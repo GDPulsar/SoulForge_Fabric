@@ -1,0 +1,15 @@
+{
+  "type": "soulforge:soul_forge_recipe",
+  "ingredients": [
+    { "item": "soulforge:bravery_arnicite" },
+    { "item": "soulforge:justice_arnicite" },
+    { "item": "soulforge:kindness_arnicite" },
+    { "item": "soulforge:patience_arnicite" },
+    { "item": "soulforge:integrity_arnicite" },
+    { "item": "soulforge:perseverance_arnicite" }
+  ],
+  "result": {
+    "item": "soulforge:determination_arnicite",
+    "count": 3
+  }
+}

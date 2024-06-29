@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NGN",
+    "NCN",
+    "NEN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "C": {
+      "item": "soulforge:bravery_arnicite_core"
+    },
+    "E": {
+      "item": "minecraft:end_crystal"
+    },
+    "G": {
+      "item": "minecraft:light_weighted_pressure_plate"
+    }
+  },
+  "result": {
+    "item": "soulforge:detonator",
+    "count": 1
+  }
+}

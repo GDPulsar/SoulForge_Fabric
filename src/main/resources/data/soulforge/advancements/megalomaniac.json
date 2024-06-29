@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:determination"
+    },
+    "title": {
+      "translate": "advancements.soulforge.megalomaniac.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.megalomaniac.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:root",
+  "criteria": {
+    "lv20": {
+      "trigger": "soulforge:player_lv",
+      "conditions": {
+        "min": 20
+      }
+    }
+  }
+}

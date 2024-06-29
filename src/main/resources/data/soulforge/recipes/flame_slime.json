@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:bravery_arnicite_core"
+    },
+    {
+      "item": "soulforge:bravery_arnicite_core"
+    },
+    {
+      "item": "soulforge:bravery_arnicite_core"
+    },
+    {
+      "item": "soulforge:bravery_arnicite_core"
+    },
+    {
+      "item": "soulforge:justice_arnicite_core"
+    },
+    {
+      "item": "soulforge:justice_arnicite_core"
+    },
+    {
+      "item": "soulforge:justice_arnicite_core"
+    },
+    {
+      "item": "soulforge:justice_arnicite_core"
+    },
+    {
+      "item": "minecraft:slime_block"
+    }
+  ],
+  "result": {
+    "item": "soulforge:flame_slime",
+    "count": 42
+  }
+}

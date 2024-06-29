@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:cooked_beef"
+    },
+    "title": {
+      "translate": "advancements.soulforge.exhausted.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.exhausted.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:root",
+  "criteria": {
+    "effect": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "soulforge:mana_overload": {}
+        }
+      }
+    }
+  }
+}

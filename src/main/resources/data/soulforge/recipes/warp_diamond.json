@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IC",
+    "iP"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "I": {
+      "item": "soulforge:integrity_arnicite"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "P": {
+      "item": "soulforge:patience_arnicite"
+    }
+  },
+  "result": {
+    "item": "soulforge:warp_diamond",
+    "count": 1
+  }
+}

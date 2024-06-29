@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/chainmail_leggings",
+    "layer1": "minecraft:trims/items/leggings_trim_quartz",
+    "layer2": "soulforge:item/siphons/integrity_leggings"
+  }
+}

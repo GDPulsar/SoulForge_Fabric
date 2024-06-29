@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:perseverance_perseverance"
+    },
+    "title": {
+      "translate": "advancements.soulforge.pure_perseverance.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.pure_perseverance.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_pure",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "trait": "Perseverance",
+        "pure": true
+      }
+    }
+  }
+}

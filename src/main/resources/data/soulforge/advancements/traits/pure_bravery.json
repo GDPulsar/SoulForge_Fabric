@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:bravery_bravery"
+    },
+    "title": {
+      "translate": "advancements.soulforge.pure_bravery.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.pure_bravery.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_pure",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "trait": "Bravery",
+        "pure": true
+      }
+    }
+  }
+}

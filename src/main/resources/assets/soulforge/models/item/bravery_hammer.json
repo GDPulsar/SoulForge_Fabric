@@ -1,0 +1,23 @@
+{
+  "credit": "Made with Blockbench",
+  "parent": "builtin/entity",
+  "display": {
+    "gui": {
+      "rotation": [
+        -15,
+        50,
+        57
+      ],
+      "translation": [
+        0.25,
+        -0.25,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
+}

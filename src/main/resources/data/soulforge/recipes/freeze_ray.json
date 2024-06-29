@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PIN",
+    "iW "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:heavy_weighted_pressure_plate"
+    },
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "P": {
+      "item": "soulforge:patience_arnicite_heart"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "item": "soulforge:freeze_ray",
+    "count": 1
+  }
+}

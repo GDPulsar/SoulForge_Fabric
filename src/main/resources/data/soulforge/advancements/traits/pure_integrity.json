@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:integrity_integrity"
+    },
+    "title": {
+      "translate": "advancements.soulforge.pure_integrity.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.pure_integrity.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_pure",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "trait": "Integrity",
+        "pure": true
+      }
+    }
+  }
+}

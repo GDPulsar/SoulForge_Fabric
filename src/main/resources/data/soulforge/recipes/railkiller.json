@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GIB",
+    "IJI",
+    " IS"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "G": {
+      "item": "minecraft:golden_helmet"
+    },
+    "B": {
+      "item": "minecraft:beacon"
+    },
+    "J": {
+      "item": "soulforge:justice_arnicite_core"
+    },
+    "S": {
+      "item": "minecraft:netherite_sword"
+    }
+  },
+  "result": {
+    "item": "soulforge:railkiller",
+    "count": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NCN",
+    "NSN",
+    " E "
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "C": {
+      "item": "soulforge:perseverance_arnicite_core"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "S": {
+      "item": "soulforge:siphon_template"
+    }
+  },
+  "result": {
+    "item": "soulforge:siphon_imbuer",
+    "count": 1
+  }
+}

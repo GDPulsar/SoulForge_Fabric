@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "soulforge:kindness_shield",
+    "soulforge:perseverance_blades",
+    "soulforge:determination_sword",
+    "soulforge:determination_greatsword",
+    "soulforge:determination_blades"
+  ]
+}

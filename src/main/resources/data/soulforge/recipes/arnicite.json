@@ -1,0 +1,18 @@
+{
+  "type": "soulforge:soul_forge_recipe",
+  "input": {
+    "item": "minecraft:iron_ingot"
+  },
+  "ingredients": [
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:amethyst_shard" }
+  ],
+  "result": {
+    "item": "soulforge:arnicite",
+    "count": 2
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ppp",
+    "hAh",
+    "ppp"
+  ],
+  "key": {
+    "A": {
+      "item": "soulforge:integrity_arnicite"
+    },
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "h": {
+      "item": "minecraft:honey_bottle"
+    }
+  },
+  "result": {
+    "item": "soulforge:integrity_gummy",
+    "count": 16
+  }
+}

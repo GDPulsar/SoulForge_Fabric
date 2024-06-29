@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "soulforge:perseverance_blades",
+    "soulforge:perseverance_claw",
+    "soulforge:bravery_hammer",
+    "soulforge:determination_greatsword",
+    "soulforge:determination_blades"
+  ]
+}

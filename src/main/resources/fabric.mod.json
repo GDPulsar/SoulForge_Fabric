@@ -1,0 +1,54 @@
+{
+	"schemaVersion": 1,
+	"id": "soulforge",
+	"version": "2.0.6",
+	"name": "SoulForge",
+	"description": "A Minecraft mod built around UNDERTALE!",
+	"authors": [
+		"GDPulsar",
+		"AmbrosialPhoenix",
+		"KoriOfAllTrades",
+		"lolteddii"
+	],
+	"contact": {
+		"homepage": "https://discord.com/invite/pUGY2BvEk2",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/soulforge/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.pulsar.soulforge.SoulForge"
+		],
+		"client": [
+			"com.pulsar.soulforge.SoulForgeClient"
+		],
+		"fabric-datagen": [
+			"com.pulsar.soulforge.SoulForgeDataGenerator"
+		],
+		"rei_client": [
+			"com.pulsar.soulforge.compat.rei.SoulForgeREIClientPlugin"
+		],
+		"cardinal-components-entity": ["com.pulsar.soulforge.components.EntityInitializer"],
+		"cardinal-components-world": ["com.pulsar.soulforge.components.WorldInitializer"]
+	},
+	"mixins": [
+		"soulforge.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.23",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*",
+		"cardinal-components": "5.2.2",
+		"geckolib": ">=4.2.2"
+	},
+	"custom": {
+		"cardinal-components": [
+			"soulforge:trait",
+			"soulforge:world_config"
+		]
+	},
+	"accessWidener": "soulforge.accesswidener"
+}

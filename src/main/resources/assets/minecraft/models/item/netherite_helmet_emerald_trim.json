@@ -1,0 +1,51 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/netherite_helmet",
+    "layer1": "minecraft:trims/items/helmet_trim_emerald"
+  },
+  "overrides": [
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_helmet_emerald_trim_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7
+      }
+    }
+  ]
+}

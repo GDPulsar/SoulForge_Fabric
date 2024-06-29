@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:justice_essence"
+    },
+    {
+      "item": "soulforge:integrity_essence"
+    },
+    {
+      "item": "minecraft:respawn_anchor"
+    }
+  ],
+  "result": {
+    "item": "soulforge:responding_freenix",
+    "count": 1
+  }
+}

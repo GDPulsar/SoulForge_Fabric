@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " CE",
+    "IBC",
+    "PI "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "P": {
+      "item": "soulforge:perseverance_arnicite_heart"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:iron_block"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    }
+  },
+  "result": {
+    "item": "soulforge:grapple_hook",
+    "count": 1
+  }
+}

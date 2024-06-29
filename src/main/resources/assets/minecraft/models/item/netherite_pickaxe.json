@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "minecraft:item/netherite_pickaxe"
+  },
+  "overrides": [
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_pickaxe_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7
+      }
+    }
+  ]
+}

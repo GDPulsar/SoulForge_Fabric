@@ -1,0 +1,7 @@
+{
+  "parent": "item/bow",
+  "textures": {
+    "layer0": "item/bow_pulling_2",
+    "layer1": "soulforge:item/siphons/determination_bow_pulling_2"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NGN",
+    "NCN",
+    "NEN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "C": {
+      "item": "soulforge:patience_arnicite_core"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "G": {
+      "item": "minecraft:tinted_glass"
+    }
+  },
+  "result": {
+    "item": "soulforge:recall_stopwatch",
+    "count": 1
+  }
+}

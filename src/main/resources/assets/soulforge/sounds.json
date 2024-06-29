@@ -1,0 +1,178 @@
+{
+  "dr_iceshock": {
+    "subtitle": "subtitles.soulforge.dr_iceshock",
+    "sounds": [
+      "soulforge:dr_iceshock"
+    ]
+  },
+  "dr_make_fountain": {
+    "subtitle": "subtitles.soulforge.dr_make_fountain",
+    "sounds": [
+      "soulforge:dr_make_fountain"
+    ]
+  },
+  "dr_revival": {
+    "subtitle": "subtitles.soulforge.dr_revival",
+    "sounds": [
+      "soulforge:dr_revival"
+    ]
+  },
+  "dr_rudebuster_swing": {
+    "subtitle": "subtitles.soulforge.dr_rudebuster_swing",
+    "sounds": [
+      "soulforge:dr_rudebuster_swing"
+    ]
+  },
+  "buzzer": {
+    "subtitle": "subtitles.soulforge.buzzer",
+    "sounds": [
+      "soulforge:buzzer"
+    ]
+  },
+  "libmo": {
+    "subtitle": "subtitles.soulforge.libmo",
+    "sounds": [
+      "soulforge:libmo"
+    ]
+  },
+  "mine_beep": {
+    "subtitle": "subtitles.soulforge.mine_beep",
+    "sounds": [
+      "soulforge:mine_beep"
+    ]
+  },
+  "mine_summon": {
+    "subtitle": "subtitles.soulforge.mine_summon",
+    "sounds": [
+      "soulforge:mine_summon"
+    ]
+  },
+  "frost_wave": {
+    "subtitle": "subtitles.soulforge.frost_wave",
+    "sounds": [
+      "soulforge:elytra_fly_shortened"
+    ]
+  },
+  "snowgrave": {
+    "subtitle": "subtitles.soulforge.snowgrave",
+    "sounds": [
+      "soulforge:snowgrave"
+    ]
+  },
+  "heal": {
+    "subtitle": "subtitles.soulforge.heal",
+    "sounds": [
+      "soulforge:heal"
+    ]
+  },
+  "mus_mtgameshow": {
+    "subtitle": "subtitles.soulforge.mus_mtgameshow",
+    "sounds": [
+      "soulforge:mus_mtgameshow"
+    ]
+  },
+  "parry": {
+    "subtitle": "subtitles.soulforge.parry",
+    "sounds": [
+      "soulforge:parry"
+    ]
+  },
+  "ut_a_bullet": {
+    "subtitle": "subtitles.soulforge.ut_a_bullet",
+    "sounds": [
+      "soulforge:ut_a_bullet"
+    ]
+  },
+  "ut_alphys": {
+    "sounds": [
+      {
+        "name": "soulforge:ut_alphys",
+        "stream": true
+      }
+    ]
+  },
+  "ut_blaster": {
+    "subtitle": "subtitles.soulforge.ut_blaster",
+    "sounds": [
+      "soulforge:ut_blaster"
+    ]
+  },
+  "ut_bombsplosion": {
+    "subtitle": "subtitles.soulforge.ut_bombsplosion",
+    "sounds": [
+      "soulforge:ut_bombsplosion"
+    ]
+  },
+  "ut_explosion": {
+    "subtitle": "subtitles.soulforge.ut_explosion",
+    "sounds": [
+      "soulforge:ut_explosion"
+    ]
+  },
+  "ut_gravity_change": {
+    "subtitle": "subtitles.soulforge.ut_gravity_change",
+    "sounds": [
+      "soulforge:ut_gravity_change"
+    ]
+  },
+  "ut_heal": {
+    "subtitle": "subtitles.soulforge.ut_heal",
+    "sounds": [
+      "soulforge:ut_heal"
+    ]
+  },
+  "ut_levelup": {
+    "subtitle": "subtitles.soulforge.ut_levelup",
+    "sounds": [
+      "soulforge:ut_levelup"
+    ]
+  },
+  "ut_reflect": {
+    "subtitle": "subtitles.soulforge.ut_reflect",
+    "sounds": [
+      "soulforge:ut_reflect"
+    ]
+  },
+  "vine_boom": {
+    "subtitle": "subtitles.soulforge.vine_boom",
+    "sounds": [
+      "soulforge:vine_boom"
+    ]
+  },
+  "gun_shoot": {
+    "subtitle": "subtitles.soulforge.gun_shoot",
+    "sounds": [
+      "soulforge:gun_shoot"
+    ]
+  },
+  "pellet_summon": {
+    "subtitle": "subtitles.soulforge.pellet_summon",
+    "sounds": [
+      "soulforge:pellet_summon"
+    ]
+  },
+  "soul_grab": {
+    "subtitle": "subtitles.soulforge.soul_grab",
+    "sounds": [
+      "soulforge:soul_grab"
+    ]
+  },
+  "weapon_summon": {
+    "subtitle": "subtitles.soulforge.weapon_summon",
+    "sounds": [
+      "soulforge:weapon_summon"
+    ]
+  },
+  "weapon_unsummon": {
+    "subtitle": "subtitles.soulforge.weapon_unsummon",
+    "sounds": [
+      "soulforge:weapon_unsummon"
+    ]
+  },
+  "domain_expansion": {
+    "subtitle": "subtitles.soulforge.domain_expansion",
+    "sounds": [
+      "soulforge:domain_expansion"
+    ]
+  }
+}

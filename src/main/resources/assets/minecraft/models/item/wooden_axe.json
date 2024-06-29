@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "minecraft:item/wooden_axe"
+  },
+  "overrides": [
+    {
+      "model": "soulforge:item/siphon/wooden_axe_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/wooden_axe_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/wooden_axe_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/wooden_axe_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/wooden_axe_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/wooden_axe_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/wooden_axe_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7
+      }
+    }
+  ]
+}

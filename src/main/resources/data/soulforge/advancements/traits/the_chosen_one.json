@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:determination"
+    },
+    "title": {
+      "translate": "advancements.soulforge.the_chosen_one.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.the_chosen_one.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:root",
+  "criteria": {
+    "determination": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "trait": "Determination"
+      }
+    }
+  }
+}

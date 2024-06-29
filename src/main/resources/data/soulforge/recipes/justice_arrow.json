@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "J  ",
+    " C ",
+    "  F"
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "J": {
+      "item": "soulforge:justice_arnicite"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "item": "soulforge:justice_arrow",
+    "count": 16
+  }
+}

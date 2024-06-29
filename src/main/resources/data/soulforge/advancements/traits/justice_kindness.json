@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:justice_kindness"
+    },
+    "title": {
+      "translate": "advancements.soulforge.justice_kindness.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.justice_kindness.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_dual",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "traits": [
+          "Justice",
+          "Kindness"
+        ]
+      }
+    }
+  }
+}

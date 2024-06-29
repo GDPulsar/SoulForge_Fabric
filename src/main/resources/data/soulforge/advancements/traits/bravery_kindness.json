@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:bravery_kindness"
+    },
+    "title": {
+      "translate": "advancements.soulforge.bravery_kindness.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.bravery_kindness.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_dual",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "traits": [
+          "Bravery",
+          "Kindness"
+        ]
+      }
+    }
+  }
+}

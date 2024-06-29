@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:determination_sword"
+    },
+    "title": {
+      "translate": "advancements.soulforge.upon_my_holy_blade.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.upon_my_holy_blade.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:root",
+  "criteria": {
+    "kill_enemy": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "equipment": {
+                "mainhand": {
+                  "tag": "soulforge:magic_weapon"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

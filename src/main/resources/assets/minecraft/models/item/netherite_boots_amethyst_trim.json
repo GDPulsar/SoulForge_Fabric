@@ -1,0 +1,51 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/netherite_boots",
+    "layer1": "minecraft:trims/items/boots_trim_amethyst"
+  },
+  "overrides": [
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/netherite_boots_amethyst_trim_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7
+      }
+    }
+  ]
+}

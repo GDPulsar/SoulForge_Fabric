@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:kindness_patience"
+    },
+    "title": {
+      "translate": "advancements.soulforge.kindness_patience.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.kindness_patience.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_dual",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "traits": [
+          "Kindness",
+          "Patience"
+        ]
+      }
+    }
+  }
+}

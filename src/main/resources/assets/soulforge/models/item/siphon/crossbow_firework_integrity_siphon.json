@@ -1,0 +1,7 @@
+{
+  "parent": "item/crossbow",
+  "textures": {
+    "layer0": "item/crossbow_firework",
+    "layer1": "soulforge:item/siphons/integrity_crossbow_firework"
+  }
+}

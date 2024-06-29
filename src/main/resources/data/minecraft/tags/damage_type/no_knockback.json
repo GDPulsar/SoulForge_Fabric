@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "soulforge:stuck_spear",
+    "soulforge:gun_shot",
+    "soulforge:warpspeed"
+  ]
+}

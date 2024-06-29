@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/leather_leggings",
+    "layer1": "minecraft:item/leather_leggings_overlay",
+    "layer2": "minecraft:trims/items/leggings_trim_gold",
+    "layer3": "soulforge:item/siphons/patience_leggings"
+  }
+}

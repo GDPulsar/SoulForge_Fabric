@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:determination"
+    },
+    "title": {
+      "translate": "advancements.soulforge.root.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.root.description"
+    },
+    "background": "textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "always": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

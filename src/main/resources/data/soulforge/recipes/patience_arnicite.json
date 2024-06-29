@@ -1,0 +1,13 @@
+{
+  "type": "soulforge:soul_forge_recipe",
+  "input": {
+    "item": "soulforge:arnicite"
+  },
+  "ingredients": [
+    { "item": "soulforge:patience_essence" }
+  ],
+  "result": {
+    "item": "soulforge:patience_arnicite",
+    "count": 1
+  }
+}

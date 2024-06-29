@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CG",
+    "bB"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gunpowder"
+    },
+    "B": {
+      "item": "soulforge:bravery_arnicite"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "b": {
+      "item": "minecraft:glass_bottle"
+    }
+  },
+  "result": {
+    "item": "soulforge:incendiary_grenade",
+    "count": 3
+  }
+}

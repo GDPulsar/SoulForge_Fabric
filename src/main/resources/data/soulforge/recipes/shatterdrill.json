@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " Ib",
+    "bBI",
+    "Hb "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "H": {
+      "item": "soulforge:bravery_arnicite_heart"
+    },
+    "b": {
+      "item": "minecraft:iron_bars"
+    },
+    "B": {
+      "item": "minecraft:iron_block"
+    }
+  },
+  "result": {
+    "item": "soulforge:shatterdrill",
+    "count": 1
+  }
+}

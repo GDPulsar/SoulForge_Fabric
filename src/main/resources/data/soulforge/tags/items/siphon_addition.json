@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "soulforge:bravery_arnicite",
+    "soulforge:justice_arnicite",
+    "soulforge:kindness_arnicite",
+    "soulforge:patience_arnicite",
+    "soulforge:integrity_arnicite",
+    "soulforge:perseverance_arnicite",
+    "soulforge:determination_arnicite"
+  ]
+}

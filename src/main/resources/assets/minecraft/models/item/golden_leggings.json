@@ -1,0 +1,117 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "minecraft:item/golden_leggings_quartz_trim",
+      "predicate": {
+        "trim_type": 0.1
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_iron_trim",
+      "predicate": {
+        "trim_type": 0.2
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_netherite_trim",
+      "predicate": {
+        "trim_type": 0.3
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_redstone_trim",
+      "predicate": {
+        "trim_type": 0.4
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_copper_trim",
+      "predicate": {
+        "trim_type": 0.5
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_gold_darker_trim",
+      "predicate": {
+        "trim_type": 0.6
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_emerald_trim",
+      "predicate": {
+        "trim_type": 0.7
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_diamond_trim",
+      "predicate": {
+        "trim_type": 0.8
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_lapis_trim",
+      "predicate": {
+        "trim_type": 0.9
+      }
+    },
+    {
+      "model": "minecraft:item/golden_leggings_amethyst_trim",
+      "predicate": {
+        "trim_type": 1.0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1,
+        "trim_type": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2,
+        "trim_type": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3,
+        "trim_type": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4,
+        "trim_type": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5,
+        "trim_type": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6,
+        "trim_type": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/golden_leggings_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7,
+        "trim_type": 0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "minecraft:item/golden_leggings"
+  }
+}

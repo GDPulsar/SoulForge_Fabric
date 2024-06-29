@@ -1,0 +1,30 @@
+{
+  "values": [
+    "soulforge:bravery_gauntlets",
+    "soulforge:bravery_hammer",
+    "soulforge:bravery_spear",
+    "soulforge:flamethrower",
+    "soulforge:freeze_ring",
+    "soulforge:integrity_rapier",
+    "soulforge:justice_bow",
+    "soulforge:justice_crossbow",
+    "soulforge:justice_revolver",
+    "soulforge:kindness_shield",
+    "soulforge:perseverance_blades",
+    "soulforge:perseverance_edge",
+    "soulforge:perseverance_harpoon",
+    "soulforge:colossal_claymore",
+    "soulforge:determination_blades",
+    "soulforge:determination_bow",
+    "soulforge:determination_crossbow",
+    "soulforge:determination_harpoon",
+    "soulforge:determination_gauntlets",
+    "soulforge:determination_greatsword",
+    "soulforge:determination_gun",
+    "soulforge:determination_hammer",
+    "soulforge:determination_sword",
+    "soulforge:determination_rapier",
+    "soulforge:determination_spear",
+    "soulforge:real_knife"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AHA",
+    "IBI",
+    "IGI"
+  ],
+  "key": {
+    "A": {
+      "item": "soulforge:integrity_arnicite"
+    },
+    "H": {
+      "item": "soulforge:integrity_arnicite_heart"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:iron_boots"
+    },
+    "G": {
+      "item": "minecraft:tinted_glass"
+    }
+  },
+  "result": {
+    "item": "soulforge:platform_boots",
+    "count": 1
+  }
+}

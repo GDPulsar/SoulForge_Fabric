@@ -1,0 +1,433 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/crossbow_standby"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -90,
+        0,
+        -60
+      ],
+      "translation": [
+        2,
+        0.1,
+        -3
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -90,
+        0,
+        30
+      ],
+      "translation": [
+        2,
+        0.1,
+        -3
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        0.9
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -90,
+        0,
+        -55
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        -90,
+        0,
+        35
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pulling": 1
+      },
+      "model": "item/crossbow_pulling_0"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58
+      },
+      "model": "item/crossbow_pulling_1"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0
+      },
+      "model": "item/crossbow_pulling_2"
+    },
+    {
+      "predicate": {
+        "charged": 1
+      },
+      "model": "item/crossbow_arrow"
+    },
+    {
+      "predicate": {
+        "charged": 1,
+        "firework": 1
+      },
+      "model": "item/crossbow_firework"
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_bravery_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_bravery_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_bravery_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_bravery_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_bravery_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_justice_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_justice_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_justice_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_justice_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_justice_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_kindness_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_kindness_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_kindness_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_kindness_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_kindness_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_patience_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_patience_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_patience_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_patience_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_patience_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_integrity_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_integrity_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_integrity_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_integrity_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_integrity_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_perseverance_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_perseverance_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_perseverance_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_perseverance_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_perseverance_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7,
+        "pulling": 0,
+        "charged": 0
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_0_determination_siphon",
+      "predicate": {
+        "pulling": 1,
+        "siphon_type": 0.7
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_1_determination_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58,
+        "siphon_type": 0.7
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_pulling_2_determination_siphon",
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0,
+        "siphon_type": 0.7
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_arrow_determination_siphon",
+      "predicate": {
+        "charged": 1,
+        "siphon_type": 0.7
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_determination_siphon",
+      "predicate": {
+        "charged": 1,
+        "firework": 1,
+        "siphon_type": 0.7
+      }
+    }
+  ]
+}

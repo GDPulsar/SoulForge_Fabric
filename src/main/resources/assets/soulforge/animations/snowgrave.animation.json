@@ -1,0 +1,142 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"snowgrave.main": {
+			"loop": true,
+			"animation_length": 0.75,
+			"bones": {
+				"layer1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 180, 0],
+							"easing": "linear"
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [0.8, 1, 0.8]
+						},
+						"0.375": {
+							"vector": [1, 1, 1],
+							"easing": "easeInOutSine"
+						},
+						"0.75": {
+							"vector": [0.8, 1, 0.8],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"layer2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 90, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.375": {
+							"vector": [0.9, 1, 0.9],
+							"easing": "easeInOutSine"
+						},
+						"0.75": {
+							"vector": [1, 1, 1]
+						}
+					}
+				},
+				"layer3": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 45, 0],
+							"easing": "linear"
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [0.75, 1, 0.75]
+						},
+						"0.375": {
+							"vector": [0.9, 1, 0.9],
+							"easing": "easeInOutSine"
+						},
+						"0.75": {
+							"vector": [0.75, 1, 0.75],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"layer4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 135, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"scale": {
+						"vector": [0.85, 1, 0.85]
+					}
+				},
+				"layer5": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 45, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [0.75, 1, 0.75]
+						},
+						"0.25": {
+							"vector": [0.87, 1, 0.87],
+							"easing": "easeInOutSine"
+						},
+						"0.5": {
+							"vector": [1, 1, 1]
+						},
+						"0.75": {
+							"vector": [0.75, 1, 0.75],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"layer6": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 270, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [0.9, 1, 0.9]
+						},
+						"0.5": {
+							"vector": [0.75, 1, 0.75]
+						},
+						"0.75": {
+							"vector": [0.9, 1, 0.9]
+						}
+					}
+				}
+			}
+		}
+	}
+}

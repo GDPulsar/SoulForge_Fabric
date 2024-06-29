@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:integrity_essence"
+    },
+    "title": {
+      "translate": "advancements.soulforge.harvester.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.harvester.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:root",
+  "criteria": {
+    "essence": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "soulforge:bravery_essence",
+              "soulforge:justice_essence",
+              "soulforge:kindness_essence",
+              "soulforge:patience_essence",
+              "soulforge:integrity_essence",
+              "soulforge:perseverance_essence"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

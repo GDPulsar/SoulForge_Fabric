@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TNT",
+    "TCT",
+    "KSI"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:tinted_glass"
+    },
+    "N": {
+      "item": "minecraft:netherite_block"
+    },
+    "C": {
+      "item": "minecraft:conduit"
+    },
+    "K": {
+      "item": "soulforge:kindness_arnicite_core"
+    },
+    "S": {
+      "item": "minecraft:scaffolding"
+    },
+    "I": {
+      "item": "soulforge:integrity_arnicite_core"
+    }
+  },
+  "result": {
+    "item": "soulforge:creative_zone_item",
+    "count": 1
+  }
+}

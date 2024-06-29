@@ -1,0 +1,62 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:elytra"
+    },
+    "title": {
+      "translate": "advancements.soulforge.icarus.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.icarus.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:root",
+  "criteria": {
+    "determination_platform": {
+      "trigger": "soulforge:cast_ability",
+      "conditions": {
+        "ability": "Determination Platform",
+        "player": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "position": {
+                "y": {
+                  "min": 320
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "integrity_platform": {
+      "trigger": "soulforge:cast_ability",
+      "conditions": {
+        "ability": "Platforms",
+        "player": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "position": {
+                "y": {
+                  "min": 320
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "determination_platform",
+      "integrity_platform"
+    ]
+  ]
+}

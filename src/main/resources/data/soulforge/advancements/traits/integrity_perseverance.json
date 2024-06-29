@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "soulforge:perseverance_integrity"
+    },
+    "title": {
+      "translate": "advancements.soulforge.integrity_perseverance.title"
+    },
+    "description": {
+      "translate": "advancements.soulforge.integrity_perseverance.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "soulforge:traits/any_dual",
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "traits": [
+          "Integrity",
+          "Perseverance"
+        ]
+      }
+    }
+  }
+}

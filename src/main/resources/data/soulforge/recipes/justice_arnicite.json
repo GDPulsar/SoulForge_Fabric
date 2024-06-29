@@ -1,0 +1,13 @@
+{
+  "type": "soulforge:soul_forge_recipe",
+  "input": {
+    "item": "soulforge:arnicite"
+  },
+  "ingredients": [
+    { "item": "soulforge:justice_essence" }
+  ],
+  "result": {
+    "item": "soulforge:justice_arnicite",
+    "count": 1
+  }
+}

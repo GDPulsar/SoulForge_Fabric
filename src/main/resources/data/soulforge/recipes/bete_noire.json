@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:bravery_arnicite"
+    },
+    {
+      "item": "minecraft:cake"
+    }
+  ],
+  "result": {
+    "item": "soulforge:bete_noire",
+    "count": 1
+  }
+}

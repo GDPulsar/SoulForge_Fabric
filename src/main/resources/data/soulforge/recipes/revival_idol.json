@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DSD",
+    "SHS",
+    "ITI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "T": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "D": {
+      "item": "soulforge:determination_arnicite"
+    },
+    "H": {
+      "item": "soulforge:determination_arnicite_heart"
+    },
+    "S": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "item": "soulforge:revival_idol",
+    "count": 1
+  }
+}

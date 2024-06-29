@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "d d",
+    "ddd",
+    " d "
+  ],
+  "key": {
+    "d": {
+      "item": "soulforge:arnicite"
+    }
+  },
+  "result": {
+    "item": "soulforge:arnicite_heart",
+    "count": 1
+  }
+}

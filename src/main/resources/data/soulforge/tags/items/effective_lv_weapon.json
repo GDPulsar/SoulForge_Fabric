@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "soulforge:determination_blades",
+    "soulforge:determination_bow",
+    "soulforge:determination_crossbow",
+    "soulforge:determination_gauntlets",
+    "soulforge:determination_greatsword",
+    "soulforge:determination_gun",
+    "soulforge:determination_hammer",
+    "soulforge:determination_harpoon",
+    "soulforge:determination_rapier",
+    "soulforge:determination_spear",
+    "soulforge:determination_sword",
+    "soulforge:real_knife"
+  ]
+}

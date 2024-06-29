@@ -1,0 +1,50 @@
+{
+  "parent": "item/crossbow",
+  "textures": {
+    "layer0": "item/crossbow_firework"
+  },
+  "overrides": [
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_bravery_siphon",
+      "predicate": {
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_determination_siphon",
+      "predicate": {
+        "siphon_type": 0.7
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_integrity_siphon",
+      "predicate": {
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_justice_siphon",
+      "predicate": {
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_kindness_siphon",
+      "predicate": {
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_patience_siphon",
+      "predicate": {
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/crossbow_firework_perseverance_siphon",
+      "predicate": {
+        "siphon_type": 0.6
+      }
+    }
+  ]
+}

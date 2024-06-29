@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HHH",
+    "HNH",
+    "HHH"
+  ],
+  "key": {
+    "H": {
+      "item": "soulforge:determination_arnicite_heart"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "item": "soulforge:determination_arnicite_core",
+    "count": 1
+  }
+}

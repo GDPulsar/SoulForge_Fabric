@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=true": { "model": "soulforge:block/creative_zone" },
+    "lit=false": { "model": "soulforge:block/creative_zone" }
+  }
+}

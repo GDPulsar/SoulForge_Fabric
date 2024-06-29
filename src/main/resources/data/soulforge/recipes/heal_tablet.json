@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    "IKI",
+    "IGI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "K": {
+      "item": "soulforge:kindness_arnicite_heart"
+    }
+  },
+  "result": {
+    "item": "soulforge:heal_tablet",
+    "count": 1
+  }
+}

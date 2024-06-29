@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NCN",
+    "NGN",
+    "NEN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "C": {
+      "item": "soulforge:determination_arnicite_core"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "G": {
+      "item": "minecraft:light_gray_stained_glass_pane"
+    }
+  },
+  "result": {
+    "item": "soulforge:determination_injector",
+    "count": 1
+  }
+}

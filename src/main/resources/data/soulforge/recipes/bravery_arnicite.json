@@ -1,0 +1,13 @@
+{
+  "type": "soulforge:soul_forge_recipe",
+  "input": {
+    "item": "soulforge:arnicite"
+  },
+  "ingredients": [
+    { "item": "soulforge:bravery_essence" }
+  ],
+  "result": {
+    "item": "soulforge:bravery_arnicite",
+    "count": 1
+  }
+}
