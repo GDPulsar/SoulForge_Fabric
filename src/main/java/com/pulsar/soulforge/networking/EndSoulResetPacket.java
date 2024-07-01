@@ -2,11 +2,14 @@ package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.item.SoulJarItem;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.ResetData;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -21,6 +24,10 @@ public class EndSoulResetPacket {
         PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("hey_chat_im_back");
         buffer.writeBoolean(false);
         SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);
+        if (player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR)) {
+            ItemStack soulJar = player.getMainHandStack();
+            SoulJarItem.setFromPlayer(soulJar, player);
+        }
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.softReset();
         List<TraitBase> traits = new ArrayList<>();

@@ -9,10 +9,9 @@ import com.pulsar.soulforge.ability.patience.FrozenGrasp;
 import com.pulsar.soulforge.ability.pures.MartyrsTouch;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.WorldConfigComponent;
+import com.pulsar.soulforge.components.WorldBaseComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.entity.PlayerSoulEntity;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -226,7 +225,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
         } else {
             expIncrease = (int)(targetHealth*(1+(targetDefence/10f)+(targetDamage/10f)));
         }
-        WorldConfigComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
+        WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
         expIncrease *= (int)worldComponent.getExpMultiplier();
         if (target.isMobOrPlayer()) {
             if (target.isPlayer()) {
@@ -264,7 +263,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
 
             int expIncrease = (int)(damage * (1 + (targetDefence / 10) + (targetDamage / 10)));
 
-            WorldConfigComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
+            WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
             expIncrease *= (int)worldComponent.getExpMultiplier();
             playerSoul.setEXP(playerSoul.getEXP() + expIncrease);
 

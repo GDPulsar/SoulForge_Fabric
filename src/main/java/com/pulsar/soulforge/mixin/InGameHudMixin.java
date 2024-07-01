@@ -2,6 +2,7 @@ package com.pulsar.soulforge.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.pures.Determine;
 import com.pulsar.soulforge.components.AbilityLayout;
@@ -21,8 +22,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import squeek.appleskin.client.HUDOverlayHandler;
 
 import static net.minecraft.client.gui.widget.ClickableWidget.WIDGETS_TEXTURE;
 
@@ -37,6 +38,12 @@ public abstract class InGameHudMixin {
 
     @Inject(method = "renderHotbar", at = @At("HEAD"), cancellable = true)
     private void renderHotbarExtras(float tickDelta, DrawContext context, CallbackInfo ci) {
+        if (SoulForgeClient.appleSkin && !SoulForgeClient.appleSkinApplied) {
+            if (HUDOverlayHandler.INSTANCE != null) {
+                HUDOverlayHandler.INSTANCE.FOOD_BAR_HEIGHT += 22;
+                SoulForgeClient.appleSkinApplied = true;
+            }
+        }
         PlayerEntity playerEntity = !(MinecraftClient.getInstance().getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)MinecraftClient.getInstance().getCameraEntity();
         if (playerEntity != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(playerEntity);
@@ -86,7 +93,7 @@ public abstract class InGameHudMixin {
                     if (!itemStack.isEmpty()) {
                         int rx = i + 109;
                         context.drawTexture(WIDGETS_TEXTURE, rx, this.scaledHeight - 23, 58, 22, 24, 24);
-                        if (playerEntity.getInventory().selectedSlot == 9 && playerSoul.magicModeActive())
+                        if (playerEntity.getInventory().selectedSlot == 9 && !playerSoul.magicModeActive())
                             context.drawTexture(WIDGETS_TEXTURE, rx+1, this.scaledHeight - 23, 0, 22, 24, 22);
                         m = context.getScaledWindowHeight() - 19;
                         this.renderHotbarItem(context, rx+5, m, tickDelta, playerEntity, itemStack, l);

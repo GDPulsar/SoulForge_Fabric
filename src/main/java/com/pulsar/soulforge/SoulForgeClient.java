@@ -33,6 +33,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -53,6 +54,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import squeek.appleskin.client.HUDOverlayHandler;
 
 import java.awt.*;
 
@@ -61,8 +63,21 @@ public class SoulForgeClient implements ClientModInitializer {
 
 	private DisplaySlot survivalWeaponSlot;
 
+	public static boolean appleSkin = false;
+	public static boolean appleSkinApplied = false;
+
 	@Override
 	public void onInitializeClient() {
+		if (FabricLoader.getInstance().isModLoaded("appleskin")) {
+			appleSkin = true;
+			if (HUDOverlayHandler.INSTANCE == null) {
+				appleSkinApplied = false;
+			} else {
+				appleSkinApplied = true;
+				HUDOverlayHandler.INSTANCE.FOOD_BAR_HEIGHT += 22;
+			}
+		}
+
 		KeyInputHandler.register();
 		KeyInputHandler.registerKeyInputs();
 		if (MinecraftClient.getInstance().getSession().getUsername().equals("GDPulsar")) {

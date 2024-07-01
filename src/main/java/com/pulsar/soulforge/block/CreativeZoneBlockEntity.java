@@ -1,15 +1,12 @@
 package com.pulsar.soulforge.block;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.ui.CreativeZoneScreenHandler;
-import com.pulsar.soulforge.client.ui.SoulForgeScreenHandler;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BeaconBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -18,7 +15,8 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.*;
+import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
@@ -32,9 +30,6 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.RenderUtils;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, GeoBlockEntity, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
@@ -65,12 +60,23 @@ public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScre
         };
     }
 
+    private boolean wasActivated = false;
     public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
 
-        if (fuel > 0) {
-            fuel--;
-            if (fuel % 20 == 0) applyEffect(world, pos);
+        if (world.isReceivingRedstonePower(pos) != wasActivated) {
+            if (world.isReceivingRedstonePower(pos)) {
+                SoulForge.getWorldComponent(world).addActiveCreativeZone(pos);
+            } else {
+                SoulForge.getWorldComponent(world).removeActiveCreativeZone(pos);
+            }
+        }
+        wasActivated = world.isReceivingRedstonePower(pos);
+        if (world.isReceivingRedstonePower(pos)) {
+            if (fuel > 0) {
+                fuel--;
+                if (fuel % 20 == 0) applyEffect(world, pos);
+            }
         }
         ItemStack stack = this.getStack(0);
         if (stack.isOf(SoulForgeItems.KINDNESS_ARNICITE) || stack.isOf(SoulForgeItems.INTEGRITY_ARNICITE)) {
@@ -85,12 +91,8 @@ public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScre
         }
     }
 
-    public boolean isActive(BlockState state) {
-        return (Boolean)state.getEntries().get(CreativeZoneBlock.ACTIVE) && fuel > 0;
-    }
-
     private static void applyEffect(World world, BlockPos pos) {
-        Box box = (new Box(pos)).expand(40).stretch(0.0, world.getHeight(), 0.0);
+        Box box = (new Box(pos)).expand(80).stretch(0.0, world.getHeight(), 0.0);
         for (PlayerEntity player : world.getNonSpectatingEntities(PlayerEntity.class, box)) {
             player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.CREATIVE_ZONE, 150, 0));
         }

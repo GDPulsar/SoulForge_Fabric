@@ -72,6 +72,8 @@ public class SoulResetOverlay implements HudRenderCallback {
                         soulJar = client.player.getMainHandStack();
                         allowChosing = false;
                         rerollType = RerollType.JAR;
+                    } else if (SoulJarItem.getHasSoul(client.player.getMainHandStack())) {
+                        soulJar = client.player.getMainHandStack();
                     }
                 }
                 if (rerollType == RerollType.NORMAL) {
@@ -409,13 +411,13 @@ public class SoulResetOverlay implements HudRenderCallback {
                             drawSoul(context,
                                     (int) ((getColorValue(leftColor) & 0x00FFFFFF) + opacity),
                                     (int) ((getColorValue(rightColor) & 0x00FFFFFF) + opacity),
-                                    width / 2 + (int)((1f-delta) * 150f), height / 2, 0);
+                                    width / 2 + (int)(delta * 150f), height / 2, 0);
                             leftColor = new Color(playerSoul.getTrait(0).getColor());
                             rightColor = new Color(playerSoul.getTrait(playerSoul.getTraitCount() - 1).getColor());
                             drawSoul(context,
                                     (int) ((getColorValue(leftColor) & 0x00FFFFFF) + opacity),
                                     (int) ((getColorValue(rightColor) & 0x00FFFFFF) + opacity),
-                                    width / 2 - (int)(delta * 150f), height / 2, 0);
+                                    width / 2 - (int)((1f-delta) * 150f), height / 2, 0);
                         }
                         if (tickTimer == 150) {
                             PacketByteBuf buf = PacketByteBufs.create();
@@ -425,10 +427,6 @@ public class SoulResetOverlay implements HudRenderCallback {
                             buf.writeBoolean(SoulJarItem.getPure(soulJar));
                             buf.writeVarInt(SoulJarItem.getLv(soulJar));
                             buf.writeVarInt(SoulJarItem.getExp(soulJar));
-                            soulJar.decrement(1);
-                            ItemStack newJar = new ItemStack(SoulForgeItems.SOUL_JAR);
-                            SoulJarItem.setFromPlayer(newJar, client.player);
-                            client.player.giveItemStack(newJar);
                             ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
                             playerSoul.removeTag("resettingSoul");
                         }

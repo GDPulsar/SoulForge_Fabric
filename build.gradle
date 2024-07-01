@@ -33,8 +33,13 @@ repositories {
 		}
 	}
 	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+	maven {
 		url "https://jitpack.io"
 	}
+	maven { url "https://maven.ryanliptak.com/" }
 	mavenLocal()
 }
 
@@ -69,6 +74,10 @@ dependencies {
 	//modLocalRuntime("com.github.GDPulsar:SoulForge-Teams:-SNAPSHOT")
 	modCompileOnly("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
 	//modLocalRuntime("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
+	modCompileOnly("squeek.appleskin:appleskin-fabric:${appleskin_version}") {
+		transitive = false
+	}
+	modLocalRuntime("squeek.appleskin:appleskin-fabric:${appleskin_version}")
 }
 
 processResources {

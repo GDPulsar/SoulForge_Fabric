@@ -2,33 +2,21 @@ package com.pulsar.soulforge.block;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BeaconBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class CreativeZoneBlock extends BlockWithEntity implements BlockEntityProvider {
-    public static final BooleanProperty ACTIVE = RedstoneTorchBlock.LIT;
-
     protected CreativeZoneBlock() {
         super(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque().notSolid().pistonBehavior(PistonBehavior.IGNORE).requiresTool());
     }
@@ -62,20 +50,6 @@ public class CreativeZoneBlock extends BlockWithEntity implements BlockEntityPro
         return ActionResult.SUCCESS;
     }
 
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (!world.isClient) {
-            boolean bl = state.get(ACTIVE);
-            if (bl != world.isReceivingRedstonePower(pos)) {
-                world.setBlockState(pos, state.cycle(ACTIVE), 2);
-            }
-        }
-    }
-
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(ACTIVE);
-    }
-
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
@@ -85,6 +59,6 @@ public class CreativeZoneBlock extends BlockWithEntity implements BlockEntityPro
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 }

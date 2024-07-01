@@ -3,6 +3,7 @@ package com.pulsar.soulforge.networking;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.item.SoulJarItem;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
@@ -16,8 +17,10 @@ public class StartSoulResetPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (playerSoul.canReset()) {
-            player.getInventory().removeStack(player.getInventory().indexOf(new ItemStack(SoulForgeItems.DETERMINATION_ARNICITE_HEART)), 1);
-            //playerSoul.reset();
+            if (!player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR) ||
+                    (player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR) && !SoulJarItem.getHasSoul(player.getMainHandStack()))) {
+                player.getInventory().removeStack(player.getInventory().indexOf(new ItemStack(SoulForgeItems.DETERMINATION_ARNICITE_HEART)), 1);
+            }
             playerSoul.addTag("resettingSoul");
             playerSoul.addTag("immobile");
             PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb");
