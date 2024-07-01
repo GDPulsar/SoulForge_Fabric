@@ -1,0 +1,120 @@
+package com.pulsar.soulforge.item.devices.machines;
+
+import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
+import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.item.devices.DeviceBase;
+import com.pulsar.soulforge.trait.Traits;
+import com.pulsar.soulforge.util.Utils;
+import net.minecraft.client.render.item.BuiltinModelItemRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.*;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Rarity;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.object.PlayState;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+public class SiphonImbuer extends DeviceBase implements GeoItem {
+    public SiphonImbuer() {
+        super(new Item.Settings().maxCount(1).rarity(Rarity.EPIC), 1000, Traits.perseverance);
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        TypedActionResult<ItemStack> result = super.use(world, user, hand);
+        if (result.getResult().isAccepted()) return result;
+        ItemStack stack = user.getStackInHand(hand);
+        if (!world.isClient) {
+            if (getCharge(stack) <= 0) return super.use(world, user, hand);
+            if (!stack.contains(SoulForgeItems.IMBUED_ID_COMPONENT)) {
+                if (hand == Hand.MAIN_HAND) {
+                    int slot = (user.getInventory().selectedSlot + 1) % 9;
+                    if (user.getInventory().getStack(slot).isEmpty()) return super.use(world, user, hand);
+                    ItemStack slotStack = user.getInventory().getStack(slot);
+                    Item item = slotStack.getItem();
+                    if (!(item instanceof CrossbowItem || item instanceof SwordItem || item instanceof TridentItem || item instanceof ShieldItem || item instanceof AxeItem || item instanceof BowItem)) return super.use(world, user, hand);
+                    slotStack.set(SoulForgeItems.IMBUED_COMPONENT, true);
+                    UUID uuid = UUID.randomUUID();
+                    slotStack.set(SoulForgeItems.IMBUED_ID_COMPONENT, uuid);
+                    stack.set(SoulForgeItems.IMBUED_ID_COMPONENT, uuid);
+                    user.sendMessage(Text.literal("Successfully bound to ").append(slotStack.getName()));
+                    return TypedActionResult.success(stack);
+                }
+            } else {
+                ItemStack lStack = Utils.getImbuedById(stack.get(SoulForgeItems.IMBUED_ID_COMPONENT), user);
+                if (lStack != null) {
+                    lStack.remove(SoulForgeItems.IMBUED_COMPONENT);
+                    lStack.remove(SoulForgeItems.IMBUED_ID_COMPONENT);
+                }
+                stack.remove(SoulForgeItems.IMBUED_ID_COMPONENT);
+                user.sendMessage(Text.literal("Unbound"));
+                return TypedActionResult.success(stack);
+            }
+        }
+        return TypedActionResult.fail(stack);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        if (stack.contains(SoulForgeItems.IMBUED_ID_COMPONENT)) {
+            if (getCharge(stack) <= 0) {
+                ItemStack lStack = Utils.getImbuedById(stack.get(SoulForgeItems.IMBUED_ID_COMPONENT), (PlayerEntity)entity);
+                if (lStack != null) {
+                    lStack.remove(SoulForgeItems.IMBUED_COMPONENT);
+                    lStack.remove(SoulForgeItems.IMBUED_ID_COMPONENT);
+                }
+                stack.remove(SoulForgeItems.IMBUED_ID_COMPONENT);
+            }
+        }
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        super.appendTooltip(stack, context, tooltip, type);
+        tooltip.add(Text.literal("Infuses the item in your next slot."));
+    }
+
+    public AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+
+    @Override
+    public void createRenderer(Consumer<Object> consumer) {
+        consumer.accept(new RenderProvider() {
+            private final GeoMagicItemRenderer<SiphonImbuer> renderer = new GeoMagicItemRenderer<>("siphon_imbuer", "siphon_imbuer");
+
+            @Override
+            public BuiltinModelItemRenderer getCustomRenderer() {
+                return this.renderer;
+            }
+        });
+    }
+
+    @Override
+    public Supplier<Object> getRenderProvider() {
+        return renderProvider;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
+        controllerRegistrar.add(new AnimationController<>(this, "controller", 0, (animationState) -> PlayState.STOP));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+}
