@@ -157,6 +157,9 @@
   "blockentity.soulforge.soul_forge": "Soul Forge",
   "block.soulforge.creative_zone": "Creative Zone",
   "blockentity.soulforge.creative_zone": "Creative Zone",
+  "block.soulforge.soul_jar": "Soul Jar",
+  "blockentity.soulforge.soul_jar": "Soul Jar",
+  "item.soulforge.soul_jar": "Soul Jar",
   "soulforge.creative_zone_screen.fuel_prefix": "Fuel Remaining: ",
 
   "entity.soulforge.auto_turret": "Auto Turret",

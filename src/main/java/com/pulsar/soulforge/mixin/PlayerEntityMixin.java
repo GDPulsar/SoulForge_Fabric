@@ -12,6 +12,7 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.WorldConfigComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.entity.PlayerSoulEntity;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -543,4 +544,16 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
         return original;
     }
+
+    /*@ModifyVariable(method = "interact", at = @At("STORE"), ordinal = 0)
+    private ItemStack modifyInteractingStack(ItemStack original, @Local Hand hand) {
+        if (hand == Hand.OFF_HAND) {
+            PlayerEntity player = (PlayerEntity)(Object)this;
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            if (playerSoul.hasWeapon() && playerSoul.getWeapon().isOf(SoulForgeItems.KINDNESS_SHIELD)) {
+                return playerSoul.getWeapon();
+            }
+        }
+        return original;
+    }*/
 }

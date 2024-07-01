@@ -1,8 +1,9 @@
 package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.item.SoulJarItem;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.TraitBase;
@@ -13,15 +14,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -29,11 +24,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.*;
@@ -55,6 +46,7 @@ public class SoulResetOverlay implements HudRenderCallback {
     private List<Integer> indexes = new ArrayList<>();
     private List<Vector2i> lastPositions = new ArrayList<>();
     private List<Vector2i> targetPositions = new ArrayList<>();
+    private ItemStack soulJar = ItemStack.EMPTY;
 
     @Override
     public void onHudRender(DrawContext context, float tickDelta) {
@@ -70,10 +62,18 @@ public class SoulResetOverlay implements HudRenderCallback {
                 chosenTraits = new ArrayList<>();
                 chosenPower = 0;
                 chosen = new ArrayList<>();
+                soulJar = ItemStack.EMPTY;
                 allowChosing = playerSoul.getResetData().bravery && playerSoul.getResetData().justice && playerSoul.getResetData().kindness
                         && playerSoul.getResetData().patience && playerSoul.getResetData().integrity && playerSoul.getResetData().perseverance
                         && playerSoul.getResetData().determination && playerSoul.getResetData().strongDual;
                 rerollType = getRerollType(playerSoul);
+                if (client.player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR)) {
+                    if (Objects.equals(SoulJarItem.getOwner(client.player.getMainHandStack()), client.player.getName().getString())) {
+                        soulJar = client.player.getMainHandStack();
+                        allowChosing = false;
+                        rerollType = RerollType.JAR;
+                    }
+                }
                 if (rerollType == RerollType.NORMAL) {
                     gotLibmod = Math.random() <= 0.01f && !allowChosing;
                     chosenTraits = List.of(getNormalTrait(playerSoul));
@@ -315,10 +315,12 @@ public class SoulResetOverlay implements HudRenderCallback {
                             buf.writeString("");
                             buf.writeBoolean(chosenPower >= 1);
                             buf.writeBoolean(chosenPower == 2);
+                            buf.writeVarInt(1);
+                            buf.writeVarInt(0);
                             ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
                             playerSoul.removeTag("resettingSoul");
                         }
-                    } else {
+                    } else if (rerollType != RerollType.JAR) {
                         if (timer <= 150f) {
                             for (int i = 0; i < 6; i++) {
                                 float angle = MathHelper.PI / 3f * i;
@@ -389,6 +391,44 @@ public class SoulResetOverlay implements HudRenderCallback {
                             buf.writeString(chosenTraits.size() == 2 ? chosenTraits.get(1).getName() : "");
                             buf.writeBoolean(chosenPower >= 1);
                             buf.writeBoolean(chosenPower == 2);
+                            buf.writeVarInt(1);
+                            buf.writeVarInt(0);
+                            ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
+                            playerSoul.removeTag("resettingSoul");
+                        }
+                    } else {
+                        if (tickTimer < 150) {
+                            Color leftColor = new Color(Traits.get(SoulJarItem.getTrait1(soulJar)).getColor());
+                            Color rightColor = new Color(Traits.get(SoulJarItem.getTrait1(soulJar)).getColor());
+                            if (!Objects.equals(SoulJarItem.getTrait2(soulJar), "")) rightColor = new Color(Traits.get(SoulJarItem.getTrait2(soulJar)).getColor());
+                            float delta = MathHelper.clamp((Math.abs(90f-timer)/50f), 0, 1);
+                            delta = (MathHelper.cos(delta * MathHelper.PI)+1f) / 2f;
+                            long opacity = MathHelper.lerp(delta, 0, 0xFF) * 16777216L;
+                            delta = MathHelper.clamp(((timer-90f)/25f), 0, 1);
+                            delta = (MathHelper.cos(delta * MathHelper.PI)+1f) / 2f;
+                            drawSoul(context,
+                                    (int) ((getColorValue(leftColor) & 0x00FFFFFF) + opacity),
+                                    (int) ((getColorValue(rightColor) & 0x00FFFFFF) + opacity),
+                                    width / 2 + (int)((1f-delta) * 150f), height / 2, 0);
+                            leftColor = new Color(playerSoul.getTrait(0).getColor());
+                            rightColor = new Color(playerSoul.getTrait(playerSoul.getTraitCount() - 1).getColor());
+                            drawSoul(context,
+                                    (int) ((getColorValue(leftColor) & 0x00FFFFFF) + opacity),
+                                    (int) ((getColorValue(rightColor) & 0x00FFFFFF) + opacity),
+                                    width / 2 - (int)(delta * 150f), height / 2, 0);
+                        }
+                        if (tickTimer == 150) {
+                            PacketByteBuf buf = PacketByteBufs.create();
+                            buf.writeString(SoulJarItem.getTrait1(soulJar));
+                            buf.writeString(SoulJarItem.getTrait2(soulJar));
+                            buf.writeBoolean(SoulJarItem.getStrong(soulJar));
+                            buf.writeBoolean(SoulJarItem.getPure(soulJar));
+                            buf.writeVarInt(SoulJarItem.getLv(soulJar));
+                            buf.writeVarInt(SoulJarItem.getExp(soulJar));
+                            soulJar.decrement(1);
+                            ItemStack newJar = new ItemStack(SoulForgeItems.SOUL_JAR);
+                            SoulJarItem.setFromPlayer(newJar, client.player);
+                            client.player.giveItemStack(newJar);
                             ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
                             playerSoul.removeTag("resettingSoul");
                         }
@@ -467,7 +507,8 @@ public class SoulResetOverlay implements HudRenderCallback {
     public enum RerollType {
         NORMAL,
         DUAL,
-        DT
+        DT,
+        JAR
     }
 
     private RerollType getRerollType(SoulComponent playerSoul) {

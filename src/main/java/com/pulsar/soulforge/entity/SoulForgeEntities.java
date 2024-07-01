@@ -55,6 +55,7 @@ public class SoulForgeEntities {
     public static EntityType<SwordSlashProjectile> SWORD_SLASH_ENTITY_TYPE;
     public static EntityType<YoyoProjectile> YOYO_ENTITY_TYPE;
     public static EntityType<RailkillerEntity> RAILKILLER_ENTITY_TYPE;
+    public static EntityType<PlayerSoulEntity> PLAYER_SOUL_ENTITY_TYPE;
 
     public static void register() {
         SNOWGRAVE_PROJECTILE_TYPE = Registry.register(
@@ -447,6 +448,15 @@ public class SoulForgeEntities {
                 FabricEntityTypeBuilder.<RailkillerEntity>create(SpawnGroup.MISC, RailkillerEntity::new)
                         .dimensions(EntityDimensions.fixed(1f, 1f))
                         .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .build()
+        );
+
+        PLAYER_SOUL_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE,
+                new Identifier(SoulForge.MOD_ID, "player_soul"),
+                FabricEntityTypeBuilder.<PlayerSoulEntity>create(SpawnGroup.MISC, PlayerSoulEntity::new)
+                        .dimensions(EntityDimensions.fixed(0.5f, 0.5f))
+                        .trackRangeBlocks(40).trackedUpdateRate(20)
                         .build()
         );
 

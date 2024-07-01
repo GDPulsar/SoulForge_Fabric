@@ -91,6 +91,8 @@ public class SoulForge implements ModInitializer {
 			}
 		});
 
+
+
 		LootTableEvents.MODIFY.register(((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (source.isBuiltin()) {
 				for (EntityType<?> entity : Constants.essenceDrops.keySet()) {

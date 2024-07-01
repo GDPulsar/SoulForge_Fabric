@@ -1,11 +1,10 @@
 package com.pulsar.soulforge;
 
 import com.mojang.datafixers.util.Pair;
-import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.patience.BlindingSnowstorm;
 import com.pulsar.soulforge.ability.perseverance.ColossalClaymore;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.client.block.CreativeZoneBlockRenderer;
+import com.pulsar.soulforge.client.block.SoulJarEntityRenderer;
 import com.pulsar.soulforge.client.entity.*;
 import com.pulsar.soulforge.client.event.ClickEvent;
 import com.pulsar.soulforge.client.event.ClientEndTick;
@@ -14,25 +13,22 @@ import com.pulsar.soulforge.client.event.KeyInputHandler;
 import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
 import com.pulsar.soulforge.client.render.SoulForgeRendering;
 import com.pulsar.soulforge.client.ui.CreativeZoneScreen;
+import com.pulsar.soulforge.client.ui.MagicHudOverlay;
 import com.pulsar.soulforge.client.ui.SoulForgeScreen;
 import com.pulsar.soulforge.client.ui.SoulResetOverlay;
-import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.client.ui.MagicHudOverlay;
 import com.pulsar.soulforge.item.weapons.JusticeCrossbow;
 import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
 import com.pulsar.soulforge.siphon.Siphon;
-import dev.architectury.event.events.client.ClientLifecycleEvent;
-import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import me.x150.renderer.event.RenderEvents;
 import me.x150.renderer.render.Renderer3d;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -48,7 +44,6 @@ import net.minecraft.client.render.entity.LightningEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -81,10 +76,13 @@ public class SoulForgeClient implements ClientModInitializer {
 
 		BlockEntityRendererFactories.register(SoulForgeBlocks.CREATIVE_ZONE_ENTITY, CreativeZoneBlockRenderer::new);
 
+		BlockEntityRendererRegistry.register(SoulForgeBlocks.SOUL_JAR_BLOCK_ENTITY, SoulJarEntityRenderer::new);
+
 		BlockRenderLayerMap.INSTANCE.putBlock(SoulForgeBlocks.SOUL_FORGE_BLOCK, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(SoulForgeBlocks.CREATIVE_ZONE, RenderLayer.getCutout());
 		BlockRenderLayerMap.INSTANCE.putBlock(SoulForgeBlocks.DOME_BLOCK, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(SoulForgeBlocks.DETERMINATION_DOME_BLOCK, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(SoulForgeBlocks.SOUL_JAR, RenderLayer.getTranslucent());
 
 		EntityRendererRegistry.register(SoulForgeEntities.BRAVERY_SPEAR_ENTITY_TYPE, BraverySpearRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.DETERMINATION_SPEAR_ENTITY_TYPE, DeterminationSpearRenderer::new);
@@ -129,6 +127,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.SWORD_SLASH_ENTITY_TYPE, SwordSlashRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.YOYO_ENTITY_TYPE, YoyoRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.RAILKILLER_ENTITY_TYPE, RailkillerRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.PLAYER_SOUL_ENTITY_TYPE, PlayerSoulRenderer::new);
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
 		HudRenderCallback.EVENT.register(new SoulResetOverlay());

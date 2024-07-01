@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "soulforge:soul_jar",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "hasSoul",
+                  "target": "BlockEntityTag.hasSoul",
+                  "op": "replace"
+                },
+                {
+                  "source": "soul",
+                  "target": "BlockEntityTag.soul",
+                  "op": "replace"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

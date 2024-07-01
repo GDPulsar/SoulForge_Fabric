@@ -2,24 +2,18 @@ package com.pulsar.soulforge.mixin;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Iterator;
-
-import static net.minecraft.screen.PlayerScreenHandler.HOTBAR_END;
-import static net.minecraft.screen.PlayerScreenHandler.INVENTORY_START;
 
 @Mixin(PlayerInventory.class)
 public abstract class PlayerInventoryMixin {

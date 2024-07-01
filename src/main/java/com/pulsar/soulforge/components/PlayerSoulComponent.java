@@ -17,6 +17,7 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
+import com.pulsar.soulforge.entity.PlayerSoulEntity;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
@@ -513,6 +514,9 @@ public class PlayerSoulComponent implements SoulComponent {
         if (player instanceof ServerPlayerEntity serverPlayer) {
             for (AbilityBase ability : activeAbilities.values()) {
                 ability.end(serverPlayer);
+                if (ability instanceof ToggleableAbilityBase toggleable) {
+                    toggleable.setActive(false);
+                }
             }
         }
         activeAbilities = new HashMap<>();
@@ -641,18 +645,10 @@ public class PlayerSoulComponent implements SoulComponent {
 
     @Override
     public boolean canReset() {
-        int hostileCount = 0;
-        for (Map.Entry<String, Integer> entry : monsterSouls.entrySet()) {
-            if (Constants.hostiles.contains(entry.getKey())) {
-                if (entry.getValue() > 0) hostileCount++;
-            }
-        }
-        if (hostileCount >= 7) {
-            for (int i = 0; i < player.getInventory().size(); i++) {
-                ItemStack stack = player.getInventory().getStack(i);
-                if (stack.getItem() == SoulForgeItems.DETERMINATION_ARNICITE_HEART) {
-                    return true;
-                }
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            ItemStack stack = player.getInventory().getStack(i);
+            if (stack.getItem() == SoulForgeItems.DETERMINATION_ARNICITE_HEART) {
+                return true;
             }
         }
         return false;

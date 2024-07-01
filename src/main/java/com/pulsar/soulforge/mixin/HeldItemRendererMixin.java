@@ -27,20 +27,26 @@ public class HeldItemRendererMixin {
         PlayerEntity player = args.get(0);
         Hand hand = args.get(3);
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul != null) {
-            if (playerSoul.hasCast("Colossal Claymore")) {
-                if (hand == Hand.MAIN_HAND) {
-                    args.set(5, new ItemStack(SoulForgeItems.COLOSSAL_CLAYMORE_DISPLAY));
-                    return;
-                }
+        if (playerSoul.hasCast("Colossal Claymore")) {
+            if (hand == Hand.MAIN_HAND) {
+                args.set(5, new ItemStack(SoulForgeItems.COLOSSAL_CLAYMORE_DISPLAY));
+                return;
             }
         }
+        /*if (hand == Hand.MAIN_HAND) {
+            if (player.getMainHandStack().getItem() == SoulForgeItems.KINDNESS_SHIELD) {
+                args.set(5, ItemStack.EMPTY);
+            }
+        }*/
         if (hand == Hand.OFF_HAND) {
             if (player.getMainHandStack().getItem() == SoulForgeItems.BRAVERY_GAUNTLETS || player.getMainHandStack().getItem() == SoulForgeItems.PERSEVERANCE_BLADES ||
                 player.getMainHandStack().getItem() == SoulForgeItems.DETERMINATION_GAUNTLETS || player.getMainHandStack().getItem() == SoulForgeItems.DETERMINATION_BLADES ||
                     player.getMainHandStack().getItem() == SoulForgeItems.GUNBLADES) {
                 args.set(5, player.getMainHandStack());
             }
+            /*if (playerSoul.hasWeapon() && playerSoul.getWeapon().isOf(SoulForgeItems.KINDNESS_SHIELD)) {
+                args.set(5, playerSoul.getWeapon());
+            }*/
         }
     }
 

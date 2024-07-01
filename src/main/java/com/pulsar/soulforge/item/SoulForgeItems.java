@@ -159,6 +159,7 @@ public class SoulForgeItems {
     public static Item SHATTERDRILL;
     public static Item GRAPPLE_HOOK;
     public static Item JUSTICE_GUN;
+    public static Item SOUL_JAR;
 
     public static Item DT_INJECTOR;
     public static Item RECALL_STOPWATCH;
@@ -283,6 +284,7 @@ public class SoulForgeItems {
         INCENDIARY_GRENADE = RegisterItem("incendiary_grenade", new IncendiaryGrenade());
         JUSTICE_ARROW = RegisterItem("justice_arrow", new JusticeArrowItem());
         ANTIHEAL_DART = RegisterItem("antiheal_dart", new AntihealDart());
+        SOUL_JAR = RegisterItem("soul_jar", new SoulJarItem());
 
         REVIVAL_IDOL = RegisterItem("revival_idol", new RevivalIdol());
         SHATTERDRILL = RegisterItem("shatterdrill", new Shatterdrill());

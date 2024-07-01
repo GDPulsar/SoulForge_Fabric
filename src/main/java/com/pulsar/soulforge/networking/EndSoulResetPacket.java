@@ -1,9 +1,6 @@
 package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.advancement.SoulForgeCriterions;
-import com.pulsar.soulforge.components.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
@@ -16,7 +13,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +32,8 @@ public class EndSoulResetPacket {
         boolean strong = buf.readBoolean();
         boolean pure = buf.readBoolean();
         playerSoul.setResetValues(traits, strong, pure);
+        playerSoul.setLV(buf.readVarInt());
+        playerSoul.setEXP(buf.readVarInt());
         ResetData resetData = playerSoul.getResetData();
         if (!traits.contains(Traits.determination)) resetData.resetsSinceDT++;
         else resetData.resetsSinceDT = 0;

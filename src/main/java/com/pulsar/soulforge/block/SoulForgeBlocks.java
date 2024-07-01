@@ -41,6 +41,8 @@ public class SoulForgeBlocks {
     public static Block CREATIVE_ZONE;
     public static Item CREATIVE_ZONE_ITEM;
     public static BlockEntityType<CreativeZoneBlockEntity> CREATIVE_ZONE_ENTITY;
+    public static Block SOUL_JAR;
+    public static BlockEntityType<SoulJarBlockEntity> SOUL_JAR_BLOCK_ENTITY;
 
     public static void registerBlocks() {
         SOUL_FORGE_BLOCK = RegisterBlock("soul_forge_block", new SoulForgeBlock());
@@ -51,5 +53,7 @@ public class SoulForgeBlocks {
         CREATIVE_ZONE = RegisterBlock("creative_zone", new CreativeZoneBlock());
         CREATIVE_ZONE_ITEM = RegisterBlockItem("creative_zone_item", new CreativeZoneItem(CREATIVE_ZONE, new FabricItemSettings().maxCount(1)));
         CREATIVE_ZONE_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "creative_zone_entity"), FabricBlockEntityTypeBuilder.create(CreativeZoneBlockEntity::new, CREATIVE_ZONE).build());
+        SOUL_JAR = RegisterBlock("soul_jar", new SoulJarBlock());
+        SOUL_JAR_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "soul_jar_block_entity"), FabricBlockEntityTypeBuilder.create(SoulJarBlockEntity::new, SOUL_JAR).build());
     }
 }

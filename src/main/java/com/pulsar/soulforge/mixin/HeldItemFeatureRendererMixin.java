@@ -24,14 +24,21 @@ public class HeldItemFeatureRendererMixin<T extends LivingEntity, M extends Enti
         Arm arm = args.get(3);
         if (entity instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul != null) {
-                if (playerSoul.hasCast("Colossal Claymore")) {
-                    if (arm == player.getMainArm()) {
-                        args.set(1, new ItemStack(SoulForgeItems.COLOSSAL_CLAYMORE_DISPLAY));
-                        return;
-                    }
+            if (playerSoul.hasCast("Colossal Claymore")) {
+                if (arm == player.getMainArm()) {
+                    args.set(1, new ItemStack(SoulForgeItems.COLOSSAL_CLAYMORE_DISPLAY));
+                    return;
                 }
             }
+            /*if (arm == player.getMainArm()) {
+                if (player.getMainHandStack().getItem() == SoulForgeItems.KINDNESS_SHIELD) {
+                    args.set(5, ItemStack.EMPTY);
+                }
+            } else {
+                if (playerSoul.hasWeapon() && playerSoul.getWeapon().isOf(SoulForgeItems.KINDNESS_SHIELD)) {
+                    args.set(5, playerSoul.getWeapon());
+                }
+            }*/
         }
         if (arm != entity.getMainArm()) {
             ItemStack mainStack = entity.getMainHandStack();

@@ -2,19 +2,14 @@ package com.pulsar.soulforge.ability.bravery;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
-import java.util.Objects;
 
 public class BraveryBoost extends ToggleableAbilityBase {
     public final String name = "Bravery Boost";
