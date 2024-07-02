@@ -18,6 +18,11 @@ public class SplashTextResourceSupplierMixin {
         original.add("*insert horny quote here*");
         original.add("Apologize to PV Sagan!!!");
         original.add("glacid glacid");
+        original.add("betty (fake)");
+        original.add("betty (real)");
+        original.add("ocean (uhhh?)");
+        original.add("kaso moment");
+        original.add("LETS GO GAMBLING!!!!");
         return original;
     }
 }

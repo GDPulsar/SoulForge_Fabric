@@ -30,6 +30,10 @@ public class BigSlashProjectile extends ProjectileEntity implements GeoAnimatabl
         this.setOwner(player);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     protected void initDataTracker() {
 

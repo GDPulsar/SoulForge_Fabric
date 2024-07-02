@@ -6,17 +6,15 @@ import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 
 public class FireTornadoProjectile extends Entity implements GeoEntity {
@@ -32,6 +30,10 @@ public class FireTornadoProjectile extends Entity implements GeoEntity {
         super(SoulForgeEntities.FIRE_TORNADO_ENTITY_TYPE, world);
         this.owner = owner;
         this.setPosition(pos);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

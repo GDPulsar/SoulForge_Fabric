@@ -14,6 +14,10 @@ public class JusticeArrowTrinketProjectile extends PersistentProjectileEntity {
         super(entityType, world);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public JusticeArrowTrinketProjectile(World world, LivingEntity shooter) {
         super(SoulForgeEntities.JUSTICE_ARROW_TRINKET_TYPE, shooter, world);
     }

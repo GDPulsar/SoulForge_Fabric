@@ -8,17 +8,9 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 
 public class FragmentationGrenadeProjectile extends ProjectileEntity {
     public FragmentationGrenadeProjectile(World world, Vec3d position, PlayerEntity owner) {
@@ -29,6 +21,10 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
 
     public FragmentationGrenadeProjectile(EntityType<? extends ProjectileEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

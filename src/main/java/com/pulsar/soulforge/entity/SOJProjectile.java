@@ -31,6 +31,10 @@ public class SOJProjectile extends ProjectileEntity implements GeoEntity {
         super(projectileEntityType, world);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     protected void initDataTracker() {
 

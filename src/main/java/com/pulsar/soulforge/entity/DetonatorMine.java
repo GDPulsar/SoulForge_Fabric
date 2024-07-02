@@ -1,12 +1,9 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -16,10 +13,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
-import net.minecraft.world.explosion.ExplosionBehavior;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +33,10 @@ public class DetonatorMine extends Entity {
         this.setPosition(position.toCenterPos().add(direction.getOffsetX()*0.5001f, direction.getOffsetY()*0.5001f, direction.getOffsetZ()*0.5001f));
         this.ignoreCameraFrustum = true;
         this.setOwner(owner);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

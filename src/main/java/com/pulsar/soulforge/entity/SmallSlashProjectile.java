@@ -30,6 +30,10 @@ public class SmallSlashProjectile extends ProjectileEntity implements GeoAnimata
         this.setOwner(player);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     protected void initDataTracker() {
 

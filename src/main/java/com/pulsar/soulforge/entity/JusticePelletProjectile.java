@@ -4,37 +4,23 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
-import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class JusticePelletProjectile extends ProjectileEntity {
@@ -48,6 +34,10 @@ public class JusticePelletProjectile extends ProjectileEntity {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             this.dataTracker.set(DAMAGE, 2f + playerSoul.getEffectiveLV() / 6f);
         }
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public JusticePelletProjectile(World world, LivingEntity owner, float damage) {

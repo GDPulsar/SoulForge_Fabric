@@ -3,10 +3,8 @@ package com.pulsar.soulforge.entity;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.weapons.BraverySpear;
 import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationSpear;
 import com.pulsar.soulforge.util.TeamUtils;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -34,6 +32,10 @@ public class DeterminationSpearProjectile extends PersistentProjectileEntity imp
     }
     public DeterminationSpearProjectile(EntityType<DeterminationSpearProjectile> determinationSpearProjectileEntityType, World world) {
         super(determinationSpearProjectileEntityType, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

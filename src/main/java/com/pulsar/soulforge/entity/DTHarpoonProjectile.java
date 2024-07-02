@@ -1,10 +1,8 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -34,6 +32,10 @@ public class DTHarpoonProjectile extends ProjectileEntity implements GeoEntity {
 
     protected void initDataTracker() {
 
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     private int returningTimer = 0;

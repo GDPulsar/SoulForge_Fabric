@@ -44,6 +44,10 @@ public class YoyoProjectile extends ProjectileEntity implements GeoEntity {
         this.ignoreCameraFrustum = true;
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public YoyoProjectile(EntityType<YoyoProjectile> entityType, World world) {
         super(entityType, world);
         this.ignoreCameraFrustum = true;

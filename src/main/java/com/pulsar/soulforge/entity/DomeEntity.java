@@ -4,14 +4,16 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Attackable;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +21,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DomeEntity extends Entity implements Attackable {
     private static final TrackedData<Float> MAX_HEALTH = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -28,6 +32,10 @@ public class DomeEntity extends Entity implements Attackable {
     private static final TrackedData<Boolean> EMITTER = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> SHIELD_BREAK_IMMUNE = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private final PlayerEntity owner;
+
+    public boolean canUsePortals() {
+        return false;
+    }
 
     public DomePart[] parts = new DomePart[]{};
 

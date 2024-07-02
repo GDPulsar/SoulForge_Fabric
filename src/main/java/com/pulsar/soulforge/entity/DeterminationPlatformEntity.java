@@ -20,6 +20,10 @@ public class DeterminationPlatformEntity extends Entity {
         setStack(0);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public DeterminationPlatformEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
         setStack(0);

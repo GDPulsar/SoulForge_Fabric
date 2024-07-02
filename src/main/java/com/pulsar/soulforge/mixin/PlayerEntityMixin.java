@@ -9,7 +9,6 @@ import com.pulsar.soulforge.ability.patience.FrozenGrasp;
 import com.pulsar.soulforge.ability.pures.MartyrsTouch;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.WorldBaseComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.event.EventType;
@@ -61,7 +60,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -188,63 +190,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
         return damageMultiplier;
     }
 
-    @Inject(method="onKilledOther", at=@At("HEAD"))
-    protected void onKillEntity(ServerWorld world, LivingEntity target, CallbackInfoReturnable<Boolean> cir) {
-        PlayerEntity player = ((PlayerEntity)(Object)this);
-
-        SoulComponent soulData = SoulForge.getPlayerSoul(player);
-        if (soulData == null) return;
-        float targetHealth;
-        if (target.getAttributes().hasAttribute(EntityAttributes.GENERIC_MAX_HEALTH)) targetHealth = (float) target.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH);
-        else targetHealth = 0f;
-
-        float targetDefence;
-        if (target.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDefence = (float) target.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-        else targetDefence = 0f;
-
-        float targetDamage;
-        if (target.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDamage = (float) target.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-        else targetDamage = 0f;
-
-        int expIncrease;
-        if (target instanceof PlayerEntity targetPlayer) {
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-            expIncrease = (int)(250*(1+(targetDefence/10)*(targetSoul.getLV()/4)));
-        } else if (target.getType() == EntityType.ENDER_DRAGON) {
-            expIncrease = 3000;
-        } else if (target.getType() == EntityType.WITHER) {
-            expIncrease = 1500;
-        } else if (target.getType() == EntityType.ELDER_GUARDIAN) {
-            expIncrease = 500;
-        } else if (target.getType() == EntityType.EVOKER) {
-            expIncrease = 250;
-        } else if (target.getType() == EntityType.WARDEN) {
-            expIncrease = 1000;
-        } else if (target.getType() == EntityType.PIGLIN_BRUTE) {
-            expIncrease = 250;
-        } else {
-            expIncrease = (int)(targetHealth*(1+(targetDefence/10f)+(targetDamage/10f)));
-        }
-        WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
-        expIncrease *= (int)worldComponent.getExpMultiplier();
-        if (target.isMobOrPlayer()) {
-            if (target.isPlayer()) {
-                if (soulData.getPlayerSouls().containsKey(target.getUuidAsString())) {
-                    expIncrease *= (int)MathHelper.clamp(1f-soulData.getPlayerSouls().get(target.getUuidAsString())/3f, 0f, 1f);
-                }
-            } else {
-                if (soulData.getMonsterSouls().containsKey(target.getType().getUntranslatedName())) {
-                    expIncrease *= (int)MathHelper.clamp(1f-soulData.getMonsterSouls().get(target.getType().getUntranslatedName())/50f, 0.2f, 1f);
-                }
-            }
-        }
-        soulData.setEXP(soulData.getEXP() + expIncrease);
-        if (target.isMobOrPlayer()) {
-            if (target.isPlayer()) soulData.addPlayerSoul(target.getUuidAsString(), 1);
-            else soulData.addMonsterSoul(target, 1);
-        }
-    }
-
     @Redirect(method="attack", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     protected boolean onDamageEntity(Entity target, DamageSource source, float damage) {
         if (target instanceof LivingEntity living) {
@@ -253,19 +198,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 if (!player.shouldDamagePlayer(targetPlayer)) return target.damage(source, damage);
             }
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            float targetDefence;
-            if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDefence = (float) living.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-            else targetDefence = 0f;
-
-            float targetDamage;
-            if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDamage = (float) living.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-            else targetDamage = 0f;
-
-            int expIncrease = (int)(damage * (1 + (targetDefence / 10) + (targetDamage / 10)));
-
-            WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
-            expIncrease *= (int)worldComponent.getExpMultiplier();
-            playerSoul.setEXP(playerSoul.getEXP() + expIncrease);
 
             // siphon
             ItemStack held = player.getMainHandStack();

@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -28,6 +27,10 @@ public class ImmobilizationEntity extends Entity implements Attackable {
         this.setSize((float)Math.max(target.getBoundingBox().getXLength(), target.getBoundingBox().getZLength()), (float)target.getBoundingBox().getYLength());
         this.calculateDimensions();
         setBoundingBox(Box.of(this.getPos(), this.getSizeX(), this.getSizeY(), this.getSizeX()));
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public ImmobilizationEntity(EntityType<? extends Entity> type, World world) {

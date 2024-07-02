@@ -39,6 +39,10 @@ public class PVHarpoonProjectile extends ProjectileEntity implements GeoEntity {
 
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     private int returningTimer = 0;
     public boolean returning = false;
     public LivingEntity hit = null;

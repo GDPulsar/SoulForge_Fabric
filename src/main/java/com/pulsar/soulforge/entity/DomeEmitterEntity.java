@@ -3,7 +3,6 @@ package com.pulsar.soulforge.entity;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import me.shedaniel.errornotifier.launch.ColorUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -14,7 +13,6 @@ import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -22,7 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -39,6 +36,10 @@ public class DomeEmitterEntity extends ThrownItemEntity implements GeoEntity {
 
     public DomeEmitterEntity(World world, double d, double e, double f) {
         super(SoulForgeEntities.DOME_EMITTER_ENTITY_TYPE, d, e, f, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public DomeEmitterEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {

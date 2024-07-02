@@ -20,6 +20,10 @@ public class IntegrityPlatformEntity extends Entity {
         this.ignoreCameraFrustum = true;
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public IntegrityPlatformEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
         setStack(0);

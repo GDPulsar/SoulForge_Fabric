@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -9,18 +7,12 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potions;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import org.joml.Vector3f;
 
 public class JusticeArrowProjectile extends ProjectileEntity {
@@ -29,6 +21,10 @@ public class JusticeArrowProjectile extends ProjectileEntity {
 
     public JusticeArrowProjectile(EntityType<? extends ProjectileEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public JusticeArrowProjectile(World world) {

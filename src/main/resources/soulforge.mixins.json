@@ -19,6 +19,7 @@
     "MilkBucketItemMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
+    "PlayerScreenHandlerMixin",
     "ProjectileEntityMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayerInteractionManagerMixin",

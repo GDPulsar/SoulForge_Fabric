@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
@@ -9,9 +7,7 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.BraverySpearProjectile;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -82,11 +78,6 @@ public class BraverySpear extends MagicSwordItem implements GeoItem {
         ItemStack itemStack = user.getStackInHand(hand);
         user.setCurrentHand(hand);
         return TypedActionResult.consume(itemStack);
-    }
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return ImmutableMultimap.of();
     }
 
     public AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);

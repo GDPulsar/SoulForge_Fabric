@@ -1,18 +1,8 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.entity.BraverySpearProjectile;
 import com.pulsar.soulforge.entity.JusticeHarpoonProjectile;
-import com.pulsar.soulforge.item.SoulForgeItems;
-import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -25,17 +15,6 @@ import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class JusticeHarpoon extends MagicSwordItem/* implements GeoItem*/ {
     public JusticeHarpoon() {
@@ -93,11 +72,6 @@ public class JusticeHarpoon extends MagicSwordItem/* implements GeoItem*/ {
             harpoon.kill();
         }
         return TypedActionResult.consume(stack);
-    }
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return ImmutableMultimap.of();
     }
 
     /*

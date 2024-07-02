@@ -2,9 +2,10 @@ package com.pulsar.soulforge.block;
 
 import com.pulsar.soulforge.entity.DomePart;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.server.network.DebugInfoSender;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -13,12 +14,10 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class DomeBlock extends Block {// implements BlockEntityProvider {
     public DomeBlock() {
-        super(FabricBlockSettings.create().dropsNothing().strength(1000f, 1000f).nonOpaque().allowsSpawning(Blocks::never).solidBlock(Blocks::never).suffocates(Blocks::never).blockVision(Blocks::never));
+        super(FabricBlockSettings.create().dropsNothing().strength(1000f, 1000f).nonOpaque().ticksRandomly().allowsSpawning(Blocks::never).solidBlock(Blocks::never).suffocates(Blocks::never).blockVision(Blocks::never));
     }
 
     @Override
@@ -49,11 +48,11 @@ public class DomeBlock extends Block {// implements BlockEntityProvider {
         return super.isSideInvisible(state, stateFrom, direction);
     }
 
-    /*@Deprecated
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    @Override
+    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         if (world.getEntitiesByClass(DomePart.class, Box.of(pos.toCenterPos(), 0.2, 0.2, 0.2), entity -> true).isEmpty()) {
             world.setBlockState(pos, Blocks.AIR.getDefaultState());
         }
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
-    }*/
+        super.randomTick(state, world, pos, random);
+    }
 }

@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.SoulJarItem;
@@ -24,8 +25,10 @@ public class EndSoulResetPacket {
         PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("hey_chat_im_back");
         buffer.writeBoolean(false);
         SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);
+        AbilityLayout newLayout = new AbilityLayout();
         if (player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR)) {
             ItemStack soulJar = player.getMainHandStack();
+            newLayout = SoulJarItem.getLayout(soulJar);
             SoulJarItem.setFromPlayer(soulJar, player);
         }
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -63,6 +66,7 @@ public class EndSoulResetPacket {
             if (strong) resetData.strongDual = true;
             resetData.addDual(traits.get(0), traits.get(1));
         }
+        playerSoul.setAbilityLayout(newLayout);
         playerSoul.removeTag("resettingSoul");
         playerSoul.removeTag("immobile");
         //SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb"));

@@ -1,24 +1,11 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -26,8 +13,6 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.awt.*;
 
 public class IncendiaryGrenadeEntity extends ThrownItemEntity implements GeoEntity {
     public IncendiaryGrenadeEntity(World world, LivingEntity owner) {
@@ -40,6 +25,10 @@ public class IncendiaryGrenadeEntity extends ThrownItemEntity implements GeoEnti
 
     public IncendiaryGrenadeEntity(EntityType<? extends ThrownItemEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

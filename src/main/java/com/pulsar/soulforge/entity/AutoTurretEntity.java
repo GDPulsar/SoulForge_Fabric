@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -34,6 +33,10 @@ public class AutoTurretEntity extends MobEntity implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         controllerRegistrar.add(new AnimationController<>(this, "main", 0, (event) -> PlayState.STOP));
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

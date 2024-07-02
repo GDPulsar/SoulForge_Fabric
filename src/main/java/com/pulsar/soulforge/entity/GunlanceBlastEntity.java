@@ -2,7 +2,6 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
-import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -19,7 +18,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class GunlanceBlastEntity extends Entity {
     public LivingEntity owner;
@@ -32,6 +30,10 @@ public class GunlanceBlastEntity extends Entity {
     public GunlanceBlastEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
         this.ignoreCameraFrustum = true;
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public GunlanceBlastEntity(World world, Vec3d pos, LivingEntity owner, Vec3d start, Vec3d end, float damage) {
@@ -93,6 +95,7 @@ public class GunlanceBlastEntity extends Entity {
             }
         }
         timer++;
+        if (this.owner.isDead() || this.owner.isRemoved()) this.kill();
         super.tick();
     }
 

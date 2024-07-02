@@ -36,7 +36,8 @@ public class DeBuff extends AbilityBase {
                     highest = player.getStatusEffect(instance.getEffectType()).getAmplifier() + 1;
                     duration = Math.max(duration, player.getStatusEffect(instance.getEffectType()).getDuration());
                 }
-                player.addStatusEffect(new StatusEffectInstance(instance.getEffectType(), duration, Math.min(Constants.effectHighest.get(instance.getEffectType()), highest)));
+                player.addStatusEffect(new StatusEffectInstance(instance.getEffectType(), duration, Math.min(
+                        Constants.effectHighest.getOrDefault(instance.getEffectType(), 3), highest)));
                 if (instance.getAmplifier() > 0) {
                     newEffects.add(new StatusEffectInstance(instance.getEffectType(), instance.getDuration(), instance.getAmplifier() - 1));
                 }

@@ -17,7 +17,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -40,6 +39,10 @@ public class BouncingShieldEntity extends ProjectileEntity implements GeoEntity 
         this.setPosition(owner.getEyePos());
         this.setPos(owner.getEyePos());
         this.setVelocity(owner.getRotationVector().multiply(1f));
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public BouncingShieldEntity(PlayerEntity owner, Vec3d position, Vec3d velocity) {

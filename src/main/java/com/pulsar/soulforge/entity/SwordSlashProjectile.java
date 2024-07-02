@@ -16,7 +16,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -36,6 +35,10 @@ public class SwordSlashProjectile extends ProjectileEntity implements GeoAnimata
         this.setOwner(player);
         this.setVelocity(player.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize().multiply(1.5f));
         this.dataTracker.set(DAMAGE, damage);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

@@ -24,6 +24,10 @@ public class SnowgraveProjectile extends Entity implements GeoEntity {
 
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     protected void readCustomDataFromNbt(NbtCompound nbt) {}
 

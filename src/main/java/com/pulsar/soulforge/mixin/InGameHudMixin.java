@@ -38,87 +38,81 @@ public abstract class InGameHudMixin {
     @Inject(method = "renderHotbar", at = @At("HEAD"), cancellable = true)
     private void renderHotbarExtras(float tickDelta, DrawContext context, CallbackInfo ci) {
         if (SoulForgeClient.appleSkin && !SoulForgeClient.appleSkinApplied) {
-            if (HUDOverlayHandler.INSTANCE != null) {
-                HUDOverlayHandler.INSTANCE.FOOD_BAR_HEIGHT += 22;
-                SoulForgeClient.appleSkinApplied = true;
-            }
+            SoulForgeClient.appleSkinLoad();
         }
         PlayerEntity playerEntity = !(MinecraftClient.getInstance().getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)MinecraftClient.getInstance().getCameraEntity();
         if (playerEntity != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(playerEntity);
-            if (playerSoul != null) {
-                int scaledWidth = context.getScaledWindowWidth();
-                int scaledHeight = context.getScaledWindowHeight();
+            int scaledHeight = context.getScaledWindowHeight();
 
-                ItemStack itemStack = playerEntity.getOffHandStack();
-                Arm arm = playerEntity.getMainArm().getOpposite();
-                int i = this.scaledWidth / 2;
-                context.getMatrices().push();
-                context.getMatrices().translate(0.0F, 0.0F, -90.0F);
-                context.drawTexture(WIDGETS_TEXTURE, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
-                context.drawTexture(WIDGETS_TEXTURE, i - 91, this.scaledHeight - 44, 0, 0, 182, 22);
-                if (playerEntity.getInventory().selectedSlot < 9 && !playerSoul.magicModeActive())
-                    context.drawTexture(WIDGETS_TEXTURE, i - 91 - 1 + playerEntity.getInventory().selectedSlot * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
-                if (!itemStack.isEmpty()) {
-                    context.drawTexture(WIDGETS_TEXTURE, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
-                }
-                if (playerSoul.magicModeActive()) {
-                    context.drawTexture(WIDGETS_TEXTURE, i - 91 - 1 + playerSoul.getAbilitySlot() * 20, this.scaledHeight - 44 - 1, 0, 22, 24, 22);
-                }
-                if (!itemStack.isEmpty()) {
-                    context.drawTexture(WIDGETS_TEXTURE, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
-                }
-                context.getMatrices().pop();
-
-                int l = 1;
-
-                int m;
-                int n;
-                int o;
-                for (m = 0; m < 9; ++m) {
-                    n = i - 90 + m * 20 + 2;
-                    o = scaledHeight - 16 - 3;
-                    this.renderHotbarItem(context, n, o, tickDelta, playerEntity, playerEntity.getInventory().main.get(m), l++);
-                    this.renderAbilityHotbarIcon(context, n - 1, o - 22 - 1, playerEntity, m);
-                }
-
-                if (!itemStack.isEmpty()) {
-                    m = scaledHeight - 16 - 3;
-                    this.renderHotbarItem(context, i - 91 - 26, m, tickDelta, playerEntity, itemStack, l++);
-                }
-
-                if (playerSoul.hasWeapon()) {
-                    itemStack = playerSoul.getWeapon();
-                    if (!itemStack.isEmpty()) {
-                        int rx = i + 109;
-                        context.drawTexture(WIDGETS_TEXTURE, rx, this.scaledHeight - 23, 58, 22, 24, 24);
-                        if (playerEntity.getInventory().selectedSlot == 9 && !playerSoul.magicModeActive())
-                            context.drawTexture(WIDGETS_TEXTURE, rx+1, this.scaledHeight - 23, 0, 22, 24, 22);
-                        m = context.getScaledWindowHeight() - 19;
-                        this.renderHotbarItem(context, rx+5, m, tickDelta, playerEntity, itemStack, l);
-                    }
-                }
-
-                RenderSystem.enableBlend();
-                if (MinecraftClient.getInstance().options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR) {
-                    assert MinecraftClient.getInstance().player != null;
-                    float f = MinecraftClient.getInstance().player.getAttackCooldownProgress(0.0F);
-                    if (f < 1.0F) {
-                        n = scaledHeight - 20;
-                        o = i + 91 + 6;
-                        if (arm == Arm.RIGHT) {
-                            o = i - 91 - 22;
-                        }
-
-                        int p = (int) (f * 19.0F);
-                        context.drawTexture(ICONS, o, n, 0, 94, 18, 18);
-                        context.drawTexture(ICONS, o, n + 18 - p, 18, 112 - p, 18, p);
-                    }
-                }
-
-                RenderSystem.disableBlend();
-                ci.cancel();
+            ItemStack itemStack = playerEntity.getOffHandStack();
+            Arm arm = playerEntity.getMainArm().getOpposite();
+            int i = this.scaledWidth / 2;
+            context.getMatrices().push();
+            context.getMatrices().translate(0.0F, 0.0F, -90.0F);
+            context.drawTexture(WIDGETS_TEXTURE, i - 91, this.scaledHeight - 22, 0, 0, 182, 22);
+            context.drawTexture(WIDGETS_TEXTURE, i - 91, this.scaledHeight - 44, 0, 0, 182, 22);
+            if (playerEntity.getInventory().selectedSlot < 9 && !playerSoul.magicModeActive())
+                context.drawTexture(WIDGETS_TEXTURE, i - 91 - 1 + playerEntity.getInventory().selectedSlot * 20, this.scaledHeight - 22 - 1, 0, 22, 24, 22);
+            if (!itemStack.isEmpty()) {
+                context.drawTexture(WIDGETS_TEXTURE, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
             }
+            if (playerSoul.magicModeActive()) {
+                context.drawTexture(WIDGETS_TEXTURE, i - 91 - 1 + playerSoul.getAbilitySlot() * 20, this.scaledHeight - 44 - 1, 0, 22, 24, 22);
+            }
+            if (!itemStack.isEmpty()) {
+                context.drawTexture(WIDGETS_TEXTURE, i - 91 - 29, this.scaledHeight - 23, 24, 22, 29, 24);
+            }
+            context.getMatrices().pop();
+
+            int l = 1;
+
+            int m;
+            int n;
+            int o;
+            for (m = 0; m < 9; ++m) {
+                n = i - 90 + m * 20 + 2;
+                o = scaledHeight - 16 - 3;
+                this.renderHotbarItem(context, n, o, tickDelta, playerEntity, playerEntity.getInventory().main.get(m), l++);
+                this.renderAbilityHotbarIcon(context, n - 1, o - 22 - 1, playerEntity, m);
+            }
+
+            if (!itemStack.isEmpty()) {
+                m = scaledHeight - 16 - 3;
+                this.renderHotbarItem(context, i - 91 - 26, m, tickDelta, playerEntity, itemStack, l++);
+            }
+
+            if (playerSoul.hasWeapon()) {
+                itemStack = playerSoul.getWeapon();
+                if (!itemStack.isEmpty()) {
+                    int rx = i + 109;
+                    context.drawTexture(WIDGETS_TEXTURE, rx, this.scaledHeight - 23, 58, 22, 24, 24);
+                    if (playerEntity.getInventory().selectedSlot == 9 && !playerSoul.magicModeActive())
+                        context.drawTexture(WIDGETS_TEXTURE, rx+1, this.scaledHeight - 23, 0, 22, 24, 22);
+                    m = context.getScaledWindowHeight() - 19;
+                    this.renderHotbarItem(context, rx+5, m, tickDelta, playerEntity, itemStack, l);
+                }
+            }
+
+            RenderSystem.enableBlend();
+            if (MinecraftClient.getInstance().options.getAttackIndicator().getValue() == AttackIndicator.HOTBAR) {
+                assert MinecraftClient.getInstance().player != null;
+                float f = MinecraftClient.getInstance().player.getAttackCooldownProgress(0.0F);
+                if (f < 1.0F) {
+                    n = scaledHeight - 20;
+                    o = i + 91 + 6;
+                    if (arm == Arm.RIGHT) {
+                        o = i - 91 - 22;
+                    }
+
+                    int p = (int) (f * 19.0F);
+                    context.drawTexture(ICONS, o, n, 0, 94, 18, 18);
+                    context.drawTexture(ICONS, o, n + 18 - p, 18, 112 - p, 18, p);
+                }
+            }
+
+            RenderSystem.disableBlend();
+            ci.cancel();
         }
     }
 

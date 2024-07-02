@@ -3,14 +3,12 @@ package com.pulsar.soulforge.ability.duals;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.ability.kindness.PainSplit;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 public class YourShield extends AbilityBase {
     public final String name = "Your Shield";
@@ -27,23 +25,22 @@ public class YourShield extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        for (AbilityBase ability : playerSoul.getActiveAbilities()) {
-            if (ability instanceof PainSplit painSplit) {
-                if (painSplit.target != null) {
-                    if (player.isSneaking()) {
-                        pullTarget = true;
-                        target = painSplit.target;
-                        target.setVelocity(player.getPos().subtract(target.getPos()).normalize().multiply(2.5f));
-                        target.velocityModified = true;
-                        SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
-                        targetSoul.addTag("fallImmune");
-                        fallImmunityTime = 0;
-                    } else {
-                        player.setVelocity(target.getPos().subtract(player.getPos()).normalize().multiply(2.5f));
-                        player.velocityModified = true;
-                    }
-                    return true;
+        PainSplit painSplit = (PainSplit)playerSoul.getAbility("Pain Split");
+        if (painSplit != null) {
+            if (painSplit.target != null) {
+                target = painSplit.target;
+                if (player.isSneaking()) {
+                    pullTarget = true;
+                    target.setVelocity(player.getPos().subtract(target.getPos()).normalize().multiply(2.5f));
+                    target.velocityModified = true;
+                    SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
+                    targetSoul.addTag("fallImmune");
+                    fallImmunityTime = 0;
+                } else {
+                    player.setVelocity(target.getPos().subtract(player.getPos()).normalize().multiply(2.5f));
+                    player.velocityModified = true;
                 }
+                return true;
             }
         }
         return false;

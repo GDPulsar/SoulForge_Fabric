@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.*;
@@ -9,9 +8,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
 
@@ -25,6 +22,10 @@ public class OrbitalStrikeEntity extends Entity {
         this.owner = owner;
         this.setPosition(position);
         setPosition(position);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public OrbitalStrikeEntity(EntityType<? extends Entity> type, World world) {

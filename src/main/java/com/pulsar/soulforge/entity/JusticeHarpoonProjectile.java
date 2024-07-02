@@ -2,7 +2,6 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -31,11 +30,18 @@ public class JusticeHarpoonProjectile extends PersistentProjectileEntity impleme
 
     public JusticeHarpoonProjectile(World world, LivingEntity owner) {
         super(SoulForgeEntities.JUSTICE_HARPOON_ENTITY_TYPE, owner, world);
+        this.pickupType = PickupPermission.DISALLOWED;
     }
 
     public JusticeHarpoonProjectile(EntityType<JusticeHarpoonProjectile> entityType, World world) {
         super(entityType, world);
+        this.pickupType = PickupPermission.DISALLOWED;
     }
+
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     public void tick() {
         if (!this.getWorld().isClient) {

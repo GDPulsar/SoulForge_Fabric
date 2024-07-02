@@ -1,27 +1,16 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.entity.JusticeHarpoonProjectile;
-import com.pulsar.soulforge.entity.PVHarpoonProjectile;
 import com.pulsar.soulforge.entity.YoyoProjectile;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -103,11 +92,6 @@ public class TrickAnchor extends MagicSwordItem implements GeoItem {
         world.spawnEntity(projectile);
         world.playSoundFromEntity(null, projectile, SoundEvents.ENTITY_FISHING_BOBBER_THROW, SoundCategory.PLAYERS, 1.0f, 1.0f);
         return TypedActionResult.consume(stack);
-    }
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return ImmutableMultimap.of();
     }
 
     public AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);

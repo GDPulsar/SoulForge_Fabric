@@ -25,6 +25,10 @@ public class LightningRodLightningEntity extends LightningEntity {
         super(type, world);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     private int ambientTick = 2;
 
     @Override

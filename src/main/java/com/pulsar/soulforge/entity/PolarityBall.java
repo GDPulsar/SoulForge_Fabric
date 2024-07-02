@@ -30,6 +30,10 @@ public class PolarityBall extends ProjectileEntity {
         this.setInverse(inverse);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public PolarityBall(EntityType<PolarityBall> entityType, World world) {
         super(entityType, world);
     }

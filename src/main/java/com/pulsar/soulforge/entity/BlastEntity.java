@@ -39,6 +39,10 @@ public class BlastEntity extends Entity {
         this.ignoreCameraFrustum = true;
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public BlastEntity(World world, Vec3d pos, LivingEntity owner, float radius, Vec3d start, Vec3d end, float damage, Color color) {
         super(SoulForgeEntities.HORIZONTAL_BLAST_ENTITY_TYPE, world);
         this.setPosition(pos);

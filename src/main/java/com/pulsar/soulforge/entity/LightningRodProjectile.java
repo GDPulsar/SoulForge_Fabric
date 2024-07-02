@@ -2,7 +2,6 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -20,12 +19,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +32,10 @@ public class LightningRodProjectile extends PersistentProjectileEntity {
     public LightningRodProjectile(EntityType<LightningRodProjectile> braverySpearProjectileEntityType, World world) {
         super(braverySpearProjectileEntityType, world);
         this.pickupType = PickupPermission.ALLOWED;
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public List<LivingEntity> damaged = new ArrayList<>();

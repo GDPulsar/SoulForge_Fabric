@@ -27,6 +27,10 @@ public class SpecialHellEntity extends Entity {
         this.ignoreCameraFrustum = true;
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     protected void initDataTracker() {
 

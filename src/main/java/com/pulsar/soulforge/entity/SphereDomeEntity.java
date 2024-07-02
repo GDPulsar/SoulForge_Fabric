@@ -26,6 +26,10 @@ public class SphereDomeEntity extends Entity implements Attackable {
         setBoundingBox(new Box(negCorner.x, negCorner.y, negCorner.z, posCorner.x, posCorner.y, posCorner.z));
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public SphereDomeEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
         maxHealth = 100f;

@@ -1,27 +1,18 @@
 package com.pulsar.soulforge.entity;
 
-import com.google.common.collect.Sets;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.TeamUtils;
-import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 public class WeatherWarningLightningEntity extends LightningEntity {
     private PlayerEntity owner;
@@ -32,6 +23,10 @@ public class WeatherWarningLightningEntity extends LightningEntity {
 
     public WeatherWarningLightningEntity(EntityType<WeatherWarningLightningEntity> type, World world) {
         super(type, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     private int ambientTick = 2;

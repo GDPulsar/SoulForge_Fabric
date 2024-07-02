@@ -1,17 +1,13 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
-import com.pulsar.soulforge.util.Utils;
-import net.minecraft.entity.*;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -34,6 +30,10 @@ public class WormholeEntity extends Entity {
         this.dataTracker.set(WORLD, targetWorld.getRegistryKey().getValue().getPath());
         this.dataTracker.set(DIRECTION, direction.toVector3f());
         this.ignoreCameraFrustum = true;
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public WormholeEntity(World world, Vec3d position, ServerWorld targetWorld, Vec3d targetPos) {

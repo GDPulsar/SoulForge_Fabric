@@ -30,6 +30,10 @@ public class PlayerSoulEntity extends Entity {
         super(type, world);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public String getOwner() { return this.dataTracker.get(OWNER); }
     public void setOwner(String value) { this.dataTracker.set(OWNER, value); }
     public String getTrait1() { return this.dataTracker.get(TRAIT1); }

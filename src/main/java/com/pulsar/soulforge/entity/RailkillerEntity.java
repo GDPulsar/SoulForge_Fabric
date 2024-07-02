@@ -1,11 +1,8 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.devices.machines.Railkiller;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -17,7 +14,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -40,6 +36,10 @@ public class RailkillerEntity extends Entity implements GeoEntity {
     public RailkillerEntity(EntityType<RailkillerEntity> entityType, World world) {
         super(entityType, world);
         this.setNoGravity(false);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     public RailkillerEntity(World world, Vec3d position, Vec3d direction, ItemStack stack) {

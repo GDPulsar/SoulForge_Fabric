@@ -32,11 +32,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.item.ClampedModelPredicateProvider;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -66,16 +64,18 @@ public class SoulForgeClient implements ClientModInitializer {
 	public static boolean appleSkin = false;
 	public static boolean appleSkinApplied = false;
 
+	public static void appleSkinLoad() {
+		if (HUDOverlayHandler.INSTANCE != null) {
+			HUDOverlayHandler.INSTANCE.FOOD_BAR_HEIGHT += 22;
+			SoulForgeClient.appleSkinApplied = true;
+		}
+	}
+
 	@Override
 	public void onInitializeClient() {
 		if (FabricLoader.getInstance().isModLoaded("appleskin")) {
 			appleSkin = true;
-			if (HUDOverlayHandler.INSTANCE == null) {
-				appleSkinApplied = false;
-			} else {
-				appleSkinApplied = true;
-				HUDOverlayHandler.INSTANCE.FOOD_BAR_HEIGHT += 22;
-			}
+			appleSkinLoad();
 		}
 
 		KeyInputHandler.register();
@@ -229,20 +229,6 @@ public class SoulForgeClient implements ClientModInitializer {
 
 		ClientRawInputEvent.MOUSE_CLICKED_PRE.register(new ClickEvent());
 
-		ScreenEvents.BEFORE_INIT.register(((client, screen, scaledWidth, scaledHeight) -> {
-			if (screen instanceof InventoryScreen && !client.interactionManager.hasCreativeInventory()) {
-				if (survivalWeaponSlot == null) {
-					survivalWeaponSlot = new DisplaySlot(client.player, 0, 77, 44);
-					((InventoryScreen) screen).getScreenHandler().slots.add(survivalWeaponSlot);
-				}
-			}
-			if (screen instanceof InventoryScreen && client.interactionManager.hasCreativeInventory()) {
-				if (survivalWeaponSlot != null) {
-					((InventoryScreen) screen).getScreenHandler().slots.remove(survivalWeaponSlot);
-				}
-			}
-		}));
-
 		ClientTickEvents.START_CLIENT_TICK.register(new ClientStartTick());
 		ClientTickEvents.END_CLIENT_TICK.register(new ClientEndTick());
 
@@ -275,11 +261,12 @@ public class SoulForgeClient implements ClientModInitializer {
 		}
 	}
 
-	private static class DisplaySlot extends Slot {
-		private PlayerEntity player;
+	public static class DisplaySlot extends Slot {
+		private final PlayerEntity player;
 
-		public DisplaySlot(PlayerEntity player, int index, int x, int y) {
-			super(new SimpleInventory(1), index, x, y);
+		public DisplaySlot(PlayerEntity player, int x, int y) {
+			super(new SimpleInventory(1), 0, x, y);
+			this.player = player;
 		}
 
 		public ItemStack getStack() {

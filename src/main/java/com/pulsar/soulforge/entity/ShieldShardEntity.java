@@ -38,6 +38,10 @@ public class ShieldShardEntity extends Entity implements GeoEntity {
         this.setRotation((float)(Math.random()*360f), (float)(Math.random()*360f));
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     public ShieldShardEntity(PlayerEntity owner, Vec3d position, Vec3d velocity) {
         super(SoulForgeEntities.SHIELD_SHARD_ENTITY_TYPE, owner.getWorld());
         this.owner = owner;

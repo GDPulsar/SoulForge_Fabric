@@ -61,9 +61,4 @@ public class LightningRod extends MagicSwordItem {
         user.setCurrentHand(hand);
         return TypedActionResult.consume(itemStack);
     }
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return ImmutableMultimap.of();
-    }
 }

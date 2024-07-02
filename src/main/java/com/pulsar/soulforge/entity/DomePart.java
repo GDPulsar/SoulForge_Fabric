@@ -11,7 +11,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -23,6 +22,10 @@ public class DomePart extends Entity {
     private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(DomePart.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
     private static final TrackedData<Boolean> DETERMINATION = DataTracker.registerData(DomePart.class, TrackedDataHandlerRegistry.BOOLEAN);
     public DomeEntity owner;
+
+    public boolean canUsePortals() {
+        return false;
+    }
 
     public DomePart(DomeEntity owner, int x, int y, int z) {
         super(SoulForgeEntities.DOME_PART_TYPE, owner.getWorld());

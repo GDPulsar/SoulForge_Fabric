@@ -28,6 +28,10 @@ public class DeterminationShotProjectile extends ProjectileEntity {
         super(entityType, world);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     public SoundCategory getSoundCategory() {
         return SoundCategory.PLAYERS;

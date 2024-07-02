@@ -1,16 +1,11 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -35,6 +30,10 @@ public class GrappleHookProjectile extends ProjectileEntity implements GeoEntity
 
     public GrappleHookProjectile(EntityType<GrappleHookProjectile> entityType, World world) {
         super(entityType, world);
+    }
+
+    public boolean canUsePortals() {
+        return false;
     }
 
     @Override

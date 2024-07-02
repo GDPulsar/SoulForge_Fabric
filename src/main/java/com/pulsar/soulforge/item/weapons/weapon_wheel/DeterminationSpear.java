@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -10,9 +8,7 @@ import com.pulsar.soulforge.entity.DeterminationSpearProjectile;
 import com.pulsar.soulforge.entity.SOJProjectile;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -83,10 +79,5 @@ public class DeterminationSpear extends MagicSwordItem {
         ItemStack itemStack = user.getStackInHand(hand);
         user.setCurrentHand(hand);
         return TypedActionResult.consume(itemStack);
-    }
-
-    @Override
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        return ImmutableMultimap.of();
     }
 }

@@ -23,6 +23,10 @@ public class FakePlayerEntity extends Entity {
 
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     @Override
     protected void writeCustomDataToNbt(NbtCompound nbt) {
 

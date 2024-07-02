@@ -18,6 +18,10 @@ public class DeterminationArrowProjectile extends PersistentProjectileEntity {
         super(SoulForgeEntities.DETERMINATION_ARROW_ENTITY_TYPE, world);
     }
 
+    public boolean canUsePortals() {
+        return false;
+    }
+
     private int damage;
 
     public DeterminationArrowProjectile(World world, PlayerEntity owner) {
