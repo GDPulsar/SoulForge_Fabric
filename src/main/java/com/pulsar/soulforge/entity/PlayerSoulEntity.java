@@ -2,6 +2,7 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,8 +11,9 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.ExplosionBehavior;
 
 import java.util.Objects;
 
@@ -110,7 +112,13 @@ public class PlayerSoulEntity extends Entity {
 
     @Override
     public void kill() {
-        this.getWorld().createExplosion(this, null, new ExplosionBehavior(), this.getX(), this.getY(), this.getZ(), 0.25f, false, World.ExplosionSourceType.NONE);
+        if (this.getWorld().isClient) {
+            this.getWorld().playSound(this.getBlockX(), this.getBlockY(), this.getBlockZ(), SoulForgeSounds.UT_SOUL_CRACK_EVENT, SoundCategory.MASTER, 1f, 1f, false);
+        }
+        for (int i = 0; i < 10; i++) {
+            this.getWorld().addParticle(ParticleTypes.CRIT, this.getX() + Math.random() * 0.2f - 0.1f,
+                    this.getY() + Math.random() * 0.2f - 0.1f, this.getZ() + Math.random() * 0.2f - 0.1f, 0.0, 0.0, 0.0);
+        }
         super.kill();
     }
 

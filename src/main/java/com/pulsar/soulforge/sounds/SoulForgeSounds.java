@@ -26,6 +26,8 @@ public class SoulForgeSounds {
     public static final Identifier UT_HEAL = new Identifier(SoulForge.MOD_ID, "ut_heal");
     public static final Identifier UT_LEVEL_UP = new Identifier(SoulForge.MOD_ID, "ut_levelup");
     public static final Identifier UT_REFLECT = new Identifier(SoulForge.MOD_ID, "ut_reflect");
+    public static final Identifier UT_SOUL_CRACK = new Identifier(SoulForge.MOD_ID, "ut_soul_crack");
+    public static final Identifier UT_SAVE = new Identifier(SoulForge.MOD_ID, "ut_save");
     public static final Identifier VINE_BOOM = new Identifier(SoulForge.MOD_ID, "vine_boom");
     public static final Identifier GUN_SHOOT = new Identifier(SoulForge.MOD_ID, "gun_shoot");
     public static final Identifier PELLET_SUMMON = new Identifier(SoulForge.MOD_ID, "pellet_summon");
@@ -55,6 +57,8 @@ public class SoulForgeSounds {
     public static SoundEvent UT_HEAL_EVENT = SoundEvent.of(UT_HEAL);
     public static SoundEvent UT_LEVEL_UP_EVENT = SoundEvent.of(UT_LEVEL_UP);
     public static SoundEvent UT_REFLECT_EVENT = SoundEvent.of(UT_REFLECT);
+    public static SoundEvent UT_SOUL_CRACK_EVENT = SoundEvent.of(UT_SOUL_CRACK);
+    public static SoundEvent UT_SAVE_EVENT = SoundEvent.of(UT_SAVE);
     public static SoundEvent VINE_BOOM_EVENT = SoundEvent.of(VINE_BOOM);
     public static SoundEvent GUN_SHOOT_EVENT = SoundEvent.of(GUN_SHOOT);
     public static SoundEvent PELLET_SUMMON_EVENT = SoundEvent.of(PELLET_SUMMON);
@@ -88,6 +92,8 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, UT_HEAL, UT_HEAL_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_LEVEL_UP, UT_LEVEL_UP_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_REFLECT, UT_REFLECT_EVENT);
+        Registry.register(Registries.SOUND_EVENT, UT_SOUL_CRACK, UT_SOUL_CRACK_EVENT);
+        Registry.register(Registries.SOUND_EVENT, UT_SAVE, UT_SAVE_EVENT);
         Registry.register(Registries.SOUND_EVENT, VINE_BOOM, VINE_BOOM_EVENT);
         Registry.register(Registries.SOUND_EVENT, GUN_SHOOT, GUN_SHOOT_EVENT);
         Registry.register(Registries.SOUND_EVENT, PELLET_SUMMON, PELLET_SUMMON_EVENT);

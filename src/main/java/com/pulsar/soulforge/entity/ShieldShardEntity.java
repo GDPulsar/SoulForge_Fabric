@@ -87,30 +87,32 @@ public class ShieldShardEntity extends Entity implements GeoEntity {
     public void tick() {
         Optional<UUID> ownerUUID = this.dataTracker.get(OWNER_UUID);
         ownerUUID.ifPresent(value -> owner = this.getEntityWorld().getPlayerByUuid(value));
-        if (isLaunched || !isCircling) {
-            for (LivingEntity entity : this.getEntityWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox(), (entity) -> entity != owner)) {
-                entity.damage(this.getDamageSources().mobProjectile(this, owner), 7f);
-            }
-        }
-        if (isLaunched && !isCircling) isLaunched = false;
-        if (isLaunched) {
-            if (launchTimer > 0) {
-                launchTimer--;
-            } else {
-                Vec3d offset = this.owner.getPos().subtract(this.getPos().add(0, -1, 0)).normalize();
-                this.setVelocity(this.getVelocity().add(offset.multiply(0.1f)));
-                if (this.distanceTo(this.owner) <= 2.5f) {
-                    this.isLaunched = false;
+        if (this.owner != null) {
+            if (isLaunched || !isCircling) {
+                for (LivingEntity entity : this.getEntityWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox(), (entity) -> entity != owner)) {
+                    entity.damage(this.getDamageSources().mobProjectile(this, owner), 7f);
                 }
+            }
+            if (isLaunched && !isCircling) isLaunched = false;
+            if (isLaunched) {
+                if (launchTimer > 0) {
+                    launchTimer--;
+                } else {
+                    Vec3d offset = this.owner.getPos().subtract(this.getPos().add(0, -1, 0)).normalize();
+                    this.setVelocity(this.getVelocity().add(offset.multiply(0.1f)));
+                    if (this.distanceTo(this.owner) <= 2.5f) {
+                        this.isLaunched = false;
+                    }
+                }
+            }
+            if (this.owner.isDead() || this.owner.isRemoved()) {
+                this.kill();
             }
         }
         this.setPitch(this.getPitch()+0.9f);
         this.setYaw(this.getYaw()+6.9f);
         this.setPos(this.getPos().add(this.getVelocity()));
         this.setPosition(this.getPos());
-        if (this.owner.isDead() || this.owner.isRemoved()) {
-            this.kill();
-        }
     }
 
     @Override

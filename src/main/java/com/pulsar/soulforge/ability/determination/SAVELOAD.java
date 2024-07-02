@@ -1,23 +1,18 @@
 package com.pulsar.soulforge.ability.determination;
 
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.util.TeamUtils;
+import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.UUID;
 
 public class SAVELOAD extends ToggleableAbilityBase {
     public final String name = "SAVE/LOAD";
@@ -34,27 +29,33 @@ public class SAVELOAD extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        if (player.getPitch() < -89.5f && player.isSneaking()) {
-            setActive(true);
-            savedPosition = player.getPos();
-            self = true;
-            timer = 600;
-        } else {
-            EntityHitResult hit = Utils.getFocussedEntity(player, (float) ReachEntityAttributes.getAttackRange(player, 3.0));
-            if (hit != null && hit.getEntity() instanceof LivingEntity living) {
+        if (!getActive()) {
+            if (player.getPitch() > 89.5f && player.isSneaking()) {
                 setActive(true);
-                savedPosition = living.getPos();
-                self = false;
+                savedPosition = player.getPos();
+                self = true;
                 timer = 600;
-                saved = living;
-                return true;
+                player.playSound(SoulForgeSounds.UT_SAVE_EVENT, SoundCategory.MASTER, 1f, 1f);
+            } else {
+                EntityHitResult hit = Utils.getFocussedEntity(player, 5f);
+                if (hit != null && hit.getEntity() instanceof LivingEntity living) {
+                    setActive(true);
+                    savedPosition = living.getPos();
+                    self = false;
+                    timer = 600;
+                    saved = living;
+                    player.playSound(SoulForgeSounds.UT_SAVE_EVENT, SoundCategory.MASTER, 1f, 1f);
+                }
             }
+        } else {
+            setActive(false);
         }
-        return false;
+        return getActive();
     }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
+        timer--;
         return timer < 0 || !getActive();
     }
 

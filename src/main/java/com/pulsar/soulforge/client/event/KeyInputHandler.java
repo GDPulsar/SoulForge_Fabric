@@ -6,9 +6,7 @@ import com.pulsar.soulforge.ability.determination.WeaponWheel;
 import com.pulsar.soulforge.ability.duals.Armory;
 import com.pulsar.soulforge.ability.duals.Reload;
 import com.pulsar.soulforge.ability.duals.Wormhole;
-import com.pulsar.soulforge.ability.integrity.KineticBoost;
 import com.pulsar.soulforge.ability.perseverance.MorphingWeaponry;
-import com.pulsar.soulforge.ability.pures.Determine;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.client.ui.*;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -23,7 +21,6 @@ import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -97,20 +94,6 @@ public class KeyInputHandler {
                             else if (ability instanceof Armory) client.setScreen(new ArmoryScreen());
                             else if (ability instanceof Reload) client.setScreen(new ReloadScreen());
                             else if (ability instanceof MorphingWeaponry) client.setScreen(new MorphingWeaponryScreen());
-                        }
-                    }
-                    if (ability instanceof KineticBoost) {
-                        float cost = ability.getCost();
-                        if (client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
-                            cost *= (float)client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
-                        }
-                        if (playerSoul.isStrong() && !playerSoul.getTraits().contains(Traits.determination)) cost /= 2f;
-                        if (playerSoul.hasCast("Valiant Heart")) cost /= 2f;
-                        if (cost <= playerSoul.getMagic()) {
-                            float horiz = playerSoul.getEffectiveLV()*0.15f;
-                            float vert = playerSoul.getEffectiveLV()*0.02f;
-                            Vec3d direction = new Vec3d(client.player.getRotationVector().x, 0f, client.player.getRotationVector().z).normalize().multiply(horiz);
-                            client.player.addVelocity(new Vec3d(direction.x, vert, direction.z));
                         }
                     }
                 }

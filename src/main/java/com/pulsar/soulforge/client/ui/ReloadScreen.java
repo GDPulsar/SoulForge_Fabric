@@ -2,8 +2,6 @@ package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.SoulForgeClient;
-import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.pures.Determine;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.pures.Determine;
 import com.pulsar.soulforge.components.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.client.MinecraftClient;
@@ -133,9 +132,6 @@ public abstract class InGameHudMixin {
             int textureHeight = MathHelper.floor(height*(66f/18f));
             Identifier textureLocation = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
             Identifier grayscaleLocation = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/grayscale/" + ability.getID().getPath() + ".png");
-            if (ability instanceof Determine determine) {
-                if (determine.selected != null) textureLocation = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + determine.selected.getID().getPath() + ".png");
-            }
             context.drawTexture(textureLocation, n, o+(18-height), 18, height, 0, 66f-textureHeight, 66, textureHeight, 66, 66);
             context.drawTexture(grayscaleLocation, n, o, 18, 18-height, 0, 0, 66, 66-textureHeight, 66, 66);
         }

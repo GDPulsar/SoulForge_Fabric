@@ -15,6 +15,8 @@ public class SoulForgeEffects {
     public static final StatusEffect FROSTBITE = new FrostbiteEffect();
     public static final StatusEffect FROSTBURN = new FrostburnEffect();
     public static final StatusEffect CREATIVE_ZONE = new CreativeZoneEffect();
+    //public static final StatusEffect UNCHAINED_EFFECT = new UnchainedEffect();
+
     public static void registerEffects() {
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "vulnerability"), VULNERABILITY);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "mana_overload"), MANA_OVERLOAD);
@@ -24,5 +26,6 @@ public class SoulForgeEffects {
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "frostbite"), FROSTBITE);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "frostburn"), FROSTBURN);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "creative_zone"), CREATIVE_ZONE);
+        //Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "unchained_soul"), UNCHAINED_EFFECT);
     }
 }

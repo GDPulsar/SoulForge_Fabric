@@ -48,7 +48,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.0.7");
+		LOGGER.info("Loading SoulForge v2.0.8");
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();

@@ -133,6 +133,18 @@
       "soulforge:ut_reflect"
     ]
   },
+  "ut_soul_crack": {
+    "subtitle": "subtitles.soulforge.ut_soul_crack",
+    "sounds": [
+      "soulforge:ut_soul_crack"
+    ]
+  },
+  "ut_save": {
+    "subtitle": "subtitles.soulforge.ut_save",
+    "sounds": [
+      "soulforge:ut_save"
+    ]
+  },
   "vine_boom": {
     "subtitle": "subtitles.soulforge.vine_boom",
     "sounds": [

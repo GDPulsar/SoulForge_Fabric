@@ -23,7 +23,8 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -58,6 +59,8 @@ abstract class LivingEntityMixin extends Entity {
     @Shadow public abstract boolean clearStatusEffects();
 
     @Shadow public abstract boolean hasStatusEffect(StatusEffect effect);
+
+    @Shadow public abstract boolean isUndead();
 
     @Inject(method = "isBlocking", at=@At("HEAD"), cancellable = true)
     public void parryBlocking(CallbackInfoReturnable<Boolean> cir) {
@@ -284,4 +287,59 @@ abstract class LivingEntityMixin extends Entity {
         }
         return original;
     }
+
+    /*@Unique
+    private boolean wasUnchained = false;
+
+    @ModifyReturnValue(method = "getStatusEffects", at = @At("RETURN"))
+    public Collection<StatusEffectInstance> getStatusEffects(Collection<StatusEffectInstance> original) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if (living instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            boolean isUnchained = playerSoul.hasCast("Unchained Soul");
+            int totalCount = 0;
+            int duration = 10000;
+            for (StatusEffectInstance effect : original) {
+                totalCount += effect.getAmplifier();
+                if (effect.getDuration() < duration) duration = effect.getDuration();
+            }
+            if (isUnchained != wasUnchained) {
+                for (StatusEffectInstance effect : original) {
+                    if (isUnchained) effect.getEffectType().onRemoved(player, player.getAttributes(), effect.getAmplifier());
+                    else effect.getEffectType().onApplied(player, player.getAttributes(), effect.getAmplifier());
+                }
+            }
+            wasUnchained = isUnchained;
+            if (isUnchained && totalCount != 0) {
+                return Set.of(new StatusEffectInstance(SoulForgeEffects.UNCHAINED_EFFECT, duration, totalCount));
+            }
+        }
+        return original;
+    }
+
+    @ModifyReturnValue(method = "getActiveStatusEffects", at = @At("RETURN"))
+    public Map<StatusEffect, StatusEffectInstance> getActiveStatusEffects(Map<StatusEffect, StatusEffectInstance> original) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if (living instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            boolean isUnchained = playerSoul.hasCast("Unchained Soul");
+            int totalCount = 0;
+            int duration = 10000;
+            for (StatusEffectInstance effect : original.values()) {
+                totalCount += effect.getAmplifier();
+                if (effect.getDuration() < duration) duration = effect.getDuration();
+            }
+            if (isUnchained != wasUnchained) {
+                for (StatusEffectInstance effect : original.values()) {
+                    if (isUnchained) effect.getEffectType().onRemoved(player, player.getAttributes(), effect.getAmplifier());
+                    else effect.getEffectType().onApplied(player, player.getAttributes(), effect.getAmplifier());
+                }
+            }
+            wasUnchained = isUnchained;
+            if (isUnchained && totalCount != 0) {
+                return Map.of(SoulForgeEffects.UNCHAINED_EFFECT, new StatusEffectInstance(SoulForgeEffects.UNCHAINED_EFFECT, duration, totalCount));
+            }
+        }
+        return original;
+    }*/
 }

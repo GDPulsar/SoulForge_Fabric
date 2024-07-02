@@ -16,9 +16,9 @@ import net.minecraft.text.Text;
 public class StartSoulResetPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.canReset()) {
-            if (!player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR) ||
-                    (player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR) && !SoulJarItem.getHasSoul(player.getMainHandStack()))) {
+        boolean holdingJar = player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR);
+        if (playerSoul.canReset() || (holdingJar && SoulJarItem.getHasSoul(player.getMainHandStack()))) {
+            if (!holdingJar || !SoulJarItem.getHasSoul(player.getMainHandStack())) {
                 player.getInventory().removeStack(player.getInventory().indexOf(new ItemStack(SoulForgeItems.DETERMINATION_ARNICITE_HEART)), 1);
             }
             playerSoul.addTag("resettingSoul");

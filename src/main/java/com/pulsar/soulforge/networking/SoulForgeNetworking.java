@@ -26,7 +26,6 @@ public class SoulForgeNetworking {
     public static final Identifier HOLD_ITEM = new Identifier(SoulForge.MOD_ID, "hold_item");
     public static final Identifier CAST_WORMHOLE = new Identifier(SoulForge.MOD_ID, "cast_wormhole");
     public static final Identifier SPAWN_WORMHOLE = new Identifier(SoulForge.MOD_ID, "spawn_wormhole");
-    public static final Identifier DETERMINE_SELECT = new Identifier(SoulForge.MOD_ID, "determine_select");
     public static final Identifier RELOAD_SELECT = new Identifier(SoulForge.MOD_ID, "reload_select");
     public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
 
@@ -36,7 +35,6 @@ public class SoulForgeNetworking {
     public static final Identifier POSITION_VELOCITY = new Identifier(SoulForge.MOD_ID, "position_velocity");
     public static final Identifier SET_THIRD_PERSON = new Identifier(SoulForge.MOD_ID, "set_third_person");
     public static final Identifier SET_SPOKEN_TEXT = new Identifier(SoulForge.MOD_ID, "set_spoken_text");
-    public static final Identifier DETERMINE_SCREEN = new Identifier(SoulForge.MOD_ID, "determine_screen");
 
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_ABILITY, CastAbilityPacket::receive);
@@ -54,7 +52,6 @@ public class SoulForgeNetworking {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.HOLD_ITEM, HoldItemPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_WORMHOLE, CastWormholePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SPAWN_WORMHOLE, SpawnWormholePacket::receive);
-        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.DETERMINE_SELECT, DetermineSelectPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RELOAD_SELECT, ReloadSelectPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.DOMAIN_EXPANSION, DomainExpansionPacket::receive);
     }

@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.ability.determination;
 
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
@@ -26,7 +25,7 @@ public class DeBuff extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        EntityHitResult hit = Utils.getFocussedEntity(player, (float) ReachEntityAttributes.getAttackRange(player, 3.0));
+        EntityHitResult hit = Utils.getFocussedEntity(player, 5f);
         if (hit != null && hit.getEntity() instanceof LivingEntity living) {
             living.damage(player.getDamageSources().playerAttack(player), 4f);
             List<StatusEffectInstance> newEffects = new ArrayList<>();

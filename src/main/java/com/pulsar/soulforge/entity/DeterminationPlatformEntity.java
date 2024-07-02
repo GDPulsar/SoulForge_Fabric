@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.entity;
 
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -8,8 +9,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 public class DeterminationPlatformEntity extends Entity {
     private static final TrackedData<Integer> TIME_ALIVE = DataTracker.registerData(DeterminationPlatformEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -77,11 +76,6 @@ public class DeterminationPlatformEntity extends Entity {
     @Override
     public boolean shouldRender(double distance) {
         return true;
-    }
-
-    @Override
-    public EntityDimensions getDimensions(EntityPose pose) {
-        return EntityDimensions.fixed(2.5f, 0.25f);
     }
 
     @Override

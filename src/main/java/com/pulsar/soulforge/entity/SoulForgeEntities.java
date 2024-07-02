@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.ability.determination.DeterminationShot;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
@@ -56,6 +57,7 @@ public class SoulForgeEntities {
     public static EntityType<YoyoProjectile> YOYO_ENTITY_TYPE;
     public static EntityType<RailkillerEntity> RAILKILLER_ENTITY_TYPE;
     public static EntityType<PlayerSoulEntity> PLAYER_SOUL_ENTITY_TYPE;
+    public static EntityType<DeterminationShotProjectile> DETERMINATION_SHOT_ENTITY_TYPE;
 
     public static void register() {
         SNOWGRAVE_PROJECTILE_TYPE = Registry.register(
@@ -457,6 +459,15 @@ public class SoulForgeEntities {
                 FabricEntityTypeBuilder.<PlayerSoulEntity>create(SpawnGroup.MISC, PlayerSoulEntity::new)
                         .dimensions(EntityDimensions.fixed(0.5f, 0.5f))
                         .trackRangeBlocks(40).trackedUpdateRate(20)
+                        .build()
+        );
+
+        DETERMINATION_SHOT_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE,
+                new Identifier(SoulForge.MOD_ID, "determination_shot"),
+                FabricEntityTypeBuilder.<DeterminationShotProjectile>create(SpawnGroup.MISC, DeterminationShotProjectile::new)
+                        .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
+                        .trackRangeBlocks(50).trackedUpdateRate(40)
                         .build()
         );
 

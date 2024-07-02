@@ -9,7 +9,6 @@ import com.pulsar.soulforge.ability.bravery.EnergyWave;
 import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
 import com.pulsar.soulforge.ability.duals.PerfectedAuraTechnique;
 import com.pulsar.soulforge.ability.integrity.Platforms;
-import com.pulsar.soulforge.ability.pures.Determine;
 import com.pulsar.soulforge.advancement.SoulForgeCriterions;
 import com.pulsar.soulforge.armor.PlatformBootsItem;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
@@ -17,7 +16,6 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
-import com.pulsar.soulforge.entity.PlayerSoulEntity;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
@@ -38,11 +36,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -52,7 +50,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.Pair;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -60,8 +61,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class PlayerSoulComponent implements SoulComponent {
     private List<TraitBase> traits;
@@ -73,7 +74,6 @@ public class PlayerSoulComponent implements SoulComponent {
     private HashMap<String, AbilityBase> abilities = new HashMap<>();
     private HashMap<String, AbilityBase> activeAbilities = new HashMap<>();
     private HashMap<AbilityBase, Integer> cooldowns = new HashMap<>();
-    private List<String> modes;
     private String mode = null;
     private List<String> tags = new ArrayList<>();
     private HashMap<String, Float> values = new HashMap<>();
@@ -92,8 +92,6 @@ public class PlayerSoulComponent implements SoulComponent {
     private Pair<UUID, Integer> wormholeRequest = null;
     private PlayerEntity disguisedAs = null;
     private UUID disguisedAsID = null;
-    private AbilityBase determinedAbility = null;
-    private boolean determining = false;
 
     public PlayerSoulComponent(PlayerEntity player) {
         this.player = player;
@@ -487,7 +485,6 @@ public class PlayerSoulComponent implements SoulComponent {
     public float cooldownPercent(AbilityBase ability) {
         if (cooldowns.containsKey(ability)) {
             float cooldownVal = ability.getCooldown();
-            if (ability instanceof Determine && hasValue("determineCooldown")) cooldownVal = getValue("determineCooldown");
             if (pure) cooldownVal /= 2;
             if (hasCast("Valiant Heart")) cooldownVal /= 1.33f;
             if (ability instanceof EnergyWave && hasValue("energyWaveCooldown")) cooldownVal = getValue("energyWaveCooldown");
@@ -1002,23 +999,7 @@ public class PlayerSoulComponent implements SoulComponent {
     @Override
     public void castAbility(AbilityBase ability) {
         if (ability == null) return;
-        boolean isDetermined = false;
-        Determine determine = null;
         boolean contains = abilities.containsKey(ability.getName());
-        if (ability instanceof Determine && !determining) {
-            if (!player.getWorld().isClient) {
-                if (((Determine) ability).selected != null) {
-                    determine = (Determine) ability;
-                    if (determinedAbility != null && determinedAbility.getType() == determine.selected.getType()) {
-                        ability = determinedAbility;
-                    } else {
-                        ability = determine.selected.getInstance();
-                    }
-                    isDetermined = true;
-                    SoulForge.LOGGER.info("determining: " + determine.selected);
-                }
-            }
-        }
         for (AbilityBase rowAbility : getLayoutRow(getAbilityRow()).abilities) {
             if (rowAbility == null) continue;
             if (rowAbility == ability) {
@@ -1026,7 +1007,7 @@ public class PlayerSoulComponent implements SoulComponent {
                 break;
             }
         }
-        if ((contains || isDetermined || ability.getType() == AbilityType.PASSIVE) && ability.getType() != AbilityType.PASSIVE_NOCAST) {
+        if ((contains|| ability.getType() == AbilityType.PASSIVE) && ability.getType() != AbilityType.PASSIVE_NOCAST) {
             float cost = ability.getCost();
             if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
                 cost *= (float)player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
@@ -1034,26 +1015,20 @@ public class PlayerSoulComponent implements SoulComponent {
             if (strong && !getTraits().contains(Traits.determination)) cost /= 2f;
             if (hasCast("Valiant Heart")) cost /= 1.33f;
             if (ability instanceof ToggleableAbilityBase toggleable && toggleable.getActive()) cost = 0;
-            if (cost <= magic && ((determine != null && !cooldowns.containsKey(determine)) || !cooldowns.containsKey(ability))) {
+            if (cost <= magic && !cooldowns.containsKey(ability)) {
                 boolean canCast = ability.cast((ServerPlayerEntity)player);
-                if (canCast && !(ability instanceof Determine)) {
+                if (canCast) {
                     SoulForgeCriterions.CAST_ABILITY.trigger((ServerPlayerEntity) player, ability);
                     if (ability instanceof ToggleableAbilityBase toggleable) {
                         if (toggleable.getActive()) {
                             magic -= cost;
-                            if (isDetermined) determinedAbility = ability;
-                            else activeAbilities.put(ability.getName(), ability);
+                            activeAbilities.put(ability.getName(), ability);
                             resetLastCastTime();
                         } else {
                             float cooldown = ability.getCooldown();
                             if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN) != null) cooldown = (int)(cooldown * player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).getValue());
                             if (pure) cooldown /= 2;
                             if (hasCast("Valiant Heart")) cooldown /= 1.33f;
-                            if (determine != null) {
-                                cooldowns.put(determine, (int)cooldown);
-                                setValue("determineCooldown", cooldown);
-                                determining = true;
-                            }
                             else cooldowns.put(ability, (int)cooldown);
                         }
                     } else {
@@ -1062,15 +1037,8 @@ public class PlayerSoulComponent implements SoulComponent {
                         if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN) != null) cooldown = (int)(cooldown * player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).getValue());
                         if (pure) cooldown /= 2;
                         if (hasCast("Valiant Heart")) cooldown /= 1.33f;
-                        if (determine != null) {
-                            cooldowns.put(determine, (int)cooldown);
-                            setValue("determineCooldown", cooldown);
-                            determinedAbility = ability;
-                            determining = true;
-                        } else {
-                            cooldowns.put(ability, (int) cooldown);
-                            activeAbilities.put(ability.getName(), ability);
-                        }
+                        cooldowns.put(ability, (int) cooldown);
+                        activeAbilities.put(ability.getName(), ability);
                         resetLastCastTime();
                     }
                     sync();
@@ -1098,7 +1066,6 @@ public class PlayerSoulComponent implements SoulComponent {
             }
             cooldowns = newCooldowns;
             for (AbilityBase ability : List.copyOf(activeAbilities.values())) {
-                if (ability instanceof Determine) continue;
                 if (ability.tick((ServerPlayerEntity)player)) {
                     ability.end((ServerPlayerEntity)player);
                     if (ability.getType() == AbilityType.TOGGLE) {
@@ -1108,24 +1075,6 @@ public class PlayerSoulComponent implements SoulComponent {
                         cooldowns.put(ability, (int)cooldown);
                     }
                     activeAbilities.remove(ability.getName());
-                }
-            }
-            if (determinedAbility != null && player instanceof ServerPlayerEntity serverPlayer) {
-                if (abilities.containsKey("Determine")) {
-                    if (determinedAbility.tick(serverPlayer)) {
-                        determinedAbility.end(serverPlayer);
-                        SoulForge.LOGGER.info("ending: " + ((Determine)abilities.get("Determine")).selected);
-                        abilities.get("Determine").end(serverPlayer);
-                        //((Determine) ability).selected = null;
-                        if (determinedAbility.getType() == AbilityType.TOGGLE) {
-                            float cooldown = determinedAbility.getCooldown();
-                            if (pure) cooldown /= 2;
-                            if (hasCast("Valiant Heart")) cooldown /= 1.33f;
-                            cooldowns.put(abilities.get("Determine"), (int)cooldown);
-                        }
-                        determinedAbility = null;
-                        determining = false;
-                    }
                 }
             }
             if (hasWeapon()) {
@@ -1472,7 +1421,7 @@ public class PlayerSoulComponent implements SoulComponent {
     }
 
     private void updateModes() {
-        modes = new ArrayList<>();
+        List<String> modes = new ArrayList<>();
         modes.add(traits.get(0).getName());
         if (traits.size() == 2) modes.add(traits.get(1).getName());
         boolean hasPassives = false;

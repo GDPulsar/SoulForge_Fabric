@@ -3,7 +3,6 @@ package com.pulsar.soulforge.trait.traits;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.determination.*;
-import com.pulsar.soulforge.ability.pures.Determine;
 import com.pulsar.soulforge.trait.TraitBase;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -17,19 +16,18 @@ public class Determination implements TraitBase {
     public final String name = "Determination";
     public final Identifier identifier = new Identifier(SoulForge.MOD_ID, "determination");
     public final List<AbilityBase> abilities = new ArrayList<>(Arrays.asList(
-            new DarkFountain(),
+            new DeBuff(),
             new DeterminationAura(),
             new DeterminationBlaster(),
-            new DeterminationBlitz(),
             new DeterminationDome(),
             new DeterminationKit(),
+            new DeterminationShot(),
             new DeterminationPlatform(),
-            new DeBuff(),
-            new Determine(),
             new LimitBreak(),
             new Regeneration(),
             new SAVELOAD(),
             new TrueLOVE(),
+            //new UnchainedSoul(),
             new WeaponWheel()
     ));
 

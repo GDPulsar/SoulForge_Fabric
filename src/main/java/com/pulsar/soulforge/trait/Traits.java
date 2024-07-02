@@ -1,19 +1,15 @@
 package com.pulsar.soulforge.trait;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.determination.DeterminationKit;
 import com.pulsar.soulforge.ability.patience.Iceshock;
-import com.pulsar.soulforge.ability.pures.*;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.trait.traits.*;
 import com.pulsar.soulforge.util.Constants;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import static java.util.Map.entry;
 
 public class Traits {
     public static TraitBase bravery = new Bravery();
@@ -78,7 +74,7 @@ public class Traits {
 
         if (isPure && traits.get(0) != Traits.spite) {
             for (TraitBase trait : traits) {
-                if (trait != Traits.perseverance) {
+                if (trait != Traits.perseverance && trait != Traits.determination) {
                     AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                     if (pureAbility.getLV() <= lv) {
                         abilities.add(pureAbility.getInstance());
@@ -88,7 +84,7 @@ public class Traits {
         }
         if (traits.contains(Traits.spite)) {
             for (TraitBase trait : Traits.all()) {
-                if (trait != Traits.perseverance) {
+                if (trait != Traits.perseverance && trait != Traits.determination) {
                     AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                     if (pureAbility.getLV() <= lv) {
                         abilities.add(pureAbility.getInstance());
@@ -115,7 +111,7 @@ public class Traits {
                         }
                     }
                     if (soul.isPure() || soul.getTraits().contains(Traits.spite) || Objects.equals(mode, "Determination")) {
-                        if (trait == Traits.perseverance) continue;
+                        if (trait == Traits.perseverance || trait == Traits.determination) continue;
                         AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                         if (pureAbility.getLV() <= soul.getLV()) {
                             abilityNames.add(pureAbility.getName());

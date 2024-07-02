@@ -30,7 +30,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.stat.Stat;
 
 import java.util.*;
 
@@ -256,7 +255,6 @@ public class Constants {
             entry(Traits.kindness, new MartyrsTouch()),
             entry(Traits.bravery, new ResplendentPhoenix()),
             entry(Traits.justice, new BFRCMG()),
-            entry(Traits.integrity, new BoogieWoogie()),
-            entry(Traits.determination, new Determine())
+            entry(Traits.integrity, new BoogieWoogie())
     ));
 }

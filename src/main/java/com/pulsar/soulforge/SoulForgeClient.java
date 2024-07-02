@@ -143,6 +143,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.YOYO_ENTITY_TYPE, YoyoRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.RAILKILLER_ENTITY_TYPE, RailkillerRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.PLAYER_SOUL_ENTITY_TYPE, PlayerSoulRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.DETERMINATION_SHOT_ENTITY_TYPE, DeterminationShotRenderer::new);
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
 		HudRenderCallback.EVENT.register(new SoulResetOverlay());
