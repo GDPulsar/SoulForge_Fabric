@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -36,13 +37,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Snowgrave extends AbilityBase {
     public final String name = "Snowgrave";
@@ -238,18 +237,17 @@ public class Snowgrave extends AbilityBase {
     }
 
     @Override
-    public void displayTick(PlayerEntity player) {
+    public void displayTick(ClientPlayerEntity player) {
         HitResult result = player.raycast(50, 1f, false);
         if (result != null) {
             if (result.squaredDistanceTo(player) <= 2500f) {
                 BlockPos target = new BlockPos(MathHelper.floor(result.getPos().x), MathHelper.floor(result.getPos().y), MathHelper.floor(result.getPos().z));
-                ServerWorld serverWorld = ((ServerPlayerEntity)player).getServerWorld();
                 Vec3d centerPos = target.toCenterPos();
                 for (int i = 0; i < 64; i++) {
                     Vec3d particlePos = new Vec3d(Math.sin(i*Math.PI/32), 0f, Math.cos(i*Math.PI/32)).multiply(7f);
-                    serverWorld.spawnParticles((ServerPlayerEntity)player, new DustParticleEffect(Vec3d.unpackRgb(0x00FFFF).toVector3f(), 1f), true, particlePos.x + centerPos.x, centerPos.y + 0.6f, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
+                    player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0x00FFFF).toVector3f(), 1f), particlePos.x + centerPos.x, centerPos.y + 0.6f, particlePos.z + centerPos.z, 0, 0, 0);
                     particlePos = new Vec3d(Math.sin(i*Math.PI/32), 0f, Math.cos(i*Math.PI/32)).multiply(15f);
-                    serverWorld.spawnParticles((ServerPlayerEntity)player, new DustParticleEffect(Vec3d.unpackRgb(0x00FFFF).toVector3f(), 1f), true, particlePos.x + centerPos.x, centerPos.y + 0.6f, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
+                    player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0x00FFFF).toVector3f(), 1f), particlePos.x + centerPos.x, centerPos.y + 0.6f, particlePos.z + centerPos.z, 0, 0, 0);
                 }
             }
         }

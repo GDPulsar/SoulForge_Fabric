@@ -1,9 +1,6 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationSpear;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -66,17 +63,12 @@ public class DeterminationSpearProjectile extends PersistentProjectileEntity imp
 
     @Override
     protected boolean tryPickup(PlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (!playerSoul.hasWeapon() && this.isOwner(player)) {
-            playerSoul.setWeapon(new ItemStack(SoulForgeItems.DETERMINATION_SPEAR));
-            return true;
-        }
         return false;
     }
 
     @Override
     protected ItemStack asItemStack() {
-        return new ItemStack(new DeterminationSpear());
+        return new ItemStack(SoulForgeItems.DETERMINATION_SPEAR);
     }
 
     @Override

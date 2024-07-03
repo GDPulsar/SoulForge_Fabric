@@ -2,9 +2,6 @@ package com.pulsar.soulforge.event;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
-import com.pulsar.soulforge.ability.determination.LimitBreak;
-import com.pulsar.soulforge.ability.integrity.Platforms;
 import com.pulsar.soulforge.ability.patience.Snowglobe;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
@@ -26,11 +23,9 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +36,7 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
 
     @Override
     public void onStartTick(MinecraftServer server) {
+        long startTickTimer = System.currentTimeMillis();
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             /* frost floor no longer exists but i'm still keeping this code just in case i need to slip and slide at home
@@ -141,13 +137,6 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                 }
             }
 
-            if (playerSoul.magicModeActive()) {
-                AbilityBase currentAbility = playerSoul.getAbilityLayout().getSlot(playerSoul.getAbilityRow(), playerSoul.getAbilitySlot());
-                if (currentAbility != null) {
-                    currentAbility.displayTick(player);
-                }
-            }
-
             if (!player.isCreative() && !player.isSpectator()) {
                 if (!hadCreativeFlight.containsKey(player)) hadCreativeFlight.put(player, false);
                 if (player.hasStatusEffect(SoulForgeEffects.CREATIVE_ZONE)) {
@@ -162,5 +151,7 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                 }
             }
         }
+        long tickDuration = System.currentTimeMillis() - startTickTimer;
+        if (tickDuration >= 20) SoulForge.LOGGER.warn("AHHH SHIT ASS: {}", tickDuration);
     }
 }

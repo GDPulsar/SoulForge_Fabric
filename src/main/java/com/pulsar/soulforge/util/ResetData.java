@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.util;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.nbt.NbtCompound;
@@ -181,10 +180,8 @@ public class ResetData {
     }
 
     public boolean hasDual(TraitBase trait1, TraitBase trait2) {
-        SoulForge.LOGGER.info("testing trait1: " + trait1.getName() + ", trait2: " + trait2.getName());
         for (Pair<TraitBase, TraitBase> dual : unlockedDuals) {
             if ((dual.getLeft() == trait1 || dual.getRight() == trait1) && (dual.getLeft() == trait2 || dual.getRight() == trait2)) {
-                SoulForge.LOGGER.info("match found: " + dual.getLeft().getName() + "-" + dual.getRight().getName());
                 return true;
             }
         }

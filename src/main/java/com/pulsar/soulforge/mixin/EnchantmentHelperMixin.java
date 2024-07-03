@@ -33,7 +33,9 @@ public class EnchantmentHelperMixin {
     private static void modifyFireAspect(LivingEntity entity, CallbackInfoReturnable<Integer> cir) {
         if (entity instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasCast("Bravery Boost") && !(playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience))) {
+            if ((playerSoul.hasCast("Bravery Boost") || playerSoul.hasCast("Perfected Aura Technique") ||
+                    playerSoul.hasCast("Fearless Instincts"))
+                    && !(playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience))) {
                 cir.setReturnValue(2);
             }
         }

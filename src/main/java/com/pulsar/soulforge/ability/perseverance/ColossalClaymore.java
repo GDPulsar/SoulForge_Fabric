@@ -3,7 +3,6 @@ package com.pulsar.soulforge.ability.perseverance;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
@@ -11,22 +10,18 @@ import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
-import me.x150.renderer.render.Renderer3d;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -95,15 +90,14 @@ public class ColossalClaymore extends AbilityBase {
     }
 
     @Override
-    public void displayTick(PlayerEntity player) {
+    public void displayTick(ClientPlayerEntity player) {
         if (player.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
             return;
         }
-        ServerWorld serverWorld = ((ServerPlayerEntity)player).getServerWorld();
         Vec3d centerPos = player.getPos();
         for (int i = 0; i < 32; i++) {
             Vec3d particlePos = new Vec3d(Math.sin(i*Math.PI/16), 0f, Math.cos(i*Math.PI/16)).multiply(5f);
-            serverWorld.spawnParticles((ServerPlayerEntity)player, new DustParticleEffect(Vec3d.unpackRgb(0xFF00FF).toVector3f(), 1f), true, particlePos.x + centerPos.x, centerPos.y, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
+            player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0xFF00FF).toVector3f(), 1f), particlePos.x + centerPos.x, centerPos.y, particlePos.z + centerPos.z, 0, 0, 0);
         }
     }
     

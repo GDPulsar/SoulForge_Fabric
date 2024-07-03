@@ -26,12 +26,12 @@ import java.util.List;
 public class LightningRodProjectile extends PersistentProjectileEntity {
     public LightningRodProjectile(World world, LivingEntity owner) {
         super(SoulForgeEntities.LIGHTNING_ROD_ENTITY_TYPE, owner, world);
-        this.pickupType = PickupPermission.ALLOWED;
+        this.pickupType = PickupPermission.DISALLOWED;
     }
 
     public LightningRodProjectile(EntityType<LightningRodProjectile> braverySpearProjectileEntityType, World world) {
         super(braverySpearProjectileEntityType, world);
-        this.pickupType = PickupPermission.ALLOWED;
+        this.pickupType = PickupPermission.DISALLOWED;
     }
 
     public boolean canUsePortals() {
@@ -98,11 +98,6 @@ public class LightningRodProjectile extends PersistentProjectileEntity {
 
     @Override
     protected boolean tryPickup(PlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (!playerSoul.hasWeapon() && this.isOwner(player)) {
-            playerSoul.setWeapon(new ItemStack(SoulForgeItems.LIGHTNING_ROD));
-            return true;
-        }
         return false;
     }
 

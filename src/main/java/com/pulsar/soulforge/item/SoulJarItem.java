@@ -49,18 +49,19 @@ public class SoulJarItem extends BlockItem {
         ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient) {
             EntityHitResult hit = Utils.getFocussedEntity(user, (float)ReachEntityAttributes.getReachDistance(user, 3f), entity -> entity instanceof PlayerSoulEntity);
-            if (hit.getEntity() instanceof PlayerSoulEntity soulEntity) {
-                setHasSoul(stack, true);
-                SoulForge.LOGGER.info("owner: {}, trait1: {}, trait2: {}", getOwner(stack), getTrait1(stack), getTrait2(stack));
-                setOwner(stack, soulEntity.getOwner());
-                setTrait1(stack, soulEntity.getTrait1());
-                setTrait2(stack, soulEntity.getTrait2());
-                setStrong(stack, soulEntity.getStrong());
-                setPure(stack, soulEntity.getPure());
-                setLv(stack, soulEntity.getLV());
-                setExp(stack, soulEntity.getEXP());
-                setLayout(stack, new AbilityLayout());
-                soulEntity.kill();
+            if (hit != null) {
+                if (hit.getEntity() instanceof PlayerSoulEntity soulEntity) {
+                    setHasSoul(stack, true);
+                    setOwner(stack, soulEntity.getOwner());
+                    setTrait1(stack, soulEntity.getTrait1());
+                    setTrait2(stack, soulEntity.getTrait2());
+                    setStrong(stack, soulEntity.getStrong());
+                    setPure(stack, soulEntity.getPure());
+                    setLv(stack, soulEntity.getLV());
+                    setExp(stack, soulEntity.getEXP());
+                    setLayout(stack, new AbilityLayout());
+                    soulEntity.kill();
+                }
             }
         }
         return TypedActionResult.consume(stack);

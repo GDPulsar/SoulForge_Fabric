@@ -4,8 +4,8 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,14 +14,16 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 public class Eruption extends AbilityBase {
@@ -81,7 +83,7 @@ public class Eruption extends AbilityBase {
     }
 
     @Override
-    public void displayTick(PlayerEntity player) {
+    public void displayTick(ClientPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float distanceForward = 7f + MathHelper.floor(playerSoul.getEffectiveLV()/4f);
         float aoeDist = 2f + MathHelper.floor(playerSoul.getEffectiveLV()/8f);
@@ -92,10 +94,9 @@ public class Eruption extends AbilityBase {
         BlockHitResult target = player.getWorld().raycast(new RaycastContext(lookPos, lookPos.subtract(0, 100, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
         if (target != null) {
             Vec3d centerPos = target.getBlockPos().toCenterPos();
-            ServerWorld serverWorld = ((ServerPlayerEntity) player).getServerWorld();
             for (int i = 0; i < 64; i++) {
                 Vec3d particlePos = new Vec3d(Math.sin(i * Math.PI / 32), 0f, Math.cos(i * Math.PI / 32)).multiply(aoeDist);
-                serverWorld.spawnParticles((ServerPlayerEntity) player, new DustParticleEffect(Vec3d.unpackRgb(0xFF8800).toVector3f(), 1f), true, particlePos.x + centerPos.x, centerPos.y + 0.6f, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
+                player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0xFF8800).toVector3f(), 1f), particlePos.x + centerPos.x, centerPos.y + 0.6f, particlePos.z + centerPos.z, 0, 0, 0);
             }
         }
     }

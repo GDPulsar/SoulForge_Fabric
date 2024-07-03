@@ -96,6 +96,11 @@ public class JusticeHarpoonProjectile extends PersistentProjectileEntity impleme
     }
 
     @Override
+    protected boolean tryPickup(PlayerEntity player) {
+        return false;
+    }
+
+    @Override
     protected ItemStack asItemStack() {
         return new ItemStack(SoulForgeItems.JUSTICE_HARPOON);
     }

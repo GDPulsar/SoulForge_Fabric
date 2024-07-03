@@ -100,7 +100,6 @@ abstract class LivingEntityMixin extends Entity {
     @Inject(method = "damage", at = @At("HEAD"))
     private void whenDamaged(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
         if (source.getAttacker() instanceof ServerPlayerEntity player) {
-            SoulForge.LOGGER.info("player: {}", player);
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             float targetDefence;
             if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR);

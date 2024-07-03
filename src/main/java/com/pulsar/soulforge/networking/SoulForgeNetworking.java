@@ -13,7 +13,6 @@ public class SoulForgeNetworking {
     // C2S
     public static final Identifier CAST_ABILITY = new Identifier(SoulForge.MOD_ID, "cast_ability");
     public static final Identifier SWITCH_MODE = new Identifier(SoulForge.MOD_ID, "switch_mode");
-    public static final Identifier ABILITY_HOTBAR_SCROLL = new Identifier(SoulForge.MOD_ID, "ability_hotbar_scroll");
     public static final Identifier SET_WEAPON = new Identifier(SoulForge.MOD_ID, "set_weapon");
     public static final Identifier RESET = new Identifier(SoulForge.MOD_ID, "reset");
     public static final Identifier VEINMINE = new Identifier(SoulForge.MOD_ID, "veinmine");
@@ -39,7 +38,6 @@ public class SoulForgeNetworking {
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_ABILITY, CastAbilityPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SWITCH_MODE, SwitchModePacket::receive);
-        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.ABILITY_HOTBAR_SCROLL, AbilityHotbarScrollPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SET_WEAPON, SetWeaponPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RESET, ResetPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.VEINMINE, VeinminePacket::receive);

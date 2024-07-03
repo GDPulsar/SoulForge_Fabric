@@ -13,31 +13,26 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class KindnessDome extends ToggleableAbilityBase {
     public final String name = "Kindness Dome";
@@ -155,9 +150,8 @@ public class KindnessDome extends ToggleableAbilityBase {
     }
 
     @Override
-    public void displayTick(PlayerEntity player) {
+    public void displayTick(ClientPlayerEntity player) {
         BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(40f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
-        ServerWorld serverWorld = ((ServerPlayerEntity)player).getServerWorld();
         if (hitResult != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
@@ -172,7 +166,7 @@ public class KindnessDome extends ToggleableAbilityBase {
                     float y = (float) Math.cos(phi);
                     float z = (float) (Math.sin(phi) * Math.sin(theta));
                     Vector3f particlePos = new Vector3f(x, y, z).normalize().mul(domeRadius);
-                    serverWorld.spawnParticles((ServerPlayerEntity) player, new DustParticleEffect(Vec3d.unpackRgb(0x00FF00).toVector3f(), 1f), true, particlePos.x + centerPos.x, particlePos.y + centerPos.y, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
+                    player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0x00FF00).toVector3f(), 1f), particlePos.x + centerPos.x, particlePos.y + centerPos.y, particlePos.z + centerPos.z, 0, 0, 0);
                 }
             }
         }

@@ -3,17 +3,12 @@ package com.pulsar.soulforge.ability.pures;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -40,23 +35,20 @@ public class MartyrsTouch extends AbilityBase {
         }
         EntityHitResult hit = Utils.getFocussedEntity(player, 32f);
         if (hit != null) {
-            Entity entity = hit.getEntity();
-            if (entity instanceof PlayerEntity target) {
+            if (hit.getEntity() instanceof PlayerEntity target) {
                 if (!TeamUtils.canHealPlayer(player.getServer(), player, target)) return false;
-                boolean removed = false;
-                for (PlayerEntity selected : players) {
-                    if (selected.getName() == target.getName()) {
-                        players.remove(selected);
-                        removed = true;
-                        break;
+                if (player.isSneaking()) {
+                    for (PlayerEntity selected : players) {
+                        if (selected.getName() == target.getName()) {
+                            players.remove(selected);
+                            player.sendMessageToClient(Text.literal("You have deselected ").append(target.getName()).formatted(Formatting.GREEN), true);
+                            return false;
+                        }
                     }
-                }
-                if (removed) {
-                    player.sendMessageToClient(Text.literal("You have deselected ").append(target.getName()).formatted(Formatting.GREEN), true);
                 } else {
                     if (players.size() >= 5) {
                         player.sendMessageToClient(Text.literal("You can only select five players!").formatted(Formatting.RED), true);
-                    } else {
+                    } else if (players.contains(target)) {
                         players.add(target);
                         player.sendMessageToClient(Text.literal("You have selected ").append(target.getName()).formatted(Formatting.GREEN), true);
                         return true;
@@ -90,11 +82,11 @@ public class MartyrsTouch extends AbilityBase {
     }
 
     @Override
-    public void displayTick(PlayerEntity player) {
+    public void displayTick(ClientPlayerEntity player) {
         if (players != null) {
-            ServerWorld serverWorld = ((ServerPlayerEntity) player).getServerWorld();
             for (PlayerEntity target : players) {
-                serverWorld.spawnParticles(new DustParticleEffect(Vec3d.unpackRgb(0x00FF00).toVector3f(), 1f), target.getX(), target.getY() + 1f, target.getZ(), 5, 0.4f, 1f, 0.4f, 0);
+                player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0x00FF00).toVector3f(), 1f),
+                        target.getX() + Math.random()*0.8f - 0.4f, target.getY() + Math.random()*2, target.getZ() + Math.random()*0.8f - 0.4f, 0f, 0f, 0f);
             }
         }
     }

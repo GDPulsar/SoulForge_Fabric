@@ -1,12 +1,8 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.entity.LightningRodProjectile;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -44,7 +40,6 @@ public class LightningRod extends MagicSwordItem {
             return;
         }
         if (!world.isClient) {
-            stack.damage(1, playerEntity, p -> p.sendToolBreakStatus(user.getActiveHand()));
             LightningRodProjectile projectile = new LightningRodProjectile(world, playerEntity);
             projectile.setOwner(playerEntity);
             projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0f, 2.5f, 0.0f);

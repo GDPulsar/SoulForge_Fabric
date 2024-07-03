@@ -73,7 +73,7 @@ public class GunlanceBlastEntity extends Entity {
     public int timer = 0;
     @Override
     public void tick() {
-        if (timer >= 20) {
+        if (timer >= 20 && this.owner != null) {
             if (this.timer % 5 == 0) {
                 List<LivingEntity> affected = new ArrayList<>();
                 for (int i = 0; i < 40; i++) {
@@ -95,7 +95,9 @@ public class GunlanceBlastEntity extends Entity {
             }
         }
         timer++;
-        if (this.owner.isDead() || this.owner.isRemoved()) this.kill();
+        if (this.owner != null) {
+            if (this.owner.isDead() || this.owner.isRemoved()) this.kill();
+        }
         super.tick();
     }
 

@@ -1,14 +1,13 @@
 package com.pulsar.soulforge.ability.duals;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.SoulForgeDataGenerator;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.TeamUtils;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -27,8 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class HestiasHearth extends ToggleableAbilityBase {
@@ -141,7 +138,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
     }
 
     @Override
-    public void displayTick(PlayerEntity player) {
+    public void displayTick(ClientPlayerEntity player) {
         if (getActive()) {
             player.sendMessage(Text.literal(String.valueOf(charge)).append("%").formatted(Formatting.GOLD), true);
         }
