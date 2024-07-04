@@ -11,7 +11,6 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -90,7 +89,7 @@ public class ColossalClaymore extends AbilityBase {
     }
 
     @Override
-    public void displayTick(ClientPlayerEntity player) {
+    public void displayTick(PlayerEntity player) {
         if (player.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
             return;
         }

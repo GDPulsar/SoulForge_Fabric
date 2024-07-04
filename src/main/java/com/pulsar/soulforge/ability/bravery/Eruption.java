@@ -5,7 +5,6 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.util.TeamUtils;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -83,7 +82,7 @@ public class Eruption extends AbilityBase {
     }
 
     @Override
-    public void displayTick(ClientPlayerEntity player) {
+    public void displayTick(PlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float distanceForward = 7f + MathHelper.floor(playerSoul.getEffectiveLV()/4f);
         float aoeDist = 2f + MathHelper.floor(playerSoul.getEffectiveLV()/8f);

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "soulforge",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"name": "SoulForge",
 	"description": "A Minecraft mod built around UNDERTALE!",
 	"authors": [

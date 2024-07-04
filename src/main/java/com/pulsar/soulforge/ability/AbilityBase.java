@@ -1,6 +1,6 @@
 package com.pulsar.soulforge.ability;
 
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -30,5 +30,5 @@ public abstract class AbilityBase {
     public abstract boolean cast(ServerPlayerEntity player);
     public abstract boolean tick(ServerPlayerEntity player);
     public abstract boolean end(ServerPlayerEntity player);
-    public void displayTick(ClientPlayerEntity player) {};
+    public void displayTick(PlayerEntity player) {};
 }

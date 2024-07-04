@@ -724,16 +724,15 @@ public class PlayerSoulComponent implements SoulComponent {
             buf.writeVarInt(exp);
             buf.writeFloat(magic);
 
-            buf.writeVarInt(activeAbilities.size());
-            for (AbilityBase active : activeAbilities.values()) {
-                buf.writeString(active.getName());
-                buf.writeNbt(active.saveNbt(new NbtCompound()));
-            }
-
-            buf.writeVarInt(cooldowns.size());
-            for (Map.Entry<AbilityBase, Integer> cooldown : cooldowns.entrySet()) {
-                buf.writeString(cooldown.getKey().getName());
-                buf.writeVarInt(cooldown.getValue());
+            buf.writeVarInt(abilities.size());
+            for (AbilityBase ability : abilities.values()) {
+                buf.writeString(ability.getName());
+                buf.writeNbt(ability.saveNbt(new NbtCompound()));
+                buf.writeBoolean(activeAbilities.containsValue(ability));
+                buf.writeBoolean(cooldowns.containsKey(ability));
+                if (cooldowns.containsKey(ability)) {
+                    buf.writeVarInt(cooldowns.get(ability));
+                }
             }
 
             buf.writeString(mode);
@@ -798,26 +797,20 @@ public class PlayerSoulComponent implements SoulComponent {
             abilities.put(ability.getName(), ability);
         }
 
-        int activeCount = buf.readVarInt();
-        HashMap<String, NbtCompound> actives = new HashMap<>();
-        for (int i = 0; i < activeCount; i++) {
-            actives.put(buf.readString(), buf.readNbt());
-        }
-        int cooldownCount = buf.readVarInt();
-        HashMap<String, Integer> cooldownNames = new HashMap<>();
-        for (int i = 0; i < cooldownCount; i++) cooldownNames.put(buf.readString(), buf.readVarInt());
-
+        int abilityCount = buf.readVarInt();
         HashMap<String, AbilityBase> activeAbilities = new HashMap<>();
         HashMap<AbilityBase, Integer> cooldowns = new HashMap<>();
-        for (String abilityName : actives.keySet()) {
-            if (abilities.containsKey(abilityName)) {
-                abilities.get(abilityName).readNbt(actives.get(abilityName));
-                activeAbilities.put(abilityName, abilities.get(abilityName));
+        for (int i = 0; i < abilityCount; i++) {
+            String name = buf.readString();
+            NbtCompound nbt = buf.readNbt();
+            boolean active = buf.readBoolean();
+            if (active) {
+                abilities.get(name).readNbt(nbt);
+                activeAbilities.put(name, abilities.get(name));
             }
-        }
-        for (String cooldown : cooldownNames.keySet()) {
-            if (abilities.containsKey(cooldown)) {
-                cooldowns.put(abilities.get(cooldown), cooldownNames.get(cooldown));
+            boolean onCooldown = buf.readBoolean();
+            if (onCooldown) {
+                cooldowns.put(abilities.get(name), buf.readVarInt());
             }
         }
 

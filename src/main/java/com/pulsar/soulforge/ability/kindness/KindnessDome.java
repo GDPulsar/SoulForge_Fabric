@@ -13,7 +13,6 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -150,7 +149,7 @@ public class KindnessDome extends ToggleableAbilityBase {
     }
 
     @Override
-    public void displayTick(ClientPlayerEntity player) {
+    public void displayTick(PlayerEntity player) {
         BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(40f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
         if (hitResult != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);

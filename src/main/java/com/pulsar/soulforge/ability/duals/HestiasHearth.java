@@ -7,7 +7,6 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.TeamUtils;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -138,7 +137,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
     }
 
     @Override
-    public void displayTick(ClientPlayerEntity player) {
+    public void displayTick(PlayerEntity player) {
         if (getActive()) {
             player.sendMessage(Text.literal(String.valueOf(charge)).append("%").formatted(Formatting.GOLD), true);
         }

@@ -17,7 +17,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -237,7 +236,7 @@ public class Snowgrave extends AbilityBase {
     }
 
     @Override
-    public void displayTick(ClientPlayerEntity player) {
+    public void displayTick(PlayerEntity player) {
         HitResult result = player.raycast(50, 1f, false);
         if (result != null) {
             if (result.squaredDistanceTo(player) <= 2500f) {

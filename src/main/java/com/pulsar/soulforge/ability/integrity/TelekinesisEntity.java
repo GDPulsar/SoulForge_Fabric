@@ -2,20 +2,11 @@ package com.pulsar.soulforge.ability.integrity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -82,7 +73,8 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
                 }
             }
             else tpPos = player.getRotationVector().multiply(4f).add(player.getEyePos());
-            if (target.getPos().distanceTo(tpPos) > 7.5f) return true;
+            Vec3d teleportOffset = target.getPos().subtract(tpPos);
+            if (teleportOffset.subtract(player.getVelocity()).length() > 7.5f) return true;
             target.teleport(tpPos.x, tpPos.y, tpPos.z);
             target.setVelocity(Vec3d.ZERO);
             target.velocityModified = true;

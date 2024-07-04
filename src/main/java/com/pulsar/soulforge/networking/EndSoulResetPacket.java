@@ -30,8 +30,8 @@ public class EndSoulResetPacket {
             ItemStack soulJar = player.getMainHandStack();
             if (soulJar.isOf(SoulForgeItems.SOUL_JAR) && SoulJarItem.getHasSoul(soulJar)) {
                 newLayout = SoulJarItem.getLayout(soulJar);
-                SoulJarItem.setFromPlayer(soulJar, player);
             }
+            SoulJarItem.setFromPlayer(soulJar, player);
         }
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.softReset();
