@@ -5,31 +5,19 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.BlastEntity;
-import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
 import java.awt.*;
 
 public class Railcannon extends AbilityBase {
-    public final String name = "Railcannon";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "railcannon");
-    public final int requiredLv = 7;
-    public final int cost = 40;
-    public final int cooldown = 400;
-    public final AbilityType type = AbilityType.CAST;
-
     private int timer = 0;
     private int castCount = 0;
 
@@ -38,7 +26,7 @@ public class Railcannon extends AbilityBase {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         timer = Math.max(5, 80-3*playerSoul.getEffectiveLV());
         castCount = 0;
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -66,24 +54,16 @@ public class Railcannon extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         timer = 0;
         castCount = 0;
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 7; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 400; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

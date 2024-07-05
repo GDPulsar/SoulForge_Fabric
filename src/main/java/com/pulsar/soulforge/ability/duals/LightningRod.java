@@ -9,14 +9,10 @@ import com.pulsar.soulforge.entity.LightningRodProjectile;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -25,13 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LightningRod extends AbilityBase {
-    public final String name = "Lightning Rod";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "lightning_rod");
-    public final int requiredLv = 15;
-    public final int cost = 20;
-    public final int cooldown = 0;
-    public final AbilityType type = AbilityType.WEAPON;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -73,7 +62,7 @@ public class LightningRod extends AbilityBase {
                 break;
             }
             if (!struck) playerSoul.setWeapon(new ItemStack(SoulForgeItems.LIGHTNING_ROD));
-            return true;
+            return super.cast(player);
         } else {
             for (LightningRodProjectile lightningRod : player.getWorld().getEntitiesByClass(LightningRodProjectile.class, Box.of(player.getPos(), 300, 300, 300), projectile -> projectile.getOwner() == player)) {
                 Vec3d fromPos = lightningRod.getPos();
@@ -92,38 +81,20 @@ public class LightningRod extends AbilityBase {
                 }
                 lightningRod.kill();
                 playerSoul.setWeapon(new ItemStack(SoulForgeItems.LIGHTNING_ROD));
-                return true;
+                return super.cast(player);
             }
         }
         playerSoul.setWeapon(new ItemStack(SoulForgeItems.LIGHTNING_ROD));
-        return true;
+        return super.cast(player);
     }
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getLV() { return 15; }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getCost() { return 20; }
 
-    public String getName() { return name; }
+    public int getCooldown() { return 0; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
-
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.WEAPON; }
 
     @Override
     public AbilityBase getInstance() {

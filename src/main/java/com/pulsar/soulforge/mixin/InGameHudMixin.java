@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.components.AbilityLayout;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -22,7 +22,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import squeek.appleskin.client.HUDOverlayHandler;
 
 import static net.minecraft.client.gui.widget.ClickableWidget.WIDGETS_TEXTURE;
 

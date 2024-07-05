@@ -1,7 +1,7 @@
 package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.AbilityLayout;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.SoulJarItem;

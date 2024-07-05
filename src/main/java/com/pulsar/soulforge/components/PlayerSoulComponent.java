@@ -12,6 +12,8 @@ import com.pulsar.soulforge.ability.integrity.Platforms;
 import com.pulsar.soulforge.advancement.SoulForgeCriterions;
 import com.pulsar.soulforge.armor.PlatformBootsItem;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
+import com.pulsar.soulforge.data.AbilityLayout;
+import com.pulsar.soulforge.data.AbilityList;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
@@ -19,17 +21,13 @@ import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
-import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.ResetData;
-import com.pulsar.soulforge.util.SpokenTextRenderer;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -39,7 +37,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -71,10 +68,7 @@ public class PlayerSoulComponent implements SoulComponent {
     private int lv;
     private int exp;
     private float magic;
-    private HashMap<String, AbilityBase> abilities = new HashMap<>();
-    private HashMap<String, AbilityBase> activeAbilities = new HashMap<>();
-    private HashMap<AbilityBase, Integer> cooldowns = new HashMap<>();
-    private String mode = null;
+    private AbilityList abilities = new AbilityList();
     private List<String> tags = new ArrayList<>();
     private HashMap<String, Float> values = new HashMap<>();
     private final PlayerEntity player;
@@ -87,7 +81,6 @@ public class PlayerSoulComponent implements SoulComponent {
     private int abilityRow = 0;
     private int abilitySlot = 0;
     private boolean magicMode = false;
-    private final SpokenTextRenderer spokenTextRenderer = new SpokenTextRenderer();
     private ResetData resetData = new ResetData();
     private Pair<UUID, Integer> wormholeRequest = null;
     private PlayerEntity disguisedAs = null;
@@ -100,14 +93,12 @@ public class PlayerSoulComponent implements SoulComponent {
         exp = 0;
         magic = 100;
         updateAbilities();
-        updateModes();
         updateTags();
     }
 
     public PlayerSoulComponent(PlayerEntity player, List<TraitBase> traits, boolean strong, boolean pure,
-                               int lv, int exp, float magic, HashMap<String, AbilityBase> abilities,
-                               HashMap<String, AbilityBase> activeAbilities, HashMap<AbilityBase, Integer> cooldowns, String mode,
-                               ItemStack weapon, List<String> tags, HashMap<String, Float> values, int lastCastTime,
+                               int lv, int exp, float magic, AbilityList abilities, ItemStack weapon,
+                               List<String> tags, HashMap<String, Float> values, int lastCastTime,
                                List<AbilityBase> discovered, HashMap<String, Integer> monsterSouls, HashMap<String, Integer> playerSouls,
                                AbilityLayout abilityLayout, int abilityRow, boolean magicMode, ResetData resetData, UUID disguisedAsID) {
         this.player = player;
@@ -118,10 +109,6 @@ public class PlayerSoulComponent implements SoulComponent {
         this.exp = exp;
         this.magic = magic;
         this.abilities = abilities;
-        this.activeAbilities = activeAbilities;
-        this.cooldowns = cooldowns;
-        updateModes();
-        this.mode = mode;
         this.weapon = weapon;
         this.tags = tags;
         this.values = values;
@@ -157,13 +144,12 @@ public class PlayerSoulComponent implements SoulComponent {
         else if (num <= 1) traits.add(trait);
         if (num == 1 && trait == null) traits = new ArrayList<>(List.of(traits.get(0)));
         abilityLayout = new AbilityLayout();
-        for (AbilityBase ability : activeAbilities.values()) {
+        for (AbilityBase ability : abilities.getActive()) {
             ability.end((ServerPlayerEntity)player);
         }
         if (pure) resetData.addPure(traits.get(0));
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         updateAbilities();
-        updateModes();
         updateTags();
         SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
         sync();
@@ -173,13 +159,12 @@ public class PlayerSoulComponent implements SoulComponent {
     public void setTraits(List<TraitBase> traits) {
         this.traits = traits;
         abilityLayout = new AbilityLayout();
-        for (AbilityBase ability : activeAbilities.values()) {
+        for (AbilityBase ability : abilities.getActive()) {
             ability.end((ServerPlayerEntity)player);
         }
         if (pure) resetData.addPure(traits.get(0));
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         updateAbilities();
-        updateModes();
         updateTags();
         SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
         sync();
@@ -189,14 +174,13 @@ public class PlayerSoulComponent implements SoulComponent {
     public void setResetValues(List<TraitBase> traits, boolean strong, boolean pure) {
         this.traits = traits;
         abilityLayout = new AbilityLayout();
-        for (AbilityBase ability : activeAbilities.values()) {
+        for (AbilityBase ability : abilities.getActive()) {
             ability.end((ServerPlayerEntity)player);
         }
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         this.strong = strong;
         this.pure = pure;
         updateAbilities();
-        updateModes();
         updateTags();
         SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
         sync();
@@ -266,16 +250,15 @@ public class PlayerSoulComponent implements SoulComponent {
         if (player instanceof ServerPlayerEntity serverPlayerEntity) {
             switch (event) {
                 case FALL_IMMUNITY:
-                    if (activeAbilities.containsKey("Launch")) {
-                        activeAbilities.get("Launch").end(serverPlayerEntity);
-                        activeAbilities.remove("Launch");
+                    if (abilities.isActive("Launch")) {
+                        abilities.get("Launch").end(serverPlayerEntity);
                         break;
                     }
                     break;
                 case SPAWN_PLATFORM:
                     boolean hasDT = false;
                     boolean hasIG = false;
-                    for (AbilityBase ability : activeAbilities.values()) {
+                    for (AbilityBase ability : abilities.getActive()) {
                         if (ability instanceof DeterminationPlatform) {
                             SoulForgeCriterions.CAST_ABILITY.trigger((ServerPlayerEntity) player, ability);
                             hasDT = true;
@@ -319,14 +302,14 @@ public class PlayerSoulComponent implements SoulComponent {
                         if (onTriple) break;
                         if (!stacked && !player.isOnGround()) {
                             if (hasIG) {
-                                for (AbilityBase ability : activeAbilities.values()) {
+                                for (AbilityBase ability : abilities.getActive()) {
                                     if (ability instanceof Platforms) {
                                         ((Platforms) ability).spawn(player);
                                         break;
                                     }
                                 }
                             } else {
-                                for (AbilityBase ability : activeAbilities.values()) {
+                                for (AbilityBase ability : abilities.getActive()) {
                                     if (ability instanceof DeterminationPlatform) {
                                         ((DeterminationPlatform) ability).spawn(player);
                                         break;
@@ -399,7 +382,6 @@ public class PlayerSoulComponent implements SoulComponent {
         this.lv = Math.min(Math.max(lv, 1), 20);
         SoulForgeCriterions.PLAYER_LV.trigger((ServerPlayerEntity)player, this.lv);
         updateAbilities();
-        updateModes();
         updateTags();
         sync();
     }
@@ -426,7 +408,6 @@ public class PlayerSoulComponent implements SoulComponent {
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.UT_LEVEL_UP_EVENT, SoundCategory.PLAYERS, 1f, 1f);
         }
         updateAbilities();
-        updateModes();
         updateTags();
         sync();
     }
@@ -448,21 +429,16 @@ public class PlayerSoulComponent implements SoulComponent {
     }
 
     @Override
-    public List<AbilityBase> getModeAbilities() {
-        return Traits.getModeAbilities(mode, this);
-    }
-
-    @Override
-    public List<AbilityBase> getAbilities() { return List.copyOf(this.abilities.values()); }
+    public List<AbilityBase> getAbilities() { return List.copyOf(this.abilities.getAll()); }
 
     @Override
     public List<AbilityBase> getActiveAbilities() {
-        return List.copyOf(this.activeAbilities.values());
+        return List.copyOf(this.abilities.getActive());
     }
 
     @Override
     public AbilityBase getAbility(String abilityName) {
-        if (this.abilities.containsKey(abilityName)) {
+        if (this.abilities.has(abilityName)) {
             return this.abilities.get(abilityName);
         }
         return null;
@@ -470,53 +446,43 @@ public class PlayerSoulComponent implements SoulComponent {
 
     @Override
     public boolean onCooldown(AbilityBase ability) {
-        return cooldowns.containsKey(ability);
+        return abilities.has(ability) && abilities.getCooldown(ability, player.age) > 0;
     }
 
     @Override
     public boolean onCooldown(String abilityName) {
-        for (AbilityBase ability : cooldowns.keySet()) {
-            if (Objects.equals(ability.getName(), abilityName)) return true;
-        }
-        return false;
+        return abilities.has(abilityName) && abilities.getCooldown(abilityName, player.age) > 0;
     }
 
     @Override
     public float cooldownPercent(AbilityBase ability) {
-        if (cooldowns.containsKey(ability)) {
+        if (abilities.has(ability)) {
             float cooldownVal = ability.getCooldown();
             if (pure) cooldownVal /= 2;
             if (hasCast("Valiant Heart")) cooldownVal /= 1.33f;
             if (ability instanceof EnergyWave && hasValue("energyWaveCooldown")) cooldownVal = getValue("energyWaveCooldown");
-            return 1f - MathHelper.clamp(cooldowns.get(ability) / cooldownVal, 0f, 1f);
+            return 1f - MathHelper.clamp((abilities.getCooldown(ability, player.age)) / cooldownVal, 0f, 1f);
         }
         return 1f;
     }
 
     @Override
     public void setCooldown(AbilityBase ability, int cooldown) {
-        cooldowns.put(ability, cooldown);
+        abilities.get(ability).setLastCastTime(player.age - (ability.getCooldown() - cooldown));
     }
 
     @Override
     public void setCooldown(String abilityName, int cooldown) {
-        if (this.abilities.containsKey(abilityName)) {
-            cooldowns.put(this.abilities.get(abilityName), cooldown);
+        if (this.abilities.has(abilityName)) {
+            abilities.get(abilityName).setLastCastTime(player.age - (abilities.get(abilityName).getCooldown() - cooldown));
         }
     }
 
     @Override
     public void onDeath() {
-        cooldowns = new HashMap<>();
-        if (player instanceof ServerPlayerEntity serverPlayer) {
-            for (AbilityBase ability : activeAbilities.values()) {
-                ability.end(serverPlayer);
-                if (ability instanceof ToggleableAbilityBase toggleable) {
-                    toggleable.setActive(false);
-                }
-            }
+        for (AbilityBase ability : abilities.getActive()) {
+            ability.setActive(false);
         }
-        activeAbilities = new HashMap<>();
         updateTags();
         setMagic(100f);
     }
@@ -546,8 +512,8 @@ public class PlayerSoulComponent implements SoulComponent {
         } else {
             manaRegenRate = 0;
         }
-        if (this.activeAbilities.containsKey("Perfected Aura Technique")) {
-            if (((PerfectedAuraTechnique)this.activeAbilities.get("Perfected Aura Technique")).fullPower) {
+        if (this.abilities.isActive("Perfected Aura Technique")) {
+            if (this.abilities.getTyped(new PerfectedAuraTechnique()).fullPower) {
                 manaRegenRate = 2f;
             }
         }
@@ -558,12 +524,12 @@ public class PlayerSoulComponent implements SoulComponent {
 
     @Override
     public boolean hasCast(String abilityName) {
-        return this.activeAbilities.containsKey(abilityName);
+        return this.abilities.isActive(abilityName);
     }
 
     @Override
     public boolean hasAbility(String abilityName) {
-        return this.abilities.containsKey(abilityName);
+        return this.abilities.has(abilityName);
     }
 
     @Override
@@ -724,19 +690,11 @@ public class PlayerSoulComponent implements SoulComponent {
             buf.writeVarInt(exp);
             buf.writeFloat(magic);
 
-            buf.writeVarInt(activeAbilities.size());
-            for (AbilityBase ability : activeAbilities.values()) {
+            buf.writeVarInt(abilities.getAll().size());
+            for (AbilityBase ability : abilities.getAll()) {
                 buf.writeString(ability.getName());
                 buf.writeNbt(ability.saveNbt(new NbtCompound()));
             }
-
-            buf.writeVarInt(cooldowns.size());
-            for (AbilityBase ability : cooldowns.keySet()) {
-                buf.writeString(ability.getName());
-                buf.writeVarInt(cooldowns.get(ability));
-            }
-
-            buf.writeString(mode);
 
             buf.writeItemStack(weapon);
 
@@ -793,35 +751,14 @@ public class PlayerSoulComponent implements SoulComponent {
         int lv = buf.readVarInt();
         int exp = buf.readVarInt();
         float magic = buf.readFloat();
-        HashMap<String, AbilityBase> abilities = new HashMap<>();
-        for (AbilityBase ability : Traits.getAbilities(traits, lv, pure)) {
-            abilities.put(ability.getName(), ability);
-        }
 
         int activeCount = buf.readVarInt();
-        HashMap<String, NbtCompound> actives = new HashMap<>();
+        AbilityList abilityList = new AbilityList();
         for (int i = 0; i < activeCount; i++) {
-            actives.put(buf.readString(), buf.readNbt());
+            AbilityBase ability = Abilities.get(buf.readString());
+            ability.readNbt(buf.readNbt());
+            abilityList.add(ability);
         }
-        int cooldownCount = buf.readVarInt();
-        HashMap<String, Integer> cooldownNames = new HashMap<>();
-        for (int i = 0; i < cooldownCount; i++) cooldownNames.put(buf.readString(), buf.readVarInt());
-
-        HashMap<String, AbilityBase> activeAbilities = new HashMap<>();
-        HashMap<AbilityBase, Integer> cooldowns = new HashMap<>();
-        for (String abilityName : actives.keySet()) {
-            if (abilities.containsKey(abilityName)) {
-                abilities.get(abilityName).readNbt(actives.get(abilityName));
-                activeAbilities.put(abilityName, abilities.get(abilityName));
-            }
-        }
-        for (String cooldown : cooldownNames.keySet()) {
-            if (abilities.containsKey(cooldown)) {
-                cooldowns.put(abilities.get(cooldown), cooldownNames.get(cooldown));
-            }
-        }
-
-        String mode = buf.readString();
 
         ItemStack weapon = buf.readItemStack();
 
@@ -852,7 +789,7 @@ public class PlayerSoulComponent implements SoulComponent {
         HashMap<String, Integer> playerSouls = new HashMap<>();
         for (int i = 0; i < soulCount; i++) playerSouls.put(buf.readString(), buf.readVarInt());
 
-        AbilityLayout layout = AbilityLayout.fromBuf(List.copyOf(abilities.values()), buf);
+        AbilityLayout layout = AbilityLayout.fromBuf(List.copyOf(abilityList.getAll()), buf);
         int row = buf.readVarInt();
         boolean magicMode = buf.readBoolean();
 
@@ -863,7 +800,7 @@ public class PlayerSoulComponent implements SoulComponent {
             disguisedAsID = buf.readUuid();
         }
 
-        return new PlayerSoulComponent(player, traits, strong, pure, lv, exp, magic, abilities, activeAbilities, cooldowns, mode, weapon, tags, values, lastCastTime, discovered, monsterSouls, playerSouls, layout, row, magicMode, resetData, disguisedAsID);
+        return new PlayerSoulComponent(player, traits, strong, pure, lv, exp, magic, abilityList, weapon, tags, values, lastCastTime, discovered, monsterSouls, playerSouls, layout, row, magicMode, resetData, disguisedAsID);
     }
 
     @Override
@@ -915,28 +852,6 @@ public class PlayerSoulComponent implements SoulComponent {
         if (this.pure) this.strong = true;
         this.pure = pure;
         updateAbilities();
-    }
-
-    @Override
-    public SpokenTextRenderer getSpokenTextRenderer() {
-        return spokenTextRenderer;
-    }
-
-    @Override
-    public void setSpokenText(String text, int speed, int timeToDisappear) {
-        spokenTextRenderer.setText(text, speed, timeToDisappear);
-        if (!player.getWorld().isClient) ServerPlayNetworking.send((ServerPlayerEntity)player, SoulForgeNetworking.SET_SPOKEN_TEXT, PacketByteBufs.create().writeString(text).writeVarInt(speed).writeVarInt(timeToDisappear));
-    }
-
-    @Override
-    public void setSpokenText(String text) {
-        spokenTextRenderer.setText(text);
-        if (!player.getWorld().isClient) ServerPlayNetworking.send((ServerPlayerEntity)player, SoulForgeNetworking.SET_SPOKEN_TEXT, PacketByteBufs.create().writeString(text).writeVarInt(4).writeVarInt(40));
-    }
-
-    @Override
-    public String getSpokenText() {
-        return spokenTextRenderer.toRender();
     }
 
     @Override
@@ -999,7 +914,7 @@ public class PlayerSoulComponent implements SoulComponent {
     @Override
     public void castAbility(AbilityBase ability) {
         if (ability == null) return;
-        boolean contains = abilities.containsKey(ability.getName());
+        boolean contains = abilities.has(ability.getName());
         for (AbilityBase rowAbility : getLayoutRow(getAbilityRow()).abilities) {
             if (rowAbility == null) continue;
             if (rowAbility == ability) {
@@ -1015,21 +930,21 @@ public class PlayerSoulComponent implements SoulComponent {
             if (strong && !getTraits().contains(Traits.determination)) cost /= 2f;
             if (hasCast("Valiant Heart")) cost /= 1.33f;
             if (ability instanceof ToggleableAbilityBase toggleable && toggleable.getActive()) cost = 0;
-            if (cost <= magic && !cooldowns.containsKey(ability)) {
+            if (cost <= magic && !onCooldown(ability)) {
                 boolean canCast = ability.cast((ServerPlayerEntity)player);
                 if (canCast) {
                     SoulForgeCriterions.CAST_ABILITY.trigger((ServerPlayerEntity) player, ability);
                     if (ability instanceof ToggleableAbilityBase toggleable) {
                         if (toggleable.getActive()) {
                             magic -= cost;
-                            activeAbilities.put(ability.getName(), ability);
+                            ability.setActive(true);
                             resetLastCastTime();
                         } else {
                             float cooldown = ability.getCooldown();
                             if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN) != null) cooldown = (int)(cooldown * player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).getValue());
                             if (pure) cooldown /= 2;
                             if (hasCast("Valiant Heart")) cooldown /= 1.33f;
-                            else cooldowns.put(ability, (int)cooldown);
+                            setCooldown(ability, (int)cooldown);
                         }
                     } else {
                         magic -= cost;
@@ -1037,8 +952,8 @@ public class PlayerSoulComponent implements SoulComponent {
                         if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN) != null) cooldown = (int)(cooldown * player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).getValue());
                         if (pure) cooldown /= 2;
                         if (hasCast("Valiant Heart")) cooldown /= 1.33f;
-                        cooldowns.put(ability, (int) cooldown);
-                        activeAbilities.put(ability.getName(), ability);
+                        setCooldown(ability, (int)cooldown);
+                        ability.setActive(true);
                         resetLastCastTime();
                     }
                     sync();
@@ -1058,23 +973,16 @@ public class PlayerSoulComponent implements SoulComponent {
     @Override
     public void tick() {
         if (player instanceof ServerPlayerEntity) {
-            HashMap<AbilityBase, Integer> newCooldowns = new HashMap<>();
-            for (AbilityBase ability : cooldowns.keySet()) {
-                if (cooldowns.get(ability) > 1) {
-                    newCooldowns.put(ability, cooldowns.get(ability) - 1);
-                }
-            }
-            cooldowns = newCooldowns;
-            for (AbilityBase ability : List.copyOf(activeAbilities.values())) {
+            for (AbilityBase ability : List.copyOf(abilities.getActive())) {
                 if (ability.tick((ServerPlayerEntity)player)) {
                     ability.end((ServerPlayerEntity)player);
                     if (ability.getType() == AbilityType.TOGGLE) {
                         float cooldown = ability.getCooldown();
                         if (pure) cooldown /= 2;
                         if (hasCast("Valiant Heart")) cooldown /= 1.33f;
-                        cooldowns.put(ability, (int)cooldown);
+                        setCooldown(ability, (int)cooldown);
                     }
-                    activeAbilities.remove(ability.getName());
+                    ability.setActive(false);
                 }
             }
             if (hasWeapon()) {
@@ -1105,10 +1013,11 @@ public class PlayerSoulComponent implements SoulComponent {
                 }
             }
             if (hasValue("stockpiles")) {
+                SoulForge.LOGGER.info("stockpiles: {}", getValue("stockpiles"));
                 if (getValue("stockpiles") == 8) {
                     setValue("stockpiles", 0);
                     setValue("stockpileTimer", 0);
-                    if (abilities.containsKey("Perfected Aura Technique")) {
+                    if (abilities.has("Perfected Aura Technique")) {
                         PerfectedAuraTechnique pat = (PerfectedAuraTechnique)abilities.get("Perfected Aura Technique");
                         pat.fullPower = true;
                         pat.timer = 5020;
@@ -1249,7 +1158,6 @@ public class PlayerSoulComponent implements SoulComponent {
                 player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
             }
         }
-        spokenTextRenderer.tick();
     }
 
     @Override
@@ -1268,9 +1176,12 @@ public class PlayerSoulComponent implements SoulComponent {
         magic = tag.getFloat("magic");
         strong = tag.getBoolean("strong");
         pure = tag.getBoolean("pure");
-        abilities = new HashMap<>();
-        for (AbilityBase ability : Traits.getAbilities(traits, lv, pure)) {
-            abilities.put(ability.getName(), ability);
+        NbtCompound abilityNbt = tag.getCompound("abilities");
+        abilities = new AbilityList();
+        for (String abilityName : abilityNbt.getKeys()) {
+            AbilityBase ability = Abilities.get(abilityName);
+            ability.readNbt(abilityNbt.getCompound(abilityName));
+            abilities.add(ability);
         }
 
         discovered = new ArrayList<>();
@@ -1296,18 +1207,7 @@ public class PlayerSoulComponent implements SoulComponent {
             }
         }
 
-        NbtList abilityNbt = tag.getList("abilityNbt", NbtElement.COMPOUND_TYPE);
-        if (abilityNbt != null) {
-            for (int i = 0; i < abilityNbt.size(); i++) {
-                NbtCompound nbt = abilityNbt.getCompound(i);
-                if (abilities.containsKey(nbt.getString("name"))) {
-                    abilities.get(nbt.getString("name")).readNbt(nbt);
-                    activeAbilities.put(nbt.getString("name"), abilities.get(nbt.getString("name")));
-                }
-            }
-        }
-
-        abilityLayout = AbilityLayout.fromNbt(List.copyOf(abilities.values()), tag.getList("abilityLayout", NbtElement.COMPOUND_TYPE));
+        abilityLayout = AbilityLayout.fromNbt(List.copyOf(abilities.getAll()), tag.getList("abilityLayout", NbtElement.COMPOUND_TYPE));
         abilityRow = tag.getInt("abilityRow");
         magicMode = tag.getBoolean("magicMode");
 
@@ -1320,7 +1220,6 @@ public class PlayerSoulComponent implements SoulComponent {
 
         if (tag.contains("disguisedAs")) disguisedAsID = tag.getUuid("disguisedAs");
 
-        updateModes();
         updateTags();
     }
 
@@ -1333,6 +1232,11 @@ public class PlayerSoulComponent implements SoulComponent {
         tag.putFloat("magic", magic);
         tag.putBoolean("strong", strong);
         tag.putBoolean("pure", pure);
+        NbtCompound abilityNbt = new NbtCompound();
+        for (AbilityBase ability : abilities.getAll()) {
+            abilityNbt.put(ability.getName(), ability.saveNbt(new NbtCompound()));
+        }
+        tag.put("abilities", abilityNbt);
         List<String> discoveredIds = new ArrayList<>();
         for (AbilityBase ability : discovered) {
             if (ability != null) {
@@ -1346,13 +1250,6 @@ public class PlayerSoulComponent implements SoulComponent {
         souls = new NbtCompound();
         for (String key : playerSouls.keySet()) souls.putInt(key, playerSouls.get(key));
         tag.put("playerSouls", souls);
-        NbtList abilityNbt = new NbtList();
-        for (AbilityBase ability : activeAbilities.values()) {
-            NbtCompound nbt = new NbtCompound();
-            nbt = ability.saveNbt(nbt);
-            abilityNbt.add(nbt);
-        }
-        tag.put("abilityNbt", abilityNbt);
         tag.put("abilityLayout", abilityLayout.toNbt());
         tag.putInt("abilityRow", abilityRow);
         tag.putBoolean("magicMode", magicMode);
@@ -1383,12 +1280,10 @@ public class PlayerSoulComponent implements SoulComponent {
         playerSouls = new HashMap<>();
         removeWeapon(false);
         abilityLayout = new AbilityLayout();
-        for (AbilityBase ability : activeAbilities.values()) {
-            ability.end((ServerPlayerEntity)player);
+        for (AbilityBase ability : abilities.getAll()) {
+            ability.setActive(false);
         }
-        activeAbilities = new HashMap<>();
         updateAbilities();
-        updateModes();
         updateTags();
         sync();
     }
@@ -1402,37 +1297,20 @@ public class PlayerSoulComponent implements SoulComponent {
         playerSouls = new HashMap<>();
         removeWeapon(false);
         abilityLayout = new AbilityLayout();
-        for (AbilityBase ability : activeAbilities.values()) {
-            ability.end((ServerPlayerEntity)player);
+        for (AbilityBase ability : abilities.getAll()) {
+            ability.setActive(false);
         }
-        activeAbilities = new HashMap<>();
         updateAbilities();
-        updateModes();
         updateTags();
         sync();
     }
 
     private void updateAbilities() {
-        abilities = new HashMap<>();
+        abilities = new AbilityList();
         for (AbilityBase ability : Traits.getAbilities(traits, lv, pure)) {
-            abilities.put(ability.getName(), ability);
+            abilities.add(ability);
             discover(ability);
         }
-    }
-
-    private void updateModes() {
-        List<String> modes = new ArrayList<>();
-        modes.add(traits.get(0).getName());
-        if (traits.size() == 2) modes.add(traits.get(1).getName());
-        boolean hasPassives = false;
-        for (AbilityBase ability : abilities.values()) {
-            if (ability.getType() == AbilityType.PASSIVE || ability.getType() == AbilityType.PASSIVE_NOCAST) {
-                hasPassives = true;
-            }
-        }
-        if (!Constants.getDualTraitAbilities(traits).isEmpty()) modes.add("Duals");
-        if (hasPassives) modes.add("Passives");
-        if (mode == null || !modes.contains(mode)) mode = modes.get(0);
     }
 
     private void resetTrait() {

@@ -1,9 +1,7 @@
 package com.pulsar.soulforge.ability.justice;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -11,8 +9,6 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -21,13 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BulletRing extends AbilityBase {
-    public final String name = "Bullet Ring";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "bullet_ring");
-    public final int requiredLv = 5;
-    public final int cost = 15;
-    public final int cooldown = 60;
-    public final AbilityType type = AbilityType.CAST;
-
     private Vec3d targetPos;
     private List<JusticePelletProjectile> projectiles = new ArrayList<>();
     private int timer = 0;
@@ -44,7 +33,7 @@ public class BulletRing extends AbilityBase {
             targetPos = target.getPos();
             projectiles = new ArrayList<>();
             timer = 16;
-            return true;
+            return super.cast(player);
         }
         return false;
     }
@@ -70,24 +59,16 @@ public class BulletRing extends AbilityBase {
             pellet.setVelocity(targetPos.add(0f, target.getHeight()/2f, 0f).subtract(pellet.getPos()).normalize().multiply(2f));
             pellet.velocityModified = true;
         }
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 5; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 15; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 60; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

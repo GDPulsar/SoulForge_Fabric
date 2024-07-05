@@ -1,7 +1,5 @@
-package com.pulsar.soulforge.components;
+package com.pulsar.soulforge.data;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.ability.AbilityBase;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;

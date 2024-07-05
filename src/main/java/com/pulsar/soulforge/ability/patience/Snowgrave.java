@@ -32,8 +32,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -43,13 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Snowgrave extends AbilityBase {
-    public final String name = "Snowgrave";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "snowgrave");
-    public final int requiredLv = 20;
-    public final int cost = 100;
-    public final int cooldown = 9600;
-    public final AbilityType type = AbilityType.SPECIAL;
-
     private final EntityAttributeModifier modifier = new EntityAttributeModifier("snowgrave", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
     private BlockPos target;
     private int timer = 0;
@@ -80,7 +71,7 @@ public class Snowgrave extends AbilityBase {
                     buf.writeBoolean(false);
                     SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
                 }
-                return true;
+                return super.cast(player);
             }
         }
         return false;
@@ -232,7 +223,7 @@ public class Snowgrave extends AbilityBase {
         playerSoul.removeTag("preventMove");
         playerSoul.removeTag("forcedThirdPerson");
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(modifier.getId());
-        return true;
+        return super.end(player);
     }
 
     @Override
@@ -251,22 +242,14 @@ public class Snowgrave extends AbilityBase {
             }
         }
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 20; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 100; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 9600; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.SPECIAL; }
 
     @Override
     public AbilityBase getInstance() {

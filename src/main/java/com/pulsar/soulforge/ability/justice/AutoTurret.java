@@ -3,29 +3,18 @@ package com.pulsar.soulforge.ability.justice;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.entity.AutoTurretEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Objects;
 import java.util.UUID;
 
 public class AutoTurret extends AbilityBase {
-    public final String name = "Auto Turret";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "auto_turret");
-    public final int requiredLv = 12;
-    public final int cost = 30;
-    public final int cooldown = 2400;
-    public final AbilityType type = AbilityType.CAST;
-
     private AutoTurretEntity turret;
     private UUID turretUUID;
 
@@ -57,31 +46,13 @@ public class AutoTurret extends AbilityBase {
         return true;
     }
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getLV() { return 12; }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getCost() { return 30; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCooldown() { return 2400; }
 
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

@@ -2,32 +2,23 @@ package com.pulsar.soulforge.ability.patience;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.trait.Traits;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import org.joml.Vector3f;
 
 import java.util.Objects;
 
@@ -43,7 +34,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
+        super.cast(player);
         if (getActive()) {
             BlockHitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.SOURCE_ONLY, player));
             if (hit != null) {
@@ -79,30 +70,15 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
                 }
             }
         }
-        if (player.hasStatusEffect(SoulForgeEffects.MANA_OVERLOAD)) return true;
-        return !getActive();
+        if (player.hasStatusEffect(SoulForgeEffects.MANA_OVERLOAD)) setActive(false);
+        return super.tick(player);
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getLV() { return 12; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 40; }
 
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public int getCooldown() { return 400; }
 
     @Override
     public AbilityBase getInstance() {

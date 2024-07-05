@@ -2,7 +2,7 @@ package com.pulsar.soulforge.trait;
 
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.determination.DeterminationKit;
+import com.pulsar.soulforge.ability.determination.DeterminationSword;
 import com.pulsar.soulforge.ability.patience.Iceshock;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.trait.traits.*;
@@ -60,7 +60,7 @@ public class Traits {
             for (AbilityBase ability : trait.getAbilities()) {
                 if (!Constants.isAllowedForDualTrait(ability, traits, lv)) continue;
                 if (ability.getLV() <= lv) {
-                    if (ability instanceof DeterminationKit && lv == 20) continue;
+                    if (ability instanceof DeterminationSword && lv == 20) continue;
                     if (ability instanceof Iceshock && lv >= 10) continue;
                     abilities.add(ability.getInstance());
                 }
@@ -104,7 +104,7 @@ public class Traits {
                     for (AbilityBase ability : trait.getAbilities()) {
                         if (ability.getLV() <= soul.getLV()) {
                             if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_NOCAST) {
-                                if (ability instanceof DeterminationKit && soul.getLV() == 20) continue;
+                                if (ability instanceof DeterminationSword && soul.getLV() == 20) continue;
                                 if (ability instanceof Iceshock && soul.getLV() >= 10) continue;
                                 abilityNames.add(ability.getName());
                             }

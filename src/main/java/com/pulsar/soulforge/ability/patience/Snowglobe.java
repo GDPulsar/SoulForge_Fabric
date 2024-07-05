@@ -2,7 +2,6 @@ package com.pulsar.soulforge.ability.patience;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -17,33 +16,12 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
-
-import java.util.Objects;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 
 public class Snowglobe extends ToggleableAbilityBase {
-    public final String name = "Snowglobe";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "snowglobe");
-    public final int requiredLv = 3;
-    public final int cost = 30;
-    public final int cooldown = 300;
-    public final AbilityType type = AbilityType.CAST;
-
     public int timer = 0;
-
-    @Override
-    public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
-        return getActive();
-    }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
@@ -80,31 +58,21 @@ public class Snowglobe extends ToggleableAbilityBase {
                 }
             }
         }
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "snowglobe");
         Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "snowglobe");
-        return true;
+        return super.cast(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 3; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 30; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public int getCooldown() { return 300; }
 
     @Override
     public AbilityBase getInstance() {

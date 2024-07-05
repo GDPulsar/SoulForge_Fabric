@@ -5,24 +5,13 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.Objects;
 
 public class SelfHeal extends AbilityBase {
-    public final String name = "Self Heal";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "self_heal");
-    public final int requiredLv = 10;
-    public final int cost = 50;
-    public final int cooldown = 500;
-    public final AbilityType type = AbilityType.CAST;
-
     public int timer = 0;
 
     @Override
@@ -42,26 +31,13 @@ public class SelfHeal extends AbilityBase {
         return timer <= 0;
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getLV() { return 10; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 50; }
 
-    public Identifier getID() { return id; }
+    public int getCooldown() { return 500; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {
@@ -78,5 +54,6 @@ public class SelfHeal extends AbilityBase {
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         timer = nbt.getInt("timer");
+        super.readNbt(nbt);
     }
 }

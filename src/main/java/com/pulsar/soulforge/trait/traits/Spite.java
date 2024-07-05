@@ -37,7 +37,7 @@ public class Spite implements TraitBase {
             new DeterminationAura(),
             new DeterminationBlaster(),
             new DeterminationDome(),
-            new DeterminationKit(),
+            new DeterminationSword(),
             new DeterminationPlatform(),
             new DeterminationShot(),
             new LimitBreak(),

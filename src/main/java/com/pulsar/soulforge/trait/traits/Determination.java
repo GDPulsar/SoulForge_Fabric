@@ -20,7 +20,7 @@ public class Determination implements TraitBase {
             new DeterminationAura(),
             new DeterminationBlaster(),
             new DeterminationDome(),
-            new DeterminationKit(),
+            new DeterminationSword(),
             new DeterminationShot(),
             new DeterminationPlatform(),
             new LimitBreak(),

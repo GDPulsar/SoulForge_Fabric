@@ -4,7 +4,7 @@ import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
-import com.pulsar.soulforge.components.AbilityLayout;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.PlayerSoulEntity;
 import com.pulsar.soulforge.trait.TraitBase;

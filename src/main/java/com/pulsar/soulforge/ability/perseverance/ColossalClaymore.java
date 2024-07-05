@@ -19,8 +19,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -28,13 +26,6 @@ import java.util.HashSet;
 import java.util.Objects;
 
 public class ColossalClaymore extends AbilityBase {
-    public final String name = "Colossal Claymore";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "colossal_claymore");
-    public final int requiredLv = 12;
-    public final int cost = 40;
-    public final int cooldown = 400;
-    public final AbilityType type = AbilityType.CAST;
-
     int timer = 0;
     public boolean greaterSlash = false;
 
@@ -59,7 +50,7 @@ public class ColossalClaymore extends AbilityBase {
             player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 2));
         }
         timer = greaterSlash ? 5 : 30;
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -84,11 +75,6 @@ public class ColossalClaymore extends AbilityBase {
     }
 
     @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-
-    @Override
     public void displayTick(PlayerEntity player) {
         if (player.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
             return;
@@ -99,22 +85,14 @@ public class ColossalClaymore extends AbilityBase {
             player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0xFF00FF).toVector3f(), 1f), particlePos.x + centerPos.x, centerPos.y, particlePos.z + centerPos.z, 0, 0, 0);
         }
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 12; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 400; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {
@@ -131,5 +109,6 @@ public class ColossalClaymore extends AbilityBase {
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         greaterSlash = nbt.getBoolean("greaterSlash");
+        super.readNbt(nbt);
     }
 }

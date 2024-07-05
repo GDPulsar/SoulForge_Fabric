@@ -15,24 +15,12 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.UUID;
 
 public class Warpspeed extends AbilityBase {
-    public final String name = "Warpspeed";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "warpspeed");
-    public final int requiredLv = 20;
-    public final int cost = 100;
-    public final int cooldown = 6000;
-    public final AbilityType type = AbilityType.CAST;
-
     private int timer = 0;
 
     @Override
@@ -40,7 +28,7 @@ public class Warpspeed extends AbilityBase {
         timer = 300;
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(UUID.randomUUID(), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier(UUID.randomUUID(), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
-        return true;
+        return super.cast(player);
     }
 
     private Vec3d lastPos = Vec3d.ZERO;
@@ -80,24 +68,16 @@ public class Warpspeed extends AbilityBase {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "Warpspeed");
         Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "Warpspeed");
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1800, 1));
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 20; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 100; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 6000; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

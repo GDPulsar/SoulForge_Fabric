@@ -2,24 +2,14 @@ package com.pulsar.soulforge.ability.integrity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.util.Utils;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
-
-import java.util.Objects;
 
 public class RepulsionField extends ToggleableAbilityBase {
     public final String name = "Repulsion Field";
@@ -30,7 +20,7 @@ public class RepulsionField extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
+        super.cast(player);
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.removeTag("fallImmune");
         playerSoul.removeValue("jumpBoost");
@@ -76,8 +66,6 @@ public class RepulsionField extends ToggleableAbilityBase {
     public int getCost() { return cost; }
 
     public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
 
     @Override
     public AbilityBase getInstance() {

@@ -30,10 +30,10 @@ public class SoulForgeNetworking {
 
     // S2C
     public static final Identifier PLAYER_SOUL = new Identifier(SoulForge.MOD_ID, "player_soul");
+    public static final Identifier USE_MAGIC = new Identifier(SoulForge.MOD_ID, "use_magic");
     public static final Identifier PERFORM_ANIMATION = new Identifier(SoulForge.MOD_ID, "perform_animation");
     public static final Identifier POSITION_VELOCITY = new Identifier(SoulForge.MOD_ID, "position_velocity");
     public static final Identifier SET_THIRD_PERSON = new Identifier(SoulForge.MOD_ID, "set_third_person");
-    public static final Identifier SET_SPOKEN_TEXT = new Identifier(SoulForge.MOD_ID, "set_spoken_text");
 
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_ABILITY, CastAbilityPacket::receive);

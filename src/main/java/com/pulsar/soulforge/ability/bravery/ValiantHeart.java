@@ -10,24 +10,14 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.Objects;
 
 public class ValiantHeart extends AbilityBase {
-    public final String name = "Valiant Heart";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "valiant_heart");
-    public final int requiredLv = 20;
-    public final int cost = 100;
-    public final int cooldown = 15600;
-    public final AbilityType type = AbilityType.CAST;
-
     private int timer = 0;
 
     private final EntityAttributeModifier damageModifier = new EntityAttributeModifier("valiant_heart", 0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -42,7 +32,7 @@ public class ValiantHeart extends AbilityBase {
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VALIANT_HEART, 3600, 0));
         player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(damageModifier);
         player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(magicModifier);
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -60,24 +50,16 @@ public class ValiantHeart extends AbilityBase {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "valiant_heart");
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_POWER, "valiant_heart");
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 3));
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 20; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 100; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 15600; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.SPECIAL; }
 
     @Override
     public AbilityBase getInstance() {
@@ -94,5 +76,6 @@ public class ValiantHeart extends AbilityBase {
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         timer = nbt.getInt("timer");
+        super.readNbt(nbt);
     }
 }

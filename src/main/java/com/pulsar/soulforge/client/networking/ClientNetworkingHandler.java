@@ -9,9 +9,9 @@ public class ClientNetworkingHandler {
 
     public static void registerPackets() {
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.PLAYER_SOUL, PlayerSoulPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.USE_MAGIC, UseMagicPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.PERFORM_ANIMATION, PerformAnimationPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.POSITION_VELOCITY, PositionVelocityPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SET_THIRD_PERSON, SetThirdPersonPacket::receive);
-        ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SET_SPOKEN_TEXT, SetSpokenTextPacket::receive);
     }
 }

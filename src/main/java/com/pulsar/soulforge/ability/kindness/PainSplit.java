@@ -1,10 +1,7 @@
 package com.pulsar.soulforge.ability.kindness;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -12,18 +9,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 
 public class PainSplit extends AbilityBase {
-    public final String name = "Pain Split";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "pain_split");
-    public final int requiredLv = 15;
-    public final int cost = 40;
-    public final int cooldown = 200;
-    public final AbilityType type = AbilityType.TOGGLE;
-
     public PlayerEntity target = null;
 
     @Override
@@ -36,7 +24,7 @@ public class PainSplit extends AbilityBase {
                     if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) return false;
                     target = targetPlayer;
                     player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                    return true;
+                    return super.cast(player);
                 }
             }
         } else {
@@ -53,26 +41,13 @@ public class PainSplit extends AbilityBase {
         return target == null;
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getLV() { return 15; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 40; }
 
-    public Identifier getID() { return id; }
+    public int getCooldown() { return 200; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.TOGGLE; }
 
     @Override
     public AbilityBase getInstance() {

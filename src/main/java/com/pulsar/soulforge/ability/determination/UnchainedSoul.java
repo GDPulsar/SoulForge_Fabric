@@ -22,7 +22,7 @@ public class UnchainedSoul extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
+        super.cast(player);
         return getActive();
     }
 

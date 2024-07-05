@@ -4,20 +4,10 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public class Launch extends AbilityBase {
-    public final String name = "Launch";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "launch");
-    public final int requiredLv = 15;
-    public final int cost = 15;
-    public final int cooldown = 200;
-    public final AbilityType type = AbilityType.CAST;
-
     private int fallImmunityTime;
 
     @Override
@@ -27,7 +17,7 @@ public class Launch extends AbilityBase {
         playerSoul.addTag("fallImmune");
         player.addVelocity(new Vec3d(0, 2, 0));
         player.velocityModified = true;
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -40,24 +30,16 @@ public class Launch extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.removeTag("fallImmune");
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 15; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 15; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 200; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

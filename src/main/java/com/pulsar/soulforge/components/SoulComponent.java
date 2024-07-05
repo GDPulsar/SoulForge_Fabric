@@ -1,17 +1,16 @@
 package com.pulsar.soulforge.components;
 
 import com.pulsar.soulforge.ability.AbilityBase;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.util.ResetData;
-import com.pulsar.soulforge.util.SpokenTextRenderer;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Pair;
 
 import java.util.HashMap;
@@ -53,7 +52,6 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     float getMagic();
     void setMagic(float magic);
 
-    List<AbilityBase> getModeAbilities();
     List<AbilityBase> getAbilities();
     List<AbilityBase> getActiveAbilities();
     AbilityBase getAbility(String abilityName);
@@ -123,11 +121,6 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     boolean isPure();
     void setStrong(boolean strong);
     void setPure(boolean pure);
-
-    SpokenTextRenderer getSpokenTextRenderer();
-    void setSpokenText(String text, int speed, int timeToDisappear);
-    void setSpokenText(String text);
-    String getSpokenText();
 
     void createWormholeRequest(PlayerEntity from);
     void removeWormholeRequest();

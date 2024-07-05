@@ -76,8 +76,8 @@ public class ResetData {
         }
         this.unlockedPures = new ArrayList<>();
         NbtList pures = nbt.getList("pures", NbtElement.STRING_TYPE);
-        for (int i = 0; i < duals.size(); i++) {
-            String pure = duals.getString(i);
+        for (int i = 0; i < pures.size(); i++) {
+            String pure = pures.getString(i);
             TraitBase trait = Traits.get(pure);
             if (trait != null) {
                 this.unlockedPures.add(trait);

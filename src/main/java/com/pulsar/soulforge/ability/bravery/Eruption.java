@@ -15,8 +15,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
@@ -26,13 +24,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 public class Eruption extends AbilityBase {
-    public final String name = "Eruption";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "eruption");
-    public final int requiredLv = 7;
-    public final int cost = 40;
-    public final int cooldown = 300;
-    public final AbilityType type = AbilityType.CAST;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -68,17 +59,7 @@ public class Eruption extends AbilityBase {
             }
             player.getWorld().playSound(null, centerPoint.x, centerPoint.y, centerPoint.z, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.MASTER, 2.5f, 1f);
         }
-        return true;
-    }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -99,22 +80,14 @@ public class Eruption extends AbilityBase {
             }
         }
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 7; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 300; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

@@ -5,33 +5,21 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.patience.BlindingSnowstorm;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AngelsTempest extends AbilityBase{
-    public final String name = "Angel's Tempest";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "angels_tempest");
-    public final int requiredLv = 12;
-    public final int cost = 200;
-    public final int cooldown = 4800;
-    public final AbilityType type = AbilityType.CAST;
-
     public int timer = 0;
 
     @Override
@@ -107,7 +95,7 @@ public class AngelsTempest extends AbilityBase{
                 }
             }
         }
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -126,26 +114,17 @@ public class AngelsTempest extends AbilityBase{
         return timer <= 0;
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
+    public String getName() { return "Angel's Tempest"; }
 
-    public String getName() { return name; }
+    public Identifier getID() { return new Identifier(SoulForge.MOD_ID, "angels_tempest"); }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 12; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 200; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 4800; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

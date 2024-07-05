@@ -1,31 +1,20 @@
 package com.pulsar.soulforge.ability.patience;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.entity.FrozenEnergyProjectile;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class SkewerWeakpoint extends AbilityBase {
-    public final String name = "Skewer Weakpoint";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "skewer_weakpoint");
-    public final int requiredLv = 15;
-    public final int cost = 30;
-    public final int cooldown = 200;
-    public final AbilityType type = AbilityType.CAST;
-    
     public int timer = 0;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
         timer = 13;
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -48,26 +37,13 @@ public class SkewerWeakpoint extends AbilityBase {
         return timer <= 0;
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getLV() { return 15; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 30; }
 
-    public Identifier getID() { return id; }
+    public int getCooldown() { return 200; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

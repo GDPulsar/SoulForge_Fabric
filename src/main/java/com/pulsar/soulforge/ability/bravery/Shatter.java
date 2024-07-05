@@ -16,9 +16,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -28,13 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Shatter extends AbilityBase {
-    public final String name = "Shatter";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "shatter");
-    public final int requiredLv = 17;
-    public final int cost = 80;
-    public final int cooldown = 900;
-    public final AbilityType type = AbilityType.CAST;
-    
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         ServerWorld serverWorld = player.getServerWorld();
@@ -77,34 +67,16 @@ public class Shatter extends AbilityBase {
             Vec3d vec3d2 = new Vec3d(w * ac, x * ac, y * ac);
             entity.setVelocity(entity.getVelocity().add(vec3d2));
         }
-        return true;
+        return super.cast(player);
     }
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getLV() { return 17; }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getCost() { return 80; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCooldown() { return 900; }
 
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

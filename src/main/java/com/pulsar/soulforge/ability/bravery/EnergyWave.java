@@ -12,13 +12,9 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -27,13 +23,6 @@ import net.minecraft.world.event.GameEvent;
 import java.awt.*;
 
 public class EnergyWave extends ToggleableAbilityBase {
-    public final String name = "Energy Wave";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "energy_wave");
-    public final int requiredLv = 3;
-    public final int cost = 20;
-    public final int cooldown = 0;
-    public final AbilityType type = AbilityType.CAST;
-
     private int chargeTimer = 0;
     private int chargeLevel = 0;
     private boolean overcharged = false;
@@ -106,21 +95,13 @@ public class EnergyWave extends ToggleableAbilityBase {
         return true;
     }
 
-    public String getName() { return name; }
+    public int getLV() { return 3; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 20; }
 
-    public Identifier getID() { return id; }
+    public int getCooldown() { return 0; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

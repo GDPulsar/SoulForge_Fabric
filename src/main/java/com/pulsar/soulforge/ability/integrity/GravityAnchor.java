@@ -4,37 +4,22 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Vector3f;
 
-import java.awt.*;
 import java.util.Objects;
 
 public class GravityAnchor extends AbilityBase {
-    public final String name = "Gravity Anchor";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "gravity_anchor");
-    public final int requiredLv = 5;
-    public final int cost = 40;
-    public final int cooldown = 400;
-    public final AbilityType type = AbilityType.CAST;
-
     private int timer = 0;
     private LivingEntity target;
 
@@ -60,7 +45,7 @@ public class GravityAnchor extends AbilityBase {
             }
             living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 2));
             timer = Math.round(playerSoul.getEffectiveLV()*0.75f);
-            return true;
+            return super.cast(player);
         }
         return false;
     }
@@ -82,24 +67,16 @@ public class GravityAnchor extends AbilityBase {
                 targetSoul.removeTag("disableJump");
             }
         }
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 5; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 400; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

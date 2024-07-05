@@ -18,13 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MartyrsTouch extends AbilityBase {
-    public final String name = "Martyr's Touch";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "martyrs_touch");
-    public final int requiredLv = 15;
-    public final int cost = 40;
-    public final int cooldown = 0;
-    public final AbilityType type = AbilityType.CAST;
-
     public List<PlayerEntity> players = null;
 
     @Override
@@ -50,7 +43,7 @@ public class MartyrsTouch extends AbilityBase {
                     } else if (players.contains(target)) {
                         players.add(target);
                         player.sendMessageToClient(Text.literal("You have selected ").append(target.getName()).formatted(Formatting.GREEN), true);
-                        return true;
+                        return super.cast(player);
                     }
                 }
             } else {
@@ -76,11 +69,6 @@ public class MartyrsTouch extends AbilityBase {
     }
 
     @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-
-    @Override
     public void displayTick(PlayerEntity player) {
         if (players != null) {
             for (PlayerEntity target : players) {
@@ -90,21 +78,17 @@ public class MartyrsTouch extends AbilityBase {
         }
     }
 
-    public String getName() { return name; }
+    public String getName() { return "Martyr's Touch"; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public Identifier getID() { return new Identifier(SoulForge.MOD_ID, "martyrs_touch"); }
 
-    public Identifier getID() { return id; }
+    public int getLV() { return 15; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCost() { return 40; }
 
-    public int getLV() { return requiredLv; }
+    public int getCooldown() { return 0; }
 
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

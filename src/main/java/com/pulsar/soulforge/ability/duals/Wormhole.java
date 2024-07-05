@@ -1,51 +1,16 @@
 package com.pulsar.soulforge.ability.duals;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class Wormhole extends AbilityBase {
-    public final String name = "Wormhole";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "wormhole");
-    public final int requiredLv = 15;
-    public final int cost = 30;
-    public final int cooldown = 600;
-    public final AbilityType type = AbilityType.CAST;
+    public int getLV() { return 15; }
 
-    @Override
-    public boolean cast(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getCost() { return 30; }
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getCooldown() { return 600; }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-
-    public String getName() { return name; }
-
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
-
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

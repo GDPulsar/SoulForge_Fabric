@@ -12,8 +12,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -23,13 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class StatusInversion extends AbilityBase {
-    public final String name = "Status Inversion";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "status_inversion");
-    public final int requiredLv = 12;
-    public final int cost = 40;
-    public final int cooldown = 200;
-    public final AbilityType type = AbilityType.CAST;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
         EntityHitResult hit = Utils.getFocussedEntity(player, 32f);
@@ -94,34 +85,16 @@ public class StatusInversion extends AbilityBase {
                 }
             }
         }
-        return true;
+        return super.cast(player);
     }
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getLV() { return 12; }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getCost() { return 40; }
 
-    public String getName() { return name; }
+    public int getCooldown() { return 200; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
-
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

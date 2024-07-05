@@ -2,7 +2,6 @@ package com.pulsar.soulforge.ability.determination;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -18,8 +17,6 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -27,12 +24,6 @@ import net.minecraft.world.World;
 import java.util.Objects;
 
 public class DeterminationDome extends ToggleableAbilityBase {
-    public final String name = "Determination Dome";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "determination_dome");
-    public final int requiredLv = 10;
-    public final int cost = 40;
-    public final int cooldown = 300;
-
     public float domeHealth = 200f;
     public DomeEntity entity;
     private BlockPos center = null;
@@ -45,7 +36,7 @@ public class DeterminationDome extends ToggleableAbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         if (!player.getWorld().isClient) {
-            toggleActive();
+            super.cast(player);
             if (getActive()) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 domeHealth = playerSoul.getEffectiveLV() * 10f;
@@ -127,22 +118,12 @@ public class DeterminationDome extends ToggleableAbilityBase {
         player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 150f, 1f);
         return true;
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 10; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public int getCooldown() { return 300; }
 
     @Override
     public AbilityBase getInstance() {
@@ -160,5 +141,6 @@ public class DeterminationDome extends ToggleableAbilityBase {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         super.readNbt(nbt);
         center = NbtHelper.toBlockPos(nbt.getCompound(("center")));
+        super.readNbt(nbt);
     }
 }

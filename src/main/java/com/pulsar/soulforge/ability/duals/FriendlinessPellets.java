@@ -8,19 +8,9 @@ import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public class FriendlinessPellets extends AbilityBase {
-    public final String name = "Friendliness Pellets";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "friendliness_pellets");
-    public final int requiredLv = 1;
-    public final int cost = 4;
-    public final int cooldown = 2;
-    public final AbilityType type = AbilityType.CAST;
-    
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -31,34 +21,16 @@ public class FriendlinessPellets extends AbilityBase {
         projectile.velocityModified = true;
         world.spawnEntity(projectile);
         world.playSoundFromEntity(null, player, SoulForgeSounds.PELLET_SUMMON_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-        return true;
+        return super.cast(player);
     }
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getLV() { return 1; }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getCost() { return 4; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCooldown() { return 2; }
 
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

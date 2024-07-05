@@ -10,7 +10,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -20,12 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 public class TelekinesisEntity extends ToggleableAbilityBase {
-    public final String name = "Telekinesis: Entity";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "telekinesis_entity");
-    public final int requiredLv = 3;
-    public final int cost = 25;
-    public final int cooldown = 900;
-
     private LivingEntity target = null;
     private int timer = 0;
 
@@ -47,8 +40,7 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
                             new DustParticleEffect(Vec3d.unpackRgb(0x0000FF).toVector3f(), 1f),
                             target.getX()+x, target.getY(), target.getZ()+z, 1, 0, 0.2, 0, 0);
                 }
-                setActive(true);
-                return true;
+                return super.cast(player);
             }
         } else {
             target.setVelocity(target.getPos().subtract(target.prevX, target.prevY, target.prevZ));
@@ -82,29 +74,26 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
             if (target.isDead()) target = null;
         }
         timer--;
-        return target == null || timer <= 0 || !getActive();
+        return target == null || timer <= 0 || super.tick(player);
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
         target = null;
-        setActive(false);
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    @Override
+    public String getName() { return "Telekinesis: Entity"; }
 
-    public Identifier getID() { return id; }
+    @Override
+    public Identifier getID() { return new Identifier(SoulForge.MOD_ID, "telekinesis_entity"); }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getLV() { return 3; }
 
-    public int getLV() { return requiredLv; }
+    public int getCost() { return 25; }
 
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 900; }
 
     @Override
     public AbilityBase getInstance() {

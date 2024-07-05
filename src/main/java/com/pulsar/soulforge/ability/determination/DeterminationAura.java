@@ -2,22 +2,15 @@ package com.pulsar.soulforge.ability.determination;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-
-import java.util.Objects;
 
 public class DeterminationAura extends ToggleableAbilityBase {
     public final String name = "Determination Aura";
@@ -30,13 +23,15 @@ public class DeterminationAura extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (getActive()) {
+        if (!getActive()) {
+            if (playerSoul.getMagic() < 100f) {
+                setActive(false);
+                return false;
+            }
             playerSoul.setMagic(0f);
-            timer = 0;
         }
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -56,29 +51,21 @@ public class DeterminationAura extends ToggleableAbilityBase {
         EntityAttributeModifier strengthModifier = new EntityAttributeModifier("determination_aura_strength", playerSoul.getEffectiveLV()*0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
         player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
         player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "determination_aura_health");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "determination_aura_strength");
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 19; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 100; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 0; }
 
     @Override
     public AbilityBase getInstance() {

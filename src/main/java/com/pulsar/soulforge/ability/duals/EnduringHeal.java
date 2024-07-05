@@ -8,26 +8,14 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Vector3f;
 
 public class EnduringHeal extends AbilityBase {
-    public final String name = "Enduring Heal";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "enduring_heal");
-    public final int requiredLv = 1;
-    public final int cost = 20;
-    public final int cooldown = 2000;
-    public final AbilityType type = AbilityType.CAST;
-
     int timer = 0;
     LivingEntity target = null;
 
@@ -49,7 +37,7 @@ public class EnduringHeal extends AbilityBase {
                             target.getZ() + Math.random()*2-1,
                             0, 0, 0);
                 }
-                return true;
+                return super.cast(player);
             }
         }
         return false;
@@ -64,29 +52,16 @@ public class EnduringHeal extends AbilityBase {
             if (timer % rate == 0) target.heal(1f);
             return timer <= 0;
         }
-        return true;
+        return super.tick(player);
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
+    public int getLV() { return 1; }
 
-    public String getName() { return name; }
+    public int getCost() { return 20; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCooldown() { return 2000; }
 
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

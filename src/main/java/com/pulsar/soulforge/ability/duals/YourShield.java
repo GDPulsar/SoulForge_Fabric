@@ -7,17 +7,8 @@ import com.pulsar.soulforge.ability.kindness.PainSplit;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class YourShield extends AbilityBase {
-    public final String name = "Your Shield";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "your_shield");
-    public final int requiredLv = 15;
-    public final int cost = 30;
-    public final int cooldown = 200;
-    public final AbilityType type = AbilityType.CAST;
-
     public boolean pullTarget = false;
     public PlayerEntity target;
     private int fallImmunityTime = 0;
@@ -40,7 +31,7 @@ public class YourShield extends AbilityBase {
                     player.setVelocity(target.getPos().subtract(player.getPos()).normalize().multiply(2.5f));
                     player.velocityModified = true;
                 }
-                return true;
+                return super.cast(player);
             }
         }
         return false;
@@ -52,7 +43,7 @@ public class YourShield extends AbilityBase {
             fallImmunityTime++;
             return fallImmunityTime >= 80;
         }
-        return true;
+        return super.tick(player);
     }
 
     @Override
@@ -61,24 +52,16 @@ public class YourShield extends AbilityBase {
             SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
             targetSoul.removeTag("fallImmune");
         }
-        return true;
+        return super.end(player);
     }
 
-    public String getName() { return name; }
+    public int getLV() { return 15; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 30; }
 
-    public Identifier getID() { return id; }
+    public int getCooldown() { return 200; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

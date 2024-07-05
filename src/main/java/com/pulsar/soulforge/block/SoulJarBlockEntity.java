@@ -1,7 +1,7 @@
 package com.pulsar.soulforge.block;
 
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.components.AbilityLayout;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.block.BlockState;

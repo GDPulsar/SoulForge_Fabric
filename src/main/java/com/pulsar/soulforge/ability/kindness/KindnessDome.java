@@ -2,7 +2,6 @@ package com.pulsar.soulforge.ability.kindness;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -21,8 +20,6 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -34,12 +31,6 @@ import org.joml.Vector3f;
 import java.util.Objects;
 
 public class KindnessDome extends ToggleableAbilityBase {
-    public final String name = "Kindness Dome";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "kindness_dome");
-    public final int requiredLv = 5;
-    public final int cost = 40;
-    public final int cooldown = 300;
-
     public DomeEntity entity;
     private BlockPos center = null;
     private int domeRadius = 4;
@@ -53,7 +44,7 @@ public class KindnessDome extends ToggleableAbilityBase {
         if (!player.getWorld().isClient) {
             BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(40f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
             if (hitResult != null) {
-                toggleActive();
+                super.cast(player);
                 if (getActive()) {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                     center = hitResult.getBlockPos();
@@ -109,9 +100,9 @@ public class KindnessDome extends ToggleableAbilityBase {
     @Override
     public boolean tick(ServerPlayerEntity player) {
         if (entity != null) {
-            return !getActive() || !entity.isAlive() || entity.isRemoved();
+            return super.tick(player) || !entity.isAlive() || entity.isRemoved();
         }
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
@@ -145,7 +136,7 @@ public class KindnessDome extends ToggleableAbilityBase {
         }
         entity = null;
         player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 10f, 1f);
-        return true;
+        return super.end(player);
     }
 
     @Override
@@ -170,22 +161,12 @@ public class KindnessDome extends ToggleableAbilityBase {
             }
         }
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 5; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public int getCooldown() { return 300; }
 
     @Override
     public AbilityBase getInstance() {

@@ -28,12 +28,6 @@ import org.joml.Vector3f;
 import java.util.List;
 
 public class HestiasHearth extends ToggleableAbilityBase {
-    public final String name = "Hestia's Hearth";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "hestias_hearth");
-    public final int requiredLv = 10;
-    public final int cost = 5;
-    public final int cooldown = 1800;
-
     public Vec3d hestiaPos = null;
     public int charge = 0;
     public int timer = 0;
@@ -45,7 +39,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
             hestiaPos = player.getPos();
             charge = 15;
             timer = 40;
-            setActive(true);
+            super.cast(player);
         } else {
             if (playerSoul.getMagic() < 5f) return false;
             if (charge < 100) {
@@ -59,7 +53,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
             playerSoul.resetLastCastTime();
             return false;
         }
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -133,7 +127,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
         charge = 0;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.setCooldown(this, 1800);
-        return true;
+        return super.end(player);
     }
 
     @Override
@@ -143,19 +137,15 @@ public class HestiasHearth extends ToggleableAbilityBase {
         }
     }
 
-    public String getName() { return name; }
+    public String getName() { return "Hestia's Hearth"; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public Identifier getID() { return new Identifier(SoulForge.MOD_ID, "hestias_hearth"); }
 
-    public Identifier getID() { return id; }
+    public int getLV() { return 10; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCost() { return 5; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 1800; }
 
     @Override
     public AbilityBase getInstance() {

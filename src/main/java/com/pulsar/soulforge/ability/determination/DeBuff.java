@@ -8,7 +8,6 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 
@@ -16,13 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeBuff extends AbilityBase {
-    public final String name = "De-Buff";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "de_buff");
-    public final int requiredLv = 12;
-    public final int cost = 35;
-    public final int cooldown = 500;
-    public final AbilityType type = AbilityType.CAST;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
         EntityHitResult hit = Utils.getFocussedEntity(player, 5f);
@@ -46,36 +38,22 @@ public class DeBuff extends AbilityBase {
             for (StatusEffectInstance instance : newEffects) {
                 living.addStatusEffect(instance);
             }
-            return true;
+            return super.cast(player);
         }
         return false;
     }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        return true;
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
     
-    public String getName() { return name; }
+    public String getName() { return "De-Buff"; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public Identifier getID() { return new Identifier(SoulForge.MOD_ID, "de_buff"); }
 
-    public Identifier getID() { return id; }
+    public int getLV() { return 12; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCost() { return 35; }
 
-    public int getLV() { return requiredLv; }
+    public int getCooldown() { return 500; }
 
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

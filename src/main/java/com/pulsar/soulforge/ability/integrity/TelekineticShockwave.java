@@ -7,26 +7,15 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 public class TelekineticShockwave extends AbilityBase {
-    public final String name = "Telekinetic Shockwave";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "telekinetic_shockwave");
-    public final int requiredLv = 15;
-    public final int cost = 35;
-    public final int cooldown = 200;
-    public final AbilityType type = AbilityType.CAST;
-
     public int gojoTimer = 0;
     public boolean isGojo = false;
 
@@ -54,7 +43,7 @@ public class TelekineticShockwave extends AbilityBase {
         } else {
             gojoTimer = 0;
         }
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -87,29 +76,16 @@ public class TelekineticShockwave extends AbilityBase {
             gojoTimer++;
             return gojoTimer >= playerSoul.getEffectiveLV()*3f;
         }
-        return true;
+        return super.tick(player);
     }
 
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        return true;
-    }
-    
-    public String getName() { return name; }
+    public int getLV() { return 15; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 35; }
 
-    public Identifier getID() { return id; }
+    public int getCooldown() { return 200; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

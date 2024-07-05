@@ -2,7 +2,6 @@ package com.pulsar.soulforge.ability.kindness;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.ImmobilizationEntity;
@@ -15,18 +14,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.event.GameEvent;
 
 public class Immobilization extends ToggleableAbilityBase {
-    public final String name = "Immobilization";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "immobilization");
-    public final int requiredLv = 7;
-    public final int cost = 30;
-    public final int cooldown = 1200;
-
     private ImmobilizationEntity entity;
     private LivingEntity target = null;
 
@@ -77,8 +68,7 @@ public class Immobilization extends ToggleableAbilityBase {
                     serverWorld.spawnEntity(entity);
                     serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
                     target.setInvulnerable(true);
-                    setActive(true);
-                    return getActive();
+                    return super.cast(player);
                 }
             }
         } else {
@@ -110,22 +100,14 @@ public class Immobilization extends ToggleableAbilityBase {
             }
             target.setInvulnerable(false);
         }
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 7; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 30; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 1200; }
 
     @Override
     public AbilityBase getInstance() {

@@ -8,28 +8,19 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class BraveryBoost extends ToggleableAbilityBase {
-    public final String name = "Bravery Boost";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "bravery_boost");
-    public final int requiredLv = 15;
-    public final int cost = 100;
-    public final int cooldown = 0;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (getActive()) {
+        if (!getActive()) {
             if (playerSoul.getMagic() < 100f) {
                 setActive(false);
                 return false;
             }
             playerSoul.setMagic(0f);
         }
-        return true;
+        return super.cast(player);
     }
 
     @Override
@@ -41,29 +32,22 @@ public class BraveryBoost extends ToggleableAbilityBase {
         EntityAttributeModifier strengthModifier = new EntityAttributeModifier("bravery_boost_strength", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
         player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
         player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "bravery_boost_health");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "bravery_boost_strength");
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
 
-    public Identifier getID() { return id; }
+    public int getLV() { return 15; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCost() { return 100; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 0; }
 
     @Override
     public AbilityBase getInstance() {

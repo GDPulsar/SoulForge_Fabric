@@ -2,45 +2,31 @@ package com.pulsar.soulforge.ability.duals;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.Utils;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.Objects;
 
 public class PerfectedAuraTechnique extends ToggleableAbilityBase {
-    public final String name = "Perfected Aura Technique";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "perfected_aura_technique");
-    public final int requiredLv = 15;
-    public final int cost = 100;
-    public final int cooldown = 0;
-
     public boolean fullPower = false;
     public int timer = 0;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        toggleActive();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (getActive()) {
             if (playerSoul.getMagic() < 100f) {
@@ -49,13 +35,13 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             }
             playerSoul.setMagic(0f);
         }
-        return true;
+        return super.cast(player);
     }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (fullPower) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             if (timer == 5020) {
                 player.setHealth(60f);
                 playerSoul.setMagic(100f);
@@ -109,7 +95,6 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
                 }
             }
         } else {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "pat_health");
             Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "pat_armor");
             Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "pat_strength");
@@ -120,7 +105,7 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addPersistentModifier(armorModifier);
             player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
         }
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
@@ -132,22 +117,14 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COOLDOWN, "pat_cooldown");
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "pat_cost");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "pat_speed");
-        return true;
+        return super.end(player);
     }
 
-    public String getName() { return name; }
+    public int getLV() { return 15; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getCost() { return 100; }
 
-    public Identifier getID() { return id; }
-
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 0; }
 
     @Override
     public AbilityBase getInstance() {
@@ -166,5 +143,6 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         fullPower = nbt.getBoolean("fullPower");
         timer = nbt.getInt("timer");
+        super.readNbt(nbt);
     }
 }

@@ -3,34 +3,22 @@ package com.pulsar.soulforge.ability.justice;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.OrbitalStrikeEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import net.minecraft.world.event.GameEvent;
 
 import java.util.Objects;
 
 public class OrbitalStrike extends AbilityBase {
-    public final String name = "Orbital Strike";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "orbital_strike");
-    public final int requiredLv = 20;
-    public final int cost = 50;
-    public final int cooldown = 6000;
-    public final AbilityType type = AbilityType.SPECIAL;
-
     public OrbitalStrikeEntity entity;
     public int timer = 0;
 
@@ -48,7 +36,7 @@ public class OrbitalStrike extends AbilityBase {
             serverWorld.spawnEntity(entity);
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_REVIVAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
             timer = 300;
-            return true;
+            return super.cast(player);
         }
         return false;
     }
@@ -72,24 +60,16 @@ public class OrbitalStrike extends AbilityBase {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.removeTag("immobile");
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 2400, 1));
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 20; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 50; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
+    public int getCooldown() { return 6000; }
 
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
-
-    public AbilityType getType() { return type; }
+    public AbilityType getType() { return AbilityType.SPECIAL; }
 
     @Override
     public AbilityBase getInstance() {
@@ -106,5 +86,6 @@ public class OrbitalStrike extends AbilityBase {
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         timer = nbt.getInt("timer");
+        super.readNbt(nbt);
     }
 }
