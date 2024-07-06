@@ -4,7 +4,6 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -90,7 +89,7 @@ public abstract class ProjectileEntityMixin {
                                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 60, 2));
                             }
                             if (persistentProjectile.getCommandTags().contains("Patience Siphon")) {
-                                target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 60, 0));
+                                target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 60, 0));
                             }
                             if (persistentProjectile.getCommandTags().contains("Kindness Siphon")) {
                                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 40, 1));

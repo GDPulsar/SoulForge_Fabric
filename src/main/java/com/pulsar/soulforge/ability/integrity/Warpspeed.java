@@ -67,7 +67,7 @@ public class Warpspeed extends AbilityBase {
         player.setStepHeight(0.6f);
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "Warpspeed");
         Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "Warpspeed");
-        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1800, 1));
+        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1800, 1));
         return super.end(player);
     }
 

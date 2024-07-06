@@ -24,7 +24,7 @@ public class Iceshock extends AbilityBase {
                 }
                 player.getServerWorld().spawnParticles(ParticleTypes.SNOWFLAKE, target.getX(), target.getY(), target.getZ(), 20, 0.5, 1, 0.5, 0.1);
                 player.getServerWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_ICESHOCK_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                target.damage(SoulForgeDamageTypes.of(player.getWorld(), SoulForgeDamageTypes.ABILITY_PIERCE_DAMAGE_TYPE), 3f);
+                target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_PIERCE_DAMAGE_TYPE), 3f);
                 return super.cast(player);
             }
         }

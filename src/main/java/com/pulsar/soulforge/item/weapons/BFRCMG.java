@@ -5,20 +5,17 @@ import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BlastEntity;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -86,7 +83,7 @@ public class BFRCMG extends MagicItem implements GeoItem {
                         if (stack.getNbt().getInt("heat") == 20) {
                             playerSoul.removeWeapon(false);
                             player.getWorld().createExplosion(null, player.getDamageSources().explosion(player, player), new ExplosionBehavior(), player.getPos(), 1f, false, World.ExplosionSourceType.NONE);
-                            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1200, 1));
+                            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1200, 1));
                         }
                     }
                 }

@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -52,7 +50,7 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
                 if (this.age % 20 == 0) {
                     DamageSource source;
                     if (getOwner() != null) source = SoulForgeDamageTypes.of(getOwner().getWorld(), SoulForgeDamageTypes.STUCK_SPEAR_DAMAGE_TYPE);
-                    else source = SoulForgeDamageTypes.of(getOwner().getWorld(), SoulForgeDamageTypes.STUCK_SPEAR_DAMAGE_TYPE);
+                    else source = SoulForgeDamageTypes.of(getOwner(), this.getWorld(), SoulForgeDamageTypes.STUCK_SPEAR_DAMAGE_TYPE);
                     int timeUntilRegen = stuckEntity.timeUntilRegen;
                     stuckEntity.timeUntilRegen = 0;
                     stuckEntity.damage(source, 2f);
@@ -90,13 +88,12 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
         }
         float f = 5.0f;
         Entity entity2 = this.getOwner();
-        DamageSource damageSource = this.getDamageSources().trident(this, entity2 == null ? this : entity2);
+        DamageSource damageSource = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);
         if (entity.damage(damageSource, f)) {
             if (entity.getType() == EntityType.ENDERMAN) {
                 return;
             }
-            if (entity instanceof LivingEntity) {
-                LivingEntity livingEntity2 = (LivingEntity)entity;
+            if (entity instanceof LivingEntity livingEntity2) {
                 if (entity2 instanceof LivingEntity) {
                     EnchantmentHelper.onUserDamaged(livingEntity2, entity2);
                     EnchantmentHelper.onTargetDamaged((LivingEntity)entity2, livingEntity2);
@@ -110,11 +107,6 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
 
     @Override
     protected boolean tryPickup(PlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (!playerSoul.hasWeapon() && this.isOwner(player)) {
-            playerSoul.setWeapon(new ItemStack(SoulForgeItems.BRAVERY_SPEAR));
-            return true;
-        }
         return false;
     }
 

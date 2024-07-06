@@ -15,9 +15,7 @@ import net.minecraft.item.ToolMaterials;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
@@ -42,9 +40,7 @@ public class Shatterdrill extends PickaxeDeviceBase implements GeoItem {
         ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient) {
             if (getCharge(stack) >= 25) {
-                BlockHitResult hit = world.raycast(new RaycastContext(user.getPos(), user.getPos().subtract(0, 100, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, user));
-                BlockState state = world.getBlockState(hit.getBlockPos());
-                if (hit.getPos().distanceTo(user.getPos()) >= 1f && state.isSolidBlock(world, hit.getBlockPos())) {
+                if (user.getSteppingBlockState().isAir()) {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
                     playerSoul.addTag("shatterdrill");
                     user.setVelocity(0, -2f, 0);

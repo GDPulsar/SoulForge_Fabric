@@ -2,7 +2,7 @@ package com.pulsar.soulforge.ability.determination;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
-public class SAVELOAD extends AbilityBase {
+public class SAVELOAD extends ToggleableAbilityBase {
     public int timer = 0;
     public Vec3d savedPosition = Vec3d.ZERO;
     public boolean self = false;
@@ -41,13 +41,13 @@ public class SAVELOAD extends AbilityBase {
         } else {
             setActive(false);
         }
-        return getActive();
+        return true;
     }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
         timer--;
-        return timer < 0 || !getActive();
+        return timer < 0 || super.tick(player);
     }
 
     @Override
@@ -71,9 +71,6 @@ public class SAVELOAD extends AbilityBase {
     public int getCost() { return 40; }
 
     public int getCooldown() { return 600; }
-
-    @Override
-    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

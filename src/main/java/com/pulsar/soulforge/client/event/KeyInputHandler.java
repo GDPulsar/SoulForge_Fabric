@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.client.event;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.determination.WeaponWheel;
 import com.pulsar.soulforge.ability.duals.Armory;
@@ -8,6 +7,7 @@ import com.pulsar.soulforge.ability.duals.Reload;
 import com.pulsar.soulforge.ability.duals.Wormhole;
 import com.pulsar.soulforge.ability.perseverance.MorphingWeaponry;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
+import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
 import com.pulsar.soulforge.client.ui.*;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -53,7 +53,7 @@ public class KeyInputHandler {
                 } else if (client.currentScreen instanceof SoulScreen soulScreen) {
                     client.setScreen(soulScreen.parent);
                 } else {
-                    ClientPlayNetworking.send(SoulForgeNetworking.TOGGLE_MAGIC_MODE, PacketByteBufs.create());
+                    if (ClientNetworkingHandler.playerSoul != null) ClientNetworkingHandler.playerSoul.toggleMagicMode();
                 }
             }
             while (AbilityScreenKey.wasPressed()) {
@@ -64,22 +64,27 @@ public class KeyInputHandler {
                 }
             }
             while (CycleUpKey.wasPressed()) {
-                ClientPlayNetworking.send(SoulForgeNetworking.SWITCH_MODE, PacketByteBufs.create().writeVarInt(1));
+                if (ClientNetworkingHandler.playerSoul != null) {
+                    ClientNetworkingHandler.playerSoul.setAbilityRow((ClientNetworkingHandler.playerSoul.getAbilityRow()+1)%4);
+                }
             }
             while (CycleDownKey.wasPressed()) {
-                ClientPlayNetworking.send(SoulForgeNetworking.SWITCH_MODE, PacketByteBufs.create().writeVarInt(-1));
+                if (ClientNetworkingHandler.playerSoul != null) {
+                    ClientNetworkingHandler.playerSoul.setAbilityRow((ClientNetworkingHandler.playerSoul.getAbilityRow()+3)%4);
+                }
             }
             while (SoulResetKey.wasPressed()) {
                 ClientPlayNetworking.send(SoulForgeNetworking.START_SOUL_RESET, PacketByteBufs.create());
             }
             while (CastAbilityKey.wasPressed()) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(client.player);
+                SoulComponent playerSoul = ClientNetworkingHandler.playerSoul;
+                if (playerSoul == null) break;
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeBoolean(playerSoul.magicModeActive());
                 if (playerSoul.magicModeActive()) {
-                    buf.writeBoolean(false);
-                    buf.writeVarInt(playerSoul.getAbilitySlot());
                     AbilityBase ability = playerSoul.getLayoutAbility(playerSoul.getAbilityRow(), playerSoul.getAbilitySlot());
+                    buf.writeBoolean(true);
+                    buf.writeString(ability.getName());
                     if (playerSoul.onCooldown(ability)) break;
                     if (ability instanceof WeaponWheel || ability instanceof Wormhole || ability instanceof Armory || ability instanceof Reload || ability instanceof MorphingWeaponry) {
                         float cost = ability.getCost();
@@ -107,7 +112,11 @@ public class KeyInputHandler {
                 }
             }
             while (WeaponSlotKey.wasPressed()) {
-                if (client.player != null) client.player.getInventory().selectedSlot = 9;
+                if (client.player != null) {
+                    if (ClientNetworkingHandler.playerSoul != null) {
+                        if (ClientNetworkingHandler.playerSoul.hasWeapon()) client.player.getInventory().selectedSlot = 9;
+                    }
+                }
             }
         });
     }

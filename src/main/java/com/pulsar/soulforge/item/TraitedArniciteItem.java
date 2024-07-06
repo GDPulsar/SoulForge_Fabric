@@ -24,7 +24,7 @@ public class TraitedArniciteItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-        if (playerSoul.getTraits().contains(trait) && !user.hasStatusEffect(SoulForgeEffects.MANA_OVERLOAD)) {
+        if (playerSoul.getTraits().contains(trait) && !user.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) {
             if (playerSoul.getMagic() < 100f) {
                 playerSoul.setMagic(playerSoul.getMagic() + 50f);
                 user.giveItemStack(new ItemStack(SoulForgeItems.ARNICITE));

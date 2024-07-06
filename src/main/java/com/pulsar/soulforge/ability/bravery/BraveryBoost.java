@@ -19,8 +19,11 @@ public class BraveryBoost extends ToggleableAbilityBase {
                 return false;
             }
             playerSoul.setMagic(0f);
+            return super.cast(player);
+        } else {
+            setActive(false);
         }
-        return super.cast(player);
+        return true;
     }
 
     @Override

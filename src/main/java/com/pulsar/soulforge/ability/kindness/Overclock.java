@@ -63,7 +63,7 @@ public class Overclock extends AbilityBase {
                     }
                     player.sendMessageToClient(Text.literal("OVERCLOCK ACTIVE").formatted(Formatting.GREEN, Formatting.BOLD), true);
                     playerSoul.setMagic(0f);
-                    player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 2400, 1));
+                    player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2400, 1));
                     return super.cast(player);
                 }
             } else {

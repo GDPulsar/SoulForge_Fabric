@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 public abstract class AbilityBase {
     private boolean isActive = false;
     private int lastCastTime = 0;
+    private int offCooldownTime = 0;
 
     public String getName() {
         return String.join(" ", this.getClass().getSimpleName().split("(?=\\p{Upper})"));
@@ -28,12 +29,14 @@ public abstract class AbilityBase {
         nbt.putString("name", getName());
         nbt.putBoolean("active", isActive);
         nbt.putInt("lastCastTime", lastCastTime);
+        nbt.putInt("offCooldownTime", offCooldownTime);
         return nbt;
     }
 
     public void readNbt(NbtCompound nbt) {
         isActive = nbt.getBoolean("active");
         lastCastTime = nbt.getInt("lastCastTime");
+        offCooldownTime = nbt.getInt("offCooldownTime");
     }
 
     public void setActive(boolean active) {
@@ -47,6 +50,12 @@ public abstract class AbilityBase {
     }
     public int getLastCastTime() {
         return lastCastTime;
+    }
+    public void setOffCooldownTime(int offCooldownTime) {
+        this.offCooldownTime = offCooldownTime;
+    }
+    public int getOffCooldownTime() {
+        return offCooldownTime;
     }
 
     public boolean cast(ServerPlayerEntity player) {

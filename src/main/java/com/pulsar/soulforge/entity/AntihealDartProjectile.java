@@ -61,7 +61,7 @@ public class AntihealDartProjectile extends ProjectileEntity implements GeoEntit
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
-        DamageSource damageSource = this.getDamageSources().mobProjectile(this, (LivingEntity)this.getOwner());
+        DamageSource damageSource = this.getDamageSources().thrown(this, this.getOwner());
         if (entity instanceof PlayerEntity player) {
             entity.damage(damageSource, 5f);
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);

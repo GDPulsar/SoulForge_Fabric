@@ -2,6 +2,7 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -95,9 +96,7 @@ public class EnergyBallProjectile extends ProjectileEntity {
             }
         }
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), damage);
+        entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
         if (entity instanceof LivingEntity living) {
             if (frostburn) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 250, 0));
             else living.setFireTicks(250);

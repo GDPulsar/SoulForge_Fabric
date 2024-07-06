@@ -12,12 +12,10 @@ import org.jetbrains.annotations.Nullable;
 public class SoulForgeNetworking {
     // C2S
     public static final Identifier CAST_ABILITY = new Identifier(SoulForge.MOD_ID, "cast_ability");
-    public static final Identifier SWITCH_MODE = new Identifier(SoulForge.MOD_ID, "switch_mode");
     public static final Identifier SET_WEAPON = new Identifier(SoulForge.MOD_ID, "set_weapon");
     public static final Identifier RESET = new Identifier(SoulForge.MOD_ID, "reset");
     public static final Identifier VEINMINE = new Identifier(SoulForge.MOD_ID, "veinmine");
     public static final Identifier SET_ABILITY_LAYOUT = new Identifier(SoulForge.MOD_ID, "set_ability_layout");
-    public static final Identifier TOGGLE_MAGIC_MODE = new Identifier(SoulForge.MOD_ID, "toggle_magic_mode");
     public static final Identifier START_SOUL_RESET = new Identifier(SoulForge.MOD_ID, "start_soul_reset");
     public static final Identifier END_SOUL_RESET = new Identifier(SoulForge.MOD_ID, "end_soul_reset");
     public static final Identifier LEFT_CLICK = new Identifier(SoulForge.MOD_ID, "left_click");
@@ -37,12 +35,10 @@ public class SoulForgeNetworking {
 
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_ABILITY, CastAbilityPacket::receive);
-        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SWITCH_MODE, SwitchModePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SET_WEAPON, SetWeaponPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RESET, ResetPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.VEINMINE, VeinminePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SET_ABILITY_LAYOUT, SetAbilityLayoutPacket::receive);
-        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.TOGGLE_MAGIC_MODE, ToggleMagicModePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.START_SOUL_RESET, StartSoulResetPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.END_SOUL_RESET, EndSoulResetPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.LEFT_CLICK, LeftClickPacket::receive);

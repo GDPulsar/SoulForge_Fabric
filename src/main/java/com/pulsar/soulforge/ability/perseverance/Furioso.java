@@ -53,7 +53,7 @@ public class Furioso extends AbilityBase {
                 if (harpoon.hit == null) {
                     harpoon.kill();
                     harpoon = null;
-                    player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1800, 0));
+                    player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1800, 0));
                     return true;
                 } else {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -62,7 +62,7 @@ public class Furioso extends AbilityBase {
                         if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) {
                             harpoon.kill();
                             harpoon = null;
-                            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1800, 0));
+                            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1800, 0));
                             return true;
                         }
                         SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
@@ -103,7 +103,7 @@ public class Furioso extends AbilityBase {
         if (timer == 98) target.damage(player.getDamageSources().playerAttack(player), 7);
         if (timer == 110) {
             playerSoul.removeWeapon();
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1800, 2));
+            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1800, 2));
         }
         return timer >= 110;
     }

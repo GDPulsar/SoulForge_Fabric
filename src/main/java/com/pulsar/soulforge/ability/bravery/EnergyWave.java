@@ -26,6 +26,7 @@ public class EnergyWave extends ToggleableAbilityBase {
     private int chargeTimer = 0;
     private int chargeLevel = 0;
     private boolean overcharged = false;
+    private int lastCooldownLength = 0;
 
     private final EntityAttributeModifier modifier = new EntityAttributeModifier("energy_wave", -0.7, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
@@ -35,11 +36,11 @@ public class EnergyWave extends ToggleableAbilityBase {
             player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(modifier);
             chargeLevel = 0;
             chargeTimer = 0;
-            setActive(true);
+            super.cast(player);
         } else {
             setActive(false);
         }
-        return getActive();
+        return true;
     }
 
     @Override
@@ -64,12 +65,11 @@ public class EnergyWave extends ToggleableAbilityBase {
             }
             chargeLevel += 1;
         }
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
-        setActive(false);
         Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(30f));
         HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(30f)), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
         if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
@@ -79,7 +79,7 @@ public class EnergyWave extends ToggleableAbilityBase {
         if (overcharged) {
             damage = 1.6f * playerSoul.getEffectiveLV();
             size = 0.5f;
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 2400, 1));
+            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2400, 1));
             playerSoul.setValue("overchargeCooldown", 6000);
         }
         BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
@@ -89,17 +89,17 @@ public class EnergyWave extends ToggleableAbilityBase {
         serverWorld.spawnEntity(blast);
         serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
         serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-        playerSoul.setCooldown(this, 100+20*chargeLevel);
-        playerSoul.setValue("energyWaveCooldown", 100 + 20*chargeLevel);
+        setLastCastTime(player.age);
+        lastCooldownLength = 100 + 20 * chargeLevel;
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "energy_wave");
-        return true;
+        return super.end(player);
     }
 
     public int getLV() { return 3; }
 
     public int getCost() { return 20; }
 
-    public int getCooldown() { return 0; }
+    public int getCooldown() { return lastCooldownLength; }
 
     public AbilityType getType() { return AbilityType.CAST; }
 

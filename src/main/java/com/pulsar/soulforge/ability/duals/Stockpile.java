@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +25,7 @@ public class Stockpile extends AbilityBase {
                 if (!playerSoul.hasValue("stockpiles")) playerSoul.setValue("stockpiles", 0);
                 playerSoul.setValue("stockpiles", playerSoul.getValue("stockpiles")+1);
                 playerSoul.setValue("stockpileTimer", 2400);
-                target.damage(player.getDamageSources().playerAttack(player), 3f);
+                target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.STOCKPILE_DAMAGE_TYPE), 3f);
                 return super.cast(player);
             }
         }

@@ -12,7 +12,7 @@ public class FragmentationGrenade extends AbilityBase {
         World world = player.getWorld();
         FragmentationGrenadeProjectile projectile = new FragmentationGrenadeProjectile(world, player.getEyePos(), player);
         projectile.setPosition(player.getEyePos());
-        projectile.setVelocity(player.getRotationVector().multiply(1.5f));
+        projectile.setVelocity(player.getRotationVector().multiply(2f));
         projectile.setOwner(player);
         world.spawnEntity(projectile);
         return true;

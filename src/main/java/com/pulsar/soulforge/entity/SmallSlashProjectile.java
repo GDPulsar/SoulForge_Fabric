@@ -1,5 +1,8 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -73,12 +76,15 @@ public class SmallSlashProjectile extends ProjectileEntity implements GeoAnimata
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
         if (entity instanceof LivingEntity living) {
             living.maxHurtTime = 0;
         }
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), 10f);
+        float damage = 10f;
+        if (getOwner() instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            damage = playerSoul.getEffectiveLV() / 2f;
+        }
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
     }
 
     private void destroy() {

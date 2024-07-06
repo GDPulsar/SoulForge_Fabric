@@ -18,9 +18,8 @@ public class FearlessInstincts extends ToggleableAbilityBase {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "fearless_instincts_health");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "fearless_instincts_strength");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "fearless_instincts_speed");
-        if (getActive()) {
+        if (!getActive()) {
             if (playerSoul.getMagic() < 100f) {
-                setActive(false);
                 return false;
             }
             playerSoul.addTag("fallImmune");
@@ -30,8 +29,7 @@ public class FearlessInstincts extends ToggleableAbilityBase {
             player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_strength", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
             playerSoul.setMagic(0f);
         }
-        super.cast(player);
-        return getActive();
+        return super.cast(player);
     }
 
     @Override

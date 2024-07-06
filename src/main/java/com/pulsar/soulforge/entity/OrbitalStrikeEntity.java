@@ -8,6 +8,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
@@ -28,6 +29,10 @@ public class OrbitalStrikeEntity extends Entity {
         return false;
     }
 
+    public boolean isFireImmune() {
+        return true;
+    }
+
     public OrbitalStrikeEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
     }
@@ -42,8 +47,12 @@ public class OrbitalStrikeEntity extends Entity {
         timer = nbt.getInt("timer");
     }
 
-    public Vec3d getPosition() { return new Vec3d(this.dataTracker.get(POSITION).x, this.dataTracker.get(POSITION).y, this.dataTracker.get(POSITION).z); }
-    public void setPos(Vec3d position) { this.dataTracker.set(POSITION, position.toVector3f()); }
+    public Vec3d getPosition() {
+        return new Vec3d(this.dataTracker.get(POSITION).x, this.dataTracker.get(POSITION).y, this.dataTracker.get(POSITION).z);
+    }
+    public void setPos(Vec3d position) {
+        this.dataTracker.set(POSITION, position.toVector3f());
+    }
 
     private int timer = 0;
     @Override
@@ -57,11 +66,7 @@ public class OrbitalStrikeEntity extends Entity {
                     }
                     float horizDist = (float) new Vec3d(getX(), 0f, getZ()).distanceTo(new Vec3d(entity.getX(), 0f, entity.getZ()));
                     if (horizDist <= 2f) {
-                        if (this.owner != null) {
-                            entity.damage(SoulForgeDamageTypes.of(owner.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 30);
-                        } else {
-                            entity.damage(SoulForgeDamageTypes.of(getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 30);
-                        }
+                        entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 30);
                     }
                 }
             }
@@ -81,8 +86,12 @@ public class OrbitalStrikeEntity extends Entity {
         return true;
     }
 
+    protected Box calculateBoundingBox() {
+        return super.calculateBoundingBox().withMinY(-64).withMaxY(320);
+    }
+
     @Override
     public EntityDimensions getDimensions(EntityPose pose) {
-        return EntityDimensions.fixed(4f, 20f);
+        return EntityDimensions.fixed(4f, 384f);
     }
 }

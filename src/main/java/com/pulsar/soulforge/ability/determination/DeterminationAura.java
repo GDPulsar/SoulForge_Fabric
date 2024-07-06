@@ -9,16 +9,9 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class DeterminationAura extends ToggleableAbilityBase {
-    public final String name = "Determination Aura";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "determination_aura");
-    public final int requiredLv = 19;
-    public final int cost = 100;
-    public final int cooldown = 0;
-
     int timer = 0;
 
     @Override

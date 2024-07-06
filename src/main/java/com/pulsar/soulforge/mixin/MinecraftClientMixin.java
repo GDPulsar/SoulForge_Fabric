@@ -28,15 +28,13 @@ public class MinecraftClientMixin {
         if (this.player != null) {
             if (this.player.hasStatusEffect(SoulForgeEffects.SNOWED_VISION)) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(this.player);
-                if (playerSoul != null) {
-                    if (playerSoul.getTraits().contains(Traits.patience) && playerSoul.getTraits().contains(Traits.perseverance)) {
-                        if (entity instanceof LivingEntity) {
-                            for (AbilityBase ability : playerSoul.getActiveAbilities()) {
-                                if (ability instanceof BlindingSnowstorm snowstorm) {
-                                    if (snowstorm.location.toCenterPos().distanceTo(entity.getPos()) < 140f) {
-                                        cir.setReturnValue(true);
-                                        return;
-                                    }
+                if (playerSoul.getTraits().contains(Traits.patience) && playerSoul.getTraits().contains(Traits.perseverance)) {
+                    if (entity instanceof LivingEntity) {
+                        for (AbilityBase ability : playerSoul.getActiveAbilities()) {
+                            if (ability instanceof BlindingSnowstorm snowstorm) {
+                                if (snowstorm.location.toCenterPos().distanceTo(entity.getPos()) < 140f) {
+                                    cir.setReturnValue(true);
+                                    return;
                                 }
                             }
                         }

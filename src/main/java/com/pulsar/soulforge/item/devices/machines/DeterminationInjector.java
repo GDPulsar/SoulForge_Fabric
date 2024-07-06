@@ -3,12 +3,10 @@ package com.pulsar.soulforge.item.devices.machines;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
-import com.pulsar.soulforge.client.item.RevivalIdolRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.devices.DeviceBase;
-import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -76,8 +74,8 @@ public class DeterminationInjector extends DeviceBase implements GeoItem {
                     stack.getOrCreateNbt().putInt("timer", 0);
                 } else {
                     if (!playerSoul.getTraits().contains(Traits.determination)) {
-                        user.damage(user.getDamageSources().magic(), timer / 500f);
-                        user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, timer/4, timer/4000));
+                        user.damage(SoulForgeDamageTypes.of(world, SoulForgeDamageTypes.INJECTOR_DAMAGE_TYPE), timer / 500f);
+                        user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, timer/4, timer/4000));
                         user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, timer/4, timer/4000));
                         user.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, timer/4, timer/4000));
                     }

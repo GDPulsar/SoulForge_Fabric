@@ -2,7 +2,6 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -46,7 +45,7 @@ public class DeterminationArrowProjectile extends PersistentProjectileEntity {
                 if (entityHitResult.getEntity() instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
                     if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
                 }
-                entityHitResult.getEntity().damage(getOwner().getDamageSources().mobProjectile(this, (LivingEntity)getOwner()), damage);
+                entityHitResult.getEntity().damage(getOwner().getDamageSources().arrow(this, getOwner()), damage);
             }
         }
         this.setVelocity(this.getVelocity().normalize());

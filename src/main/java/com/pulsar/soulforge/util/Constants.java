@@ -171,7 +171,7 @@ public class Constants {
             }
         }
         for (StatusEffectInstance effect : effects) {
-            if (effect.getEffectType() == SoulForgeEffects.MANA_OVERLOAD) newEffects.add(effect);
+            if (effect.getEffectType() == SoulForgeEffects.MANA_SICKNESS) newEffects.add(effect);
             if (!effectInversion.containsKey(effect.getEffectType())) continue;
             newEffects.add(new StatusEffectInstance(effectInversion.get(effect.getEffectType()), (int)(effect.getDuration() * durationModifier), (int)(effect.getAmplifier() * amplifierModifier)));
         }

@@ -1,7 +1,6 @@
 package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.determination.DeterminationShot;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
@@ -26,7 +25,6 @@ public class SoulForgeEntities {
     public static EntityType<AutoTurretEntity> TURRET_ENTITY_TYPE;
     public static EntityType<SmallSlashProjectile> SMALL_SLASH_ENTITY_TYPE;
     public static EntityType<BigSlashProjectile> BIG_SLASH_ENTITY_TYPE;
-    public static EntityType<DarkFountainEntity> DARK_FOUNTAIN_ENTITY_TYPE;
     public static EntityType<SpecialHellEntity> SPECIAL_HELL_ENTITY_TYPE;
     public static EntityType<OrbitalStrikeEntity> ORBITAL_STRIKE_ENTITY_TYPE;
     public static EntityType<FragmentationGrenadeProjectile> FRAGMENTATION_GRENADE_ENTITY_TYPE;
@@ -44,7 +42,7 @@ public class SoulForgeEntities {
     public static EntityType<IncendiaryGrenadeEntity> INCENDIARY_GRENADE_ENTITY_TYPE;
     public static EntityType<LightningRodProjectile> LIGHTNING_ROD_ENTITY_TYPE;
     public static EntityType<DetonatorMine> DETONATOR_MINE_ENTITY_TYPE;
-    public static EntityType<PolarityBall> POLARITY_BALL_ENTITY_TYPE;
+    public static EntityType<PolarityBallEntity> POLARITY_BALL_ENTITY_TYPE;
     public static EntityType<JusticeArrowTrinketProjectile> JUSTICE_ARROW_TRINKET_TYPE;
     public static EntityType<AntihealDartProjectile> ANTIHEAL_DART_ENTITY_TYPE;
     public static EntityType<ShieldShardEntity> SHIELD_SHARD_ENTITY_TYPE;
@@ -193,15 +191,6 @@ public class SoulForgeEntities {
                         .build()
         );
 
-        DARK_FOUNTAIN_ENTITY_TYPE = Registry.register(
-                Registries.ENTITY_TYPE,
-                new Identifier(SoulForge.MOD_ID, "dark_fountain"),
-                FabricEntityTypeBuilder.<DarkFountainEntity>create(SpawnGroup.MISC, DarkFountainEntity::new)
-                        .dimensions(EntityDimensions.changing(4f, 20f))
-                        .trackRangeBlocks(100).trackedUpdateRate(40)
-                        .build()
-        );
-
         SPECIAL_HELL_ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,
                 new Identifier(SoulForge.MOD_ID, "special_hell"),
@@ -215,8 +204,8 @@ public class SoulForgeEntities {
                 Registries.ENTITY_TYPE,
                 new Identifier(SoulForge.MOD_ID, "orbital_strike"),
                 FabricEntityTypeBuilder.<OrbitalStrikeEntity>create(SpawnGroup.MISC, OrbitalStrikeEntity::new)
-                        .dimensions(EntityDimensions.changing(4f, 20f))
-                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .dimensions(EntityDimensions.fixed(4f, 384f))
+                        .trackRangeBlocks(300).trackedUpdateRate(40)
                         .build()
         );
 
@@ -348,7 +337,7 @@ public class SoulForgeEntities {
         POLARITY_BALL_ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,
                 new Identifier(SoulForge.MOD_ID, "polarity_ball"),
-                FabricEntityTypeBuilder.<PolarityBall>create(SpawnGroup.MISC, PolarityBall::new)
+                FabricEntityTypeBuilder.<PolarityBallEntity>create(SpawnGroup.MISC, PolarityBallEntity::new)
                         .dimensions(EntityDimensions.fixed(0.5f, 0.5f))
                         .trackRangeBlocks(50).trackedUpdateRate(40)
                         .build()

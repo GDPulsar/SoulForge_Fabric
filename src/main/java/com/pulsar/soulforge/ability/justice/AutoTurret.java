@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -37,9 +36,8 @@ public class AutoTurret extends AbilityBase {
             }
             turret = null;
         }
-        turret = new AutoTurretEntity(player.getWorld());
-        turret.direction = new Vec3d(player.getRotationVector().x, 0f, player.getRotationVector().z).normalize();
-        turret.setPosition(player.getPos().add(turret.direction));
+        turret = new AutoTurretEntity(player.getWorld(), player);
+        turret.setPosition(player.getPos().add(turret.getDirection()));
         player.getWorld().spawnEntity(turret);
         turretUUID = turret.getUuid();
         player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.WEAPON_SUMMON_EVENT, SoundCategory.PLAYERS, 1f, 1f);

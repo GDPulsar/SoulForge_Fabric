@@ -8,6 +8,7 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -39,7 +40,7 @@ public class EntityMixin {
         if (entity instanceof PlayerEntity player) {
             if (player.isUsingItem()) {
                 if (player.getActiveItem().isOf(SoulForgeItems.GUNLANCE)) {
-                    return Math.min(2, value);
+                    return MathHelper.clamp(value, -0.5, 0.5);
                 }
             }
         }
@@ -52,7 +53,7 @@ public class EntityMixin {
         if (entity instanceof PlayerEntity player) {
             if (player.isUsingItem()) {
                 if (player.getActiveItem().isOf(SoulForgeItems.GUNLANCE)) {
-                    return Math.min(2, value);
+                    return MathHelper.clamp(value, -0.5, 0.5);
                 }
             }
         }

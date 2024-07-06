@@ -2,6 +2,7 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +40,7 @@ public class FireTornadoProjectile extends Entity implements GeoEntity {
     @Override
     public void tick() {
         calculateDimensions();
-        if (age%4 == 0) {
+        if (age % 4 == 0) {
             for (Entity entity : getEntityWorld().getOtherEntities(this, this.getBoundingBox(), Entity::canHit)) {
                 if (entity == owner) continue;
                 if (entity instanceof LivingEntity living) {
@@ -57,7 +58,7 @@ public class FireTornadoProjectile extends Entity implements GeoEntity {
                             SoulComponent playerSoul = SoulForge.getPlayerSoul(owner);
                             damage = playerSoul.getEffectiveLV()/4f;
                         }
-                        living.damage(this.getDamageSources().onFire(), damage);
+                        living.damage(SoulForgeDamageTypes.of(owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
                         living.timeUntilRegen = 10;
                     }
                 }
@@ -90,7 +91,7 @@ public class FireTornadoProjectile extends Entity implements GeoEntity {
     }
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
-        tAnimationState.getController().setAnimation(RawAnimation.begin().then("snowgrave.main", Animation.LoopType.LOOP));
+        tAnimationState.getController().setAnimation(RawAnimation.begin().then("fire_tornado.main", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 

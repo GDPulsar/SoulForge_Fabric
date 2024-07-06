@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "soulforge",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"name": "SoulForge",
 	"description": "A Minecraft mod built around UNDERTALE!",
 	"authors": [
@@ -12,7 +12,7 @@
 	],
 	"contact": {
 		"homepage": "https://discord.com/invite/pUGY2BvEk2",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/GDPulsar/SoulForge_Fabric/tree/1.20.1"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/soulforge/icon.png",

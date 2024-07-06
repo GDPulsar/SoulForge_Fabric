@@ -1,4 +1,10 @@
 {
+  "bonk": {
+    "subtitle": "subtitles.soulforge.bonk",
+    "sounds": [
+      "soulforge:bonk"
+    ]
+  },
   "dr_iceshock": {
     "subtitle": "subtitles.soulforge.dr_iceshock",
     "sounds": [

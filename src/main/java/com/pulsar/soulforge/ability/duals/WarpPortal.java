@@ -21,7 +21,7 @@ public class WarpPortal extends AbilityBase {
         BlockHitResult target = player.getWorld().raycast(new RaycastContext(lookPos, lookPos.subtract(0, 100, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
         if (target != null) {
             Vec3d direction = player.getRotationVector().withAxis(Direction.Axis.Y, 0);
-            Vec3d end = target.getBlockPos().toCenterPos().add(0, 1, 0);
+            Vec3d end = target.getBlockPos().toCenterPos().add(0, 1.5, 0);
             Vec3d start = player.getPos().add(direction.normalize().multiply(2.5f)).add(0, 1, 0);
             ServerWorld serverWorld = player.getServerWorld();
             WormholeEntity startWormhole = new WormholeEntity(serverWorld, start, serverWorld, end.add(direction.multiply(1.5f)), player.getRotationVector().withAxis(Direction.Axis.Y, 0));

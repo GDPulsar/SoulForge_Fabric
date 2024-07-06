@@ -3,8 +3,8 @@ package com.pulsar.soulforge.effects;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 
-public class ManaOverload extends StatusEffect {
-    public ManaOverload() {
+public class ManaSickness extends StatusEffect {
+    public ManaSickness() {
         super(
                 StatusEffectCategory.HARMFUL,
                 0x000000

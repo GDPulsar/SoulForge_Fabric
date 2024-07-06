@@ -1,16 +1,10 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -25,7 +19,7 @@ import java.util.List;
 public class PerseveranceBlades extends MagicSwordItem {
     public PerseveranceBlades() {
         // attack damage, attack speed
-        super(6, 1f, 0.2f);
+        super(6, 1.2f, 0.6f);
     }
 
     @Override

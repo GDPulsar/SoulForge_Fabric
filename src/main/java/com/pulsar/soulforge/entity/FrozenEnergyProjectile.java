@@ -2,6 +2,7 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -69,8 +70,6 @@ public class FrozenEnergyProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
         float damage = 6f;
         if (this.getOwner() != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)this.getOwner());
@@ -81,7 +80,8 @@ public class FrozenEnergyProjectile extends ProjectileEntity {
                 if (!effect.getEffectType().isBeneficial() && effect.getEffectType() != StatusEffects.UNLUCK) damage += effect.getAmplifier();
             }
         }
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), damage);
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SKEWER_WEAKPOINT_DAMAGE_TYPE), damage);
+        entity.timeUntilRegen = 14;
     }
 
     private void destroy() {

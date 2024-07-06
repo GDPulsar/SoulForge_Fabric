@@ -1,7 +1,6 @@
 package com.pulsar.soulforge.item.weapons;
 
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -39,7 +38,7 @@ public class ColossalClaymore extends MagicSwordItem {
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (entity instanceof LivingEntity living) {
             living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 1, 0));
-            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1, 1));
+            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1, 1));
         }
     }
 }

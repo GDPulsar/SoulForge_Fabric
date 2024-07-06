@@ -59,7 +59,7 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
         getWorld().createExplosion(this.getOwner(), getX(), getY(), getZ(), 2f, World.ExplosionSourceType.NONE);
         for (int i = 0; i < 70; i++) {
             JusticePelletProjectile pellet = new JusticePelletProjectile(this.getWorld(), (LivingEntity)this.getOwner());
-            Vec3d direction = new Vec3d(Math.random()-0.5f, Math.random()-0.5f, Math.random()-0.5f).normalize();
+            Vec3d direction = new Vec3d(Math.random()-0.5f, Math.random()*1.5f-0.75f, Math.random()-0.5f).normalize();
             pellet.setPos(this.getPos().add(direction.multiply(2f)));
             pellet.setVelocity(direction.multiply(4f));
             this.getWorld().spawnEntity(pellet);

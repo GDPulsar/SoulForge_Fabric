@@ -28,9 +28,8 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (getActive()) {
+        if (!getActive()) {
             if (playerSoul.getMagic() < 100f) {
-                setActive(false);
                 return false;
             }
             playerSoul.setMagic(0f);
@@ -74,7 +73,7 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             }
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 12, 2));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 10, 1));
-            player.removeStatusEffect(SoulForgeEffects.MANA_OVERLOAD);
+            player.removeStatusEffect(SoulForgeEffects.MANA_SICKNESS);
             timer--;
             if (timer <= 0) {
                 fullPower = false;
@@ -85,7 +84,7 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
                 Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COOLDOWN, "pat_cooldown");
                 Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "pat_cost");
                 Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "pat_speed");
-                player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 900, 4));
+                player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 900, 4));
             }
             ServerWorld serverWorld = player.getServerWorld();
             for (ServerPlayerEntity target : serverWorld.getPlayers()) {

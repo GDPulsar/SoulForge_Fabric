@@ -41,44 +41,42 @@ public class KindnessDome extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        if (!player.getWorld().isClient) {
+        super.cast(player);
+        if (getActive()) {
             BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(40f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
             if (hitResult != null) {
-                super.cast(player);
-                if (getActive()) {
-                    SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                    center = hitResult.getBlockPos();
-                    domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
-                    player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 10f, 1f);
-                    entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
-                            playerSoul.getEffectiveLV() * 10, false, player, playerSoul.getTraits().contains(Traits.perseverance) && playerSoul.getTraits().contains(Traits.kindness));
-                    entity.setPosition(player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f));
-                    double radius = domeRadius + 0.5;
-                    double radSq = radius * radius;
-                    double rad1Sq = (radius - 1.5) * (radius - 1.5);
-                    int ceilRad = MathHelper.ceil(radius);
-                    for (int x = 0; x <= ceilRad; x++) {
-                        for (int y = 0; y < ceilRad; y++) {
-                            for (int z = 0; z <= ceilRad; z++) {
-                                double distanceSq = lengthSq(x, y, z);
-                                if (distanceSq > radSq) continue;
-                                if (distanceSq < rad1Sq) continue;
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                center = hitResult.getBlockPos();
+                domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
+                player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 10f, 1f);
+                entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
+                        playerSoul.getEffectiveLV() * 10, false, player, playerSoul.getTraits().contains(Traits.perseverance) && playerSoul.getTraits().contains(Traits.kindness));
+                entity.setPosition(player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f));
+                double radius = domeRadius + 0.5;
+                double radSq = radius * radius;
+                double rad1Sq = (radius - 1.5) * (radius - 1.5);
+                int ceilRad = MathHelper.ceil(radius);
+                for (int x = 0; x <= ceilRad; x++) {
+                    for (int y = 0; y < ceilRad; y++) {
+                        for (int z = 0; z <= ceilRad; z++) {
+                            double distanceSq = lengthSq(x, y, z);
+                            if (distanceSq > radSq) continue;
+                            if (distanceSq < rad1Sq) continue;
 
-                                placeDomeBlock(x, y, z, player);
-                                placeDomeBlock(-x, y, z, player);
-                                placeDomeBlock(x, -y, z, player);
-                                placeDomeBlock(-x, -y, z, player);
-                                placeDomeBlock(x, y, -z, player);
-                                placeDomeBlock(-x, y, -z, player);
-                                placeDomeBlock(x, -y, -z, player);
-                                placeDomeBlock(-x, -y, -z, player);
-                            }
+                            placeDomeBlock(x, y, z, player);
+                            placeDomeBlock(-x, y, z, player);
+                            placeDomeBlock(x, -y, z, player);
+                            placeDomeBlock(-x, -y, z, player);
+                            placeDomeBlock(x, y, -z, player);
+                            placeDomeBlock(-x, y, -z, player);
+                            placeDomeBlock(x, -y, -z, player);
+                            placeDomeBlock(-x, -y, -z, player);
                         }
                     }
                 }
             }
         }
-        return getActive();
+        return true;
     }
 
     private void placeDomeBlock(int x, int y, int z, PlayerEntity player) {
@@ -108,34 +106,36 @@ public class KindnessDome extends ToggleableAbilityBase {
     @Override
     public boolean end(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        for (int x = -domeRadius; x <= domeRadius; x++) {
-            for (int y = -domeRadius; y <= domeRadius; y++) {
-                for (int z = -domeRadius; z <= domeRadius; z++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(center);
-                    if (player.getWorld().getBlockState(pos).isOf(SoulForgeBlocks.DOME_BLOCK)) {
-                        player.getWorld().addBlockBreakParticles(pos, player.getWorld().getBlockState(pos));
-                        player.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-                    }
-                }
-            }
-        }
-        if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.integrity)) {
-            for (int i = 0; i < 15; i++) {
-                Vec3d velocity = new Vec3d(Math.random()-0.5f, Math.random()-0.5f, Math.random()-0.5f).normalize().multiply(2f);
-                ShieldShardEntity shard = new ShieldShardEntity(player, center.toCenterPos(), velocity);
-                shard.setPosition(center.toCenterPos());
-                shard.setVelocity(velocity);
-                player.getWorld().spawnEntity(shard);
-            }
-        }
         if (entity != null) {
             for (DomePart part : entity.getParts()) {
                 if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
             }
             if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
         }
+        if (center != null) {
+            for (int x = -domeRadius; x <= domeRadius; x++) {
+                for (int y = -domeRadius; y <= domeRadius; y++) {
+                    for (int z = -domeRadius; z <= domeRadius; z++) {
+                        BlockPos pos = new BlockPos(x, y, z).add(center);
+                        if (player.getServerWorld().getBlockState(pos).isOf(SoulForgeBlocks.DOME_BLOCK)) {
+                            player.getServerWorld().addBlockBreakParticles(pos, player.getWorld().getBlockState(pos));
+                            player.getServerWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+                        }
+                    }
+                }
+            }
+            if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.integrity)) {
+                for (int i = 0; i < 15; i++) {
+                    Vec3d velocity = new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f).normalize().multiply(2f);
+                    ShieldShardEntity shard = new ShieldShardEntity(player, center.toCenterPos(), velocity);
+                    shard.setPosition(center.toCenterPos());
+                    shard.setVelocity(velocity);
+                    player.getWorld().spawnEntity(shard);
+                }
+            }
+        }
         entity = null;
-        player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 10f, 1f);
+        player.getServerWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 5f, 1f, true);
         return super.end(player);
     }
 
@@ -144,7 +144,7 @@ public class KindnessDome extends ToggleableAbilityBase {
         BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(40f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
         if (hitResult != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
+            float domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
             Vec3d centerPos = hitResult.getPos();
             float phiStep = (float) (Math.PI / 16);
             float thetaStep = (float) (2.0 * Math.PI / 16);
@@ -175,14 +175,20 @@ public class KindnessDome extends ToggleableAbilityBase {
 
     @Override
     public NbtCompound saveNbt(NbtCompound nbt) {
-        nbt.put("center", NbtHelper.fromBlockPos(center));
-        return super.saveNbt(nbt);
+        if (nbt.contains("center")) nbt.put("center", NbtHelper.fromBlockPos(center));
+        nbt.putFloat("domeRadius", domeRadius);
+        nbt.putString("id", getID().getPath());
+        nbt.putString("name", getName());
+        nbt.putInt("lastCastTime", getLastCastTime());
+        super.saveNbt(nbt);
+        return nbt;
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         super.readNbt(nbt);
-        center = NbtHelper.toBlockPos(nbt.getCompound(("center")));
+        if (center != null) center = NbtHelper.toBlockPos(nbt.getCompound(("center")));
+        domeRadius = nbt.getInt("domeRadius");
     }
 }

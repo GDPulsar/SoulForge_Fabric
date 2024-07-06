@@ -135,7 +135,7 @@ public class LeftClickPacket {
                         }
                         playerSoul.setMagic(playerSoul.getMagic() - 50f);
                         playerSoul.resetLastCastTime();
-                        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 600, 0));
+                        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 600, 0));
                     }
                 } else if (playerSoul.getMagic() >= 5f) {
                     for (DeterminationArrowProjectile arrow : player.getEntityWorld().getEntitiesByType(TypeFilter.instanceOf(DeterminationArrowProjectile.class),

@@ -6,10 +6,8 @@ import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.SpecialHellEntity;
-import com.pulsar.soulforge.item.weapons.BraveryHammer;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -52,7 +50,7 @@ public class DeterminationHammer extends MagicSwordItem implements GeoItem {
                         world.spawnEntity(specialHell);
                         playerSoul.setMagic(0f);
                         playerSoul.resetLastCastTime();
-                        user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 0));
+                        user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 6000, 0));
                     }
                 } else {
                     Vec3d pos = hit.getBlockPos().toCenterPos();

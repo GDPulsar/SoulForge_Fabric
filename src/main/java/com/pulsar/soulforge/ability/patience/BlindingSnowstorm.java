@@ -14,7 +14,6 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -23,12 +22,6 @@ import net.minecraft.world.RaycastContext;
 import java.util.Objects;
 
 public class BlindingSnowstorm extends ToggleableAbilityBase {
-    public final String name = "Blinding Snowstorm";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "blinding_snowstorm");
-    public final int requiredLv = 12;
-    public final int cost = 40;
-    public final int cooldown = 400;
-    
     public BlockPos location;
     public float size;
 
@@ -43,11 +36,15 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
                 location = hit.getBlockPos();
             }
         }
-        return getActive();
+        return true;
     }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
+        if (location == null) {
+            setActive(false);
+            return true;
+        }
         for (Entity entity : player.getEntityWorld().getOtherEntities(null, Box.of(location.toCenterPos(), size*2, size*2, size*2))) {
             if (entity instanceof LivingEntity target) {
                 if (target.squaredDistanceTo(location.toCenterPos()) <= size * size) {
@@ -70,7 +67,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
                 }
             }
         }
-        if (player.hasStatusEffect(SoulForgeEffects.MANA_OVERLOAD)) setActive(false);
+        if (player.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) setActive(false);
         return super.tick(player);
     }
 
@@ -87,7 +84,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
 
     @Override
     public NbtCompound saveNbt(NbtCompound nbt) {
-        nbt.put("location", NbtHelper.fromBlockPos(location));
+        if (nbt.contains("location")) nbt.put("location", NbtHelper.fromBlockPos(location));
         nbt.putFloat("size", size);
         return super.saveNbt(nbt);
     }
@@ -95,7 +92,8 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
     @Override
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
-        location = NbtHelper.toBlockPos(nbt.getCompound("location"));
+        if (location != null) location = NbtHelper.toBlockPos(nbt.getCompound("location"));
         size = nbt.getFloat("size");
+        super.readNbt(nbt);
     }
 }

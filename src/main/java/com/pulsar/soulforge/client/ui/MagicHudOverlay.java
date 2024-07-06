@@ -21,29 +21,27 @@ public class MagicHudOverlay implements HudRenderCallback {
         int top = client.getWindow().getScaledHeight() - 136;
         int left = 5;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(client.player);
-        if (playerSoul != null) {
-            context.drawTexture(new Identifier(SoulForge.MOD_ID, "textures/ui/magic/bar_background.png"), left, top, 0, 0, 16, 106, 16, 106);
-            int magic = (int) playerSoul.getMagic();
-            int colorA = playerSoul.getTrait(0).getColor();
-            int colorB = playerSoul.getTrait(playerSoul.getTraitCount()-1).getColor();
-            colorA = new Color(colorA, false).getRGB();
-            colorB = new Color(colorB, false).getRGB();
-            int darkA = new Color(colorA).darker().getRGB();
-            int darkB = new Color(colorB).darker().getRGB();
-            int darkkA = new Color(darkA).darker().getRGB();
-            int darkkB = new Color(darkB).darker().getRGB();
+        context.drawTexture(new Identifier(SoulForge.MOD_ID, "textures/ui/magic/bar_background.png"), left, top, 0, 0, 16, 106, 16, 106);
+        int magic = (int) playerSoul.getMagic();
+        int colorA = playerSoul.getTrait(0).getColor();
+        int colorB = playerSoul.getTrait(playerSoul.getTraitCount()-1).getColor();
+        colorA = new Color(colorA, false).getRGB();
+        colorB = new Color(colorB, false).getRGB();
+        int darkA = new Color(colorA).darker().getRGB();
+        int darkB = new Color(colorB).darker().getRGB();
+        int darkkA = new Color(darkA).darker().getRGB();
+        int darkkB = new Color(darkB).darker().getRGB();
 
-            context.drawVerticalLine(left + 2, top + 2, top + 52, darkkB);
-            context.drawVerticalLine(left + 2, top + 51, top + 103, darkkA);
-            context.drawVerticalLine(left + 13, top + 2, top + 52, darkkB);
-            context.drawVerticalLine(left + 13, top + 51, top + 103, darkkA);
-            context.drawHorizontalLine(left + 3, left + 13, top + 2, darkkB);
-            context.drawHorizontalLine(left + 3, left + 13, top + 103, darkkA);
-            if (magic != 0) context.fill(left + 3, top + 102 - Math.min(magic - 1, 50), left + 13, top + 103, colorA);
-            if (magic <= 50) context.fill(left + 3, top + 103 - (magic - 1), left + 13, top + 52, darkA);
-            else context.fill(left + 3, top + 102 - (magic - 1), left + 13, top + 52, colorB);
-            if (magic != 100) context.fill(left + 3, top + 102 - Math.max(50, magic - 1), left + 13, top + 2, darkB);
-        }
+        context.drawVerticalLine(left + 2, top + 2, top + 52, darkkB);
+        context.drawVerticalLine(left + 2, top + 51, top + 103, darkkA);
+        context.drawVerticalLine(left + 13, top + 2, top + 52, darkkB);
+        context.drawVerticalLine(left + 13, top + 51, top + 103, darkkA);
+        context.drawHorizontalLine(left + 3, left + 13, top + 2, darkkB);
+        context.drawHorizontalLine(left + 3, left + 13, top + 103, darkkA);
+        if (magic != 0) context.fill(left + 3, top + 102 - Math.min(magic - 1, 50), left + 13, top + 103, colorA);
+        if (magic <= 50) context.fill(left + 3, top + 103 - (magic - 1), left + 13, top + 52, darkA);
+        else context.fill(left + 3, top + 102 - (magic - 1), left + 13, top + 52, colorB);
+        if (magic != 100) context.fill(left + 3, top + 102 - Math.max(50, magic - 1), left + 13, top + 2, darkB);
     }
 
     public void renderMagicBALLS(DrawContext context) {

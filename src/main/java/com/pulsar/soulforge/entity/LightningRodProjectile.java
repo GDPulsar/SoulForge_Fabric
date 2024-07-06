@@ -2,6 +2,7 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -55,7 +56,7 @@ public class LightningRodProjectile extends PersistentProjectileEntity {
                             float distance = target.distanceTo(this);
                             if (distance < 2f) {
                                 if (!damaged.contains(target)) {
-                                    target.damage(this.getDamageSources().playerAttack(player), playerSoul.getLV() / 4f * (1f - distance / 2f));
+                                    target.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), playerSoul.getLV() / 4f * (1f - distance / 2f));
                                     damaged.add(target);
                                 }
                             }

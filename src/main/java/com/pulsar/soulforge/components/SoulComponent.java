@@ -48,6 +48,10 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     int getEXP();
     void setEXP(int exp);
     int getExpRequirement();
+    int getHate();
+    void setHate(int hate);
+    boolean getInverted();
+    void setInverted(boolean inverted);
 
     float getMagic();
     void setMagic(float magic);
@@ -107,6 +111,7 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     }
 
     PacketByteBuf toBuffer();
+    void fromBuffer(PacketByteBuf buf);
 
     void castAbility(int index);
     void castAbility(AbilityBase ability);

@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -45,7 +46,7 @@ public class Eruption extends AbilityBase {
                     float dist = (float) living.getPos().distanceTo(centerPoint);
                     if (dist <= aoeDist) {
                         Vec3d launchDir = centerPoint.subtract(living.getPos()).withAxis(Direction.Axis.Y, 0).normalize().multiply(dist / 3f);
-                        living.damage(player.getDamageSources().playerAttack(player), damage);
+                        living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
                         living.setVelocity(launchDir.add(0f, playerSoul.getEffectiveLV()/10f, 0f));
                     }
                 }

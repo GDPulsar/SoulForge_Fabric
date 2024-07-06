@@ -60,7 +60,7 @@ public class Traits {
             for (AbilityBase ability : trait.getAbilities()) {
                 if (!Constants.isAllowedForDualTrait(ability, traits, lv)) continue;
                 if (ability.getLV() <= lv) {
-                    if (ability instanceof DeterminationSword && lv == 20) continue;
+                    if (ability instanceof DeterminationSword && lv >= 20) continue;
                     if (ability instanceof Iceshock && lv >= 10) continue;
                     abilities.add(ability.getInstance());
                 }
@@ -102,7 +102,7 @@ public class Traits {
             for (TraitBase trait : Traits.all()) {
                 if (Objects.equals(trait.getName(), mode)) {
                     for (AbilityBase ability : trait.getAbilities()) {
-                        if (ability.getLV() <= soul.getLV()) {
+                        if (ability.getLV() <= soul.getLV() || soul.getTraits().contains(Traits.spite)) {
                             if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_NOCAST) {
                                 if (ability instanceof DeterminationSword && soul.getLV() == 20) continue;
                                 if (ability instanceof Iceshock && soul.getLV() >= 10) continue;
@@ -137,10 +137,11 @@ public class Traits {
             }
         }
         List<AbilityBase> abilities = new ArrayList<>();
-        for (AbilityBase ability : soul.getAbilities()) {
-            if (abilityNames.contains(ability.getName())) {
-                abilities.add(ability);
-            }
+        for (String abilityName : abilityNames) {
+            try {
+                AbilityBase ability = soul.getAbility(abilityName);
+                if (ability != null) abilities.add(ability);
+            } catch (Exception ignored) {}
         }
         abilities.sort(Comparator.comparingInt(AbilityBase::getLV));
         return abilities;

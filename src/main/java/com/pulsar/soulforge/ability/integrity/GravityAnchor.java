@@ -32,10 +32,6 @@ public class GravityAnchor extends AbilityBase {
             }
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             target = living;
-            if (result.getEntity() instanceof PlayerEntity targetPlayer) {
-                SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                targetSoul.addTag("disableJump");
-            }
             for (int i = 0; i < 10; i++) {
                 float x = MathHelper.sin((float)(i/5*Math.PI));
                 float z = MathHelper.cos((float)(i/5*Math.PI));
@@ -44,7 +40,7 @@ public class GravityAnchor extends AbilityBase {
                         target.getX()+x, target.getY(), target.getZ()+z, 1, 0, 0.2);
             }
             living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 2));
-            timer = Math.round(playerSoul.getEffectiveLV()*0.75f);
+            timer = Math.round(playerSoul.getEffectiveLV()*15f);
             return super.cast(player);
         }
         return false;
@@ -55,18 +51,13 @@ public class GravityAnchor extends AbilityBase {
         timer--;
         if (target != null) {
             target.addVelocity(0, -5, 0);
+            target.velocityModified = true;
         }
         return timer == 0;
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
-        if (target != null) {
-            if (target instanceof PlayerEntity targetPlayer) {
-                SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                targetSoul.removeTag("disableJump");
-            }
-        }
         return super.end(player);
     }
 

@@ -1,9 +1,9 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -81,9 +81,7 @@ public class SwordSlashProjectile extends ProjectileEntity implements GeoAnimata
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), this.dataTracker.get(DAMAGE));
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), this.dataTracker.get(DAMAGE));
     }
 
     protected void onCollision(HitResult hitResult) {

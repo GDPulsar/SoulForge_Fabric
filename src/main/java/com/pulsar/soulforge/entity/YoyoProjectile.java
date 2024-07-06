@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -101,9 +102,7 @@ public class YoyoProjectile extends ProjectileEntity implements GeoEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), 4f);
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 4f);
         entity.timeUntilRegen = 15;
     }
 

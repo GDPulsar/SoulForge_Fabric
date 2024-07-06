@@ -22,8 +22,8 @@ public class RendAsunder extends AbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         StatusEffectInstance effect = new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, playerSoul.getEffectiveLV()*10, playerSoul.isPure() ? 1 : 0);
-        DamageSource damageSource = SoulForgeDamageTypes.of(player.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
-        for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 1.5f, 2f, 1f, 2f)) {
+        DamageSource damageSource = SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+        for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 2f, 3f, 1f, 2f)) {
             if (target instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
             }

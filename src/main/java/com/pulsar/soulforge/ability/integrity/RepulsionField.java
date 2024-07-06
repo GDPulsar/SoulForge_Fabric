@@ -8,16 +8,8 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class RepulsionField extends ToggleableAbilityBase {
-    public final String name = "Repulsion Field";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "repulsion_field");
-    public final int requiredLv = 7;
-    public final int cost = 40;
-    public final int cooldown = 0;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
         super.cast(player);
@@ -41,7 +33,7 @@ public class RepulsionField extends ToggleableAbilityBase {
         if (!playerSoul.hasCast("Warpspeed")) player.setStepHeight(1.6f);
         playerSoul.addTag("fallImmune");
         playerSoul.setValue("jumpBoost", 2f);
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
@@ -50,22 +42,14 @@ public class RepulsionField extends ToggleableAbilityBase {
         playerSoul.removeTag("fallImmune");
         playerSoul.removeValue("jumpBoost");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "repulsion_field");
-        return true;
+        return super.end(player);
     }
-    
-    public String getName() { return name; }
 
-    public Text getLocalizedText() { return Text.translatable("ability."+id.getPath()+".name"); }
+    public int getLV() { return 7; }
 
-    public Identifier getID() { return id; }
+    public int getCost() { return 40; }
 
-    public String getTooltip() { return Text.translatable("ability."+id.getPath()+".tooltip").getString(); }
-
-    public int getLV() { return requiredLv; }
-
-    public int getCost() { return cost; }
-
-    public int getCooldown() { return cooldown; }
+    public int getCooldown() { return 0; }
 
     @Override
     public AbilityBase getInstance() {

@@ -3,6 +3,7 @@ package com.pulsar.soulforge.ability.determination;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -19,7 +20,7 @@ public class DeBuff extends AbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         EntityHitResult hit = Utils.getFocussedEntity(player, 5f);
         if (hit != null && hit.getEntity() instanceof LivingEntity living) {
-            living.damage(player.getDamageSources().playerAttack(player), 4f);
+            living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 4f);
             List<StatusEffectInstance> newEffects = new ArrayList<>();
             for (StatusEffectInstance instance : living.getStatusEffects()) {
                 int highest = 0;

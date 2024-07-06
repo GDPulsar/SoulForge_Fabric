@@ -41,6 +41,7 @@ public class PerseveranceHarpoon extends MagicSwordItem {
         }
         Vec3d direction = target.getPos().subtract(attacker.getPos());
         target.takeKnockback(0.4f, direction.x, direction.z);
+        target.velocityModified = true;
         return super.postHit(stack, target, attacker);
     }
 

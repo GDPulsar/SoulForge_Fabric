@@ -17,7 +17,6 @@ import org.joml.Vector3f;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class GunlanceBlastEntity extends Entity {
     public LivingEntity owner;
@@ -85,7 +84,7 @@ public class GunlanceBlastEntity extends Entity {
                                 if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
                             }
                             DamageSource source;
-                            source = SoulForgeDamageTypes.of(Objects.requireNonNullElse(owner, entity).getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+                            source = SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);
                             living.damage(source, getDamage());
                             living.timeUntilRegen = 0;
                             affected.add(living);

@@ -5,7 +5,6 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.*;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Direction;
@@ -52,15 +51,12 @@ public class SpecialHellEntity extends Entity {
                     }
                     float horizDist = (float)this.getPos().withAxis(Direction.Axis.Y, 0).distanceTo(entity.getPos().withAxis(Direction.Axis.Y, 0));
                     if (horizDist <= 10f) {
-                        DamageSource source;
                         float damage = 20f;
                         if (owner != null) {
                             SoulComponent playerSoul = SoulForge.getPlayerSoul(owner);
                             damage = playerSoul.getEffectiveLV();
-                            source = SoulForgeDamageTypes.of(owner.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
-                        } else
-                            source = SoulForgeDamageTypes.of(entity.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
-                        entity.damage(source, damage);
+                        }
+                        entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
                         entity.timeUntilRegen = 10;
                     }
                 }

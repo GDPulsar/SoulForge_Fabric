@@ -13,7 +13,7 @@ public class ShotgunFist extends WeaponAbilityBase {
 
     public int getCooldown() { return 200; }
 
-    public int getLV() { return 10; }
+    public int getLV() { return 3; }
 
     @Override
     public AbilityBase getInstance() {

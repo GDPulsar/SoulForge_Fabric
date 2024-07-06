@@ -1,13 +1,10 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.client.item.DefaultedGeoItemRenderer;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.entity.DarkFountainEntity;
 import com.pulsar.soulforge.entity.SpecialHellEntity;
-import com.pulsar.soulforge.item.weapons.BraverySpear;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -55,7 +52,7 @@ public class DeterminationSword extends MagicSwordItem implements GeoItem {
                 world.spawnEntity(specialHell);
                 playerSoul.setMagic(0f);
                 playerSoul.resetLastCastTime();
-                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 3600, 0));
+                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3600, 0));
             }
         }
         ItemStack itemStack = user.getStackInHand(hand);

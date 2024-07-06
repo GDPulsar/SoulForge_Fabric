@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -94,7 +95,7 @@ public class ShieldShardEntity extends Entity implements GeoEntity {
         if (this.owner != null) {
             if (isLaunched || !isCircling) {
                 for (LivingEntity entity : this.getEntityWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox(), (entity) -> entity != owner)) {
-                    entity.damage(this.getDamageSources().mobProjectile(this, owner), 7f);
+                    entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SHIELD_SHARD_DAMAGE_TYPE), 7f);
                 }
             }
             if (isLaunched && !isCircling) isLaunched = false;

@@ -2,6 +2,7 @@ package com.pulsar.soulforge.item.weapons;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -17,6 +18,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +41,7 @@ public class Flamethrower extends MagicItem {
                     if (entity instanceof PlayerEntity targetPlayer) {
                         if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer)) continue;
                     }
-                    entity.damage(user.getDamageSources().playerAttack(user), 2f);
+                    entity.damage(SoulForgeDamageTypes.of(user, world, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 2f);
                     if (frostburn) {
                         entity.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 50, 0));
                     } else {
@@ -52,9 +54,10 @@ public class Flamethrower extends MagicItem {
                 playerSoul.setMagic(playerSoul.getMagic() - 2f);
                 playerSoul.resetLastCastTime();
             } else {
+                Vec3d handPos = Utils.getArmPosition(user);
                 for (int i = 0; i < 5; i++) {
                     world.addParticle(ParticleTypes.FLAME,
-                            user.getPos().x, user.getPos().y+0.5f, user.getPos().z,
+                            handPos.x, handPos.y, handPos.z,
                             (user.getRotationVector().x + Math.random() / 2f - 0.25f) / 4f, Math.random() / 8f, (user.getRotationVector().z + Math.random() / 2f - 0.25f) / 4f);
                 }
             }

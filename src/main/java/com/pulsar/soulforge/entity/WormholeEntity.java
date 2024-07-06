@@ -86,6 +86,8 @@ public class WormholeEntity extends Entity {
             }
             if (this.timer >= 200) this.kill();
             timer++;
+        } else {
+            this.kill();
         }
         super.tick();
     }

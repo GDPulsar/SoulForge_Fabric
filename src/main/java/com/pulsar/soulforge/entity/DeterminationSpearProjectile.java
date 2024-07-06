@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
@@ -56,8 +57,7 @@ public class DeterminationSpearProjectile extends PersistentProjectileEntity imp
             if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
         }
         float f = 5.0f;
-        Entity entity2 = this.getOwner();
-        DamageSource damageSource = this.getDamageSources().trident(this, entity2 == null ? this : entity2);
+        DamageSource damageSource = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);
         entity.damage(damageSource, f);
     }
 

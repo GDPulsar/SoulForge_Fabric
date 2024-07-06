@@ -2,6 +2,7 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -21,10 +22,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-public class PolarityBall extends ProjectileEntity {
-    private static final TrackedData<Boolean> INVERSE = DataTracker.registerData(PolarityBall.class, TrackedDataHandlerRegistry.BOOLEAN);
+public class PolarityBallEntity extends ProjectileEntity {
+    private static final TrackedData<Boolean> INVERSE = DataTracker.registerData(PolarityBallEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    public PolarityBall(World world, LivingEntity owner, boolean inverse) {
+    public PolarityBallEntity(World world, LivingEntity owner, boolean inverse) {
         this(SoulForgeEntities.POLARITY_BALL_ENTITY_TYPE, world);
         this.setOwner(owner);
         this.setInverse(inverse);
@@ -34,7 +35,7 @@ public class PolarityBall extends ProjectileEntity {
         return false;
     }
 
-    public PolarityBall(EntityType<PolarityBall> entityType, World world) {
+    public PolarityBallEntity(EntityType<PolarityBallEntity> entityType, World world) {
         super(entityType, world);
     }
 
@@ -99,7 +100,7 @@ public class PolarityBall extends ProjectileEntity {
                         damage = playerSoul.getEffectiveLV() * 1.25f;
                     }
                     damage *= (12f - dist) / 12f;
-                    target.damage(this.getDamageSources().mobProjectile(this, (LivingEntity)this.getOwner()), damage);
+                    target.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
                     Vec3d offset = this.getPos().subtract(entity.getPos()).normalize();
                     if (getInverse()) {
                         entity.setVelocity(offset.multiply(dist/4f));

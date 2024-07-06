@@ -9,8 +9,8 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -29,31 +29,26 @@ public class Immobilization extends ToggleableAbilityBase {
                     if (target.isPlayer()) {
                         SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity)target);
                         targetSoul.removeTag("immobile");
-                    } else {
-                        NbtCompound nbt = new NbtCompound();
-                        nbt = target.writeNbt(nbt);
-                        nbt.putBoolean("NoAI", false);
-                        target.readNbt(nbt);
+                    } else if (target instanceof MobEntity mob) {
+                        mob.setAiDisabled(true);
                     }
-                    target.setInvulnerable(false);
+                    target.setInvulnerable(true);
+                    target = null;
                     setActive(false);
-                    return getActive();
+                    return true;
                 }
                 entity.remove(Entity.RemovalReason.DISCARDED);
             }
             EntityHitResult result = Utils.getFocussedEntity(player, 10);
             if (result != null) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                if (result.getEntity() instanceof PlayerEntity targetPlayer) {
-                    target = targetPlayer;
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+                if (result.getEntity() instanceof PlayerEntity playerTarget) {
+                    target = playerTarget;
+                    SoulComponent targetSoul = SoulForge.getPlayerSoul(playerTarget);
                     targetSoul.addTag("immobile");
-                } else if (result.getEntity() instanceof LivingEntity living) {
-                    target = living;
-                    NbtCompound nbt = new NbtCompound();
-                    nbt = living.writeNbt(nbt);
-                    nbt.putBoolean("NoAI", true);
-                    living.readNbt(nbt);
+                } else if (result.getEntity() instanceof MobEntity mob) {
+                    target = mob;
+                    mob.setAiDisabled(true);
                 }
                 if (target != null) {
                     player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
@@ -76,7 +71,7 @@ public class Immobilization extends ToggleableAbilityBase {
             entity = null;
             setActive(false);
         }
-        return getActive();
+        return true;
     }
 
     @Override
@@ -92,11 +87,8 @@ public class Immobilization extends ToggleableAbilityBase {
             if (target.isPlayer()) {
                 SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity)target);
                 targetSoul.removeTag("immobile");
-            } else {
-                NbtCompound nbt = new NbtCompound();
-                nbt = target.writeNbt(nbt);
-                nbt.putBoolean("NoAI", false);
-                target.readNbt(nbt);
+            } else if (target instanceof MobEntity mob) {
+                mob.setAiDisabled(false);
             }
             target.setInvulnerable(false);
         }

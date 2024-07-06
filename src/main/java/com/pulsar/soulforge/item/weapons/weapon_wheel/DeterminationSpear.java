@@ -56,7 +56,7 @@ public class DeterminationSpear extends MagicSwordItem {
                 world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 4.0f, 0.75f);
                 playerSoul.setMagic(0f);
                 playerSoul.resetLastCastTime();
-                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 3000, 0));
+                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3000, 0));
             } else {
                 DeterminationSpearProjectile projectile = new DeterminationSpearProjectile(world, playerEntity);
                 projectile.setOwner(playerEntity);

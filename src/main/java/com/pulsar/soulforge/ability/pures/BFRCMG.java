@@ -11,6 +11,8 @@ public class BFRCMG extends WeaponAbilityBase {
         return SoulForgeItems.BFRCMG;
     }
 
+    public String getName() { return "BFRCMG"; }
+
     public int getLV() { return 10; }
 
     public int getCooldown() { return 200; }

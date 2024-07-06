@@ -24,7 +24,7 @@ public class BulletRing extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        EntityHitResult hit = Utils.getFocussedEntity(player, 50);
+        EntityHitResult hit = Utils.getFocussedEntity(player, 100);
         if (hit != null && hit.getEntity() instanceof LivingEntity) {
             if (hit.getEntity() instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) return false;

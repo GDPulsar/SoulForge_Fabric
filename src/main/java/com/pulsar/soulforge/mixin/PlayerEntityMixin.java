@@ -350,9 +350,9 @@ abstract class PlayerEntityMixin extends LivingEntity {
                     if (source.getAttacker() instanceof LivingEntity living)
                         living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 80, 2));
                     if (amount < 30f) {
-                        source.getAttacker().damage(this.getDamageSources().playerAttack(player), amount);
+                        source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), amount);
                     } else {
-                        source.getAttacker().damage(this.getDamageSources().playerAttack(player), 30);
+                        source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), 30);
                         if (!(this.isInvulnerableTo(source) || (this.abilities.invulnerable && !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)))) {
                             this.despawnCounter = 0;
                             if (!this.isDead()) {

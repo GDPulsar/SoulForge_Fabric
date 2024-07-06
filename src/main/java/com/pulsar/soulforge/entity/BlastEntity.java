@@ -18,7 +18,6 @@ import org.joml.Vector3f;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -146,7 +145,8 @@ public class BlastEntity extends Entity {
                             if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
                         }
                         DamageSource source;
-                        source = SoulForgeDamageTypes.of(Objects.requireNonNullElse(owner, entity).getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+                        assert owner instanceof PlayerEntity;
+                        source = SoulForgeDamageTypes.of((PlayerEntity)owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
                         if (getIgnoresIframes()) living.timeUntilRegen = 0;
                         living.damage(source, getDamage());
                         if (this.onDamageEvent != null) {

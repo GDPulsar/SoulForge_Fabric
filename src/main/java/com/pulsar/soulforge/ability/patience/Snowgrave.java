@@ -162,7 +162,7 @@ public class Snowgrave extends AbilityBase {
                 }
             }
         } else if (timer < 400) {
-            if (timer == 300) player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 2570, 2));
+            if (timer == 300) player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2570, 2));
             // phase 3
             if (timer <= 325) {
                 for (SnowgraveProjectile projectile : projectiles) {

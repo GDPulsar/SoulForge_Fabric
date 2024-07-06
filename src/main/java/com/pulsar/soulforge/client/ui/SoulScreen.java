@@ -12,6 +12,7 @@ import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Constants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -101,18 +102,18 @@ public class SoulScreen extends Screen {
         if (!Constants.getDualTraitAbilities(playerSoul.getTraits()).isEmpty()) modes.add("Duals");
         if (hasPassives) modes.add("Passives");
         if (page == 0) {
-            widgets.add(new ClickableTextureWidget(42 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_left.png"), () -> {
+            widgets.add(new ClickableTextureWidget(42 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_left.png"), (mouseButton) -> {
                 modeIndex = (modeIndex - 1 + modes.size()) % modes.size();
                 updateWidgets();
             }));
-            widgets.add(new ClickableTextureWidget(146 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_right.png"), () -> {
+            widgets.add(new ClickableTextureWidget(146 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_right.png"), (mouseButton) -> {
                 modeIndex = (modeIndex + 1) % modes.size();
                 updateWidgets();
             }));
             int i = 0;
             for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
                 Identifier id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
-                ClickableTextureWidget button = new ClickableTextureWidget(17+(i%9)*18 + this.x, 51 + MathHelper.floor(i/9f) * 18 + this.y, 18, 18, id, () -> {
+                ClickableTextureWidget button = new ClickableTextureWidget(17+(i%9)*18 + this.x, 51 + MathHelper.floor(i/9f) * 18 + this.y, 18, 18, id, (mouseButton) -> {
                     selectedAbility = ability;
                     updateWidgets();
                 }, ability.getLocalizedText());
@@ -127,7 +128,7 @@ public class SoulScreen extends Screen {
                         Identifier id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
                         int finalRow = rowNum;
                         int finalSlot = slotNum;
-                        ClickableTextureWidget button = new ClickableTextureWidget(17 + slotNum * 18 + this.x, 101 + rowNum * 18 + this.y, 18, 18, id, () -> {
+                        ClickableTextureWidget button = new ClickableTextureWidget(17 + slotNum * 18 + this.x, 101 + rowNum * 18 + this.y, 18, 18, id, (mouseButton) -> {
                             if (selectedAbility != null) {
                                 playerSoul.setLayoutAbility(selectedAbility, finalRow, finalSlot);
                                 PacketByteBuf buf = PacketByteBufs.create();
@@ -142,11 +143,19 @@ public class SoulScreen extends Screen {
                     } else {
                         int finalRow = rowNum;
                         int finalSlot = slotNum;
-                        ClickableTextureWidget button = new ClickableTextureWidget(17 + slotNum * 18 + this.x, 101 + rowNum * 18 + this.y, 18, 18, null, () -> {
-                            if (selectedAbility != null) {
+                        ClickableTextureWidget button = new ClickableTextureWidget(17 + slotNum * 18 + this.x, 101 + rowNum * 18 + this.y, 18, 18, null, (mouseButton) -> {
+                            if (selectedAbility != null && mouseButton == 0) {
                                 playerSoul.setLayoutAbility(selectedAbility, finalRow, finalSlot);
                                 PacketByteBuf buf = PacketByteBufs.create();
                                 buf.writeString(selectedAbility.getID().toString());
+                                buf.writeVarInt(finalRow);
+                                buf.writeVarInt(finalSlot);
+                                ClientPlayNetworking.send(SoulForgeNetworking.SET_ABILITY_LAYOUT, buf);
+                                updateWidgets();
+                            } else if (mouseButton == 1) {
+                                playerSoul.setLayoutAbility(null, finalRow, finalSlot);
+                                PacketByteBuf buf = PacketByteBufs.create();
+                                buf.writeString("null");
                                 buf.writeVarInt(finalRow);
                                 buf.writeVarInt(finalSlot);
                                 ClientPlayNetworking.send(SoulForgeNetworking.SET_ABILITY_LAYOUT, buf);
@@ -186,12 +195,21 @@ public class SoulScreen extends Screen {
                 context.drawCenteredTextWithShadow(textRenderer, "EXP until next LV: ", 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
                 context.drawCenteredTextWithShadow(textRenderer, String.valueOf(playerSoul.getExpRequirement()), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             }
-            context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
+            context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.getAbilities().contains(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
         }
         for (ClickableWidget widget : widgets) {
             widget.render(context, mouseX, mouseY, delta);
         }
-        //context.getMatrices().translate(this.x, this.y, 1f);
+        /*int i = 0;
+        for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
+            if (ability == selectedAbility) {
+                int x = 17+(i%9)*18 + this.x;
+                int y = 51 + MathHelper.floor(i/9f) * 18 + this.y;
+                context.drawBorder(x, y, 18, 18, 0xFFFFFF);
+                context.drawBorder(x + 1, y + 1, 16, 16, 0xFFFFFF);
+            }
+            i++;
+        }*/
     }
 
     private int getPageOfAbility(AbilityBase ability) {
@@ -239,6 +257,7 @@ public class SoulScreen extends Screen {
     public static class ClickableTextureWidget extends ClickableWidget {
         public Identifier texture;
         public final PressAction pressAction;
+        public boolean selected = false;
 
         public ClickableTextureWidget(int x, int y, int width, int height, Identifier texture, PressAction pressAction, Text tooltip) {
             this(x, y, width, height, texture, pressAction);
@@ -253,21 +272,36 @@ public class SoulScreen extends Screen {
 
         @Override
         protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
-            if (this.texture != null) context.drawTexture(this.texture, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
+            if (this.texture != null) {
+                context.drawTexture(this.texture, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
+            }
+            if (selected) {
+                context.drawBorder(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0xFFFFFF);
+                context.drawBorder(this.getX()+1, this.getY()+1, this.getWidth()-2, this.getHeight()-2, 0xFFFFFF);
+            }
         }
 
         @Override
         protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 
-        @Override
-        public void onClick(double mouseX, double mouseY) {
+        public void onClick(int button) {
             if (this.hovered) {
-                this.pressAction.onClick();
+                this.pressAction.onClick(button);
             }
         }
 
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            boolean bl = this.clicked(mouseX, mouseY);
+            if (bl) {
+                this.playDownSound(MinecraftClient.getInstance().getSoundManager());
+                this.onClick(button);
+                return true;
+            }
+            return false;
+        }
+
         public interface PressAction {
-            void onClick();
+            void onClick(int button);
         }
     }
 

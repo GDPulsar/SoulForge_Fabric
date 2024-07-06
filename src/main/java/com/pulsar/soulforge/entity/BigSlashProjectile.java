@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -73,12 +74,10 @@ public class BigSlashProjectile extends ProjectileEntity implements GeoAnimatabl
         if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
             if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
         }
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
         if (entity instanceof LivingEntity living) {
             living.maxHurtTime = 0;
         }
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), 18f);
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 18f);
     }
 
     private void destroy() {

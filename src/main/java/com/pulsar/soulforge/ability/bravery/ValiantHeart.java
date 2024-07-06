@@ -49,7 +49,7 @@ public class ValiantHeart extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "valiant_heart");
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_POWER, "valiant_heart");
-        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 3));
+        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 6000, 3));
         return super.end(player);
     }
 

@@ -2,8 +2,7 @@ package com.pulsar.soulforge.client.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.render.SphereRenderer;
-import com.pulsar.soulforge.entity.EnergyBallProjectile;
-import com.pulsar.soulforge.entity.PolarityBall;
+import com.pulsar.soulforge.entity.PolarityBallEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.RenderLayer;
@@ -16,7 +15,7 @@ import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 
 @Environment(EnvType.CLIENT)
-public class PolaritiesBallRenderer extends EntityRenderer<PolarityBall> {
+public class PolaritiesBallRenderer extends EntityRenderer<PolarityBallEntity> {
     private static final Identifier INVERSE_TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/bravery.png");
     private static final Identifier REVERSE_TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/patience.png");
 
@@ -24,14 +23,14 @@ public class PolaritiesBallRenderer extends EntityRenderer<PolarityBall> {
         super(context);
     }
 
-    public void render(PolarityBall polarityBall, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(PolarityBallEntity polarityBallEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(getTexture(polarityBall)));
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(getTexture(polarityBallEntity)));
         SphereRenderer.renderSphere(matrix, vertexConsumer, 0.25f);
     }
 
-    public Identifier getTexture(PolarityBall polarityBall) {
-        if (polarityBall.getInverse()) return INVERSE_TEXTURE;
+    public Identifier getTexture(PolarityBallEntity polarityBallEntity) {
+        if (polarityBallEntity.getInverse()) return INVERSE_TEXTURE;
         return REVERSE_TEXTURE;
     }
 }

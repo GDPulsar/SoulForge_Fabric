@@ -5,6 +5,7 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -49,9 +50,9 @@ public class Snowglobe extends ToggleableAbilityBase {
                             if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                         }
                         living.addStatusEffect(new StatusEffectInstance(frostburn ? SoulForgeEffects.FROSTBURN : SoulForgeEffects.FROSTBITE, 20 * playerSoul.getEffectiveLV(), 0));
-                        living.damage(player.getDamageSources().freeze(), playerSoul.getEffectiveLV() / 6f);
+                        living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV() / 6f);
                         if (playerSoul.getLV() >= 10) {
-                            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140, MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
+                            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140,  MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
                             living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 140, MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
                         }
                     }

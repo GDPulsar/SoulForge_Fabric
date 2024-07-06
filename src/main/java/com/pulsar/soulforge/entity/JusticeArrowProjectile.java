@@ -1,7 +1,7 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -92,8 +92,7 @@ public class JusticeArrowProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         if (owner != null) {
             if (entityHitResult != null) {
-                DamageSource source = this.getDamageSources().mobProjectile(this, null);
-                if (getOwner() != null) source = getOwner().getDamageSources().mobProjectile(this, (LivingEntity)getOwner());
+                DamageSource source = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);
                 entityHitResult.getEntity().damage(source, damage);
             }
         }

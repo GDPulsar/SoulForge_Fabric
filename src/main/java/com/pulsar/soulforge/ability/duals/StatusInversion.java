@@ -67,7 +67,7 @@ public class StatusInversion extends AbilityBase {
                     if (effect.getEffectType() == SoulForgeEffects.FROSTBITE) newEffects.add(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
                     if (effect.getEffectType() == SoulForgeEffects.FROSTBURN) newEffects.add(new StatusEffectInstance(SoulForgeEffects.FROSTBITE, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
                     if (effect.getEffectType() == SoulForgeEffects.FROSTBURN) player.setFireTicks((int) (effect.getDuration()*0.6f));
-                    if (effect.getEffectType() == SoulForgeEffects.MANA_OVERLOAD) newEffects.add(effect);
+                    if (effect.getEffectType() == SoulForgeEffects.MANA_SICKNESS) newEffects.add(effect);
                     if (effect.getEffectType() == SoulForgeEffects.SNOWED_VISION) newEffects.add(effect);
                     if (effect.getEffectType() == SoulForgeEffects.CREATIVE_ZONE) newEffects.add(effect);
                     if (effect.getEffectType() == SoulForgeEffects.VALIANT_HEART) newEffects.add(effect);
@@ -83,9 +83,10 @@ public class StatusInversion extends AbilityBase {
                     player.getServerWorld().spawnParticles(player, new DustParticleEffect(Vec3d.unpackRgb(0x00FF0).toVector3f(), 1f), true, particlePos.x + centerPos.x, centerPos.y, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
                     player.getServerWorld().spawnParticles(player, new DustParticleEffect(Vec3d.unpackRgb(0x00FFFF).toVector3f(), 1f), true, particlePos.x + centerPos.x, centerPos.y - 0.3f, particlePos.z + centerPos.z, 1, 0, 0, 0, 0);
                 }
+                return super.cast(player);
             }
         }
-        return super.cast(player);
+        return false;
     }
 
     public int getLV() { return 12; }

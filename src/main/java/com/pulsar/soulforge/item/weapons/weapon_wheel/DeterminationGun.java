@@ -2,6 +2,7 @@ package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.weapons.MagicRangedItem;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
@@ -30,7 +31,7 @@ public class DeterminationGun extends MagicRangedItem {
                 if (hit != null) {
                     if (hit.getEntity() instanceof LivingEntity target) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-                        target.damage(user.getDamageSources().playerAttack(user), 5f + playerSoul.getEffectiveLV()/2.5f);
+                        target.damage(SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.GUN_SHOT_DAMAGE_TYPE), 5f + playerSoul.getEffectiveLV()/2.5f);
                         ammo--;
                         cooldown = 10;
                         world.playSoundFromEntity(null, user, SoulForgeSounds.GUN_SHOOT_EVENT, SoundCategory.PLAYERS, 1f, 1f);

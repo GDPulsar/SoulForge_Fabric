@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -40,6 +41,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
             charge = 15;
             timer = 40;
             super.cast(player);
+            return true;
         } else {
             if (playerSoul.getMagic() < 5f) return false;
             if (charge < 100) {
@@ -53,7 +55,6 @@ public class HestiasHearth extends ToggleableAbilityBase {
             playerSoul.resetLastCastTime();
             return false;
         }
-        return super.cast(player);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
                         living.heal(1f);
                         if (charge >= 35) {
                             for (StatusEffectInstance effect : List.copyOf(living.getStatusEffects())) {
-                                if (effect.getEffectType() == SoulForgeEffects.MANA_OVERLOAD) continue;
+                                if (effect.getEffectType() == SoulForgeEffects.MANA_SICKNESS) continue;
                                 living.removeStatusEffect(effect.getEffectType());
                             }
                         }
@@ -106,7 +107,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
                         if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                     }
                     if ((charge < 70 && timer >= 40) || (charge < 85 && timer % 20 == 0) || (charge >= 85 && timer % 10 == 0)) {
-                        living.damage(SoulForgeDamageTypes.of(player.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 1f);
+                        living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 1f);
                     }
                 }
             }
@@ -150,5 +151,18 @@ public class HestiasHearth extends ToggleableAbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new HestiasHearth();
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        nbt.putInt("charge", charge);
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        super.saveNbt(nbt);
+        nbt.putInt("charge", charge);
+        return nbt;
     }
 }

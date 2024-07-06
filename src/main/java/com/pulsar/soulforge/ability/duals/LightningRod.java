@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.entity.LightningRodLightningEntity;
 import com.pulsar.soulforge.entity.LightningRodProjectile;
 import com.pulsar.soulforge.item.SoulForgeItems;
@@ -55,7 +56,7 @@ public class LightningRod extends AbilityBase {
                     if (found) {
                         chained.add(closest);
                         chainPos = closest.getPos();
-                        closest.damage(player.getDamageSources().playerAttack(player), 5 + playerSoul.getEffectiveLV() / 2f);
+                        closest.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 5 + playerSoul.getEffectiveLV() / 2f);
                     }
                 }
                 struck = true;

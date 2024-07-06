@@ -64,7 +64,7 @@ public class Onrush extends AbilityBase {
 
     public int getCost() { return 30; }
 
-    public int getCooldown() { return 200; }
+    public int getCooldown() { return 160; }
 
     public AbilityType getType() { return AbilityType.CAST; }
 

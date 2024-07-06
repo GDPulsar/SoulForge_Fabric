@@ -24,23 +24,33 @@ public class AbilityList {
     }
 
     public List<AbilityBase> getAll() {
-        return abilities.values().stream().toList();
+        return List.copyOf(abilities.values());
     }
 
     public List<AbilityBase> getActive() {
-        return abilities.values().stream().filter(AbilityBase::getActive).toList();
+        return List.copyOf(abilities.values().stream().filter(AbilityBase::getActive).toList());
     }
 
     public int getCooldown(String name, int currentTick) {
-        return MathHelper.clamp(get(name).getCooldown() - (currentTick - get(name).getLastCastTime()), 0, get(name).getCooldown());
+        if (get(name) == null) return 0;
+        return MathHelper.clamp(currentTick - get(name).getLastCastTime(), 0, get(name).getOffCooldownTime() - get(name).getLastCastTime());
     }
 
     public int getCooldown(AbilityBase ability, int currentTick) {
-        return MathHelper.clamp(get(ability).getCooldown() - (currentTick - get(ability).getLastCastTime()), 0, get(ability).getCooldown());
+        if (get(ability) == null) return 0;
+        return MathHelper.clamp(currentTick - get(ability).getLastCastTime(), 0, get(ability).getOffCooldownTime() - get(ability).getLastCastTime());
     }
 
     public void add(AbilityBase ability) {
         abilities.put(ability.getName(), ability);
+    }
+
+    public void set(List<AbilityBase> abilities) {
+        HashMap<String, AbilityBase> newAbilities = new HashMap<>();
+        for (AbilityBase ability : abilities) {
+            newAbilities.put(ability.getName(), ability);
+        }
+        this.abilities = newAbilities;
     }
 
     public boolean has(AbilityBase ability) {

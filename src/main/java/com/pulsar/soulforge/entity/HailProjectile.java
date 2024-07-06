@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -69,9 +70,7 @@ public class HailProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
-        entity.damage(this.getDamageSources().mobProjectile(this, livingEntity), 12f);
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 12f);
         if (this.dataTracker.get(IS_STAGE_1) && entity instanceof LivingEntity living) {
             living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 300, 1));
         }

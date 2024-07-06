@@ -38,6 +38,9 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ClampedModelPredicateProvider;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.LightningEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
@@ -59,7 +62,14 @@ import java.awt.*;
 public class SoulForgeClient implements ClientModInitializer {
 	public static EntityModelLayer MODEL_FROZEN_ENERGY_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "frozen_energy"), "Frozen Energy");
 
-	private DisplaySlot survivalWeaponSlot;
+	public static RenderLayer getBeamRenderLayer(Identifier texture) {
+		return RenderLayer.of("energy_beam", VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.QUADS,
+						256, false, false, RenderLayer.MultiPhaseParameters.builder()
+								.program(RenderPhase.ENTITY_SOLID_PROGRAM).texture(new RenderPhase.Texture(texture, false, false))
+								.transparency(RenderPhase.NO_TRANSPARENCY).lightmap(RenderPhase.ENABLE_LIGHTMAP).overlay(RenderPhase.DISABLE_OVERLAY_COLOR)
+								.layering(RenderPhase.Layering.VIEW_OFFSET_Z_LAYERING)
+				.build(false));
+	}
 
 	public static boolean appleSkin = false;
 	public static boolean appleSkinApplied = false;
@@ -113,7 +123,6 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.BIG_SLASH_ENTITY_TYPE, BigSlashRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.HORIZONTAL_BLAST_ENTITY_TYPE, BlastRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.GUNLANCE_BLAST_ENTITY_TYPE, GunlanceBlastRenderer::new);
-		EntityRendererRegistry.register(SoulForgeEntities.DARK_FOUNTAIN_ENTITY_TYPE, DarkFountainEntityRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.SPECIAL_HELL_ENTITY_TYPE, SpecialHellEntityRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.ORBITAL_STRIKE_ENTITY_TYPE, OrbitalStrikeEntityRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.IMMOBILIZATION_ENTITY_TYPE, ImmobilizationEntityRenderer::new);

@@ -2,11 +2,13 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -32,7 +34,7 @@ public class JusticePelletProjectile extends ProjectileEntity {
         this.setOwner(owner);
         if (owner instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            this.dataTracker.set(DAMAGE, 2f + playerSoul.getEffectiveLV() / 6f);
+            this.dataTracker.set(DAMAGE, 2f + playerSoul.getEffectiveLV() / 4f);
         }
     }
 
@@ -110,11 +112,15 @@ public class JusticePelletProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        Entity entity2 = this.getOwner();
-        LivingEntity livingEntity = entity2 instanceof LivingEntity ? (LivingEntity)entity2 : null;
         if (entity instanceof LivingEntity living) {
+            DamageSource source;
+            if (getOwner() instanceof AutoTurretEntity autoTurret) {
+                source = SoulForgeDamageTypes.of(autoTurret.getOwner(), this.getWorld(), SoulForgeDamageTypes.AUTO_TURRET_DAMAGE_TYPE);
+            } else {
+                source = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+            }
             float damage = this.dataTracker.get(DAMAGE);
-            if (damage > 0) living.damage(this.getDamageSources().mobProjectile(this, livingEntity), damage);
+            if (damage > 0) living.damage(source, damage);
             else {
                 living.heal(-damage);
                 living.getWorld().playSound(null, living.getBlockPos(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.MASTER, 1f, 1f);

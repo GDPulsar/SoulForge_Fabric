@@ -27,6 +27,11 @@ public class Abilities {
                     return ability.getInstance();
                 }
             }
+            if (trait != Traits.determination && trait != Traits.perseverance) {
+                if (Objects.equals(Constants.pureAbilities.get(trait).getName(), name)) {
+                    return Constants.pureAbilities.get(trait).getInstance();
+                }
+            }
         }
         for (TraitBase trait1 : Traits.all()) {
             if (trait1 != Traits.determination) {

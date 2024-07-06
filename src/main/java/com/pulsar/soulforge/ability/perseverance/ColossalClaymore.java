@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -41,13 +42,13 @@ public class ColossalClaymore extends AbilityBase {
                 if (target instanceof PlayerEntity targetPlayer) {
                     if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                 }
-                target.damage(player.getDamageSources().playerAttack(player), playerSoul.getEffectiveLV()*4f);
+                target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV()*4f);
             }
             player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_BOMBSPLOSION_EVENT, SoundCategory.MASTER, 1f, 1f);
             PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("greater_slash");
             buf.writeBoolean(false);
             if (player.getServer() != null) SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 2));
+            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 6000, 2));
         }
         timer = greaterSlash ? 5 : 30;
         return super.cast(player);
@@ -66,7 +67,7 @@ public class ColossalClaymore extends AbilityBase {
             if (target instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
             }
-            target.damage(player.getDamageSources().playerAttack(player), playerSoul.getEffectiveLV()*0.8f);
+            target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV()*0.8f);
             target.setVelocity(velocity);
             target.velocityModified = true;
         }

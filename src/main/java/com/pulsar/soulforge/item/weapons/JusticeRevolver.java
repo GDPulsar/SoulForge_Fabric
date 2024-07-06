@@ -1,23 +1,19 @@
 package com.pulsar.soulforge.item.weapons;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.justice.JusticePellets;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.item.special.CrushingRound;
 import com.pulsar.soulforge.item.special.FrostbiteRound;
 import com.pulsar.soulforge.item.special.PuncturingRound;
 import com.pulsar.soulforge.item.special.SuppressingRound;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import com.pulsar.soulforge.util.Utils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
 public class JusticeRevolver extends MagicRangedItem {
@@ -52,10 +48,11 @@ public class JusticeRevolver extends MagicRangedItem {
                         }
                     }
                 }
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+                projectile.setDamage(5 + playerSoul.getLV() / 2.5f);
                 projectile.setPos(user.getEyePos());
                 projectile.setVelocity(user.getRotationVector().multiply(8));
                 world.spawnEntity(projectile);
-                world.playSoundFromEntity(null, user, SoulForgeSounds.GUN_SHOOT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 ammo--;
                 user.getItemCooldownManager().set(this, 10);
                 world.playSoundFromEntity(null, user, SoulForgeSounds.GUN_SHOOT_EVENT, SoundCategory.PLAYERS, 1f, 1f);

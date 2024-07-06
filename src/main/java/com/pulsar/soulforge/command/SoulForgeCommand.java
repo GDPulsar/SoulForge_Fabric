@@ -4,20 +4,20 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.WorldComponent;
-import com.pulsar.soulforge.components.WorldInitializer;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.world.World;
 
 import java.util.List;
 
+import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
 import static com.mojang.brigadier.arguments.FloatArgumentType.getFloat;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
-import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
 import static net.minecraft.command.argument.EntityArgumentType.getPlayer;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -120,7 +120,8 @@ public class SoulForgeCommand {
                                                                     return 1;
                                                                 })
                                                         )
-                                                ).then(literal("power")
+                                                )
+                                                .then(literal("power")
                                                         .then(literal("normal")
                                                                 .executes(context -> {
                                                                     SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
@@ -145,6 +146,21 @@ public class SoulForgeCommand {
                                                                     data.setStrong(true);
                                                                     data.setPure(true);
                                                                     context.getSource().sendMessage(Text.literal("Set your power to PURE."));
+                                                                    return 1;
+                                                                })
+                                                        )
+                                                )
+                                                .then(literal("hate")
+                                                        .then(argument("amount", integer())
+                                                                .executes(context -> {
+                                                                    SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
+                                                                    data.setHate(getInteger(context, "amount"));
+                                                                    if (data.getHate() == 100) {
+                                                                        context.getSource().sendMessage(Text.literal("sachism jumpscare"));
+                                                                    }
+                                                                    if (data.getHate() == 70) {
+                                                                        context.getSource().getPlayer().teleport(context.getSource().getServer().getWorld(World.OVERWORLD), 0, -500, 0, 0f, 0f);
+                                                                    }
                                                                     return 1;
                                                                 })
                                                         )

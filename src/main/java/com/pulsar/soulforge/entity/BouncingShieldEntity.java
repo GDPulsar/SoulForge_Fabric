@@ -120,7 +120,7 @@ public class BouncingShieldEntity extends ProjectileEntity implements GeoEntity 
                         stallTimer = 4;
                     }
                 } else if (hit.getEntity() instanceof LivingEntity living) {
-                    living.damage(this.getDamageSources().mobProjectile(this, this.owner), playerSoul.getEffectiveLV()*0.75f);
+                    living.damage(this.getDamageSources().thrown(this, this.owner), playerSoul.getEffectiveLV()*0.75f);
                 }
             }
             if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.justice)) {

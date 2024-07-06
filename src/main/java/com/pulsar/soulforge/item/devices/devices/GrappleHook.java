@@ -2,7 +2,6 @@ package com.pulsar.soulforge.item.devices.devices;
 
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.entity.GrappleHookProjectile;
-import com.pulsar.soulforge.entity.PolarityBall;
 import com.pulsar.soulforge.item.devices.DeviceBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;

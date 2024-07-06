@@ -2,7 +2,6 @@ package com.pulsar.soulforge.client.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.render.CylinderRenderer;
-import com.pulsar.soulforge.entity.DarkFountainEntity;
 import com.pulsar.soulforge.entity.SpecialHellEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

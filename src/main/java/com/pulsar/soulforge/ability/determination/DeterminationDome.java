@@ -35,40 +35,38 @@ public class DeterminationDome extends ToggleableAbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        if (!player.getWorld().isClient) {
-            super.cast(player);
-            if (getActive()) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                domeHealth = playerSoul.getEffectiveLV() * 10f;
-                center = player.getBlockPos();
-                player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 150f, 1f);
-                entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos(), domeRadius, domeHealth);
-                entity.setPosition(player.getBlockPos().toCenterPos().subtract(0, 0.5f, 0));
-                double radius = domeRadius + 0.5;
-                double radSq = radius * radius;
-                double rad1Sq = (radius - 1.5) * (radius - 1.5);
-                int ceilRad = MathHelper.ceil(radius);
-                for (int x = 0; x <= ceilRad; x++) {
-                    for (int y = 0; y < ceilRad; y++) {
-                        for (int z = 0; z <= ceilRad; z++) {
-                            double distanceSq = lengthSq(x, y, z);
-                            if (distanceSq > radSq) continue;
-                            if (distanceSq < rad1Sq) continue;
+        super.cast(player);
+        if (getActive()) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            domeHealth = playerSoul.getEffectiveLV() * 10f;
+            center = player.getBlockPos();
+            player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 150f, 1f);
+            entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos(), domeRadius, domeHealth);
+            entity.setPosition(player.getBlockPos().toCenterPos().subtract(0, 0.5f, 0));
+            double radius = domeRadius + 0.5;
+            double radSq = radius * radius;
+            double rad1Sq = (radius - 1.5) * (radius - 1.5);
+            int ceilRad = MathHelper.ceil(radius);
+            for (int x = 0; x <= ceilRad; x++) {
+                for (int y = 0; y < ceilRad; y++) {
+                    for (int z = 0; z <= ceilRad; z++) {
+                        double distanceSq = lengthSq(x, y, z);
+                        if (distanceSq > radSq) continue;
+                        if (distanceSq < rad1Sq) continue;
 
-                            placeDomeBlock(x, y, z, player);
-                            placeDomeBlock(-x, y, z, player);
-                            placeDomeBlock(x, -y, z, player);
-                            placeDomeBlock(-x, -y, z, player);
-                            placeDomeBlock(x, y, -z, player);
-                            placeDomeBlock(-x, y, -z, player);
-                            placeDomeBlock(x, -y, -z, player);
-                            placeDomeBlock(-x, -y, -z, player);
-                        }
+                        placeDomeBlock(x, y, z, player);
+                        placeDomeBlock(-x, y, z, player);
+                        placeDomeBlock(x, -y, z, player);
+                        placeDomeBlock(-x, -y, z, player);
+                        placeDomeBlock(x, y, -z, player);
+                        placeDomeBlock(-x, y, -z, player);
+                        placeDomeBlock(x, -y, -z, player);
+                        placeDomeBlock(-x, -y, -z, player);
                     }
                 }
             }
         }
-        return getActive();
+        return true;
     }
 
     private void placeDomeBlock(int x, int y, int z, PlayerEntity player) {
@@ -90,13 +88,19 @@ public class DeterminationDome extends ToggleableAbilityBase {
     @Override
     public boolean tick(ServerPlayerEntity player) {
         if (entity != null) {
-            return !getActive() || !entity.isAlive() || entity.isRemoved();
+            return super.tick(player) || !entity.isAlive() || entity.isRemoved();
         }
-        return !getActive();
+        return super.tick(player);
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
+        if (entity != null) {
+            for (DomePart part : entity.getParts()) {
+                if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
+            }
+            if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
+        }
         for (int x = -domeRadius; x <= domeRadius; x++) {
             for (int y = -domeRadius; y <= domeRadius; y++) {
                 for (int z = -domeRadius; z <= domeRadius; z++) {
@@ -108,15 +112,9 @@ public class DeterminationDome extends ToggleableAbilityBase {
                 }
             }
         }
-        if (entity != null) {
-            for (DomePart part : entity.getParts()) {
-                if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
-            }
-            if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
-        }
         entity = null;
         player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 150f, 1f);
-        return true;
+        return super.end(player);
     }
 
     public int getLV() { return 10; }
@@ -132,7 +130,7 @@ public class DeterminationDome extends ToggleableAbilityBase {
 
     @Override
     public NbtCompound saveNbt(NbtCompound nbt) {
-        nbt.put("center", NbtHelper.fromBlockPos(center));
+        if (nbt.contains("center")) nbt.put("center", NbtHelper.fromBlockPos(center));
         return super.saveNbt(nbt);
     }
 
@@ -140,7 +138,6 @@ public class DeterminationDome extends ToggleableAbilityBase {
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         super.readNbt(nbt);
-        center = NbtHelper.toBlockPos(nbt.getCompound(("center")));
-        super.readNbt(nbt);
+        if (center != null) center = NbtHelper.toBlockPos(nbt.getCompound(("center")));
     }
 }

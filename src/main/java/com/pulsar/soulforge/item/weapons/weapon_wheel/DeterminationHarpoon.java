@@ -43,6 +43,7 @@ public class DeterminationHarpoon extends MagicSwordItem {
         double d = attacker.getX() - target.getX();
         double e = attacker.getZ() - target.getZ();
         attacker.takeKnockback(0.4000000059604645, d, e);
+        target.velocityModified = true;
         return false;
     }
 
@@ -65,7 +66,7 @@ public class DeterminationHarpoon extends MagicSwordItem {
                 world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 4.0f, 0.75f);
                 playerSoul.setMagic(0f);
                 playerSoul.resetLastCastTime();
-                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 3000, 0));
+                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3000, 0));
             } else {
                 if (projectile == null || projectile.isRemoved()) {
                     projectile = new DTHarpoonProjectile(world, user);
