@@ -28,7 +28,6 @@ import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.ResetData;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -219,7 +218,7 @@ public class PlayerSoulComponent implements SoulComponent {
     }
 
     private void updateTags() {
-        if (this.player instanceof ClientPlayerEntity) return;
+        if (this.player.getWorld().isClient) return;
         tags = new ArrayList<>();
     }
 
@@ -682,7 +681,7 @@ public class PlayerSoulComponent implements SoulComponent {
 
     @Override
     public void sync() {
-        if (!(this.player instanceof ClientPlayerEntity)) SoulComponent.sync(this.player);
+        if (!this.player.getWorld().isClient) SoulComponent.sync(this.player);
     }
 
     @Override
@@ -1334,7 +1333,7 @@ public class PlayerSoulComponent implements SoulComponent {
     }
 
     private void updateAbilities() {
-        if (this.player instanceof ClientPlayerEntity) return;
+        if (this.player.getWorld().isClient) return;
         List<String> shouldBeAbilityNames = Traits.getAbilities(traits, getLV(), pure).stream().map(AbilityBase::getName).toList();
         for (String abilityName : shouldBeAbilityNames) {
             if (!this.abilities.has(abilityName)) {
