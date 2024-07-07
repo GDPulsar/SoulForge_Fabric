@@ -1,5 +1,6 @@
 <div align="center">
-# SoulForge
+
+  # SoulForge
 
 SoulForge is a mod designed around the game UNDERTALE by Toby Fox. It adds a magic system centered around traits.
 
