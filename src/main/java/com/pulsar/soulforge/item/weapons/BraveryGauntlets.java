@@ -44,7 +44,9 @@ public class BraveryGauntlets extends MagicSwordItem {
             user.addVelocity(0, 0.7, 0);
             if (!frostburn) target.setFireTicks(10);
             else target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 10, 0));
-            target.damage(user.getDamageSources().playerAttack(user), this.baseAttackDamage*2.5f);
+            if (target.damage(user.getDamageSources().playerAttack(user), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV())*2.5f)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)((this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()) * 2.5f));
+            }
             target.timeUntilRegen = 15;
             MinecraftServer server = world.getServer();
             if (server != null) {

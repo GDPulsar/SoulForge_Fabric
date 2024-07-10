@@ -3,6 +3,7 @@ package com.pulsar.soulforge.ability.determination;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -58,6 +59,8 @@ public class SAVELOAD extends ToggleableAbilityBase {
             } else if (saved != null) {
                 saved.teleport(savedPosition.x, savedPosition.y, savedPosition.z);
             }
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.setStyle(playerSoul.getStyle() + ((600 - timer) / 20));
         }
         return super.end(player);
     }

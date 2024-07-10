@@ -17,7 +17,10 @@ public class Regeneration extends AbilityBase {
         if (playerSoul.hasValue("antiheal")) {
             healAmount *= 1f-playerSoul.getValue("antiheal");
         }
+        float healthChange = player.getHealth();
         player.setHealth(player.getHealth() + healAmount);
+        healthChange = player.getHealth() - healthChange;
+        playerSoul.setStyle(playerSoul.getStyle() + (int)healthChange);
         player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
         for (int i = 0; i < 12; i++) {
             for (int j = -2; j < 3; j++) {

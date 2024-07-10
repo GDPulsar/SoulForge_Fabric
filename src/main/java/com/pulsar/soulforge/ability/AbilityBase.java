@@ -9,8 +9,7 @@ import net.minecraft.util.Identifier;
 
 public abstract class AbilityBase {
     private boolean isActive = false;
-    private int lastCastTime = 0;
-    private int offCooldownTime = 0;
+    private int cooldown = 0;
 
     public String getName() {
         return String.join(" ", this.getClass().getSimpleName().split("(?=\\p{Upper})"));
@@ -23,20 +22,19 @@ public abstract class AbilityBase {
     public abstract int getCooldown();
     public abstract AbilityType getType();
     public abstract AbilityBase getInstance();
+    public void cooldownTick() { this.cooldown -= 1; }
 
     public NbtCompound saveNbt(NbtCompound nbt) {
         nbt.putString("id", getID().getPath());
         nbt.putString("name", getName());
         nbt.putBoolean("active", isActive);
-        nbt.putInt("lastCastTime", lastCastTime);
-        nbt.putInt("offCooldownTime", offCooldownTime);
+        nbt.putInt("cooldown", cooldown);
         return nbt;
     }
 
     public void readNbt(NbtCompound nbt) {
         isActive = nbt.getBoolean("active");
-        lastCastTime = nbt.getInt("lastCastTime");
-        offCooldownTime = nbt.getInt("offCooldownTime");
+        cooldown = nbt.getInt("cooldown");
     }
 
     public void setActive(boolean active) {
@@ -45,22 +43,16 @@ public abstract class AbilityBase {
     public boolean getActive() {
         return isActive;
     }
-    public void setLastCastTime(int lastCastTime) {
-        this.lastCastTime = lastCastTime;
+    public void setCooldownVal(int cooldown) {
+        this.cooldown = cooldown;
     }
-    public int getLastCastTime() {
-        return lastCastTime;
+    public int getCooldownVal() {
+        return cooldown;
     }
-    public void setOffCooldownTime(int offCooldownTime) {
-        this.offCooldownTime = offCooldownTime;
-    }
-    public int getOffCooldownTime() {
-        return offCooldownTime;
-    }
+    public boolean onCooldown() { return cooldown > 0; }
 
     public boolean cast(ServerPlayerEntity player) {
         setActive(true);
-        setLastCastTime(player.getServer().getTicks());
         return true;
     }
     public boolean tick(ServerPlayerEntity player) {

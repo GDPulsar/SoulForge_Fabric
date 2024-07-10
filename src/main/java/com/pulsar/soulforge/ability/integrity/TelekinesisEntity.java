@@ -26,7 +26,7 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (target == null) {
-            EntityHitResult hit = Utils.getFocussedEntity(player, 6);
+            EntityHitResult hit = Utils.getFocussedEntity(player, 8);
             if (hit != null && hit.getEntity() instanceof LivingEntity living) {
                 HitResult hit2 = player.getWorld().raycast(new RaycastContext(player.getPos(), living.getPos(), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
                 if (hit2.getPos().distanceTo(living.getPos()) > 0.2f) return false;
@@ -55,7 +55,7 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
     public boolean tick(ServerPlayerEntity player) {
         if (target != null) {
             Vec3d tpPos;
-            HitResult hit = player.raycast(4f, 0, false);
+            HitResult hit = player.raycast(6f, 0, false);
             if (hit != null) {
                 if (hit.getType() == HitResult.Type.BLOCK) {
                     BlockHitResult blockHitResult = (BlockHitResult)hit;
@@ -64,9 +64,14 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
                     tpPos = hit.getPos();
                 }
             }
-            else tpPos = player.getRotationVector().multiply(4f).add(player.getEyePos());
-            Vec3d teleportOffset = target.getPos().subtract(tpPos);
-            if (teleportOffset.subtract(player.getVelocity()).length() > 7.5f) return true;
+            else tpPos = player.getRotationVector().multiply(6f).add(player.getEyePos());
+            float teleportDist = (float)target.getPos().distanceTo(tpPos);
+            if (Math.abs(player.getVelocity().length() - teleportDist) > 7.5f) {
+                setActive(false);
+                return super.tick(player);
+            }
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.setStyle(playerSoul.getStyle() + 1);
             target.teleport(tpPos.x, tpPos.y, tpPos.z);
             target.setVelocity(Vec3d.ZERO);
             target.velocityModified = true;

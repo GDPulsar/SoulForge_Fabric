@@ -1,5 +1,7 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -28,7 +30,9 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class YoyoProjectile extends ProjectileEntity implements GeoEntity {
     private static final TrackedData<Vector3f> TARGET = DataTracker.registerData(YoyoProjectile.class, TrackedDataHandlerRegistry.VECTOR3F);
@@ -72,6 +76,10 @@ public class YoyoProjectile extends ProjectileEntity implements GeoEntity {
                 if (!projectiles.contains(projectile)) {
                     projectiles.add(projectile);
                     entity.remove(RemovalReason.UNLOADED_TO_CHUNK);
+                    if (getOwner() instanceof PlayerEntity player) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        playerSoul.setStyle(playerSoul.getStyle() + 10);
+                    }
                 }
             }
         }
@@ -117,8 +125,11 @@ public class YoyoProjectile extends ProjectileEntity implements GeoEntity {
         if (hitResult instanceof EntityHitResult entityHitResult) {
             if (entityHitResult.getEntity() instanceof LivingEntity living) {
                 if (this.getOwner() instanceof PlayerEntity owner) {
-                    living.damage(owner.getDamageSources().playerAttack(owner), 8f);
-                    living.timeUntilRegen = 15;
+                    if (living.damage(owner.getDamageSources().playerAttack(owner), 8f)) {
+                        living.timeUntilRegen = 15;
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(owner);
+                        playerSoul.setStyle(playerSoul.getStyle() + 8);
+                    }
                 }
             }
         }

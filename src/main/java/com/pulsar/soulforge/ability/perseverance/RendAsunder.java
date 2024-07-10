@@ -23,11 +23,14 @@ public class RendAsunder extends AbilityBase {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         StatusEffectInstance effect = new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, playerSoul.getEffectiveLV()*10, playerSoul.isPure() ? 1 : 0);
         DamageSource damageSource = SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+        int affectedCount = 0;
         for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 2f, 3f, 1f, 2f)) {
             if (target instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
             }
-            target.damage(damageSource, 0.5f*playerSoul.getEffectiveLV());
+            if (target.damage(damageSource, 0.5f*playerSoul.getEffectiveLV())) {
+                affectedCount++;
+            }
             target.addStatusEffect(effect, player);
             if (target instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
@@ -35,6 +38,7 @@ public class RendAsunder extends AbilityBase {
                 Utils.addAntiheal(0.4f, playerSoul.getEffectiveLV()*20, targetSoul);
             }
         }
+        playerSoul.setStyle(playerSoul.getStyle() + affectedCount * 5);
         for (int i = 0; i < 3; i ++) {
             ServerWorld serverWorld = player.getServerWorld();
             Vec3d particlePos = new Vec3d(player.getRotationVector().x, 0.5f, player.getRotationVector().z).add(player.getPos());

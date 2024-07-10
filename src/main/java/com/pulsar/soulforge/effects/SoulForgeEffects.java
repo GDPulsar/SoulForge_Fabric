@@ -9,6 +9,7 @@ import net.minecraft.util.Identifier;
 public class SoulForgeEffects {
     public static final StatusEffect VULNERABILITY = new VulnerabilityEffect();
     public static final StatusEffect MANA_SICKNESS = new ManaSickness();
+    public static final StatusEffect MANA_OVERLOAD = new ManaOverload();
     public static final StatusEffect SNOWED_VISION = new SnowedVision();
     public static final StatusEffect VALIANT_HEART = new ValiantHeart();
     public static final StatusEffect CRUSHED = new CrushedEffect();
@@ -20,6 +21,7 @@ public class SoulForgeEffects {
     public static void registerEffects() {
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "vulnerability"), VULNERABILITY);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "mana_sickness"), MANA_SICKNESS);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "mana_overload"), MANA_OVERLOAD);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "snowed_vision"), SNOWED_VISION);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "valiant_heart"), VALIANT_HEART);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "crushed"), CRUSHED);

@@ -15,6 +15,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
@@ -25,9 +26,15 @@ public class Warpspeed extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (playerSoul.getStyleRank() < 4) {
+            player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+            return false;
+        }
         timer = 300;
         player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(UUID.randomUUID(), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier(UUID.randomUUID(), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1200, 0));
         return super.cast(player);
     }
 
@@ -52,7 +59,7 @@ public class Warpspeed extends AbilityBase {
         timer--;
         if (lastPos.distanceTo(player.getPos()) < 0.001f) {
             stillTimer++;
-            if (stillTimer >= 4) {
+            if (stillTimer > 4) {
                 timer = 0;
             }
         } else {
@@ -67,7 +74,6 @@ public class Warpspeed extends AbilityBase {
         player.setStepHeight(0.6f);
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "Warpspeed");
         Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "Warpspeed");
-        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 1800, 1));
         return super.end(player);
     }
 

@@ -183,6 +183,10 @@ public class DomeEntity extends Entity implements Attackable {
             }
         }
         setHealth(getHealth() - amount);
+        if (this.owner != null) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(this.owner);
+            playerSoul.setStyle(playerSoul.getStyle() + (int)amount);
+        }
         if (source.getAttacker() == this.owner && this.getEmitter()) {
             setHealth(-1f);
         }

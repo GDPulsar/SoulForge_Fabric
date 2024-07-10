@@ -13,7 +13,6 @@ public abstract class ToggleableAbilityBase extends AbilityBase {
     }
     public boolean end(ServerPlayerEntity player) {
         setActive(false);
-        setLastCastTime(player.getServer().getTicks());
         return true;
     }
     @Override

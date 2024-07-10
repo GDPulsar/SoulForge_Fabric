@@ -3,6 +3,7 @@ package com.pulsar.soulforge.mixin;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -57,10 +58,15 @@ public abstract class ProjectileEntityMixin {
         }
     }
 
-    @Inject(method="onEntityHit", at=@At("HEAD"))
+    @Inject(method="onEntityHit", at=@At("HEAD"), cancellable = true)
     protected void onEntityHit(EntityHitResult entityHitResult, CallbackInfo ci) {
         ProjectileEntity projectile = (ProjectileEntity)(Object)this;
         if (entityHitResult.getEntity() instanceof LivingEntity target) {
+            if (target.isUsingItem() && (target.getActiveItem().isOf(SoulForgeItems.PERSEVERANCE_EDGE) || target.getActiveItem().isOf(SoulForgeItems.DETERMINATION_EDGE))) {
+                projectile.kill();
+                ci.cancel();
+                return;
+            }
             if (getOwner() != null) {
                 if (projectile instanceof PersistentProjectileEntity persistentProjectile) {
                     if (getOwner() instanceof PlayerEntity player) {

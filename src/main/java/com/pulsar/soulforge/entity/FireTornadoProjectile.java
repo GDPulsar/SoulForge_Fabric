@@ -58,8 +58,10 @@ public class FireTornadoProjectile extends Entity implements GeoEntity {
                             SoulComponent playerSoul = SoulForge.getPlayerSoul(owner);
                             damage = playerSoul.getEffectiveLV()/4f;
                         }
-                        living.damage(SoulForgeDamageTypes.of(owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
-                        living.timeUntilRegen = 10;
+                        if (living.damage(SoulForgeDamageTypes.of(owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage)) {
+                            SoulComponent playerSoul = SoulForge.getPlayerSoul(owner);
+                            playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+                        }
                     }
                 }
             }

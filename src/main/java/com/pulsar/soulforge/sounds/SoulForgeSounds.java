@@ -19,8 +19,10 @@ public class SoulForgeSounds {
     public static final Identifier HEAL = new Identifier(SoulForge.MOD_ID, "heal");
     public static final Identifier PARRY = new Identifier(SoulForge.MOD_ID, "parry");
     public static final Identifier UT_A_BULLET = new Identifier(SoulForge.MOD_ID, "ut_a_bullet");
+    public static final Identifier UT_A_GRAB = new Identifier(SoulForge.MOD_ID, "ut_a_grab");
     public static final Identifier UT_BLASTER = new Identifier(SoulForge.MOD_ID, "ut_blaster");
     public static final Identifier UT_BOMBSPLOSION = new Identifier(SoulForge.MOD_ID, "ut_bombsplosion");
+    public static final Identifier UT_CREATE = new Identifier(SoulForge.MOD_ID, "ut_create");
     public static final Identifier UT_EXPLOSION = new Identifier(SoulForge.MOD_ID, "ut_explosion");
     public static final Identifier UT_GRAVITY_CHANGE = new Identifier(SoulForge.MOD_ID, "ut_gravity_change");
     public static final Identifier UT_HEAL = new Identifier(SoulForge.MOD_ID, "ut_heal");
@@ -50,8 +52,10 @@ public class SoulForgeSounds {
     public static SoundEvent HEAL_EVENT = SoundEvent.of(HEAL);
     public static SoundEvent PARRY_EVENT = SoundEvent.of(PARRY);
     public static SoundEvent UT_A_BULLET_EVENT = SoundEvent.of(UT_A_BULLET);
+    public static SoundEvent UT_A_GRAB_EVENT = SoundEvent.of(UT_A_GRAB);
     public static SoundEvent UT_BLASTER_EVENT = SoundEvent.of(UT_BLASTER);
     public static SoundEvent UT_BOMBSPLOSION_EVENT = SoundEvent.of(UT_BOMBSPLOSION);
+    public static SoundEvent UT_CREATE_EVENT = SoundEvent.of(UT_CREATE);
     public static SoundEvent UT_EXPLOSION_EVENT = SoundEvent.of(UT_EXPLOSION);
     public static SoundEvent UT_GRAVITY_CHANGE_EVENT = SoundEvent.of(UT_GRAVITY_CHANGE);
     public static SoundEvent UT_HEAL_EVENT = SoundEvent.of(UT_HEAL);
@@ -85,8 +89,10 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, HEAL, HEAL_EVENT);
         Registry.register(Registries.SOUND_EVENT, PARRY, PARRY_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_A_BULLET, UT_A_BULLET_EVENT);
+        Registry.register(Registries.SOUND_EVENT, UT_A_GRAB, UT_A_GRAB_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_BLASTER, UT_BLASTER_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_BOMBSPLOSION, UT_BOMBSPLOSION_EVENT);
+        Registry.register(Registries.SOUND_EVENT, UT_CREATE, UT_CREATE_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_EXPLOSION, UT_EXPLOSION_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_GRAVITY_CHANGE, UT_GRAVITY_CHANGE_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_HEAL, UT_HEAL_EVENT);

@@ -27,14 +27,16 @@ public class StatusInversion extends AbilityBase {
         if (hit != null) {
             if (hit.getEntity() instanceof LivingEntity target) {
                 Collection<StatusEffectInstance> effects = target.getStatusEffects();
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                playerSoul.setStyle(playerSoul.getStyle() + 4 * effects.size());
                 List<StatusEffectInstance> newEffects = new ArrayList<>();
                 if (target.getFireTicks() > 0) {
                     target.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, (int)(target.getFireTicks()*0.6f), 0));
                 }
                 if (target instanceof PlayerEntity targetPlayer) {
-                    SoulComponent playerSoul = SoulForge.getPlayerSoul(targetPlayer);
-                    if (playerSoul.hasValue("antiheal") && playerSoul.hasValue("antihealDuration")) {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, (int) (playerSoul.getValue("antihealDuration")), (int) (playerSoul.getValue("antiheal") * 0.06f)));
+                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+                    if (targetSoul.hasValue("antiheal") && targetSoul.hasValue("antihealDuration")) {
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, (int) (targetSoul.getValue("antihealDuration")), (int) (targetSoul.getValue("antiheal") * 0.06f)));
                     }
                 }
                 for (StatusEffectInstance effect : effects) {

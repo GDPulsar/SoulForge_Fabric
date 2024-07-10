@@ -89,6 +89,12 @@
       "soulforge:ut_a_bullet"
     ]
   },
+  "ut_a_grab": {
+    "subtitle": "subtitles.soulforge.ut_a_grab",
+    "sounds": [
+      "soulforge:ut_a_grab"
+    ]
+  },
   "ut_alphys": {
     "sounds": [
       {
@@ -107,6 +113,12 @@
     "subtitle": "subtitles.soulforge.ut_bombsplosion",
     "sounds": [
       "soulforge:ut_bombsplosion"
+    ]
+  },
+  "ut_create": {
+    "subtitle": "subtitles.soulforge.ut_create",
+    "sounds": [
+      "soulforge:ut_create"
     ]
   },
   "ut_explosion": {

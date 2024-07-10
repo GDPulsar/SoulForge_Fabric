@@ -79,7 +79,12 @@ public class DeterminationShotProjectile extends ProjectileEntity {
             damage = playerSoul.getEffectiveLV();
         }
         Entity entity = entityHitResult.getEntity();
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
+        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage)) {
+            if (getOwner() instanceof PlayerEntity player) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+            }
+        }
     }
 
     @Override

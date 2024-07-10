@@ -59,7 +59,7 @@ public class LeftClickPacket {
                     player.getWorld().spawnEntity(shield);
                 }
             } else {
-                if (using.isOf(SoulForgeItems.KINDNESS_SHIELD)) {
+                if (using.isOf(SoulForgeItems.KINDNESS_SHIELD) || using.isOf(SoulForgeItems.DETERMINATION_SHIELD)) {
                     if (playerSoul.hasValue("shieldBashCooldown")) {
                         if (playerSoul.getValue("shieldBashCooldown") > 0) return;
                     }

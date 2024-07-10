@@ -11,6 +11,7 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -56,7 +57,7 @@ public class LightningRod extends AbilityBase {
                     if (found) {
                         chained.add(closest);
                         chainPos = closest.getPos();
-                        closest.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 5 + playerSoul.getEffectiveLV() / 2f);
+                        closest.damage(SoulForgeDamageTypes.of(player, DamageTypes.LIGHTNING_BOLT), 5 + playerSoul.getEffectiveLV() / 2f);
                     }
                 }
                 struck = true;

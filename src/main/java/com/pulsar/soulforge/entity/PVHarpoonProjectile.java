@@ -105,7 +105,13 @@ public class PVHarpoonProjectile extends ProjectileEntity implements GeoEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 12f);
+        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 12f)) {
+            if (getOwner() instanceof PlayerEntity player) {
+                float distance = entity.distanceTo(player);
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(distance * 6f));
+            }
+        }
     }
 
     private void destroy() {

@@ -29,6 +29,7 @@ import me.x150.renderer.render.Renderer3d;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -58,17 +59,20 @@ import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.client.HUDOverlayHandler;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
+import static net.minecraft.client.render.RenderPhase.*;
 
 public class SoulForgeClient implements ClientModInitializer {
 	public static EntityModelLayer MODEL_FROZEN_ENERGY_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "frozen_energy"), "Frozen Energy");
 
+	public static RenderPhase.ShaderProgram energyBeamProgram;
+
 	public static RenderLayer getBeamRenderLayer(Identifier texture) {
-		return RenderLayer.of("energy_beam", VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.QUADS,
-						256, false, false, RenderLayer.MultiPhaseParameters.builder()
-								.program(RenderPhase.ENTITY_SOLID_PROGRAM).texture(new RenderPhase.Texture(texture, false, false))
-								.transparency(RenderPhase.NO_TRANSPARENCY).lightmap(RenderPhase.ENABLE_LIGHTMAP).overlay(RenderPhase.DISABLE_OVERLAY_COLOR)
-								.layering(RenderPhase.Layering.VIEW_OFFSET_Z_LAYERING)
-				.build(false));
+		RenderLayer.MultiPhaseParameters mpp = RenderLayer.MultiPhaseParameters.builder().program(energyBeamProgram).texture(new RenderPhase.Texture(texture, false, false)).transparency(NO_TRANSPARENCY).lightmap(ENABLE_LIGHTMAP).overlay(ENABLE_OVERLAY_COLOR).build(false);
+		return RenderLayer.of("energy_beam", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.QUADS,
+						2048, false, false, mpp);
 	}
 
 	public static boolean appleSkin = false;
@@ -179,6 +183,8 @@ public class SoulForgeClient implements ClientModInitializer {
 				entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f);
 		ModelPredicateProviderRegistry.register(SoulForgeItems.KINDNESS_SHIELD, new Identifier("blocking"), (stack, world, entity, i) ->
 				entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f);
+		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_SHIELD, new Identifier("blocking"), (stack, world, entity, i) ->
+				entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f);
 		ModelPredicateProviderRegistry.register(SoulForgeItems.JUSTICE_BOW, new Identifier("pulling"), ((stack, world, entity, seed) -> {
 			if (entity == null) return 0f;
 			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f;
@@ -257,7 +263,18 @@ public class SoulForgeClient implements ClientModInitializer {
 			}
 		});
 
-		SoulForgeRendering.initializeShaders();
+		CoreShaderRegistrationCallback.EVENT.register(ctx -> {
+			SoulForgeRendering.initializeShaders(
+					(id, vertexFormat, onLoaded) -> {
+						try {
+							ctx.register(id, vertexFormat, onLoaded);
+						} catch (IOException e) {
+							throw new UncheckedIOException(e);
+						}
+					});
+
+			energyBeamProgram = new RenderPhase.ShaderProgram(SoulForgeRendering::energyBeam);
+		});
 	}
 
 	private static void drawInFrontOfPlayer(MatrixStack stack, Vec3d position, Vec3d size, Color color) {

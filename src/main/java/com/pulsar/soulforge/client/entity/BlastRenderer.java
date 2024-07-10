@@ -1,11 +1,11 @@
 package com.pulsar.soulforge.client.entity;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.client.render.CylinderRenderer;
 import com.pulsar.soulforge.entity.BlastEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -35,7 +35,7 @@ public class BlastRenderer extends EntityRenderer<BlastEntity> {
 
     public void render(BlastEntity blastEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(SoulForgeClient.getBeamRenderLayer(TEXTURE));
         float size;
         if (blastEntity.timer <= 3) {
             size = MathHelper.lerp(blastEntity.timer/3f, 0f, blastEntity.getRadius());

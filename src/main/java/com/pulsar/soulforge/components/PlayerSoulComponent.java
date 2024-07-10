@@ -33,6 +33,8 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -62,14 +64,17 @@ import java.util.List;
 import java.util.*;
 
 public class PlayerSoulComponent implements SoulComponent {
-    private List<TraitBase> traits;
-    private boolean strong;
-    private boolean pure;
-    private int lv;
-    private int exp;
-    private int hate;
-    private boolean inverted;
-    private float magic;
+    private List<TraitBase> traits = List.of(Traits.bravery, Traits.justice);
+    private boolean strong = false;
+    private boolean pure = false;
+    private int lv = 1;
+    private int exp = 0;
+    private int style = 0;
+    private int styleRank = 0;
+    private int lastStyleIncrease = 0;
+    private int hate = 0;
+    private boolean inverted = false;
+    private float magic = 0;
     private AbilityList abilities = new AbilityList();
     private List<String> tags = new ArrayList<>();
     private HashMap<String, Float> values = new HashMap<>();
@@ -93,8 +98,9 @@ public class PlayerSoulComponent implements SoulComponent {
         resetTrait();
         lv = 1;
         exp = 0;
+        style = 0;
+        styleRank = 0;
         magic = 100;
-        SoulForge.LOGGER.info("new player soul");
         updateAbilities();
         updateTags();
     }
@@ -350,8 +356,8 @@ public class PlayerSoulComponent implements SoulComponent {
             if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER) != null) multiplier = (float)player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).getValue();
         }
         if (pure) multiplier += 0.5f;
-        if (traits.contains(Traits.determination) && this.player != null) {
-            multiplier += MathHelper.clamp(0.5f*((player.getMaxHealth()-player.getHealth())/player.getMaxHealth()), 0f, 0.5f);
+        if (traits.contains(Traits.determination)) {
+            multiplier += 0.1f * getStyleRank();
         }
         return MathHelper.floor(effLv*multiplier);
     }
@@ -383,7 +389,7 @@ public class PlayerSoulComponent implements SoulComponent {
         }
         if (leveledUp && player instanceof ServerPlayerEntity) {
             SoulForgeCriterions.PLAYER_LV.trigger((ServerPlayerEntity)player, this.lv);
-            player.sendMessage(Text.of("Your LOVE increased to " + this.lv));
+            player.sendMessage(Text.translatable("soulforge.lv.increase").append(String.valueOf(this.lv)));
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.UT_LEVEL_UP_EVENT, SoundCategory.PLAYERS, 1f, 1f);
         }
         updateAbilities();
@@ -395,6 +401,50 @@ public class PlayerSoulComponent implements SoulComponent {
     public int getExpRequirement() {
         if (lv >= 20) return -1;
         return MathHelper.floor(10000f*(lv/20f)*(lv/20f));
+    }
+
+    @Override
+    public int getStyle() {
+        return style;
+    }
+
+    @Override
+    public void setStyle(int style) {
+        this.style = style;
+        while (this.style >= getStyleRequirement()) {
+            this.style -= getStyleRequirement();
+            this.styleRank++;
+        }
+        this.lastStyleIncrease = player.age;
+    }
+
+    @Override
+    public int getStyleRequirement() {
+        return switch (this.styleRank) {
+            case 0 -> 100;
+            case 1 -> 250;
+            case 2 -> 350;
+            case 3, 4 -> 500;
+            default -> 69420;
+        };
+    }
+
+    @Override
+    public int getStyleRank() {
+        return styleRank;
+    }
+
+    @Override
+    public void setStyleRank(int styleRank) {
+        this.styleRank = styleRank;
+        if (styleRank >= 5) {
+            player.playSound(SoulForgeSounds.UT_CREATE_EVENT, 1f, 1f);
+        } else if (styleRank > 0) {
+            player.playSound(SoulForgeSounds.UT_A_GRAB_EVENT, 1f, 1f);
+        }
+        if (styleRank > 5) {
+            player.sendMessage(Text.literal("what sort of frog magic is this"));
+        }
     }
 
     @Override
@@ -446,22 +496,19 @@ public class PlayerSoulComponent implements SoulComponent {
     @Override
     public boolean onCooldown(AbilityBase ability) {
         if (player == null) return false;
-        return abilities.has(ability) && player.age <= abilities.get(ability).getOffCooldownTime() && abilities.get(ability).getLastCastTime() != 0;
+        return abilities.has(ability) && abilities.get(ability).getCooldownVal() > 0;
     }
 
     @Override
     public boolean onCooldown(String abilityName) {
-        return abilities.has(abilityName) && player.age <= abilities.get(abilityName).getOffCooldownTime() && abilities.get(abilityName).getLastCastTime() != 0;
+        return abilities.has(abilityName) && abilities.get(abilityName).getCooldownVal() > 0;
     }
 
     @Override
     public float cooldownPercent(AbilityBase ability) {
         try {
-            if (abilities.get(ability).getLastCastTime() == 0 || abilities.get(ability).getOffCooldownTime() == 0) return 1f;
-            int offCooldown = abilities.get(ability).getOffCooldownTime();
-            if (player.age > offCooldown) return 1f;
-            int onCooldown = abilities.get(ability).getLastCastTime();
-            return MathHelper.clamp((float)(player.age - onCooldown) / (float)(offCooldown - onCooldown), 0f, 1f);
+            if (abilities.get(ability).getCooldownVal() == 0) return 1f;
+            return MathHelper.clamp(1f - ((float)(abilities.get(ability).getCooldownVal()) / (float)(abilities.get(ability).getCooldown())), 0f, 1f);
         } catch (NullPointerException e) {
             return 1f;
         }
@@ -470,16 +517,14 @@ public class PlayerSoulComponent implements SoulComponent {
     @Override
     public void setCooldown(AbilityBase ability, int cooldown) {
         if (abilities.get(ability).getCooldown() == 0) return;
-        abilities.get(ability).setLastCastTime(player.age);
-        abilities.get(ability).setOffCooldownTime(player.age + cooldown);
+        abilities.get(ability).setCooldownVal(cooldown);
     }
 
     @Override
     public void setCooldown(String abilityName, int cooldown) {
         if (this.abilities.has(abilityName)) {
             if (abilities.get(abilityName).getCooldown() == 0) return;
-            abilities.get(abilityName).setLastCastTime(player.age);
-            abilities.get(abilityName).setOffCooldownTime(player.age + cooldown);
+            abilities.get(abilityName).setCooldownVal(cooldown);
         }
     }
 
@@ -507,12 +552,13 @@ public class PlayerSoulComponent implements SoulComponent {
 
     @Override
     public void magicTick() {
-        int manaOverloadAmplifier = 0;
-        if (player.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) manaOverloadAmplifier = Objects.requireNonNull(player.getStatusEffect(SoulForgeEffects.MANA_SICKNESS)).getAmplifier();
-        if (lastCastTime/20f > (5f*(manaOverloadAmplifier+1))/Math.ceil(lv/5f)) {
+        int manaSicknessAmplifier = 0;
+        float manaStartTime = 5f - MathHelper.clamp(getStyleRank(), 0, 5);
+        if (player.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) manaSicknessAmplifier = Objects.requireNonNull(player.getStatusEffect(SoulForgeEffects.MANA_SICKNESS)).getAmplifier() + 1;
+        if (lastCastTime/20f > (manaStartTime*(manaSicknessAmplifier+1))/Math.ceil(lv/5f)) {
             float moveDist = (float) player.getPos().distanceTo(lastPos);
-            if ((lastCastTime%(60-lv*2) == 0 && moveDist < 0.01f) || (lastCastTime%(120-lv*4) == 0 && moveDist >= 0.01f) && manaOverloadAmplifier < 4) {
-                manaRegenRate += 1/20f - manaOverloadAmplifier/80f;
+            if ((lastCastTime%(60-lv*2) == 0 && moveDist < 0.01f) || (lastCastTime%(120-lv*4) == 0 && moveDist >= 0.01f) && manaSicknessAmplifier < 4) {
+                manaRegenRate += 1/20f - manaSicknessAmplifier/80f;
             }
         } else {
             manaRegenRate = 0;
@@ -527,6 +573,23 @@ public class PlayerSoulComponent implements SoulComponent {
         setMagic(magic + manaRegenRate);
         lastCastTime++;
         lastPos = player.getPos();
+
+        if (style > 0 || styleRank > 0) {
+            int styleTicks = player.age - lastStyleIncrease;
+            if (styleTicks >= 140) {
+                if (styleTicks % 10 == 0) {
+                    style = MathHelper.clamp(style - getStyleRequirement() / 100, 0, getStyleRequirement());
+                    if (style == 0 && styleRank > 0) {
+                        styleRank--;
+                        style = getStyleRequirement()-1;
+                    }
+                }
+            }
+        }
+        if (player.hasStatusEffect(SoulForgeEffects.MANA_OVERLOAD)) {
+            style = 0;
+            styleRank = 0;
+        }
     }
 
     @Override
@@ -695,6 +758,9 @@ public class PlayerSoulComponent implements SoulComponent {
             buf.writeBoolean(pure);
             buf.writeVarInt(lv);
             buf.writeVarInt(exp);
+            buf.writeVarInt(style);
+            buf.writeVarInt(styleRank);
+            buf.writeVarInt(lastStyleIncrease);
             buf.writeVarInt(hate);
             buf.writeBoolean(inverted);
             buf.writeFloat(magic);
@@ -758,6 +824,9 @@ public class PlayerSoulComponent implements SoulComponent {
         this.pure = buf.readBoolean();
         this.lv = buf.readVarInt();
         this.exp = buf.readVarInt();
+        this.style = buf.readVarInt();
+        this.styleRank = buf.readVarInt();
+        this.lastStyleIncrease = buf.readVarInt();
         this.hate = buf.readVarInt();
         this.inverted = buf.readBoolean();
         this.magic = buf.readFloat();
@@ -946,9 +1015,13 @@ public class PlayerSoulComponent implements SoulComponent {
                             magic -= cost;
                             resetLastCastTime();
                         } else {
-                            ability.setLastCastTime(player.age);
                             ability.end((ServerPlayerEntity)player);
                             ability.setActive(false);
+                            float cooldown = ability.getCooldown();
+                            if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN) != null) cooldown = (int)(cooldown * player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).getValue());
+                            if (pure) cooldown /= 2;
+                            if (hasCast("Valiant Heart")) cooldown /= 1.33f;
+                            setCooldown(ability, (int)cooldown);
                         }
                     } else {
                         magic -= cost;
@@ -979,7 +1052,7 @@ public class PlayerSoulComponent implements SoulComponent {
     public void tick() {
         if (player instanceof ServerPlayerEntity) {
             long startTickTimer = System.currentTimeMillis();
-            for (AbilityBase ability : List.copyOf(abilities.getActive())) {
+            for (AbilityBase ability : abilities.getActive()) {
                 if (ability.tick((ServerPlayerEntity)player)) {
                     ability.end((ServerPlayerEntity)player);
                     if (ability.getType() == AbilityType.TOGGLE) {
@@ -990,6 +1063,9 @@ public class PlayerSoulComponent implements SoulComponent {
                     }
                     ability.setActive(false);
                 }
+            }
+            for (AbilityBase ability : abilities.getOnCooldown()) {
+                ability.cooldownTick();
             }
             if (lastTickWasShitAss) {
                 long tickDuration = System.currentTimeMillis() - startTickTimer;
@@ -1014,7 +1090,6 @@ public class PlayerSoulComponent implements SoulComponent {
             }
             decreaseTimer("parry");
             decreaseTimer("parryCooldown");
-            decreaseTimer("overchargeCooldown");
             decreaseTimer("dtWeaponCooldown");
             decreaseTimer("shieldBashCooldown");
             decreaseTimer("stockpileTimer");
@@ -1046,8 +1121,16 @@ public class PlayerSoulComponent implements SoulComponent {
                     }
                     for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
                         if (target instanceof LivingEntity living) {
-                            living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 2f);
+                            if (living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 5f)) {
+                                setStyle(getStyle() + 5);
+                            }
                             living.takeKnockback(1.5f, -player.getVelocity().x, -player.getVelocity().z);
+                            if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_SHIELD)) {
+                                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 100, 0));
+                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1));
+                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, 1));
+                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 100, 1));
+                            }
                         }
                     }
                 }
@@ -1057,21 +1140,27 @@ public class PlayerSoulComponent implements SoulComponent {
                     setValue("clawGouge", (int)getValue("clawGouge") - 1);
                     if (getValue("clawGouge") == 15) {
                         removeTag("immobile");
-                        Vec3d velAdd = player.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize().multiply(2f);
+                        Vec3d velAdd = player.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize().multiply(player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW) ? 3.5f : 2f);
                         player.addVelocity(velAdd);
                         player.velocityModified = true;
                     }
                     if (getValue("clawGouge") <= 15) {
                         for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
                             if (target instanceof LivingEntity living) {
-                                living.damage(player.getDamageSources().playerAttack(player), (float)(player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)*1.5f));
-                                player.setVelocity(Vec3d.ZERO);
-                                player.velocityModified = true;
-                                if (living instanceof PlayerEntity) {
-                                    if (getMagic() >= 40) {
-                                        setMagic(getMagic() - 40f);
-                                        SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity)living);
-                                        Utils.addAntiheal(0.8f, getLV()*40f, targetSoul);
+                                if (living.damage(player.getDamageSources().playerAttack(player), (float) (player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5f))) {
+                                    setStyle(getStyle() + (int) (player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5f));
+                                }
+                                if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW)) {
+                                    living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140, 1));
+                                } else {
+                                    player.setVelocity(Vec3d.ZERO);
+                                    player.velocityModified = true;
+                                    if (living instanceof PlayerEntity) {
+                                        if (getMagic() >= 40) {
+                                            setMagic(getMagic() - 40f);
+                                            SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity) living);
+                                            Utils.addAntiheal(0.8f, getLV() * 40f, targetSoul);
+                                        }
                                     }
                                 }
                                 if (player.getMainHandStack().isOf(SoulForgeItems.GUNLANCE)) {
@@ -1110,7 +1199,9 @@ public class PlayerSoulComponent implements SoulComponent {
                 if (getValue("yoyoAoETimer") > 0) {
                     for (Entity entity : player.getWorld().getOtherEntities(player, Box.of(player.getPos(), 4, 4, 4))) {
                         if (entity instanceof LivingEntity living) {
-                            living.damage(player.getDamageSources().playerAttack(player), 12f);
+                            if (living.damage(player.getDamageSources().playerAttack(player), 12f)) {
+                                setStyle(getStyle() + 12);
+                            }
                         }
                     }
                     if (player instanceof ServerPlayerEntity serverPlayer) {
@@ -1160,12 +1251,13 @@ public class PlayerSoulComponent implements SoulComponent {
                 if (player.getMainHandStack().isOf(SoulForgeItems.PERSEVERANCE_CLAW)) setValue("shieldBreak", 3f);
                 else setValue("shieldBreak", 2f);
             } else {
-                setValue("shieldBreak", 1f);
+                if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW)) setValue("shieldBreak", 2f);
+                else setValue("shieldBreak", 1f);
             }
 
             if (getTraits().contains(Traits.determination)) {
                 Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "limit_break");
-                EntityAttributeModifier strengthModifier = new EntityAttributeModifier("limit_break", 0.5*((player.getMaxHealth()-player.getHealth())/player.getMaxHealth()), EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+                EntityAttributeModifier strengthModifier = new EntityAttributeModifier("limit_break", 0.1 * styleRank, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
                 player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
             }
             lastTickWasShitAss = false;
@@ -1201,7 +1293,7 @@ public class PlayerSoulComponent implements SoulComponent {
             try {
                 AbilityBase ability = Abilities.get(abilityName);
                 ability.readNbt(abilityNbt.getCompound(abilityName));
-                ability.setLastCastTime(0);
+                ability.setCooldownVal(0);
                 abilities.add(ability);
             } catch (NullPointerException e) {
                 SoulForge.LOGGER.warn("Ability does not exist: {}", abilityName);
@@ -1308,6 +1400,9 @@ public class PlayerSoulComponent implements SoulComponent {
         removeWeapon(false);
         abilityLayout = new AbilityLayout();
         for (AbilityBase ability : abilities.getAll()) {
+            if (ability.getActive()) {
+                ability.end((ServerPlayerEntity)player);
+            }
             ability.setActive(false);
         }
         updateAbilities();
@@ -1325,6 +1420,9 @@ public class PlayerSoulComponent implements SoulComponent {
         removeWeapon(false);
         abilityLayout = new AbilityLayout();
         for (AbilityBase ability : abilities.getAll()) {
+            if (ability.getActive()) {
+                ability.end((ServerPlayerEntity)player);
+            }
             ability.setActive(false);
         }
         updateAbilities();

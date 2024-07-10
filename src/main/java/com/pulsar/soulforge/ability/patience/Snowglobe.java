@@ -43,6 +43,7 @@ public class Snowglobe extends ToggleableAbilityBase {
                 Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "snowglobe");
                 player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("snowglobe", -0.85f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
                 player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier("snowglobe", -0.85f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                boolean affected = false;
                 for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 8, 8, 8))) {
                     if (entity instanceof LivingEntity living) {
                         if (living.distanceTo(player) > 4f) continue;
@@ -55,7 +56,11 @@ public class Snowglobe extends ToggleableAbilityBase {
                             living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140,  MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
                             living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 140, MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
                         }
+                        affected = true;
                     }
+                }
+                if (affected) {
+                    playerSoul.setStyle(playerSoul.getStyle() + 1);
                 }
             }
         }

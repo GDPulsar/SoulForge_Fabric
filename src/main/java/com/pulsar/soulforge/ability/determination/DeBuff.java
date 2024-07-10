@@ -3,6 +3,7 @@ package com.pulsar.soulforge.ability.determination;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.Utils;
@@ -20,11 +21,15 @@ public class DeBuff extends AbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         EntityHitResult hit = Utils.getFocussedEntity(player, 5f);
         if (hit != null && hit.getEntity() instanceof LivingEntity living) {
+            int stolenEffectCount = 0;
+            int stolenDurationCount = 0;
             living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 4f);
             List<StatusEffectInstance> newEffects = new ArrayList<>();
             for (StatusEffectInstance instance : living.getStatusEffects()) {
                 int highest = 0;
                 int duration = instance.getEffectType().isBeneficial() ? instance.getDuration() : instance.getDuration() / 2;
+                stolenEffectCount++;
+                stolenDurationCount += duration;
                 if (player.hasStatusEffect(instance.getEffectType())) {
                     highest = player.getStatusEffect(instance.getEffectType()).getAmplifier() + 1;
                     duration = Math.max(duration, player.getStatusEffect(instance.getEffectType()).getDuration());
@@ -39,6 +44,8 @@ public class DeBuff extends AbilityBase {
             for (StatusEffectInstance instance : newEffects) {
                 living.addStatusEffect(instance);
             }
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.setStyle(playerSoul.getStyle() + (int)(stolenEffectCount * stolenDurationCount / 1200f));
             return super.cast(player);
         }
         return false;

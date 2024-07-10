@@ -342,6 +342,12 @@ abstract class PlayerEntityMixin extends LivingEntity {
             getWorld().playSound(null, getX(), getY(), getZ(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.PLAYERS, 1f, 1f, 0);
             cir.setReturnValue(false);
         }
+        if (source.getAttacker() instanceof PlayerEntity attacker) {
+            if (!TeamUtils.canDamagePlayer(player.getServer(), player, attacker)) {
+                cir.setReturnValue(false);
+                return;
+            }
+        }
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (playerSoul.hasValue("parry")) {
             if (playerSoul.getValue("parry") > 0) {

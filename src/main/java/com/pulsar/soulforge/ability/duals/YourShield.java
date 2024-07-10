@@ -5,8 +5,12 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.kindness.PainSplit;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.util.TeamUtils;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Box;
 
 public class YourShield extends AbilityBase {
     public boolean pullTarget = false;
@@ -20,6 +24,16 @@ public class YourShield extends AbilityBase {
         if (painSplit != null) {
             if (painSplit.target != null) {
                 target = painSplit.target;
+                int nearbyCount = 0;
+                for (Entity entity : player.getWorld().getOtherEntities(target, Box.of(target.getPos(), 20, 20, 20))) {
+                    if (entity instanceof LivingEntity target) {
+                        if (target instanceof PlayerEntity targetPlayer) {
+                            if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                        }
+                        nearbyCount++;
+                    }
+                }
+                playerSoul.setStyle(playerSoul.getStyle() + nearbyCount * 10);
                 if (player.isSneaking()) {
                     pullTarget = true;
                     target.setVelocity(player.getPos().subtract(target.getPos()).normalize().multiply(2.5f));

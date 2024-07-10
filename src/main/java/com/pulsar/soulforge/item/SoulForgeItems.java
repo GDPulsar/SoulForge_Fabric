@@ -111,15 +111,19 @@ public class SoulForgeItems {
     // weapon wheel
     public static Item DETERMINATION_BLADES;
     public static Item DETERMINATION_BOW;
+    public static Item DETERMINATION_CLAW;
     public static Item DETERMINATION_CROSSBOW;
+    public static Item DETERMINATION_EDGE;
     public static Item DETERMINATION_HARPOON;
     public static Item DETERMINATION_GAUNTLETS;
     public static Item DETERMINATION_GREATSWORD;
     public static Item DETERMINATION_GUN;
     public static Item DETERMINATION_HAMMER;
-    public static Item DETERMINATION_SWORD;
     public static Item DETERMINATION_RAPIER;
+    public static Item DETERMINATION_SHIELD;
     public static Item DETERMINATION_SPEAR;
+    public static Item DETERMINATION_STAFF;
+    public static Item DETERMINATION_SWORD;
     public static Item REAL_KNIFE;
 
     public static Item BFRCMG;
@@ -243,15 +247,19 @@ public class SoulForgeItems {
 
         DETERMINATION_BLADES = RegisterItem("determination_blades", new DeterminationBlades());
         DETERMINATION_BOW = RegisterItem("determination_bow", new DeterminationBow());
+        DETERMINATION_CLAW = RegisterItem("determination_claw", new DeterminationClaw());
         DETERMINATION_CROSSBOW = RegisterItem("determination_crossbow", new DeterminationCrossbow());
+        DETERMINATION_EDGE = RegisterItem("determination_edge", new DeterminationEdge());
         DETERMINATION_HARPOON = RegisterItem("determination_harpoon", new DeterminationHarpoon());
         DETERMINATION_GAUNTLETS = RegisterItem("determination_gauntlets", new DeterminationGauntlets());
         DETERMINATION_GREATSWORD = RegisterItem("determination_greatsword", new DeterminationGreatsword());
         DETERMINATION_GUN = RegisterItem("determination_gun", new DeterminationGun());
         DETERMINATION_HAMMER = RegisterItem("determination_hammer", new DeterminationHammer());
-        DETERMINATION_SWORD = RegisterItem("determination_sword", new DeterminationSword());
         DETERMINATION_RAPIER = RegisterItem("determination_rapier", new DeterminationRapier());
+        DETERMINATION_SHIELD = RegisterItem("determination_shield", new DeterminationShield());
         DETERMINATION_SPEAR = RegisterItem("determination_spear", new DeterminationSpear());
+        DETERMINATION_STAFF = RegisterItem("determination_staff", new DeterminationStaff());
+        DETERMINATION_SWORD = RegisterItem("determination_sword", new DeterminationSword());
         REAL_KNIFE = RegisterItem("real_knife", new RealKnife());
 
         BFRCMG = RegisterItem("bfrcmg", new BFRCMG());

@@ -10,6 +10,7 @@ import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -46,11 +47,15 @@ public class DeterminationSword extends MagicSwordItem implements GeoItem {
         if (user.isSneaking()) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
             if (playerSoul.getMagic() >= 100f && playerSoul.getLV() >= 20) {
+                if (playerSoul.getStyleRank() < 1) {
+                    user.sendMessage(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+                }
                 SpecialHellEntity specialHell = new SpecialHellEntity(world, user.getPos(), user);
                 specialHell.setPosition(user.getPos());
                 specialHell.owner = user;
                 world.spawnEntity(specialHell);
                 playerSoul.setMagic(0f);
+                playerSoul.setStyleRank(playerSoul.getStyleRank() - 1);
                 playerSoul.resetLastCastTime();
                 user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3600, 0));
             }

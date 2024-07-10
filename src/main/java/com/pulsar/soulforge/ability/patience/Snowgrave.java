@@ -32,6 +32,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -51,10 +52,14 @@ public class Snowgrave extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (playerSoul.getStyleRank() < 5) {
+            player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+            return false;
+        }
         HitResult result = player.raycast(50, 1f, false);
         if (result != null) {
             if (result.squaredDistanceTo(player) <= 2500f) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 playerSoul.addTag("preventJump");
                 playerSoul.addTag("preventMove");
                 playerSoul.addTag("forcedThirdPerson");
@@ -66,11 +71,12 @@ public class Snowgrave extends AbilityBase {
                 playerPos = castPos;
                 particleVel = new Vec3d(Math.random() * 5 - 2.5, Math.random() - 2, Math.random() * 5 - 2.5);
                 player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.SNOWGRAVE_EVENT, SoundCategory.MASTER, 3f, 1f);
-                if (player.getServer() != null) {
+                /*if (player.getServer() != null) {
                     PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("snowgrave");
                     buf.writeBoolean(false);
                     SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-                }
+                }*/
+                player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 2740, 0));
                 return super.cast(player);
             }
         }
@@ -79,11 +85,11 @@ public class Snowgrave extends AbilityBase {
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
-        if (target == null || castPos == null) return true;
+        if (target == null || castPos == null) return super.tick(player);
         timer++;
         ServerWorld serverWorld = player.getServerWorld();
         assert serverWorld != null;
-        for (int i = 0; i < (timer >= 200 && timer < 400 ? 250 : 100); i++) {
+        for (int i = 0; i < (timer >= 100 && timer < 300 ? 250 : 100); i++) {
             float x = (float) (Math.random() * 60 - 30);
             float y = (float) (Math.random() * 25);
             float z = (float) (Math.random() * 60 - 30);
@@ -97,7 +103,7 @@ public class Snowgrave extends AbilityBase {
                 if (targeted instanceof PlayerEntity targetPlayer) {
                     if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                 }
-                if (timer >= 200) {
+                if (timer >= 100) {
                     if (targeted.getPos().distanceTo(target.toCenterPos()) <= 20f) {
                         targeted.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 1, 6));
                         targeted.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 1, 4));
@@ -122,21 +128,21 @@ public class Snowgrave extends AbilityBase {
                 }
             }
         }
-        if (timer < 200) {
+        if (timer < 100) {
             // phase 1
-            if (timer >= 100) {
+            if (timer >= 50) {
                 Vec3d direction = castPos.subtract(target.toCenterPos());
                 direction = new Vec3d(direction.x, 0f, direction.z).normalize();
                 Vec3d floatToLocation = new Vec3d(direction.x*15f, 7f, direction.z*15f).add(target.toCenterPos());
                 playerPos = castPos.lerp(floatToLocation, (double)(timer-100)/100D);
             }
-        } else if (timer < 300) {
+        } else if (timer < 200) {
             // phase 2
             for (int x = -15; x < 16; x++) {
                 for (int z = -15; z < 16; z++) {
                     float distance = (float) MathHelper.hypot(x, z);
                     if (distance < 15f) {
-                        if (Math.random() <= 0.05f * MathHelper.clamp((15f - distance)/2f, 0, 1)) {
+                        if (Math.random() <= 0.025f * MathHelper.clamp((15f - distance)/2f, 0, 1)) {
                             try {
                                 BlockPos snowPos = Utils.getTopBlock(player.getServer(), player.getWorld(), target.getX() + x, target.getZ() + z);
                                 BlockState state = player.getWorld().getBlockState(snowPos);
@@ -161,12 +167,11 @@ public class Snowgrave extends AbilityBase {
                     }
                 }
             }
-        } else if (timer < 400) {
-            if (timer == 300) player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2570, 2));
+        } else if (timer < 300) {
             // phase 3
-            if (timer <= 325) {
+            if (timer <= 225) {
                 for (SnowgraveProjectile projectile : projectiles) {
-                    projectile.setPosition(projectile.getPos().add(0, 1.2, 0));
+                    projectile.setPos(projectile.getPos().add(0, 1.2, 0));
                 }
                 if (timer % 5 == 0) projectiles.add(SoulForgeEntities.SNOWGRAVE_PROJECTILE_TYPE.spawn(serverWorld, target.add(0, -6, 0), SpawnReason.EVENT));
             }
@@ -182,7 +187,7 @@ public class Snowgrave extends AbilityBase {
                     }
                 }
             }
-        } else if (timer < 470) {
+        } else if (timer < 340) {
             // phase 4
             for (SnowgraveProjectile projectile : projectiles) {
                 projectile.kill();
@@ -196,8 +201,8 @@ public class Snowgrave extends AbilityBase {
                 }
             }
             projectiles.clear();
-            if (timer == 400) castPos = player.getPos();
-            if (timer <= 420) {
+            if (timer == 300) castPos = player.getPos();
+            if (timer <= 320) {
                 try {
                     Vec3d bottom = Utils.getTopBlock(player.getServer(), player.getWorld(), player.getBlockX(), player.getBlockZ()).toCenterPos();
                     playerPos = castPos.lerp(bottom, (double) (timer - 400) / 20D);
@@ -206,14 +211,14 @@ public class Snowgrave extends AbilityBase {
                 } catch (Exception ignored) {}
             }
         }
-        if (timer <= 420) {
+        if (timer <= 340) {
             PacketByteBuf buf = PacketByteBufs.create();
             buf.writeBoolean(true); buf.writeVector3f(playerPos.toVector3f());
             buf.writeBoolean(true); buf.writeVector3f(new Vec3d(0, 0, 0).toVector3f());
             buf.writeBoolean(false);
             ServerPlayNetworking.send(player, SoulForgeNetworking.POSITION_VELOCITY, buf);
         }
-        return timer >= 470;
+        return timer >= 340;
     }
 
     @Override

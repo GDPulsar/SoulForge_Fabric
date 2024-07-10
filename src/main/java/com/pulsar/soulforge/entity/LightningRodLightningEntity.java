@@ -1,12 +1,11 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -58,7 +57,7 @@ public class LightningRodLightningEntity extends LightningEntity {
                         entity.setOnFireFor(8);
                     }
                     entity.timeUntilRegen = 0;
-                    entity.damage(this.getDamageSources().lightningBolt(), 18.0F);
+                    entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), DamageTypes.LIGHTNING_BOLT), 18.0F);
                 }
             }
         } else {

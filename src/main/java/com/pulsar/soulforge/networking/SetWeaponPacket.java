@@ -3,7 +3,6 @@ package com.pulsar.soulforge.networking;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.weapons.Gunblades;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -16,8 +15,8 @@ public class SetWeaponPacket {
         ItemStack stack = buf.readItemStack();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.setWeapon(stack);
-        if (stack.isOf(SoulForgeItems.GUNBLADES)) {
-            ((Gunblades)stack.getItem()).ammo = playerSoul.getLV() + 6;
+        if (stack.isOf(SoulForgeItems.JUSTICE_REVOLVER) || stack.isOf(SoulForgeItems.DETERMINATION_GUN) || stack.isOf(SoulForgeItems.GUNBLADES)) {
+            stack.getOrCreateNbt().putInt("ammo", playerSoul.getLV() + 6);
         }
     }
 }

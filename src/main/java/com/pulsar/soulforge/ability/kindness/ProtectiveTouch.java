@@ -23,7 +23,10 @@ public class ProtectiveTouch extends AbilityBase {
                 if (target instanceof PlayerEntity targetPlayer) {
                     if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) return false;
                 }
-                target.setAbsorptionAmount(Math.max(target.getAbsorptionAmount(), (float)(playerSoul.getEffectiveLV())));
+                float newAbsorptionAmount = Math.max(target.getAbsorptionAmount(), (float)(playerSoul.getEffectiveLV()));
+                float absorptionIncrease = newAbsorptionAmount - target.getAbsorptionAmount();
+                target.setAbsorptionAmount(newAbsorptionAmount);
+                playerSoul.setStyle(playerSoul.getStyle() + (int)absorptionIncrease);
                 player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 return super.cast(player);
             }

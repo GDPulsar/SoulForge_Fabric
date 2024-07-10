@@ -12,6 +12,7 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
@@ -28,6 +29,10 @@ public class AngelsTempest extends AbilityBase{
         boolean inSnowstorm = false;
         BlindingSnowstorm snowstorm = null;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (playerSoul.getStyleRank() < 2) {
+            player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+            return false;
+        }
         for (AbilityBase ability : playerSoul.getActiveAbilities()) {
             if (ability instanceof BlindingSnowstorm) {
                 snowstorm = (BlindingSnowstorm)ability;
@@ -95,6 +100,7 @@ public class AngelsTempest extends AbilityBase{
                 }
             }
         }
+        playerSoul.setStyleRank(playerSoul.getStyleRank() - 2);
         return super.cast(player);
     }
 

@@ -1,5 +1,7 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -53,7 +55,12 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
                     else source = SoulForgeDamageTypes.of(getOwner(), this.getWorld(), SoulForgeDamageTypes.STUCK_SPEAR_DAMAGE_TYPE);
                     int timeUntilRegen = stuckEntity.timeUntilRegen;
                     stuckEntity.timeUntilRegen = 0;
-                    stuckEntity.damage(source, 2f);
+                    if (stuckEntity.damage(source, 2f)) {
+                        if (getOwner() instanceof PlayerEntity player) {
+                            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                            playerSoul.setStyle(playerSoul.getStyle() + 2);
+                        }
+                    }
                     stuckEntity.timeUntilRegen = timeUntilRegen;
                     hitCount++;
                     if (hitCount == 8) {

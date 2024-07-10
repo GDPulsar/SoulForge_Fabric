@@ -120,8 +120,21 @@ public class JusticePelletProjectile extends ProjectileEntity {
                 source = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
             }
             float damage = this.dataTracker.get(DAMAGE);
-            if (damage > 0) living.damage(source, damage);
+            if (damage > 0) {
+                if (living.damage(source, damage)) {
+                    if (this.getOwner() instanceof PlayerEntity player) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+                    }
+                }
+            }
             else {
+                if (living.getHealth() < living.getMaxHealth()) {
+                    if (this.getOwner() instanceof PlayerEntity player) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        playerSoul.setStyle(playerSoul.getStyle() - (int) damage);
+                    }
+                }
                 living.heal(-damage);
                 living.getWorld().playSound(null, living.getBlockPos(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.MASTER, 1f, 1f);
             }

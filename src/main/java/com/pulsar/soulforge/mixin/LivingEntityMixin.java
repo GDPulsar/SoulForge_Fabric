@@ -6,6 +6,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.WorldBaseComponent;
+import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.effects.VulnerabilityEffect;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
@@ -23,10 +24,13 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.DamageTypeTags;
@@ -125,6 +129,60 @@ abstract class LivingEntityMixin extends Entity {
                 }
             }
             playerSoul.setEXP(playerSoul.getEXP() + expIncrease);
+
+            if (source.isOf(DamageTypes.ARROW)) {
+                if (source.getSource() instanceof PersistentProjectileEntity projectile) {
+                    if (projectile.inBlockState == null) {
+                        float distance = this.distanceTo(source.getAttacker());
+                        boolean lineOfSight = player.canSee(projectile);
+                        int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
+                        playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
+                    }
+                }
+            }
+            if (source.isOf(DamageTypes.TRIDENT)) {
+                if (source.getSource() instanceof TridentEntity projectile) {
+                    if (projectile.inBlockState == null) {
+                        float distance = this.distanceTo(source.getAttacker());
+                        boolean lineOfSight = player.canSee(projectile);
+                        int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
+                        playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
+                    }
+                }
+            }
+            if (source.isOf(DamageTypes.EXPLOSION)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+            }
+            if (source.isOf(DamageTypes.FALLING_ANVIL)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 10));
+            }
+            if (source.isOf(DamageTypes.FALLING_STALACTITE)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 5));
+            }
+            if (source.isOf(DamageTypes.FIREWORKS)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+            }
+            if (source.isOf(DamageTypes.LIGHTNING_BOLT)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+            }
+            if (source.isOf(DamageTypes.PLAYER_ATTACK)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage / 2f));
+            }
+            if (source.isOf(DamageTypes.PLAYER_EXPLOSION)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+            }
+            if (source.isOf(DamageTypes.THROWN)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+            }
+            if (source.isOf(SoulForgeDamageTypes.PARRY_DAMAGE_TYPE)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 3f));
+            }
+            if ((LivingEntity)(Object)this instanceof PlayerEntity targetPlayer) {
+                if (source.isOf(SoulForgeDamageTypes.PAIN_SPLIT_DAMAGE_TYPE)) {
+                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+                    targetSoul.setStyle(targetSoul.getStyle() + (int)damage);
+                }
+            }
         }
     }
 

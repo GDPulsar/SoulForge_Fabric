@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -49,12 +50,16 @@ public class DeterminationSpear extends MagicSwordItem {
         if (!world.isClient) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) user);
             if (user.isSneaking() && playerSoul.getMagic() >= 100f) {
+                if (playerSoul.getStyleRank() < 1) {
+                    playerEntity.sendMessage(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+                }
                 SOJProjectile projectile = new SOJProjectile(world, playerEntity);
                 projectile.setOwner(playerEntity);
                 projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0f, 5f, 0f);
                 world.spawnEntity(projectile);
                 world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 4.0f, 0.75f);
                 playerSoul.setMagic(0f);
+                playerSoul.setStyleRank(playerSoul.getStyleRank() - 1);
                 playerSoul.resetLastCastTime();
                 user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3000, 0));
             } else {

@@ -1,7 +1,10 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.TeamUtils;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -45,6 +48,7 @@ public class WeatherWarningLightningEntity extends LightningEntity {
             if (!(this.getWorld() instanceof ServerWorld)) {
                 this.getWorld().setLightningTicksLeft(2);
             } else {
+                float styleIncrease = 0f;
                 for (Entity entity : this.getWorld().getOtherEntities(this,
                         new Box(this.getX() - 3.0, this.getY() - 3.0, this.getZ() - 3.0,
                                 this.getX() + 3.0, this.getY() + 6.0 + 3.0, this.getZ() + 3.0),
@@ -56,7 +60,12 @@ public class WeatherWarningLightningEntity extends LightningEntity {
                     entity.onStruckByLightning((ServerWorld) this.getWorld(), this);
                     if (entity instanceof LivingEntity living) {
                         living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 900, 2));
+                        styleIncrease += 40f * (1f + Utils.getTotalDebuffLevel(living)/10f);
                     }
+                }
+                if (this.owner != null) {
+                    SoulComponent playerSoul = SoulForge.getPlayerSoul(this.owner);
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)styleIncrease);
                 }
             }
         } else {

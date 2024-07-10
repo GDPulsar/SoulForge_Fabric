@@ -1,30 +1,24 @@
 package com.pulsar.soulforge.util;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.devices.machines.SiphonImbuer;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextContent;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.EntityHitResult;
@@ -33,7 +27,6 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3f;
-import org.spongepowered.asm.mixin.injection.struct.InjectorGroupInfo;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -214,5 +207,21 @@ public class Utils {
             }
         }
         target.addStatusEffect(new StatusEffectInstance(effect, duration, amplifier));
+    }
+
+    public static int getTotalEffectLevel(LivingEntity target) {
+        int val = 0;
+        for (StatusEffectInstance effect : target.getStatusEffects()) {
+            val += effect.getAmplifier();
+        }
+        return val;
+    }
+
+    public static int getTotalDebuffLevel(LivingEntity target) {
+        int val = 0;
+        for (StatusEffectInstance effect : target.getStatusEffects()) {
+            if (!effect.getEffectType().isBeneficial()) val += effect.getAmplifier();
+        }
+        return val;
     }
 }

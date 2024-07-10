@@ -6,6 +6,7 @@ import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -13,6 +14,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -66,6 +68,9 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(speedModifier);
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 20, 20, 20))) {
                 if (entity instanceof LivingEntity target) {
+                    if (entity instanceof PlayerEntity) {
+                        if (!TeamUtils.canDamagePlayer(player.getServer(), player, (PlayerEntity)target)) continue;
+                    }
                     if (target.distanceTo(player) < 10f) {
                         if (entity.getFireTicks() < 40) { entity.setFireTicks(50); }
                     }
@@ -85,6 +90,9 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
                 Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "pat_cost");
                 Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "pat_speed");
                 player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 900, 4));
+            }
+            if (timer % 20 == 0) {
+                playerSoul.setStyle(playerSoul.getStyle() + 1);
             }
             ServerWorld serverWorld = player.getServerWorld();
             for (ServerPlayerEntity target : serverWorld.getPlayers()) {

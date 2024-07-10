@@ -179,7 +179,7 @@ public class KindnessDome extends ToggleableAbilityBase {
         nbt.putFloat("domeRadius", domeRadius);
         nbt.putString("id", getID().getPath());
         nbt.putString("name", getName());
-        nbt.putInt("lastCastTime", getLastCastTime());
+        nbt.putInt("lastCastTime", getCooldownVal());
         super.saveNbt(nbt);
         return nbt;
     }

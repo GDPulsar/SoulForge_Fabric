@@ -59,7 +59,9 @@ public class HestiasHearth extends ToggleableAbilityBase {
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (hestiaPos != null && getActive()) {
+            player.sendMessageToClient(Text.literal(String.valueOf(charge)).append("%").formatted(Formatting.GOLD), true);
             ServerWorld serverWorld = player.getServerWorld();
             float phiStep = (float) (Math.PI / 16);
             for (int i = 0; i < 32; i++) {
@@ -86,6 +88,9 @@ public class HestiasHearth extends ToggleableAbilityBase {
                         if (entity instanceof PlayerEntity targetPlayer) {
                             if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) continue;
                         }
+                        if (living.getHealth() < living.getMaxHealth()) {
+                            playerSoul.setStyle(playerSoul.getStyle() + 1);
+                        }
                         living.heal(1f);
                         if (charge >= 35) {
                             for (StatusEffectInstance effect : List.copyOf(living.getStatusEffects())) {
@@ -99,15 +104,17 @@ public class HestiasHearth extends ToggleableAbilityBase {
         } else if (charge > 55) {
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(hestiaPos, 16, 16, 16))) {
                 if (entity.getPos().withAxis(Direction.Axis.Y, 0).distanceTo(hestiaPos.withAxis(Direction.Axis.Y, 0)) > 8) continue;
-                if (entity.getFireTicks() < 60) {
-                    entity.setFireTicks(70);
-                }
                 if (entity instanceof LivingEntity living) {
                     if (entity instanceof PlayerEntity targetPlayer) {
                         if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                     }
+                    if (entity.getFireTicks() < 60) {
+                        entity.setFireTicks(70);
+                    }
                     if ((charge < 70 && timer >= 40) || (charge < 85 && timer % 20 == 0) || (charge >= 85 && timer % 10 == 0)) {
-                        living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 1f);
+                        if (living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 1f)) {
+                            playerSoul.setStyle(playerSoul.getStyle() + 1);
+                        }
                     }
                 }
             }
@@ -117,7 +124,9 @@ public class HestiasHearth extends ToggleableAbilityBase {
 
     @Override
     public boolean end(ServerPlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (charge >= 100) {
+            playerSoul.setStyle(playerSoul.getStyle() + 100);
             player.getWorld().createExplosion(player, hestiaPos.x, hestiaPos.y, hestiaPos.z, 5f, World.ExplosionSourceType.NONE);
             if (player.getPos().distanceTo(hestiaPos) < charge/10f) {
                 player.heal(player.getMaxHealth());
@@ -126,16 +135,8 @@ public class HestiasHearth extends ToggleableAbilityBase {
         setActive(false);
         hestiaPos = null;
         charge = 0;
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.setCooldown(this, 1800);
         return super.end(player);
-    }
-
-    @Override
-    public void displayTick(PlayerEntity player) {
-        if (getActive()) {
-            player.sendMessage(Text.literal(String.valueOf(charge)).append("%").formatted(Formatting.GOLD), true);
-        }
     }
 
     public String getName() { return "Hestia's Hearth"; }

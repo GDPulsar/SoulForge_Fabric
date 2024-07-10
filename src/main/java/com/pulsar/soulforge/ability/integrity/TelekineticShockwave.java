@@ -26,6 +26,7 @@ public class TelekineticShockwave extends AbilityBase {
         if (!isGojo) {
             ServerWorld world = player.getServer().getWorld(player.getWorld().getRegistryKey());
             if (world != null) {
+                int affectedCount = 0;
                 Box box = new Box(player.getPos().subtract(10, 10, 10), player.getPos().add(10, 10, 10));
                 for (Entity target : world.getOtherEntities(player, box)) {
                     if (target.distanceTo(player) < 4f) {
@@ -36,8 +37,10 @@ public class TelekineticShockwave extends AbilityBase {
                         else push.multiply(1f, 0.5f, 1f);
                         target.addVelocity(push);
                         target.velocityModified = true;
+                        affectedCount++;
                     }
                 }
+                playerSoul.setStyle(playerSoul.getStyle() + affectedCount * 3);
                 player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
             }
         } else {

@@ -27,7 +27,10 @@ public class SelfHeal extends AbilityBase {
         if (timer > 0) timer--;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         int rate = Math.round(120f/(Math.min(36, playerSoul.getEffectiveLV() + 6)));
-        if (timer % rate == 0) player.heal(1f);
+        if (timer % rate == 0) {
+            if (player.getHealth() < player.getMaxHealth()) playerSoul.setStyle(playerSoul.getStyle() + 1);
+            player.heal(1f);
+        }
         return timer <= 0;
     }
 

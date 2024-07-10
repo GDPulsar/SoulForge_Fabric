@@ -20,6 +20,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -36,19 +37,25 @@ public class ColossalClaymore extends AbilityBase {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (player.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
             if (playerSoul.getMagic() < 100f) return false;
+            if (playerSoul.getStyleRank() < 2) {
+                player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+                return false;
+            }
+            int manaOverload = playerSoul.getStyleRank() * 400;
+            float damage = playerSoul.getEffectiveLV() * playerSoul.getStyleRank() * 0.5f;
             playerSoul.setMagic(0f);
             greaterSlash = true;
             for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 5f, 8f, 2f, 2f)) {
                 if (target instanceof PlayerEntity targetPlayer) {
                     if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                 }
-                target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV()*4f);
+                target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
             }
             player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_BOMBSPLOSION_EVENT, SoundCategory.MASTER, 1f, 1f);
             PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("greater_slash");
             buf.writeBoolean(false);
             if (player.getServer() != null) SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 6000, 2));
+            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, manaOverload, 0));
         }
         timer = greaterSlash ? 5 : 30;
         return super.cast(player);
@@ -67,7 +74,9 @@ public class ColossalClaymore extends AbilityBase {
             if (target instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
             }
-            target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV()*0.8f);
+            if (target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV()*0.8f)) {
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(playerSoul.getEffectiveLV()*0.8f));
+            }
             target.setVelocity(velocity);
             target.velocityModified = true;
         }

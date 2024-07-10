@@ -2,7 +2,6 @@ package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.SoulForgeClient;
-import com.pulsar.soulforge.ability.determination.WeaponWheel;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -12,11 +11,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.Window;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -60,7 +56,9 @@ public class WeaponWheelScreen extends Screen {
                     SoulForgeItems.DETERMINATION_HARPOON,
                     SoulForgeItems.DETERMINATION_CROSSBOW,
                     SoulForgeItems.DETERMINATION_GUN,
-                    SoulForgeItems.DETERMINATION_GAUNTLETS
+                    SoulForgeItems.DETERMINATION_GAUNTLETS,
+                    SoulForgeItems.DETERMINATION_CLAW,
+                    SoulForgeItems.DETERMINATION_SHIELD
             ));
             double anglePer = (2*Math.PI)/weapons.size();
             hovering = null;

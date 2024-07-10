@@ -52,7 +52,7 @@ public class Immobilization extends ToggleableAbilityBase {
                 }
                 if (target != null) {
                     player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                    entity = new ImmobilizationEntity(player.getWorld(), target.getPos(), playerSoul.getEffectiveLV() * 5, target);
+                    entity = new ImmobilizationEntity(player.getWorld(), target.getPos(), playerSoul.getEffectiveLV() * 5, target, player);
                     entity.maxHealth = playerSoul.getEffectiveLV() * 5;
                     entity.health = playerSoul.getEffectiveLV() * 5;
                     entity.setPosition(target.getPos());

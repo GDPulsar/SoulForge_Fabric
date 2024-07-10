@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -49,34 +50,37 @@ public class DeterminationHarpoon extends MagicSwordItem {
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity playerEntity)) {
-            return;
-        }
-        int i = this.getMaxUseTime(stack) - remainingUseTicks;
-        if (i < 10) {
-            return;
-        }
-        if (!world.isClient) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)user);
-            if (user.isSneaking() && playerSoul.getMagic() >= 100f) {
-                SOJProjectile projectile = new SOJProjectile(world, playerEntity);
-                projectile.setOwner(playerEntity);
-                projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0f, 5f, 0f);
-                world.spawnEntity(projectile);
-                world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 4.0f, 0.75f);
-                playerSoul.setMagic(0f);
-                playerSoul.resetLastCastTime();
-                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3000, 0));
-            } else {
-                if (projectile == null || projectile.isRemoved()) {
-                    projectile = new DTHarpoonProjectile(world, user);
-                    projectile.setPosition(user.getEyePos());
-                    projectile.setVelocity(user.getRotationVector().multiply(2));
+        if (user instanceof PlayerEntity player) {
+            int i = this.getMaxUseTime(stack) - remainingUseTicks;
+            if (i < 10) {
+                return;
+            }
+            if (!world.isClient) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) user);
+                if (user.isSneaking() && playerSoul.getMagic() >= 100f) {
+                    if (playerSoul.getStyleRank() < 1) {
+                        player.sendMessage(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+                    }
+                    SOJProjectile projectile = new SOJProjectile(world, player);
+                    projectile.setOwner(player);
+                    projectile.setVelocity(player, player.getPitch(), player.getYaw(), 0.0f, 5f, 0f);
                     world.spawnEntity(projectile);
+                    world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 4.0f, 0.75f);
+                    playerSoul.setMagic(0f);
+                    playerSoul.setStyleRank(playerSoul.getStyleRank() - 1);
+                    playerSoul.resetLastCastTime();
+                    user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 3000, 0));
+                } else {
+                    if (projectile == null || projectile.isRemoved()) {
+                        projectile = new DTHarpoonProjectile(world, user);
+                        projectile.setPosition(user.getEyePos());
+                        projectile.setVelocity(user.getRotationVector().multiply(2));
+                        world.spawnEntity(projectile);
+                    }
                 }
             }
+            player.incrementStat(Stats.USED.getOrCreateStat(this));
         }
-        playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
     }
 
     @Override

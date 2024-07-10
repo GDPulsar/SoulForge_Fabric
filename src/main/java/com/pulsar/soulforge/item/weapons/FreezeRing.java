@@ -43,7 +43,10 @@ public class FreezeRing extends MagicItem {
                             }
                             world.playSoundFromEntity(null, user, SoulForgeSounds.DR_ICESHOCK_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                             DamageSource damageSource = SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.ABILITY_PIERCE_DAMAGE_TYPE);
-                            target.damage(damageSource, 5f);
+                            if (target.damage(damageSource, 5f)) {
+                                SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+                                playerSoul.setStyle(playerSoul.getStyle() + (int)(5f * (1f + Utils.getTotalDebuffLevel(target) / 10f)));
+                            }
                             iceshockCooldown = 100;
                             return TypedActionResult.success(user.getStackInHand(hand));
                         } else {
@@ -65,6 +68,7 @@ public class FreezeRing extends MagicItem {
                     Vec3d pos = hit.getPos();
                     if (!world.isClient) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+                        float styleIncrease = 0f;
                         for (Entity target : user.getEntityWorld().getOtherEntities(user, new Box(pos.subtract(3, 3, 3), pos.add(3, 3, 3)))) {
                             if (target instanceof LivingEntity living) {
                                 if (living instanceof PlayerEntity targetPlayer) {
@@ -72,8 +76,10 @@ public class FreezeRing extends MagicItem {
                                 }
                                 living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 30*playerSoul.getLV(), (int)(playerSoul.getLV()/5f) - 1));
                                 living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 30*playerSoul.getLV(), Math.max((int)(playerSoul.getLV()/5f) - 1, 1)));
+                                styleIncrease += 5f * (1f + Utils.getTotalDebuffLevel(living)/10f);
                             }
                         }
+                        playerSoul.setStyle(playerSoul.getStyle() + (int)styleIncrease);
                         sleepMistCooldown = 600;
                     } else {
                         for (int i = 0; i < 50; i++) {

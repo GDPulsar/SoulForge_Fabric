@@ -1,7 +1,10 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -9,6 +12,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
@@ -70,7 +74,12 @@ public class HailProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 12f);
+        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 12f)) {
+            if (this.getOwner() instanceof PlayerEntity player && entity instanceof LivingEntity living) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                playerSoul.setStyle(playerSoul.getStyle() + (int)(12f * (1f + Utils.getTotalDebuffLevel(living)/10f)));
+            }
+        }
         if (this.dataTracker.get(IS_STAGE_1) && entity instanceof LivingEntity living) {
             living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 300, 1));
         }

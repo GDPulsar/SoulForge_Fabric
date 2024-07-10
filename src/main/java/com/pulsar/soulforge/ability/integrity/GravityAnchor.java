@@ -22,6 +22,7 @@ import java.util.Objects;
 public class GravityAnchor extends AbilityBase {
     private int timer = 0;
     private LivingEntity target;
+    float lastY = 0f;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
@@ -41,6 +42,7 @@ public class GravityAnchor extends AbilityBase {
             }
             living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 2));
             timer = Math.round(playerSoul.getEffectiveLV()*15f);
+            lastY = (float)target.getY();
             return super.cast(player);
         }
         return false;
@@ -52,6 +54,12 @@ public class GravityAnchor extends AbilityBase {
         if (target != null) {
             target.addVelocity(0, -5, 0);
             target.velocityModified = true;
+        }
+        if (timer % 10 == 0) {
+            float yDiff = (float)(lastY - player.getY());
+            lastY = (float)player.getY();
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.setStyle(playerSoul.getStyle() + (int)yDiff);
         }
         return timer == 0;
     }

@@ -5,13 +5,12 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -53,13 +52,11 @@ public class EnergyWave extends ToggleableAbilityBase {
             if (playerSoul.getMagic() >= 5f) {
                 playerSoul.setMagic(playerSoul.getMagic()-5f);
             } else {
-                if (playerSoul.getLV() >= 10) {
-                    if (playerSoul.hasValue("overchargeCooldown")) {
-                        if (playerSoul.getValue("overchargeCooldown") > 0) return true;
-                    }
+                if (playerSoul.getLV() >= 10 && playerSoul.getStyleRank() >= 3) {
                     playerSoul.setMagic(0f);
                     overcharged = true;
                 } else {
+                    setActive(false);
                     return true;
                 }
             }
@@ -79,8 +76,7 @@ public class EnergyWave extends ToggleableAbilityBase {
         if (overcharged) {
             damage = 1.6f * playerSoul.getEffectiveLV();
             size = 0.5f;
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2400, 1));
-            playerSoul.setValue("overchargeCooldown", 6000);
+            playerSoul.setStyleRank(Math.max(0, playerSoul.getStyleRank()-3));
         }
         BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
                 player, size, Vec3d.ZERO, end, damage, Color.ORANGE);
@@ -89,7 +85,6 @@ public class EnergyWave extends ToggleableAbilityBase {
         serverWorld.spawnEntity(blast);
         serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
         serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-        setLastCastTime(player.age);
         lastCooldownLength = 100 + 20 * chargeLevel;
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "energy_wave");
         return super.end(player);
@@ -106,5 +101,18 @@ public class EnergyWave extends ToggleableAbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new EnergyWave();
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        super.saveNbt(nbt);
+        nbt.putInt("lastCooldownLength", lastCooldownLength);
+        return nbt;
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        lastCooldownLength = nbt.getInt("lastCooldownLength");
     }
 }

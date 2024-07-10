@@ -1,6 +1,9 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
+import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.*;
@@ -141,14 +144,20 @@ public class BlastEntity extends Entity {
                 Box box = new Box(pos.subtract(getRadius(), getRadius(), getRadius()), pos.add(getRadius(), getRadius(), getRadius()));
                 for (Entity entity : getWorld().getOtherEntities(this, box)) {
                     if (entity instanceof LivingEntity living && !affected.contains(living.getUuid()) && !(living == owner)) {
+                        if (living.isUsingItem() && (living.getActiveItem().isOf(SoulForgeItems.PERSEVERANCE_EDGE) || living.getActiveItem().isOf(SoulForgeItems.DETERMINATION_EDGE))) {
+                            continue;
+                        }
                         if (entity instanceof PlayerEntity targetPlayer && this.owner instanceof PlayerEntity player) {
-                            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+                            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) continue;
                         }
                         DamageSource source;
                         assert owner instanceof PlayerEntity;
                         source = SoulForgeDamageTypes.of((PlayerEntity)owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
                         if (getIgnoresIframes()) living.timeUntilRegen = 0;
-                        living.damage(source, getDamage());
+                        if (living.damage(source, getDamage())) {
+                            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)owner);
+                            playerSoul.setStyle(playerSoul.getStyle() + (int)getDamage());
+                        }
                         if (this.onDamageEvent != null) {
                             this.onDamageEvent.accept(living);
                         }

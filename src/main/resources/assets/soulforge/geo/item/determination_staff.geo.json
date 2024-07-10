@@ -1,0 +1,91 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "themainfuckingstaff",
+					"pivot": [-0.5, 0.5, -21.6],
+					"cubes": [
+						{"origin": [-0.5, 0, -17.3], "size": [1, 1, 29], "uv": [-26, -27]}
+					]
+				},
+				{
+					"name": "accessories",
+					"pivot": [0, -0.5, -0.6],
+					"cubes": [
+						{"origin": [-1, -0.5, 9.3], "size": [2, 2, 0.7], "uv": [2, 2]},
+						{"origin": [-1, -0.5, 10.3], "size": [2, 2, 0.7], "uv": [2, 2]},
+						{"origin": [-1, -0.5, -16.7], "size": [2, 2, 0.7], "uv": [2, 2]},
+						{"origin": [-1, -0.5, -15.7], "size": [2, 2, 0.7], "uv": [2, 2]},
+						{"origin": [-0.8, -0.2, 0.9], "size": [1.5, 1.4, 6.7], "uv": [-1, -2]}
+					]
+				},
+				{
+					"name": "OrbofOrbing",
+					"pivot": [0, -0.5, -0.6],
+					"cubes": [
+						{"origin": [-1.5, -1, 11.7], "size": [3, 3, 1.1], "uv": [0, 1]},
+						{"origin": [-1, -0.5, 13.7], "size": [2, 2, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "TheGrabbies",
+					"parent": "OrbofOrbing",
+					"pivot": [0, 0.5, -1.05]
+				},
+				{
+					"name": "Prong1",
+					"parent": "TheGrabbies",
+					"pivot": [0, -0.5, -0.6],
+					"cubes": [
+						{"origin": [-1.31066, 0, 12.03579], "size": [2, 1, 0.5], "pivot": [0, 0.5, 14.76066], "rotation": [0, 45, 0], "uv": [2, 2]},
+						{"origin": [-1, 0, 17.11421], "size": [2, 1, 0.5], "pivot": [0, 0.5, 14.76066], "rotation": [0, -90, 0], "uv": [2, 2]},
+						{"origin": [-1.31066, 0, 16.98553], "size": [1, 1, 0.5], "pivot": [0, 0.5, 14.76066], "rotation": [0, -45, 0], "uv": [2, 2]}
+					]
+				},
+				{
+					"name": "Prong2",
+					"parent": "TheGrabbies",
+					"pivot": [0, 0.5, -1.05],
+					"rotation": [0, 0, -180],
+					"cubes": [
+						{"origin": [-10.71518, 0, 8.14031], "size": [2, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, 45, 0], "uv": [2, 2]},
+						{"origin": [12.3, 0, 3.81421], "size": [2, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, -90, 0], "uv": [2, 2]},
+						{"origin": [8.09386, 0, 13.09005], "size": [1, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, -45, 0], "uv": [2, 2]}
+					]
+				},
+				{
+					"name": "Prong3",
+					"parent": "TheGrabbies",
+					"pivot": [0, 0.5, -1.05],
+					"rotation": [0, 0, 90],
+					"cubes": [
+						{"origin": [-10.71518, 0, 8.14031], "size": [2, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, 45, 0], "uv": [2, 2]},
+						{"origin": [12.3, 0, 3.81421], "size": [2, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, -90, 0], "uv": [2, 2]},
+						{"origin": [8.09386, 0, 13.09005], "size": [1, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, -45, 0], "uv": [2, 2]}
+					]
+				},
+				{
+					"name": "Prong4",
+					"parent": "TheGrabbies",
+					"pivot": [0, 0.5, -1.05],
+					"rotation": [0, 0, -90],
+					"cubes": [
+						{"origin": [-10.71518, 0, 8.14031], "size": [2, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, 45, 0], "uv": [2, 2]},
+						{"origin": [12.3, 0, 3.81421], "size": [2, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, -90, 0], "uv": [2, 2]},
+						{"origin": [8.09386, 0, 13.09005], "size": [1, 1, 0.5], "pivot": [0, 0.5, 1.46066], "rotation": [0, -45, 0], "uv": [2, 2]}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,7 +1,6 @@
 package com.pulsar.soulforge.data;
 
 import com.pulsar.soulforge.ability.AbilityBase;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -31,14 +30,18 @@ public class AbilityList {
         return List.copyOf(abilities.values().stream().filter(AbilityBase::getActive).toList());
     }
 
-    public int getCooldown(String name, int currentTick) {
-        if (get(name) == null) return 0;
-        return MathHelper.clamp(currentTick - get(name).getLastCastTime(), 0, get(name).getOffCooldownTime() - get(name).getLastCastTime());
+    public List<AbilityBase> getOnCooldown() {
+        return List.copyOf(abilities.values().stream().filter(AbilityBase::onCooldown).toList());
     }
 
-    public int getCooldown(AbilityBase ability, int currentTick) {
+    public int getCooldown(String name) {
+        if (get(name) == null) return 0;
+        return get(name).getCooldownVal();
+    }
+
+    public int getCooldown(AbilityBase ability) {
         if (get(ability) == null) return 0;
-        return MathHelper.clamp(currentTick - get(ability).getLastCastTime(), 0, get(ability).getOffCooldownTime() - get(ability).getLastCastTime());
+        return get(ability).getCooldownVal();
     }
 
     public void add(AbilityBase ability) {

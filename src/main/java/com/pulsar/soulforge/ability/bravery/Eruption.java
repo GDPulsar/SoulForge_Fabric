@@ -28,6 +28,7 @@ public class Eruption extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        float totalDamage = 0f;
         float distanceForward = 7f + MathHelper.floor(playerSoul.getEffectiveLV()/4f);
         float aoeDist = 2f + MathHelper.floor(playerSoul.getEffectiveLV()/8f);
         float damage = 5f + MathHelper.floor(playerSoul.getEffectiveLV()/4f);
@@ -46,7 +47,9 @@ public class Eruption extends AbilityBase {
                     float dist = (float) living.getPos().distanceTo(centerPoint);
                     if (dist <= aoeDist) {
                         Vec3d launchDir = centerPoint.subtract(living.getPos()).withAxis(Direction.Axis.Y, 0).normalize().multiply(dist / 3f);
-                        living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
+                        if (living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage)) {
+                            totalDamage += damage;
+                        }
                         living.setVelocity(launchDir.add(0f, playerSoul.getEffectiveLV()/10f, 0f));
                     }
                 }
@@ -60,6 +63,7 @@ public class Eruption extends AbilityBase {
             }
             player.getWorld().playSound(null, centerPoint.x, centerPoint.y, centerPoint.z, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.MASTER, 2.5f, 1f);
         }
+        playerSoul.setStyle(playerSoul.getStyle() + (int)totalDamage);
         return super.cast(player);
     }
 

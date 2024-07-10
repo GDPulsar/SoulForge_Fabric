@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -26,7 +27,10 @@ public class OrbitalStrike extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.addTag("immobile");
+        if (playerSoul.getStyleRank() < 4) {
+            player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+            return false;
+        }
         Vec3d start = player.getEyePos();
         Vec3d end = start.add(player.getRotationVector().x * 50f, player.getRotationVector().y * 50f, player.getRotationVector().z * 50f);
         BlockHitResult blockHit = player.getWorld().raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
@@ -37,6 +41,7 @@ public class OrbitalStrike extends AbilityBase {
             serverWorld.spawnEntity(entity);
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_REVIVAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
             timer = 300;
+            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1800, 1));
             return super.cast(player);
         }
         return false;
@@ -58,9 +63,6 @@ public class OrbitalStrike extends AbilityBase {
 
     @Override
     public boolean end(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.removeTag("immobile");
-        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2400, 1));
         return super.end(player);
     }
 

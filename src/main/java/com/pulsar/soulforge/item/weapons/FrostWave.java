@@ -32,13 +32,15 @@ public class FrostWave extends MagicItem {
                 }
                 entity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 80 + playerSoul.getEffectiveLV()*40, Math.round(playerSoul.getEffectiveLV()/5f) - 1));
                 entity.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY,  80 + playerSoul.getEffectiveLV()*40, Math.min(Math.round(playerSoul.getEffectiveLV()/6f) - 1, 2)));
-                entity.damage(SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 1f);
                 int duration = 10;
                 if (entity.hasStatusEffect(SoulForgeEffects.FROSTBITE)) duration = entity.getStatusEffect(SoulForgeEffects.FROSTBITE).getDuration() + 10;
                 if (entity.hasStatusEffect(SoulForgeEffects.FROSTBURN)) duration = entity.getStatusEffect(SoulForgeEffects.FROSTBURN).getDuration() + 10;
                 entity.addStatusEffect(new StatusEffectInstance(
                         frostburn ? SoulForgeEffects.FROSTBURN : SoulForgeEffects.FROSTBITE,
                         duration, 0));
+                if (entity.damage(SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV() / 5f)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)((playerSoul.getEffectiveLV() / 20f) * (1f + Utils.getTotalDebuffLevel(entity) / 10f)));
+                }
             }
             world.playSoundFromEntity(null, user, SoulForgeSounds.FROST_WAVE_EVENT, SoundCategory.PLAYERS, 1f, 1f);
             playerSoul.setMagic(playerSoul.getMagic() - 2f);

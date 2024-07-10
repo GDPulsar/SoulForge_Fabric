@@ -1,10 +1,13 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -17,13 +20,15 @@ public class ImmobilizationEntity extends Entity implements Attackable {
     public float health;
     private LivingEntity target;
     private static final TrackedData<Vector3f> SIZE = DataTracker.registerData(ImmobilizationEntity.class, TrackedDataHandlerRegistry.VECTOR3F);
+    private final PlayerEntity owner;
 
-    public ImmobilizationEntity(World world, Vec3d position, float health, LivingEntity target) {
+    public ImmobilizationEntity(World world, Vec3d position, float health, LivingEntity target, PlayerEntity owner) {
         super(SoulForgeEntities.IMMOBILIZATION_ENTITY_TYPE, world);
         this.setPosition(position);
         this.maxHealth = health;
         this.health = health;
         this.setEntity(target);
+        this.owner = owner;
         this.setSize((float)Math.max(target.getBoundingBox().getXLength(), target.getBoundingBox().getZLength()), (float)target.getBoundingBox().getYLength());
         this.calculateDimensions();
         setBoundingBox(Box.of(this.getPos(), this.getSizeX(), this.getSizeY(), this.getSizeX()));
@@ -37,6 +42,7 @@ public class ImmobilizationEntity extends Entity implements Attackable {
         super(type, world);
         maxHealth = 100f;
         health = 100f;
+        this.owner = null;
     }
 
     @Override
@@ -92,6 +98,10 @@ public class ImmobilizationEntity extends Entity implements Attackable {
     @Override
     public boolean damage(DamageSource source, float amount) {
         health -= amount;
+        if (this.owner != null) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(this.owner);
+            playerSoul.setStyle(playerSoul.getStyle() + (int)amount);
+        }
         if (health <= 0) kill();
         return true;
     }

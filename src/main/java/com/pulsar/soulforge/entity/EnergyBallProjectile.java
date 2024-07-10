@@ -96,7 +96,12 @@ public class EnergyBallProjectile extends ProjectileEntity {
             }
         }
         Entity entity = entityHitResult.getEntity();
-        entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
+        if (entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage)) {
+            if (this.getOwner() instanceof PlayerEntity player) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+            }
+        }
         if (entity instanceof LivingEntity living) {
             if (frostburn) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 250, 0));
             else living.setFireTicks(250);
@@ -122,6 +127,7 @@ public class EnergyBallProjectile extends ProjectileEntity {
                 ((ServerWorld)getWorld()).spawnParticles(ParticleTypes.FLAME, this.getX() + pos.x, this.getY() + pos.y, this.getZ() + pos.z, 1, vel.x, vel.y, vel.z, 0);
             }
         }
+        float totalDamage = 0f;
         float aoeDamage = 1f;
         int aoeSize = 3;
         boolean frostburn = false;
@@ -135,10 +141,16 @@ public class EnergyBallProjectile extends ProjectileEntity {
         }
         for (Entity aoe : Utils.visibleEntitiesInBox(this, Box.of(this.getPos(), aoeSize, aoeSize, aoeSize))) {
             if (aoe instanceof LivingEntity target && target != this.getOwner()) {
-                target.damage(this.getDamageSources().mobProjectile(this.getOwner(), target), aoeDamage);
+                if (target.damage(this.getDamageSources().mobProjectile(this.getOwner(), target), aoeDamage)) {
+                    totalDamage += aoeDamage;
+                }
                 target.setFireTicks(100);
                 if (frostburn) target.setFrozenTicks(100);
             }
+        }
+        if (this.getOwner() instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.setStyle(playerSoul.getStyle() + (int)totalDamage);
         }
         super.onCollision(hitResult);
         this.destroy();

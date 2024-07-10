@@ -6,6 +6,7 @@ import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -39,19 +40,27 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
         return true;
     }
 
+    int timer = 0;
     @Override
     public boolean tick(ServerPlayerEntity player) {
         if (location == null) {
             setActive(false);
             return true;
         }
+        float styleChange = 0f;
         for (Entity entity : player.getEntityWorld().getOtherEntities(null, Box.of(location.toCenterPos(), size*2, size*2, size*2))) {
             if (entity instanceof LivingEntity target) {
                 if (target.squaredDistanceTo(location.toCenterPos()) <= size * size) {
                     target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.SNOWED_VISION, 5, 0));
                 }
+                if (target != player) styleChange += (1f + Utils.getTotalDebuffLevel(target) / 10f);
             }
         }
+        if (timer % 20 == 0) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.setStyle(playerSoul.getStyle() + (int)styleChange);
+        }
+        timer = (timer + 1) % 20;
         ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
         float phiStep = (float) (Math.PI / 32);
         float thetaStep = (float) (2.0 * Math.PI / 64);

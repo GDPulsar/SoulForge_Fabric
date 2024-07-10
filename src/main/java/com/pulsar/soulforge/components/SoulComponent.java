@@ -48,6 +48,11 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     int getEXP();
     void setEXP(int exp);
     int getExpRequirement();
+    int getStyle();
+    void setStyle(int style);
+    int getStyleRequirement();
+    int getStyleRank();
+    void setStyleRank(int styleRank);
     int getHate();
     void setHate(int hate);
     boolean getInverted();

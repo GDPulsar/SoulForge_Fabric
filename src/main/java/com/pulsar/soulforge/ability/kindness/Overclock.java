@@ -24,6 +24,11 @@ public class Overclock extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (playerSoul.getStyleRank() < 3) {
+            player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+            return false;
+        }
         if (players == null) {
             players = new ArrayList<>();
         }
@@ -55,7 +60,6 @@ public class Overclock extends AbilityBase {
             }
         } else {
             if (player.isSneaking()) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 if (playerSoul.getMagic() >= 100f) {
                     for (PlayerEntity target : players) {
                         target.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 600, 4-players.size()));
@@ -63,7 +67,7 @@ public class Overclock extends AbilityBase {
                     }
                     player.sendMessageToClient(Text.literal("OVERCLOCK ACTIVE").formatted(Formatting.GREEN, Formatting.BOLD), true);
                     playerSoul.setMagic(0f);
-                    player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 2400, 1));
+                    player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1200, 1));
                     return super.cast(player);
                 }
             } else {

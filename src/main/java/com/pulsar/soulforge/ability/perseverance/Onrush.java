@@ -1,7 +1,9 @@
 package com.pulsar.soulforge.ability.perseverance;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
@@ -30,7 +32,7 @@ public class Onrush extends AbilityBase {
     }
 
     List<LivingEntity> damaged = new ArrayList<>();
-
+    int chainCount = 0;
     @Override
     public boolean tick(ServerPlayerEntity player) {
         timer--;
@@ -44,10 +46,14 @@ public class Onrush extends AbilityBase {
                     if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
                 }
                 if (!damaged.contains(living)) {
-                    living.damage(source, damage);
-                    living.timeUntilRegen += 10;
-                    damaged.add(living);
-                    hit = true;
+                    if (living.damage(source, damage)) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * (chainCount + 1)));
+                        living.timeUntilRegen += 10;
+                        damaged.add(living);
+                        hit = true;
+                        break;
+                    }
                 }
             }
         }
@@ -56,6 +62,7 @@ public class Onrush extends AbilityBase {
             Vec3d vel = new Vec3d(player.getRotationVector().x, 0f, player.getRotationVector().z);
             player.addVelocity(vel.normalize());
             player.velocityModified = true;
+            chainCount++;
         }
         return timer <= 0;
     }

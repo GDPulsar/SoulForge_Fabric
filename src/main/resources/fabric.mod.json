@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "soulforge",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"name": "SoulForge",
 	"description": "A Minecraft mod built around UNDERTALE!",
 	"authors": [
@@ -31,7 +31,8 @@
 			"com.pulsar.soulforge.compat.rei.SoulForgeREIClientPlugin"
 		],
 		"cardinal-components-entity": ["com.pulsar.soulforge.components.EntityInitializer"],
-		"cardinal-components-world": ["com.pulsar.soulforge.components.WorldInitializer"]
+		"cardinal-components-world": ["com.pulsar.soulforge.components.WorldInitializer"],
+		"modmenu": [ "com.pulsar.soulforge.compat.modmenu.SoulForgeModMenuImpl" ]
 	},
 	"mixins": [
 		"soulforge.mixins.json"
@@ -48,7 +49,13 @@
 		"cardinal-components": [
 			"soulforge:trait",
 			"soulforge:world_config"
-		]
+		],
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.com/invite/pUGY2BvEk2"
+			},
+			"badges": []
+		}
 	},
 	"accessWidener": "soulforge.accesswidener"
 }

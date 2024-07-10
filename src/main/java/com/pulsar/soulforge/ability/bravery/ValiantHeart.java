@@ -14,6 +14,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 
 import java.util.Objects;
 
@@ -27,9 +28,14 @@ public class ValiantHeart extends AbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (playerSoul.getMagic() < 100f) return false;
+        if (playerSoul.getStyleRank() < 5) {
+            player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
+            return false;
+        }
         playerSoul.setMagic(0f);
         timer = 3600;
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VALIANT_HEART, 3600, 0));
+        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 0));
         player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(damageModifier);
         player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(magicModifier);
         return super.cast(player);
@@ -49,7 +55,6 @@ public class ValiantHeart extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "valiant_heart");
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_POWER, "valiant_heart");
-        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 6000, 3));
         return super.end(player);
     }
 
