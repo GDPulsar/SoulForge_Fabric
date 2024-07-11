@@ -12,6 +12,7 @@ in vec3 Normal;
 uniform sampler2D Sampler2;
 
 uniform mat4 ModelViewMat;
+uniform mat3 IViewRotMat;
 uniform mat4 ProjMat;
 uniform vec3 ChunkOffset;
 uniform int FogShape;
@@ -22,10 +23,12 @@ out vec2 texCoord0;
 out vec4 normal;
 
 void main() {
-    vec3 pos = Position + ChunkOffset;
-    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+    vec3 worldPos = IViewRotMat * Position;
+    vec4 pos = vec4(vec3(worldPos.x, worldPos.y, worldPos.z) * IViewRotMat, 1.0);
+    pos = vec4(pos.x, pos.y, pos.z, pos.w);
+    gl_Position = ProjMat * pos;
 
-    vertexDistance = fog_distance(ModelViewMat, pos, FogShape);
+    vertexDistance = fog_distance(ModelViewMat, Position, FogShape);
     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
     texCoord0 = UV0;
     normal = ProjMat * ModelViewMat * vec4(Normal, 0.0);

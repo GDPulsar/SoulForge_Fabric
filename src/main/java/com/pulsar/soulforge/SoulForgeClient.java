@@ -41,7 +41,6 @@ import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
 import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.LightningEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
@@ -63,6 +62,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 import static net.minecraft.client.render.RenderPhase.*;
+import static net.minecraft.client.render.VertexFormats.POSITION_COLOR_TEXTURE_LIGHT;
 
 public class SoulForgeClient implements ClientModInitializer {
 	public static EntityModelLayer MODEL_FROZEN_ENERGY_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "frozen_energy"), "Frozen Energy");
@@ -70,8 +70,10 @@ public class SoulForgeClient implements ClientModInitializer {
 	public static RenderPhase.ShaderProgram energyBeamProgram;
 
 	public static RenderLayer getBeamRenderLayer(Identifier texture) {
-		RenderLayer.MultiPhaseParameters mpp = RenderLayer.MultiPhaseParameters.builder().program(energyBeamProgram).texture(new RenderPhase.Texture(texture, false, false)).transparency(NO_TRANSPARENCY).lightmap(ENABLE_LIGHTMAP).overlay(ENABLE_OVERLAY_COLOR).build(false);
-		return RenderLayer.of("energy_beam", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.QUADS,
+		RenderLayer.MultiPhaseParameters mpp = RenderLayer.MultiPhaseParameters.builder().program(energyBeamProgram)
+				.texture(new RenderPhase.Texture(texture, false, false)).transparency(NO_TRANSPARENCY)
+				.lightmap(ENABLE_LIGHTMAP).overlay(ENABLE_OVERLAY_COLOR).build(false);
+		return RenderLayer.of("energy_beam", POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.QUADS,
 						2048, false, false, mpp);
 	}
 

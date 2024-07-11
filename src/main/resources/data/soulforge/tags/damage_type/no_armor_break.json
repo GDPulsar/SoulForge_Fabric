@@ -1,0 +1,17 @@
+{
+  "values": [
+    "soulforge:ability",
+    "soulforge:ability_pierce",
+    "soulforge:auto_turret",
+    "soulforge:gun_shot",
+    "soulforge:injector",
+    "soulforge:pain_split",
+    "soulforge:parry",
+    "soulforge:shield_shard",
+    "soulforge:skewer_weakpoint",
+    "soulforge:stockpile",
+    "soulforge:stuck_spear",
+    "soulforge:summon_weapon",
+    "soulforge:warpspeed"
+  ]
+}

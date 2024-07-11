@@ -79,7 +79,7 @@ public class EnergyWave extends ToggleableAbilityBase {
             playerSoul.setStyleRank(Math.max(0, playerSoul.getStyleRank()-3));
         }
         BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
-                player, size, Vec3d.ZERO, end, damage, Color.ORANGE);
+                player, size, Vec3d.ZERO, end, damage, new Color(255, 128, 0));
         blast.owner = player;
         ServerWorld serverWorld = (ServerWorld)player.getWorld();
         serverWorld.spawnEntity(blast);

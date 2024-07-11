@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.tag;
 
 import com.pulsar.soulforge.SoulForge;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -19,4 +20,5 @@ public class SoulForgeTags {
     public static final TagKey<Item> BREAKS_SHIELD = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "breaks_shield"));
     public static final TagKey<Item> SIPHON_ADDITION = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "siphon_addition"));
     public static final TagKey<Item> SIPHONABLE = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "siphonable"));
+    public static final TagKey<DamageType> NO_ARMOR_BREAK = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "no_armor_break"));
 }

@@ -1,19 +1,22 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.tag.SoulForgeTags;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.function.Consumer;
 
 @Mixin(PlayerInventory.class)
 public abstract class PlayerInventoryMixin {
@@ -57,5 +60,12 @@ public abstract class PlayerInventoryMixin {
     private void modifyUpdatingItems(CallbackInfo ci) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(this.player);
         playerSoul.getWeapon().inventoryTick(this.player.getWorld(), this.player, 0, this.selectedSlot == 9);
+    }
+
+    @Redirect(method = "damageArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"))
+    private <T extends LivingEntity> void modifyDamageArmor(ItemStack instance, int amount, T entity, Consumer<T> breakCallback, @Local DamageSource damageSource) {
+        if (!damageSource.isIn(SoulForgeTags.NO_ARMOR_BREAK)) {
+            instance.damage(amount, entity, breakCallback);
+        }
     }
 }
