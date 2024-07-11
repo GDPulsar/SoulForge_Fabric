@@ -17,6 +17,7 @@
     "LivingEntityAccessor",
     "LivingEntityMixin",
     "MilkBucketItemMixin",
+    "PersistentProjectileEntityMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "PlayerScreenHandlerMixin",

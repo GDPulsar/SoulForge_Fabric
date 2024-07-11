@@ -40,7 +40,17 @@ repositories {
 		url "https://jitpack.io"
 	}
 	maven { url "https://maven.ryanliptak.com/" }
-	mavenLocal()
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
 }
 
 dependencies {
@@ -74,7 +84,8 @@ dependencies {
 
 	//modCompileOnly("com.github.GDPulsar:SoulForge-Teams:-SNAPSHOT")
 	//modLocalRuntime("com.github.GDPulsar:SoulForge-Teams:-SNAPSHOT")
-	modCompileOnly("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
+	modCompileOnly "maven.modrinth:soulforge-teams:1.0.2"
+	//modCompileOnly("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
 	//modLocalRuntime("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
 	modCompileOnly("squeek.appleskin:appleskin-fabric:${appleskin_version}") {
 		transitive = false

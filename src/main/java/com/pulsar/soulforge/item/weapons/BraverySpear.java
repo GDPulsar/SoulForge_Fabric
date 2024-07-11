@@ -30,7 +30,7 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class BraverySpear extends MagicSwordItem implements GeoItem {
+public class BraverySpear extends MagicSweepingSwordItem implements GeoItem {
     public BraverySpear() {
         super(6, 1.4f, 0.25f);
         addAttribute(ReachEntityAttributes.ATTACK_RANGE, new EntityAttributeModifier("bv_spear_reach", 2f, EntityAttributeModifier.Operation.ADDITION));

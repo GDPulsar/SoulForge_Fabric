@@ -7,6 +7,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 public class SoulForgeTags {
+    public static final TagKey<Item> ARTIFACT_SIPHONABLE = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "artifact_siphonable"));
     public static final TagKey<Item> IMBUER_SWORDS = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "imbuer_swords"));
     public static final TagKey<Item> IMBUER_SHIELDS = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "imbuer_shields"));
     public static final TagKey<Item> IMBUER_AXES = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "imbuer_axes"));

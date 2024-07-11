@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class DeterminationBlades extends MagicSwordItem {
     public DeterminationBlades() {
-        super(6, 1.6f, 0.75f);
+        super(6, 1.2f, 0.75f);
     }
 
     @Override

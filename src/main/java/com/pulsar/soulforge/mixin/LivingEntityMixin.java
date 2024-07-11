@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
@@ -14,6 +15,8 @@ import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.devices.devices.RevivalIdol;
 import com.pulsar.soulforge.shield.ShieldBlockCallback;
+import com.pulsar.soulforge.siphon.Siphon;
+import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.tag.SoulForgeTags;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
@@ -33,6 +36,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -499,4 +503,18 @@ abstract class LivingEntityMixin extends Entity {
         }
         return original;
     }*/
+
+    @ModifyVariable(method = "tickRiptide", at = @At("STORE"), ordinal = 0)
+    private Box modifyRiptideCollisionBox(Box box) {
+        if (this.getMainHandStack().isOf(Items.TRIDENT)) {
+            NbtCompound nbt = this.getMainHandStack().getOrCreateNbt();
+            if (nbt.contains("Siphon")) {
+                Siphon.Type siphonType = Siphon.Type.getSiphon(nbt.getString("Siphon"));
+                if (siphonType == Type.BRAVERY) {
+                    return box.expand(2);
+                }
+            }
+        }
+        return box;
+    }
 }

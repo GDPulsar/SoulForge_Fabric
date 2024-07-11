@@ -1,0 +1,13 @@
+{
+  "type": "soulforge:siphon_recipe",
+  "template": {
+    "item": "soulforge:siphon_template"
+  },
+  "base": {
+    "tag": "soulforge:artifact_siphonable"
+  },
+  "addition": {
+    "item": "soulforge:patience_arnicite_heart"
+  },
+  "siphonStr": "patience"
+}

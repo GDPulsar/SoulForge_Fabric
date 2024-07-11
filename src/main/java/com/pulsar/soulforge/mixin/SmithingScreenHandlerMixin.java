@@ -49,6 +49,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
                         this.recipes.stream().anyMatch(recipe ->
                                 recipe.testBase(stack)
                         ) || stack.isIn(SoulForgeTags.SIPHONABLE)
+                                || stack.isIn(SoulForgeTags.ARTIFACT_SIPHONABLE)
                 )
                 .input(2, 44, 48, stack ->
                         this.recipes.stream().anyMatch(recipe ->
@@ -85,7 +86,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
     @Inject(method = "getQuickMoveSlot", at=@At("HEAD"), cancellable = true)
     private static void getQuickMoveSlot(SmithingRecipe recipe, ItemStack stack, CallbackInfoReturnable<Optional<Integer>> cir) {
         if (stack.isOf(SoulForgeItems.SIPHON_TEMPLATE)) cir.setReturnValue(Optional.of(0));
-        if (stack.isIn(SoulForgeTags.SIPHONABLE)) cir.setReturnValue(Optional.of(1));
+        if (stack.isIn(SoulForgeTags.SIPHONABLE) || stack.isIn(SoulForgeTags.ARTIFACT_SIPHONABLE)) cir.setReturnValue(Optional.of(1));
         if (stack.isIn(SoulForgeTags.SIPHON_ADDITION)) cir.setReturnValue(Optional.of(2));
     }
 }

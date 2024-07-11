@@ -1,19 +1,19 @@
 package com.pulsar.soulforge.item.weapons;
 
-import net.minecraft.item.ToolMaterial;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
 
-public class MagicToolItem extends MagicItem {
-    private final ToolMaterial material = MagicWeaponMaterial.INSTANCE;
-
+public class MagicToolItem extends ToolItem {
     public MagicToolItem() {
-        super();
+        super(MagicWeaponMaterial.INSTANCE, new FabricItemSettings().maxCount(1));
     }
 
-    public ToolMaterial getMaterial() {
-        return this.material;
-    }
+    @Override
+    public boolean isDamageable() { return false; }
 
-    public int getEnchantability() {
-        return this.material.getEnchantability();
+    @Override
+    public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+        return false;
     }
 }

@@ -24,7 +24,7 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class PerseveranceEdge extends MagicSwordItem implements GeoItem {
+public class PerseveranceEdge extends MagicSweepingSwordItem implements GeoItem {
     public PerseveranceEdge() {
         // attack damage, attack speed
         super(6f, 1.6f, 0.25f);

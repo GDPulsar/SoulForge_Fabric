@@ -7,6 +7,7 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.DeterminationSpearProjectile;
 import com.pulsar.soulforge.entity.SOJProjectile;
 import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -22,7 +23,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
-public class DeterminationSpear extends MagicSwordItem {
+public class DeterminationSpear extends MagicSweepingSwordItem {
     public DeterminationSpear() {
         super(6, 1.4f, 0.25f);
         addAttribute(ReachEntityAttributes.ATTACK_RANGE, new EntityAttributeModifier("dt_spear_reach", 2f, EntityAttributeModifier.Operation.ADDITION));

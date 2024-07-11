@@ -4,3 +4,4 @@ accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogM
 accessible class net/minecraft/client/render/BackgroundRenderer$FogData
 accessible method net/minecraft/screen/ScreenHandler addSlot (Lnet/minecraft/screen/slot/Slot;)Lnet/minecraft/screen/slot/Slot;
 accessible field net/minecraft/entity/projectile/PersistentProjectileEntity inBlockState Lnet/minecraft/block/BlockState;
+accessible field net/minecraft/entity/projectile/TridentEntity tridentStack Lnet/minecraft/item/ItemStack;

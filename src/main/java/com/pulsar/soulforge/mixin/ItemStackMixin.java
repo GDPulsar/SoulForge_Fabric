@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.siphon.Siphon;
+import com.pulsar.soulforge.siphon.Siphon.Type;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
@@ -62,12 +64,15 @@ public abstract class ItemStackMixin {
             armorSiphonModifiers.put(slot, slotSiphonModifiers);
         }
         braveryWeaponModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+        braveryTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 2, Operation.ADDITION));
         integrityWeaponDamageModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", -0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
         integrityWeaponSpeedModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
     }
 
     @Unique
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> braveryWeaponModifier;
+    @Unique
+    private static Map.Entry<EntityAttribute, EntityAttributeModifier> braveryTridentModifier;
     @Unique
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> integrityWeaponDamageModifier;
     @Unique
@@ -84,11 +89,15 @@ public abstract class ItemStackMixin {
                     if (type != Siphon.Type.SPITE) {
                         if (stack.getItem() instanceof ArmorItem armor && armor.getSlotType() == slot) {
                             modifiers.put(armorSiphonModifiers.get(slot).get(type));
-                        } else if ((stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || stack.getItem() instanceof TridentItem) && slot == EquipmentSlot.MAINHAND) {
+                        } else if ((stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem) && slot == EquipmentSlot.MAINHAND) {
                             if (type == Siphon.Type.BRAVERY) modifiers.put(braveryWeaponModifier);
                             if (type == Siphon.Type.INTEGRITY) {
                                 modifiers.put(integrityWeaponDamageModifier);
                                 modifiers.put(integrityWeaponSpeedModifier);
+                            }
+                        } else if (stack.getItem() instanceof TridentItem) {
+                            if (type == Type.BRAVERY) {
+                                modifiers.put(braveryTridentModifier);
                             }
                         }
                     } else {

@@ -3,6 +3,7 @@ package com.pulsar.soulforge.item.weapons.weapon_wheel;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -25,7 +26,7 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class DeterminationEdge extends MagicSwordItem implements GeoItem {
+public class DeterminationEdge extends MagicSweepingSwordItem implements GeoItem {
     public DeterminationEdge() {
         // attack damage, attack speed
         super(6f, 1.6f, 0.25f);

@@ -1,16 +1,33 @@
 package com.pulsar.soulforge.command;
 
+import com.google.common.collect.Collections2;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType.StringType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
+import com.pulsar.soulforge.util.Utils;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
 import static com.mojang.brigadier.arguments.FloatArgumentType.getFloat;
@@ -18,6 +35,7 @@ import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
+import static com.pulsar.soulforge.command.SoulForgeCommand.TraitArgumentType.trait;
 import static net.minecraft.command.argument.EntityArgumentType.getPlayer;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -31,11 +49,10 @@ public class SoulForgeCommand {
                         .then(literal("player")
                                 .then(argument("playerName", player())
                                         .then(literal("get")
-                                                .then(literal("trait1")
+                                                .then(literal("trait")
                                                         .executes(context -> {
                                                             SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
-                                                            List<TraitBase> traits = data.getTraits();
-                                                            String str = "Trait: " + (traits.size() == 2 ? traits.get(0).getName() + "-" + traits.get(1).getName() : traits.get(0).getName());
+                                                            String str = Utils.getTraitText(data).getString();
                                                             context.getSource().sendMessage(Text.literal("Your trait is: " + str));
                                                             return 1;
                                                         })
@@ -62,40 +79,32 @@ public class SoulForgeCommand {
                                                         })
                                                 )
                                         ).then(literal("set")
-                                                .then(literal("trait1")
-                                                        .then(argument("trait", string())
-                                                                .executes(context -> {
-                                                                    TraitBase trait = Traits.get(getString(context, "trait"));
-                                                                    if (trait != null) {
-                                                                        SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
-                                                                        data.setTrait(0, trait);
-                                                                        context.getSource().sendMessage(Text.literal("Your trait has been changed to: " + data.toString()));
-                                                                    } else {
-                                                                        context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait") + " exists!"));
-                                                                    }
-                                                                    return 1;
-                                                                })
-                                                        )
-                                                )
-                                                .then(literal("trait2")
-                                                        .then(argument("trait", string())
-                                                                .executes(context -> {
-                                                                    SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
-                                                                    if (getString(context, "trait").equals("None")) {
-                                                                        data.setTrait(1, null);
-                                                                        context.getSource().sendMessage(Text.literal("Removed your second trait."));
-                                                                        return 1;
-                                                                    }
-                                                                    TraitBase trait = Traits.get(getString(context, "trait"));
-                                                                    if (trait != null) {
-                                                                        if (data.getTrait(0) == trait) {
-                                                                            context.getSource().sendMessage(Text.literal("You cannot have two of the same trait!"));
+                                                .then(literal("trait")
+                                                        .then(argument("trait1", trait())
+                                                                .then(argument("trait2", trait())
+                                                                        .executes(context -> {
+                                                                            TraitBase trait1 = Traits.get(getString(context, "trait1"));
+                                                                            TraitBase trait2 = Traits.get(getString(context, "trait2"));
+                                                                            if (trait1 != null && trait2 != null) {
+                                                                                SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
+                                                                                data.setTraits(List.of(trait1, trait2));
+                                                                                context.getSource().sendMessage(Text.literal("Your trait has been changed to: " + Utils.getTraitText(data).getString()));
+                                                                            } else if (trait1 != null) {
+                                                                                context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
+                                                                            } else if (trait2 != null) {
+                                                                                context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait2") + " exists!"));
+                                                                            }
                                                                             return 1;
-                                                                        }
-                                                                        data.setTrait(1, trait);
-                                                                        context.getSource().sendMessage(Text.literal("Your trait has been changed to: " + data.toString()));
+                                                                        })
+                                                                )
+                                                                .executes(context -> {
+                                                                    TraitBase trait1 = Traits.get(getString(context, "trait1"));
+                                                                    if (trait1 != null) {
+                                                                        SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
+                                                                        data.setTraits(List.of(trait1));
+                                                                        context.getSource().sendMessage(Text.literal("Your trait has been changed to: " + Utils.getTraitText(data).getString()));
                                                                     } else {
-                                                                        context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait") + " exists!"));
+                                                                        context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
                                                                     }
                                                                     return 1;
                                                                 })
@@ -202,5 +211,38 @@ public class SoulForgeCommand {
                                 )
                         )
         );
+    }
+
+    public static class TraitArgumentType implements ArgumentType<String> {
+        private TraitArgumentType() {}
+
+        public static TraitArgumentType trait() {
+            return new TraitArgumentType();
+        }
+
+        public static String getString(final CommandContext<?> context, final String name) {
+            return context.getArgument(name, String.class);
+        }
+
+        @Override
+        public String parse(final StringReader reader) throws CommandSyntaxException {
+            return reader.readString();
+        }
+
+        @Override
+        public String toString() {
+            return "trait()";
+        }
+
+        @Override
+        public Collection<String> getExamples() {
+            return Traits.trueAll().stream().map(TraitBase::getName).toList();
+        }
+
+        @Override
+        public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+            CommandSource.suggestMatching(Traits.trueAll().stream().map(TraitBase::getName).toList(), builder);
+            return builder.buildFuture();
+        }
     }
 }

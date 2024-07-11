@@ -13,9 +13,11 @@ import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.shield.ShieldDisabledCallback;
 import com.pulsar.soulforge.siphon.Siphon;
+import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.Traits;
@@ -60,10 +62,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -247,6 +246,22 @@ abstract class PlayerEntityMixin extends LivingEntity {
         return target.damage(source, damage);
     }
 
+    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
+    private Item allowSweepingFor(ItemStack instance) {
+        if (instance.getItem() instanceof TridentItem) {
+            if (instance.getOrCreateNbt().contains("Siphon")) {
+                Siphon.Type siphonType = Siphon.Type.getSiphon(instance.getOrCreateNbt().getString("Siphon"));
+                if (siphonType == Type.BRAVERY) {
+                    return Items.GOLDEN_SWORD;
+                }
+            }
+        }
+        if (instance.getItem() instanceof MagicSweepingSwordItem) {
+            return Items.GOLDEN_SWORD;
+        }
+        return instance.getItem();
+    }
+
     @ModifyVariable(method = "attack", at = @At("STORE"), ordinal = 0)
     private float modifyDamage(float original) {
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) {
@@ -254,6 +269,15 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
         if (this.hasStatusEffect(StatusEffects.WEAKNESS)) {
             original += this.getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() * -4;
+        }
+        if (this.isUsingRiptide()) {
+            ItemStack tridentStack = this.getMainHandStack().isOf(Items.TRIDENT) ? this.getMainHandStack() : this.getOffHandStack();
+            if (tridentStack.getOrCreateNbt().contains("Siphon")) {
+                Siphon.Type siphonType = Siphon.Type.getSiphon(tridentStack.getOrCreateNbt().getString("Siphon"));
+                if (siphonType == Type.BRAVERY) {
+                    original *= 1.25f;
+                }
+            }
         }
         return original;
     }

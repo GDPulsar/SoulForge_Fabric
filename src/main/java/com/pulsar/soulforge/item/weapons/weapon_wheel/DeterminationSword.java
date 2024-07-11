@@ -5,6 +5,7 @@ import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.SpecialHellEntity;
+import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -27,7 +28,7 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class DeterminationSword extends MagicSwordItem implements GeoItem {
+public class DeterminationSword extends MagicSweepingSwordItem implements GeoItem {
     public DeterminationSword() {
         super(7, 1.5f, 0f);
     }

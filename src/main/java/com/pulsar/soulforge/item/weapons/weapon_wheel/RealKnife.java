@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.SmallSlashProjectile;
+import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import com.pulsar.soulforge.item.weapons.PerseveranceEdge;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class RealKnife extends MagicSwordItem implements GeoItem {
+public class RealKnife extends MagicSweepingSwordItem implements GeoItem {
     public RealKnife() {
         super(0, 2f, 0.8f);
     }

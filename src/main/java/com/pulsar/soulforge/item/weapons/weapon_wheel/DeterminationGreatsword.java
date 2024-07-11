@@ -9,6 +9,7 @@ import com.pulsar.soulforge.entity.BigSlashProjectile;
 import com.pulsar.soulforge.entity.SmallSlashProjectile;
 import com.pulsar.soulforge.entity.SpecialHellEntity;
 import com.pulsar.soulforge.item.weapons.BraverySpear;
+import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class DeterminationGreatsword extends MagicSwordItem implements GeoItem {
+public class DeterminationGreatsword extends MagicSweepingSwordItem implements GeoItem {
     public DeterminationGreatsword() {
         super(8, 0.7f, 0.5f);
     }

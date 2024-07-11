@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(TridentItem.class)
 public class TridentItemMixin {
-    @Redirect(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/TridentEntity;setVelocity(Lnet/minecraft/entity/Entity;FFFFF)V"))
+    /*@Redirect(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/TridentEntity;setVelocity(Lnet/minecraft/entity/Entity;FFFFF)V"))
     private void modifyProjectileSpeed(TridentEntity instance, Entity entity, float pitch, float yaw, float roll, float speed, float divergence) {
         instance.setVelocity(entity, pitch, yaw, roll, speed, divergence);
         if (entity instanceof LivingEntity owner) {
@@ -30,9 +30,9 @@ public class TridentItemMixin {
                 }
             }
         }
-    }
+    }*/
 
-    @Redirect(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addVelocity(DDD)V"))
+    /*@Redirect(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addVelocity(DDD)V"))
     private void modifyRiptideSpeed(PlayerEntity instance, double x, double y, double z) {
         ItemStack held = instance.getMainHandStack();
         if (held.getNbt() != null) {
@@ -45,20 +45,22 @@ public class TridentItemMixin {
             }
         }
         instance.addVelocity(x, y, z);
-    }
+    }*/
 
     @Redirect(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isTouchingWaterOrRain()Z"))
     private boolean modifyStoppedUsing(PlayerEntity player) {
         ItemStack stack;
         if (player.getMainHandStack().isIn(SoulForgeTags.IMBUER_TRIDENTS)) stack = player.getMainHandStack();
         else stack = player.getOffHandStack();
-        if (stack.getNbt() != null) {
-            if (stack.getNbt().getBoolean("imbued")) {
-                ItemStack imbuerStack = Utils.getImbuer(stack, player);
-                if (imbuerStack != null) {
-                    if (((SiphonImbuer)imbuerStack.getItem()).getCharge(imbuerStack) >= 10) {
-                        ((SiphonImbuer)imbuerStack.getItem()).decreaseCharge(imbuerStack, 10);
-                        return true;
+        if (!player.isTouchingWaterOrRain()) {
+            if (stack.getNbt() != null) {
+                if (stack.getNbt().getBoolean("imbued")) {
+                    ItemStack imbuerStack = Utils.getImbuer(stack, player);
+                    if (imbuerStack != null) {
+                        if (((SiphonImbuer) imbuerStack.getItem()).getCharge(imbuerStack) >= 10) {
+                            ((SiphonImbuer) imbuerStack.getItem()).decreaseCharge(imbuerStack, 10);
+                            return true;
+                        }
                     }
                 }
             }
@@ -71,12 +73,14 @@ public class TridentItemMixin {
         ItemStack stack;
         if (player.getMainHandStack().isIn(SoulForgeTags.IMBUER_TRIDENTS)) stack = player.getMainHandStack();
         else stack = player.getOffHandStack();
-        if (stack.getNbt() != null) {
-            if (stack.getNbt().getBoolean("imbued")) {
-                ItemStack imbuerStack = Utils.getImbuer(stack, player);
-                if (imbuerStack != null) {
-                    if (((SiphonImbuer)imbuerStack.getItem()).getCharge(imbuerStack) >= 10) {
-                        return true;
+        if (!player.isTouchingWaterOrRain()) {
+            if (stack.getNbt() != null) {
+                if (stack.getNbt().getBoolean("imbued")) {
+                    ItemStack imbuerStack = Utils.getImbuer(stack, player);
+                    if (imbuerStack != null) {
+                        if (((SiphonImbuer) imbuerStack.getItem()).getCharge(imbuerStack) >= 10) {
+                            return true;
+                        }
                     }
                 }
             }

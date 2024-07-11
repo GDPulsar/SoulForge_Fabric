@@ -21,6 +21,8 @@ public class Traits {
     public static TraitBase perseverance = new Perseverance();
     public static TraitBase spite = new Spite();
 
+    private static HashMap<String, TraitBase> customTraits = new HashMap<>();
+
     public static TraitBase randomNormal() {
         Random rnd = new Random();
         return switch (rnd.nextInt(6)) {
@@ -36,12 +38,20 @@ public class Traits {
         };
     }
 
+    public static void addCustomTrait(TraitBase trait) {
+        customTraits.put(trait.getName(), trait);
+    }
+
     public static List<TraitBase> all() {
         return new ArrayList<>(Arrays.asList(bravery, justice, kindness, patience, integrity, perseverance, determination));
     }
 
     public static List<TraitBase> trueAll() {
-        return new ArrayList<>(Arrays.asList(bravery, justice, kindness, patience, integrity, perseverance, determination, spite));
+        List<TraitBase> traits = new ArrayList<>(Arrays.asList(
+                bravery, justice, kindness, patience,
+                integrity, perseverance, determination, spite));
+        traits.addAll(customTraits.values());
+        return traits;
     }
 
     @Nullable
@@ -99,7 +109,7 @@ public class Traits {
     public static List<AbilityBase> getModeAbilities(String mode, SoulComponent soul) {
         List<String> abilityNames = new ArrayList<>();
         if (!Objects.equals(mode, "Passives") && !Objects.equals(mode, "Duals")) {
-            for (TraitBase trait : Traits.all()) {
+            for (TraitBase trait : Traits.trueAll()) {
                 if (Objects.equals(trait.getName(), mode)) {
                     for (AbilityBase ability : trait.getAbilities()) {
                         if (ability.getLV() <= soul.getLV() || soul.getTraits().contains(Traits.spite)) {

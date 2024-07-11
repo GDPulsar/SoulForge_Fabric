@@ -26,6 +26,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -66,6 +67,9 @@ public class SoulForge implements ModInitializer {
 		SOUL_FORGE_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "soul_forge_screen"), SoulForgeScreenHandler::new);
 		CREATIVE_ZONE_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "creative_zone_screen"), CreativeZoneScreenHandler::new);
 
+		ArgumentTypeRegistry.registerArgumentType(
+				new Identifier(MOD_ID, "trait"),
+				SoulForgeCommand.TraitArgumentType.class, ConstantArgumentSerializer.of(SoulForgeCommand.TraitArgumentType::trait));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
 			SoulForgeCommand.register(dispatcher);
 			GhostBlockCommand.register(dispatcher, registryAccess);
@@ -73,8 +77,6 @@ public class SoulForge implements ModInitializer {
 			AntihealCommand.register(dispatcher);
 			DisguiseCommand.register(dispatcher);
 		}));
-
-		ArgumentTypeRegistry.registerArgumentType(new Identifier(MOD_ID, "trait"), TraitArgumentType.class, ConstantArgumentSerializer.of(TraitArgumentType::trait));
 
 		SoulForgeNetworking.registerPackets();
 
