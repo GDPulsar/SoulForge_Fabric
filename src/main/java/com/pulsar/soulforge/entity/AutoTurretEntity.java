@@ -1,5 +1,7 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -49,6 +51,7 @@ public class AutoTurretEntity extends MobEntity implements GeoEntity, Ownable {
     public void initDataTracker() {
         this.dataTracker.startTracking(DIRECTION, new Vector3f());
         this.dataTracker.startTracking(OWNER_UUID, Optional.empty());
+        super.initDataTracker();
     }
 
     @Override
@@ -101,12 +104,17 @@ public class AutoTurretEntity extends MobEntity implements GeoEntity, Ownable {
                             this.setTarget(null);
                         }
                         Vec3d direction = target.getPos().add(0f, target.getHeight() / 2f, 0f).subtract(this.getPos().add(0, 1f, 0)).normalize();
-                        JusticePelletProjectile pellet = new JusticePelletProjectile(target.getWorld(), this);
+                        float damage = 10f;
+                        if (this.owner != null) {
+                            SoulComponent playerSoul = SoulForge.getPlayerSoul(this.owner);
+                            damage = 4f + playerSoul.getEffectiveLV() / 2f;
+                        }
+                        JusticePelletProjectile pellet = new JusticePelletProjectile(target.getWorld(), this, damage);
                         pellet.setVelocity(direction.multiply(4f));
                         pellet.setPos(this.getPos().add(0, 1f, 0));
                         this.playSound(SoulForgeSounds.PELLET_SUMMON_EVENT, 1f, 1f);
                         this.getWorld().spawnEntity(pellet);
-                        attackCooldown = 5;
+                        attackCooldown = 10;
                     }
                 }
             } else {

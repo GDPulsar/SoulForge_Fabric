@@ -71,7 +71,7 @@ public class DetonatorMine extends Entity {
                     for (Entity entity : list) {
                         entity.timeUntilRegen = 9;
                     }
-                    this.getWorld().createExplosion(getOwner(), getBlockX(), getBlockY(), getBlockZ(), 2.5f, World.ExplosionSourceType.TNT);
+                    this.getWorld().createExplosion(this, getBlockX(), getBlockY(), getBlockZ(), 7.5f, World.ExplosionSourceType.TNT);
                     this.kill();
                 }
                 if (this.dataTracker.get(TIMER) == 10) {

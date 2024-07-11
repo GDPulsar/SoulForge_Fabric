@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
@@ -504,8 +503,9 @@ abstract class LivingEntityMixin extends Entity {
         return original;
     }*/
 
-    @ModifyVariable(method = "tickRiptide", at = @At("STORE"), ordinal = 0)
-    private Box modifyRiptideCollisionBox(Box box) {
+    @Redirect(method = "tickRiptide", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;union(Lnet/minecraft/util/math/Box;)Lnet/minecraft/util/math/Box;"))
+    private Box modifyRiptideCollisionBox(Box a, Box b) {
+        Box box = a.union(b);
         if (this.getMainHandStack().isOf(Items.TRIDENT)) {
             NbtCompound nbt = this.getMainHandStack().getOrCreateNbt();
             if (nbt.contains("Siphon")) {

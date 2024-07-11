@@ -21,12 +21,17 @@ public class AutoTurret extends AbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         if (turretUUID != null && turret == null) {
             Entity found = player.getServerWorld().getEntity(turretUUID);
-            if (found instanceof AutoTurretEntity) {
-                turret = (AutoTurretEntity)found;
+            if (found != null) {
+                if (found instanceof AutoTurretEntity) {
+                    turret = (AutoTurretEntity) found;
+                } else {
+                    SoulForge.LOGGER.warn("Turret UUID did not match an instance of a turret. Found " + found.getClass() + " instead.");
+                    turret = null;
+                    turretUUID = null;
+                }
             } else {
-                SoulForge.LOGGER.warn("Turret UUID did not match an instance of a turret. Found " + found.getClass() + " instead.");
-                turret = null;
                 turretUUID = null;
+                turret = null;
             }
         }
         if (turret != null) {
