@@ -17,22 +17,23 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.recipe.SoulForgeRecipes;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import com.pulsar.soulforge.util.*;
+import com.pulsar.soulforge.util.Constants;
+import com.pulsar.soulforge.util.SoulForgeCustomTrades;
+import com.pulsar.soulforge.util.TeamUtils;
+import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.api.ModInitializer;
-
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootPool;
-import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
+import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -49,7 +50,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.2.0");
+		LOGGER.info("Loading SoulForge v2.2.1");
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();
