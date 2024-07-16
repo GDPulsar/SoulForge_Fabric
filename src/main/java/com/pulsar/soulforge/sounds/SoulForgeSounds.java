@@ -73,7 +73,9 @@ public class SoulForgeSounds {
     public static SoundEvent MINE_SUMMON_EVENT = SoundEvent.of(MINE_SUMMON);
     public static SoundEvent DOMAIN_EXPANSION_EVENT = SoundEvent.of(DOMAIN_EXPANSION);
 
+    public static final Identifier ANOTHERHIM = new Identifier(SoulForge.MOD_ID, "anotherhim");
     public static final Identifier UT_ALPHYS = new Identifier(SoulForge.MOD_ID, "ut_alphys");
+    public static SoundEvent ANOTHERHIM_EVENT = SoundEvent.of(ANOTHERHIM);
     public static SoundEvent UT_ALPHYS_EVENT = SoundEvent.of(UT_ALPHYS);
 
     public static void registerSounds() {

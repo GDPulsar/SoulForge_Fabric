@@ -3,25 +3,30 @@ package com.pulsar.soulforge.mixin;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.patience.BlindingSnowstorm;
+import com.pulsar.soulforge.client.ui.ANOTHERHIM;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
+import net.minecraft.client.RunArgs;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.realms.RealmsClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.util.math.Box;
+import net.minecraft.resource.ResourceReload;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(net.minecraft.client.MinecraftClient.class)
-public class MinecraftClientMixin {
+public abstract class MinecraftClientMixin {
     @Shadow @Nullable public ClientPlayerEntity player;
+
+    @Shadow public abstract void setScreen(@Nullable Screen screen);
 
     @Inject(method = "hasOutline", at=@At("HEAD"), cancellable = true)
     public void hasOutline(Entity entity, CallbackInfoReturnable<Boolean> cir) {
@@ -41,6 +46,14 @@ public class MinecraftClientMixin {
                     }
                 }
             }
+        }
+    }
+
+    @Inject(method = "onInitFinished", at = @At("HEAD"), cancellable = true)
+    private void THEYRE_COMING(RealmsClient realms, ResourceReload reload, RunArgs.QuickPlay quickPlay, CallbackInfo ci) {
+        if (Math.random() < 0.001) {
+            this.setScreen(new ANOTHERHIM());
+            ci.cancel();
         }
     }
 }

@@ -1,4 +1,12 @@
 {
+  "anotherhim": {
+    "sounds": [
+      {
+        "name": "soulforge:anotherhim",
+        "stream": true
+      }
+    ]
+  },
   "bonk": {
     "subtitle": "subtitles.soulforge.bonk",
     "sounds": [

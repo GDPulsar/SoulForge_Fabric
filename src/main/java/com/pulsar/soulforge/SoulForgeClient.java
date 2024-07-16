@@ -1,5 +1,7 @@
 package com.pulsar.soulforge;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import com.pulsar.soulforge.ability.perseverance.ColossalClaymore;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
@@ -24,6 +26,10 @@ import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
 import com.pulsar.soulforge.siphon.Siphon;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import ladysnake.satin.api.event.ShaderEffectRenderCallback;
+import ladysnake.satin.api.managed.ManagedFramebuffer;
+import ladysnake.satin.api.managed.ManagedShaderEffect;
+import ladysnake.satin.api.managed.ShaderEffectManager;
 import me.x150.renderer.event.RenderEvents;
 import me.x150.renderer.render.Renderer3d;
 import net.fabricmc.api.ClientModInitializer;
@@ -73,9 +79,14 @@ public class SoulForgeClient implements ClientModInitializer {
 		RenderLayer.MultiPhaseParameters mpp = RenderLayer.MultiPhaseParameters.builder().program(energyBeamProgram)
 				.texture(new RenderPhase.Texture(texture, false, false)).transparency(NO_TRANSPARENCY)
 				.lightmap(ENABLE_LIGHTMAP).overlay(ENABLE_OVERLAY_COLOR).build(false);
-		return RenderLayer.of("energy_beam", POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.QUADS,
+		RenderLayer layer = RenderLayer.of("energy_beam", POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.QUADS,
 						2048, false, false, mpp);
+		return layer;
+		//return energyBeamBuffer.getRenderLayer(layer);
 	}
+
+	public static final ManagedShaderEffect energyBeamEffect = ShaderEffectManager.getInstance().manage(new Identifier(SoulForge.MOD_ID, "shaders/post/energy_beam.json"));
+	public static final ManagedFramebuffer energyBeamBuffer = energyBeamEffect.getTarget("final");
 
 	public static boolean appleSkin = false;
 	public static boolean appleSkinApplied = false;
@@ -276,6 +287,17 @@ public class SoulForgeClient implements ClientModInitializer {
 					});
 
 			energyBeamProgram = new RenderPhase.ShaderProgram(SoulForgeRendering::energyBeam);
+		});
+
+		ShaderEffectRenderCallback.EVENT.register(tickDelta -> {
+			energyBeamEffect.render(tickDelta);
+			MinecraftClient.getInstance().getFramebuffer().beginWrite(true);
+			RenderSystem.enableBlend();
+			RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
+			energyBeamBuffer.draw(MinecraftClient.getInstance().getWindow().getFramebufferWidth(), MinecraftClient.getInstance().getWindow().getFramebufferHeight(), false);
+			energyBeamBuffer.clear();
+			MinecraftClient.getInstance().getFramebuffer().beginWrite(true);
+			RenderSystem.disableBlend();
 		});
 	}
 

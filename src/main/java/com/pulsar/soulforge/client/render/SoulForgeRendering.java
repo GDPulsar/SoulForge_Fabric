@@ -31,7 +31,6 @@ public class SoulForgeRendering {
     }
 
     public static ShaderProgram energyBeam() {
-        //SoulForge.LOGGER.info("beam radius uniform: {}", energyBeam.getUniform("Radius").getFloatData().get());
         return energyBeam;
     }
 }
