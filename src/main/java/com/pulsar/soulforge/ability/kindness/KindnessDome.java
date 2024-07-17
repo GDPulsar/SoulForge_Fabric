@@ -133,9 +133,9 @@ public class KindnessDome extends ToggleableAbilityBase {
                     player.getWorld().spawnEntity(shard);
                 }
             }
+            player.getServerWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 5f, 1f, true);
         }
         entity = null;
-        player.getServerWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 5f, 1f, true);
         return super.end(player);
     }
 

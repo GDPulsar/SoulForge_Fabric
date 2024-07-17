@@ -15,11 +15,12 @@ import net.minecraft.world.BlockView;
 public class DomeBlock extends Block {// implements BlockEntityProvider {
     public DomeBlock() {
         super(FabricBlockSettings.create().dropsNothing().strength(1000f, 1000f).nonOpaque().ticksRandomly().allowsSpawning(Blocks::never).solidBlock(Blocks::never).suffocates(Blocks::never).blockVision(Blocks::never));
-    }    /** @deprecated */
-    @Deprecated
+    }
+
+    /*@Deprecated
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
-    }
+    }*/
 
     @Override
     public int getOpacity(BlockState state, BlockView world, BlockPos pos) {

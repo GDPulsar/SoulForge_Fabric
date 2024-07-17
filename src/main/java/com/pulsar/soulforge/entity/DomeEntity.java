@@ -225,6 +225,6 @@ public class DomeEntity extends Entity implements Attackable {
 
     @Override
     public boolean shouldRender(double distance) {
-        return true;
+        return false;
     }
 }
