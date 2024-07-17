@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:arnicite_block"
+    }
+  ],
+  "result": {
+    "item": "soulforge:arnicite",
+    "count": 4
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:determination_arnicite_block"
+    }
+  ],
+  "result": {
+    "item": "soulforge:determination_arnicite",
+    "count": 4
+  }
+}

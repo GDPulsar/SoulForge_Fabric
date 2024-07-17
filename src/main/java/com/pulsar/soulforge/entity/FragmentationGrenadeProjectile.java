@@ -38,12 +38,17 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
             this.kill();
         }
         this.setVelocity(this.getVelocity().add(0.0, -0.04, 0.0));
-        this.move(MovementType.SELF, this.getVelocity());
         HitResult hitResult = ProjectileUtil.getCollision(this, this::canHit);
+        this.move(MovementType.SELF, this.getVelocity());
         if (hitResult.getType() != HitResult.Type.MISS) {
             this.onCollision(hitResult);
         }
         super.tick();
+    }
+
+    @Override
+    public boolean canBeHitByProjectile() {
+        return true;
     }
 
     @Override
@@ -56,7 +61,8 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
 
     @Override
     public void kill() {
-        getWorld().createExplosion(this.getOwner(), getX(), getY(), getZ(), 2f, World.ExplosionSourceType.NONE);
+        DamageSource source = this.getDamageSources().explosion(this, getOwner());
+        getWorld().createExplosion(this.getOwner(), source, null, getX(), getY(), getZ(), 2f, false, World.ExplosionSourceType.NONE);
         for (int i = 0; i < 70; i++) {
             JusticePelletProjectile pellet = new JusticePelletProjectile(this.getWorld(), (LivingEntity)this.getOwner());
             Vec3d direction = new Vec3d(Math.random()-0.5f, Math.random()*1.5f-0.75f, Math.random()-0.5f).normalize();
@@ -77,13 +83,10 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
     }
 
     public boolean damage(DamageSource source, float amount) {
-        if (source.getSource() == this.getOwner() || source.getSource() == this) {
+        if (source.getSource() == this) {
             return false;
         }
-        if (!this.getWorld().isClient) {
-            this.kill();
-        }
-
+        this.kill();
         return true;
     }
 }

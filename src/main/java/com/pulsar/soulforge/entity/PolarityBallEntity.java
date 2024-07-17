@@ -122,11 +122,6 @@ public class PolarityBallEntity extends ProjectileEntity {
     }
 
     @Override
-    public boolean canHit() {
-        return true;
-    }
-
-    @Override
     public void onSpawnPacket(EntitySpawnS2CPacket packet) {
         super.onSpawnPacket(packet);
         double d = packet.getVelocityX();

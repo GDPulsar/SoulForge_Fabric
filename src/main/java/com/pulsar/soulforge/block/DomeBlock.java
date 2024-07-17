@@ -2,10 +2,7 @@ package com.pulsar.soulforge.block;
 
 import com.pulsar.soulforge.entity.DomePart;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -18,6 +15,10 @@ import net.minecraft.world.BlockView;
 public class DomeBlock extends Block {// implements BlockEntityProvider {
     public DomeBlock() {
         super(FabricBlockSettings.create().dropsNothing().strength(1000f, 1000f).nonOpaque().ticksRandomly().allowsSpawning(Blocks::never).solidBlock(Blocks::never).suffocates(Blocks::never).blockVision(Blocks::never));
+    }    /** @deprecated */
+    @Deprecated
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.INVISIBLE;
     }
 
     @Override

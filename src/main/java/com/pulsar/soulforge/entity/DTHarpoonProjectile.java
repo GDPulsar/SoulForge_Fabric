@@ -116,10 +116,6 @@ public class DTHarpoonProjectile extends ProjectileEntity implements GeoEntity {
         this.destroy();
     }
 
-    public boolean canHit() {
-        return true;
-    }
-
     public void onSpawnPacket(EntitySpawnS2CPacket packet) {
         super.onSpawnPacket(packet);
         double d = packet.getVelocityX();

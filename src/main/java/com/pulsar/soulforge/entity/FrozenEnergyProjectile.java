@@ -94,10 +94,6 @@ public class FrozenEnergyProjectile extends ProjectileEntity {
         this.destroy();
     }
 
-    public boolean canHit() {
-        return true;
-    }
-
     public boolean damage(DamageSource source, float amount) {
         if (!this.getWorld().isClient) {
             ((ServerWorld)this.getWorld()).spawnParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "category": "blocks",
+  "ingredient": {
+    "item": "soulforge:kindness_arnicite_block"
+  },
+  "result": "soulforge:cut_kindness_arnicite_block",
+  "count": 1
+}

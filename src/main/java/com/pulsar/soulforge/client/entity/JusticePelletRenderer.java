@@ -12,25 +12,23 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import org.joml.Matrix4f;
+
+import java.awt.*;
 
 @Environment(EnvType.CLIENT)
 public class JusticePelletRenderer extends EntityRenderer<JusticePelletProjectile> {
-    private static final Identifier JUSTICE_TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/justice.png");
-    private static final Identifier KINDNESS_TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/kindness.png");
+    private static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/white.png");
 
     public JusticePelletRenderer(Context context) {
         super(context);
     }
 
     public void render(JusticePelletProjectile pelletEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-        Identifier texture = pelletEntity.getDamage() > 0 ? JUSTICE_TEXTURE : KINDNESS_TEXTURE;
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(texture));
-        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.125f);
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
+        SphereRenderer.renderSphere(matrixStack.peek().getPositionMatrix(), vertexConsumer, 0.125f, pelletEntity.getDamage() > 0 ? new Color(255, 255, 0) : new Color(0, 255, 0));
     }
 
     public Identifier getTexture(JusticePelletProjectile pelletEntity) {
-        return pelletEntity.getDamage() > 0 ? JUSTICE_TEXTURE : KINDNESS_TEXTURE;
+        return TEXTURE;
     }
 }

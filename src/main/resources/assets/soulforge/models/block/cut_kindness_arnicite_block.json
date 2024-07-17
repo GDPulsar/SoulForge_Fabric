@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "soulforge:block/cut_kindness_arnicite_block"
+  }
+}

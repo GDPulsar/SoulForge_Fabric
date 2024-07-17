@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:patience_arnicite_block"
+    }
+  ],
+  "result": {
+    "item": "soulforge:patience_arnicite",
+    "count": 4
+  }
+}

@@ -118,23 +118,23 @@ public class DomeEntity extends Entity implements Attackable {
         this.dataTracker.set(SHIELD_BREAK_IMMUNE, shieldBreakImmune);
     }
 
-    private float getMaxHealth() {
+    public float getMaxHealth() {
         return this.dataTracker.get(MAX_HEALTH);
     }
 
-    private float getHealth() {
+    public float getHealth() {
         return this.dataTracker.get(HEALTH);
     }
 
-    private int getSize() {
+    public int getSize() {
         return this.dataTracker.get(SIZE);
     }
 
-    private boolean getEmitter() {
+    public boolean getEmitter() {
         return this.dataTracker.get(EMITTER);
     }
 
-    private boolean getShieldBreakImmune() {
+    public boolean getShieldBreakImmune() {
         return this.dataTracker.get(SHIELD_BREAK_IMMUNE);
     }
 
@@ -225,6 +225,6 @@ public class DomeEntity extends Entity implements Attackable {
 
     @Override
     public boolean shouldRender(double distance) {
-        return distance < 64;
+        return true;
     }
 }

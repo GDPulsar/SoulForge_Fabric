@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A": {
+      "item": "soulforge:patience_arnicite"
+    }
+  },
+  "result": {
+    "item": "soulforge:patience_arnicite_block",
+    "count": 1
+  }
+}

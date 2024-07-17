@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A": {
+      "item": "soulforge:bravery_arnicite"
+    }
+  },
+  "result": {
+    "item": "soulforge:bravery_arnicite_block",
+    "count": 1
+  }
+}

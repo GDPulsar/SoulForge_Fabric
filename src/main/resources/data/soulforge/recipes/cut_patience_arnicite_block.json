@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "category": "blocks",
+  "ingredient": {
+    "item": "soulforge:patience_arnicite_block"
+  },
+  "result": "soulforge:cut_patience_arnicite_block",
+  "count": 1
+}

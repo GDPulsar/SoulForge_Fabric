@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "soulforge",
-	"version": "2.2.3",
+	"version": "2.2.4",
 	"name": "SoulForge",
 	"description": "A Minecraft mod built around UNDERTALE!",
 	"authors": [
@@ -43,7 +43,11 @@
 		"java": ">=17",
 		"fabric-api": "*",
 		"cardinal-components": "5.2.2",
+		"architectury": ">=9.0.7",
 		"geckolib": ">=4.2.2"
+	},
+	"recommends": {
+		"modmenu": ">=7.2.2"
 	},
 	"custom": {
 		"cardinal-components": [

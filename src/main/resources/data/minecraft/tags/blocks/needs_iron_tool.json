@@ -2,6 +2,22 @@
   "replace": false,
   "values": [
     "soulforge:soul_forge_block",
-    "soulforge:creative_zone"
+    "soulforge:creative_zone",
+    "soulforge:arnicite_block",
+    "soulforge:cut_arnicite_block",
+    "soulforge:determination_arnicite_block",
+    "soulforge:cut_determination_arnicite_block",
+    "soulforge:bravery_arnicite_block",
+    "soulforge:cut_bravery_arnicite_block",
+    "soulforge:justice_arnicite_block",
+    "soulforge:cut_justice_arnicite_block",
+    "soulforge:kindness_arnicite_block",
+    "soulforge:cut_kindness_arnicite_block",
+    "soulforge:patience_arnicite_block",
+    "soulforge:cut_patience_arnicite_block",
+    "soulforge:integrity_arnicite_block",
+    "soulforge:cut_integrity_arnicite_block",
+    "soulforge:perseverance_arnicite_block",
+    "soulforge:cut_perseverance_arnicite_block"
   ]
 }

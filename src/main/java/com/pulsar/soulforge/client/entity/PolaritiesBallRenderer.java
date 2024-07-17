@@ -14,10 +14,11 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 
+import java.awt.*;
+
 @Environment(EnvType.CLIENT)
 public class PolaritiesBallRenderer extends EntityRenderer<PolarityBallEntity> {
-    private static final Identifier INVERSE_TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/bravery.png");
-    private static final Identifier REVERSE_TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/patience.png");
+    private static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/white.png");
 
     public PolaritiesBallRenderer(Context context) {
         super(context);
@@ -25,12 +26,12 @@ public class PolaritiesBallRenderer extends EntityRenderer<PolarityBallEntity> {
 
     public void render(PolarityBallEntity polarityBallEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(getTexture(polarityBallEntity)));
-        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.25f);
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
+        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.25f, polarityBallEntity.getInverse() ? new Color(0, 255, 255) : new Color(255, 255, 0));
     }
 
-    public Identifier getTexture(PolarityBallEntity polarityBallEntity) {
-        if (polarityBallEntity.getInverse()) return INVERSE_TEXTURE;
-        return REVERSE_TEXTURE;
+    @Override
+    public Identifier getTexture(PolarityBallEntity entity) {
+        return TEXTURE;
     }
 }

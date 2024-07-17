@@ -87,10 +87,6 @@ public class SOJProjectile extends ProjectileEntity implements GeoEntity {
         this.destroy();
     }
 
-    public boolean canHit() {
-        return true;
-    }
-
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     @Override

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "soulforge:justice_arnicite_block"
+    }
+  ],
+  "result": {
+    "item": "soulforge:justice_arnicite",
+    "count": 4
+  }
+}

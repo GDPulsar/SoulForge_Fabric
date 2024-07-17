@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "category": "blocks",
+  "ingredient": {
+    "item": "soulforge:determination_arnicite_block"
+  },
+  "result": "soulforge:cut_determination_arnicite_block",
+  "count": 1
+}
