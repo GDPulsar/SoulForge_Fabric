@@ -54,6 +54,7 @@ public class WeatherWarningLightningEntity extends LightningEntity {
                                 this.getX() + 3.0, this.getY() + 6.0 + 3.0, this.getZ() + 3.0),
                         Entity::isAlive)) {
                     if (entity == this.owner) continue;
+                    if (entity instanceof DomePart) continue;
                     if (entity instanceof PlayerEntity targetPlayer && this.owner != null) {
                         if (!TeamUtils.canDamagePlayer(this.getServer(), this.owner, targetPlayer)) return;
                     }

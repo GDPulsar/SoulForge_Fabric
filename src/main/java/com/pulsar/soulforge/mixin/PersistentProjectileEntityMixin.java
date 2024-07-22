@@ -28,7 +28,6 @@ public class PersistentProjectileEntityMixin {
         PersistentProjectileEntity projectile = (PersistentProjectileEntity)(Object)this;
         if (projectile instanceof TridentEntity trident) {
             NbtCompound nbt = trident.tridentStack.getOrCreateNbt();
-            SoulForge.LOGGER.info("trident nbt: {}, owner: {}", nbt, trident.getOwner());
             if (nbt.contains("Siphon")) {
                 Siphon.Type siphonType = Siphon.Type.getSiphon(nbt.getString("Siphon"));
                 if (siphonType == Type.BRAVERY) {

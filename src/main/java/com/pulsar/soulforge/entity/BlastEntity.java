@@ -152,7 +152,7 @@ public class BlastEntity extends Entity {
                         }
                         DamageSource source;
                         assert owner instanceof PlayerEntity;
-                        source = SoulForgeDamageTypes.of((PlayerEntity)owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+                        source = SoulForgeDamageTypes.of((PlayerEntity)owner, this.getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE);
                         if (getIgnoresIframes()) living.timeUntilRegen = 0;
                         if (living.damage(source, getDamage())) {
                             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)owner);

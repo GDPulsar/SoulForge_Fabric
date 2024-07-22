@@ -96,15 +96,15 @@ public class EnergyBallProjectile extends ProjectileEntity {
             }
         }
         Entity entity = entityHitResult.getEntity();
-        if (entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage)) {
+        if (entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), damage)) {
             if (this.getOwner() instanceof PlayerEntity player) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
             }
-        }
-        if (entity instanceof LivingEntity living) {
-            if (frostburn) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 250, 0));
-            else living.setFireTicks(250);
+            if (entity instanceof LivingEntity living) {
+                if (frostburn) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 250, 0));
+                else living.setFireTicks(250);
+            }
         }
     }
 

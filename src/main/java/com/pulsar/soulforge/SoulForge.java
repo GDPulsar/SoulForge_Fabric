@@ -15,6 +15,7 @@ import com.pulsar.soulforge.event.ServerEndTick;
 import com.pulsar.soulforge.event.ServerStartTick;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
+import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.recipe.SoulForgeRecipes;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Constants;
@@ -50,7 +51,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.2.4");
+		LOGGER.info("Loading SoulForge v2.2.5");
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();
@@ -62,6 +63,7 @@ public class SoulForge implements ModInitializer {
 		SoulForgeRecipes.register();
 		SoulForgeAttributes.register();
 		SoulForgeCustomTrades.register();
+		SoulForgeParticles.serverRegister();
 
 		TeamUtils.checkForTeams();
 

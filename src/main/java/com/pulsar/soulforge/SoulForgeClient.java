@@ -23,6 +23,7 @@ import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.JusticeCrossbow;
 import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
+import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.siphon.Siphon;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
@@ -173,6 +174,8 @@ public class SoulForgeClient implements ClientModInitializer {
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
 		HudRenderCallback.EVENT.register(new SoulResetOverlay());
+
+		SoulForgeParticles.clientRegister();
 
 		ModelPredicateProviderRegistry.register(SoulForgeItems.INTEGRITY_RAPIER, new Identifier("parrying"), (stack, world, entity, i) -> {
 			if (entity instanceof PlayerEntity player) {

@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.entity.LightningRodRenderer;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -23,6 +24,9 @@ public class BuiltinModelItemRendererMixin {
     private Identifier modifyTridentModelTexture(Identifier original, @Local ItemStack stack) {
         if (stack.isOf(SoulForgeItems.LIGHTNING_ROD)) {
             return LightningRodRenderer.TEXTURE;
+        }
+        if (stack.getOrCreateNbt().contains("Siphon")) {
+            return new Identifier(SoulForge.MOD_ID, "textures/entity/" + stack.getOrCreateNbt().getString("Siphon") + "_trident.png");
         }
         return original;
     }

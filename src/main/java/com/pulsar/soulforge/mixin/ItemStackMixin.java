@@ -2,6 +2,7 @@ package com.pulsar.soulforge.mixin;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
@@ -65,6 +66,7 @@ public abstract class ItemStackMixin {
         }
         braveryWeaponModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
         braveryTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 2, Operation.ADDITION));
+        justiceTridentModifier = new AbstractMap.SimpleEntry<>(ReachEntityAttributes.ATTACK_RANGE, new EntityAttributeModifier(UUID.randomUUID(), "Justice Siphon", 1.5, Operation.ADDITION));
         integrityWeaponDamageModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", -0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
         integrityWeaponSpeedModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
     }
@@ -73,6 +75,8 @@ public abstract class ItemStackMixin {
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> braveryWeaponModifier;
     @Unique
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> braveryTridentModifier;
+    @Unique
+    private static Map.Entry<EntityAttribute, EntityAttributeModifier> justiceTridentModifier;
     @Unique
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> integrityWeaponDamageModifier;
     @Unique
@@ -95,9 +99,12 @@ public abstract class ItemStackMixin {
                                 modifiers.put(integrityWeaponDamageModifier);
                                 modifiers.put(integrityWeaponSpeedModifier);
                             }
-                        } else if (stack.getItem() instanceof TridentItem) {
+                        } else if (stack.getItem() instanceof TridentItem && slot == EquipmentSlot.MAINHAND) {
                             if (type == Type.BRAVERY) {
                                 modifiers.put(braveryTridentModifier);
+                            }
+                            if (type == Type.JUSTICE) {
+                                modifiers.put(justiceTridentModifier);
                             }
                         }
                     } else {
@@ -105,11 +112,18 @@ public abstract class ItemStackMixin {
                             if (siphonType != Siphon.Type.SPITE) {
                                 if (stack.getItem() instanceof ArmorItem armor && armor.getSlotType() == slot) {
                                     modifiers.put(armorSiphonModifiers.get(slot).get(siphonType));
-                                } else if ((stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || stack.getItem() instanceof TridentItem) && slot == EquipmentSlot.MAINHAND) {
+                                } else if ((stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem) && slot == EquipmentSlot.MAINHAND) {
                                     if (siphonType == Siphon.Type.BRAVERY) modifiers.put(braveryWeaponModifier);
                                     if (siphonType == Siphon.Type.INTEGRITY) {
                                         modifiers.put(integrityWeaponDamageModifier);
                                         modifiers.put(integrityWeaponSpeedModifier);
+                                    }
+                                } else if (stack.getItem() instanceof TridentItem && slot == EquipmentSlot.MAINHAND) {
+                                    if (siphonType == Type.BRAVERY) {
+                                        modifiers.put(braveryTridentModifier);
+                                    }
+                                    if (siphonType == Type.JUSTICE) {
+                                        modifiers.put(justiceTridentModifier);
                                     }
                                 }
                             }

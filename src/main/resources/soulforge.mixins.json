@@ -28,6 +28,7 @@
     "SmithingScreenHandlerMixin",
     "SpawnHelperMixin",
     "StatusEffectMixin",
+    "TridentEntityMixin",
     "TridentItemMixin",
     "WorldMixin"
   ],
@@ -51,7 +52,8 @@
     "PlayerEntityRendererMixin",
     "ScreenMixin",
     "SoundSystemMixin",
-    "SplashTextResourceSupplierMixin"
+    "SplashTextResourceSupplierMixin",
+    "TridentEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

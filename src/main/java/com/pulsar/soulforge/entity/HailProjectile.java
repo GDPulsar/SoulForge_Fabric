@@ -76,14 +76,14 @@ public class HailProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 12f)) {
+        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), 12f)) {
             if (this.getOwner() instanceof PlayerEntity player && entity instanceof LivingEntity living) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 playerSoul.setStyle(playerSoul.getStyle() + (int)(12f * (1f + Utils.getTotalDebuffLevel(living)/10f)));
             }
-        }
-        if (this.dataTracker.get(IS_STAGE_1) && entity instanceof LivingEntity living) {
-            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 300, 1));
+            if (this.dataTracker.get(IS_STAGE_1) && entity instanceof LivingEntity living) {
+                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 300, 1));
+            }
         }
     }
 

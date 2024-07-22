@@ -6,3 +6,5 @@ accessible method net/minecraft/screen/ScreenHandler addSlot (Lnet/minecraft/scr
 accessible field net/minecraft/entity/projectile/PersistentProjectileEntity inBlockState Lnet/minecraft/block/BlockState;
 accessible field net/minecraft/entity/projectile/TridentEntity tridentStack Lnet/minecraft/item/ItemStack;
 accessible field net/minecraft/client/render/entity/LivingEntityRenderer features Ljava/util/List;
+accessible method net/minecraft/entity/projectile/ProjectileUtil getCollision (Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;)Lnet/minecraft/util/hit/HitResult;
+accessible method net/minecraft/entity/projectile/PersistentProjectileEntity canHit (Lnet/minecraft/entity/Entity;)Z

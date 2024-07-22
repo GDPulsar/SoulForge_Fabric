@@ -101,7 +101,7 @@ public class PolarityBallEntity extends ProjectileEntity {
                         damage = playerSoul.getEffectiveLV() * 1.25f;
                     }
                     damage *= (12f - dist) / 12f;
-                    if (target.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage)) {
+                    if (target.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), damage)) {
                         totalDamage += damage;
                     }
                     Vec3d offset = this.getPos().subtract(entity.getPos()).normalize();

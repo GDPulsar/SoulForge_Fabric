@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.5-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -82,11 +82,7 @@ dependencies {
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 
-	//modCompileOnly("com.github.GDPulsar:SoulForge-Teams:-SNAPSHOT")
-	//modLocalRuntime("com.github.GDPulsar:SoulForge-Teams:-SNAPSHOT")
-	modCompileOnly "maven.modrinth:soulforge-teams:1.0.2"
-	//modCompileOnly("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
-	//modLocalRuntime("com.pulsar.soulforge_teams:soulforge-teams-1.20.1:1.0.2")
+	modCompileOnly "maven.modrinth:soulforge-teams:1.0.4"
 	modCompileOnly("squeek.appleskin:appleskin-fabric:${appleskin_version}") {
 		transitive = false
 	}

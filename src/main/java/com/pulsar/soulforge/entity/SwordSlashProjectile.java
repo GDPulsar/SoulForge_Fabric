@@ -81,7 +81,7 @@ public class SwordSlashProjectile extends ProjectileEntity implements GeoAnimata
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), this.dataTracker.get(DAMAGE));
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), this.dataTracker.get(DAMAGE));
     }
 
     protected void onCollision(HitResult hitResult) {

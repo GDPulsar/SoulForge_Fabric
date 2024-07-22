@@ -9,14 +9,13 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class SoulForgeParticles {
-    public static DefaultParticleType FIRE;
+    public static final DefaultParticleType FIRE_PARTICLE = FabricParticleTypes.simple();
 
     public static void serverRegister() {
-        FIRE = FabricParticleTypes.simple();
-        Registry.register(Registries.PARTICLE_TYPE, new Identifier(SoulForge.MOD_ID, "fire"), FIRE);
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier(SoulForge.MOD_ID, "fire"), FIRE_PARTICLE);
     }
 
     public static void clientRegister() {
-        ParticleFactoryRegistry.getInstance().register(FIRE, FireParticle.Factory::new);
+        ParticleFactoryRegistry.getInstance().register(FIRE_PARTICLE, FireParticle.Factory::new);
     }
 }

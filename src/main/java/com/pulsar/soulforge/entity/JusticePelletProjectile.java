@@ -117,7 +117,7 @@ public class JusticePelletProjectile extends ProjectileEntity {
             if (getOwner() instanceof AutoTurretEntity autoTurret) {
                 source = SoulForgeDamageTypes.of(autoTurret.getOwner(), this.getWorld(), SoulForgeDamageTypes.AUTO_TURRET_DAMAGE_TYPE);
             } else {
-                source = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
+                source = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE);
             }
             float damage = this.dataTracker.get(DAMAGE);
             if (damage > 0) {
@@ -125,6 +125,10 @@ public class JusticePelletProjectile extends ProjectileEntity {
                     if (this.getOwner() instanceof PlayerEntity player) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                         playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+                    }
+                    entity.timeUntilRegen = 0;
+                    if (this.onDamageEvent != null) {
+                        this.onDamageEvent.accept(living);
                     }
                 }
             }
@@ -138,10 +142,6 @@ public class JusticePelletProjectile extends ProjectileEntity {
                 living.heal(-damage);
                 living.getWorld().playSound(null, living.getBlockPos(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.MASTER, 1f, 1f);
             }
-        }
-        entity.timeUntilRegen = 0;
-        if (entity instanceof LivingEntity living && this.onDamageEvent != null) {
-            this.onDamageEvent.accept(living);
         }
     }
 

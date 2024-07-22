@@ -84,7 +84,7 @@ public class SmallSlashProjectile extends ProjectileEntity implements GeoAnimata
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             damage = playerSoul.getEffectiveLV() / 2f;
         }
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), damage);
     }
 
     private void destroy() {

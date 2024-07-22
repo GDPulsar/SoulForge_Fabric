@@ -66,7 +66,7 @@ public class OrbitalStrikeEntity extends Entity {
                     }
                     float horizDist = (float) new Vec3d(getX(), 0f, getZ()).distanceTo(new Vec3d(entity.getX(), 0f, entity.getZ()));
                     if (horizDist <= 2f) {
-                        entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 30);
+                        entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 30);
                     }
                 }
             }

@@ -74,10 +74,10 @@ public class BigSlashProjectile extends ProjectileEntity implements GeoAnimatabl
         if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
             if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
         }
-        if (entity instanceof LivingEntity living) {
+        if (entity instanceof LivingEntity living && entity.getType() != EntityType.ENDERMAN) {
             living.maxHurtTime = 0;
         }
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 18f);
+        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), 18f);
     }
 
     private void destroy() {

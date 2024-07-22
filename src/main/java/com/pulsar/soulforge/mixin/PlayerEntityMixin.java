@@ -44,12 +44,14 @@ import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
@@ -66,6 +68,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +88,8 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow protected abstract void dropShoulderEntities();
 
     @Shadow public abstract ItemCooldownManager getItemCooldownManager();
+
+    @Shadow public abstract Arm getMainArm();
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -203,23 +208,39 @@ abstract class PlayerEntityMixin extends LivingEntity {
             if (held.getNbt() != null) {
                 if (held.getNbt().contains("Siphon")) {
                     Siphon.Type type = Siphon.Type.getSiphon(held.getNbt().getString("Siphon"));
-                    if (type == Siphon.Type.PATIENCE || type == Siphon.Type.SPITE) {
-                        living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60, 1));
-                        living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 60, 0));
-                    }
-                    if (type == Siphon.Type.DETERMINATION || type == Siphon.Type.SPITE) {
-                        playerSoul.setMagic(playerSoul.getMagic() + damage);
-                    }
-                    if (type == Siphon.Type.PERSEVERANCE || type == Siphon.Type.SPITE) {
-                        if (player.getAttackCooldownProgress(0.5f) >= 0.99f) {
-                            if (target instanceof PlayerEntity targetPlayer) {
-                                SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                                Utils.addAntiheal(0.6f, (int)(player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).getValue() * 20), targetSoul);
+                    if (held.isIn(ItemTags.SWORDS) || held.isIn(ItemTags.AXES)) {
+                        if (type == Siphon.Type.PATIENCE || type == Siphon.Type.SPITE) {
+                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60, 1));
+                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 60, 0));
+                        }
+                        if (type == Siphon.Type.DETERMINATION || type == Siphon.Type.SPITE) {
+                            playerSoul.setMagic(playerSoul.getMagic() + damage);
+                        }
+                        if (type == Siphon.Type.PERSEVERANCE || type == Siphon.Type.SPITE) {
+                            if (player.getAttackCooldownProgress(0.5f) >= 0.99f) {
+                                if (target instanceof PlayerEntity targetPlayer) {
+                                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+                                    Utils.addAntiheal(0.6f, (int) (player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).getValue() * 20), targetSoul);
+                                }
                             }
                         }
+                        if (type == Siphon.Type.KINDNESS || type == Siphon.Type.SPITE) {
+                            if (player.getAbsorptionAmount() < 8f)
+                                player.setAbsorptionAmount(player.getAbsorptionAmount() + 1f);
+                        }
                     }
-                    if (type == Siphon.Type.KINDNESS || type == Siphon.Type.SPITE) {
-                        if (player.getAbsorptionAmount() < 8f) player.setAbsorptionAmount(player.getAbsorptionAmount()+1f);
+                    if (held.isOf(Items.TRIDENT)) {
+                        if (this.isUsingRiptide()) {
+                            if (type == Type.KINDNESS) {
+                                living.removeStatusEffect(StatusEffects.DOLPHINS_GRACE);
+                                living.removeStatusEffect(StatusEffects.WATER_BREATHING);
+                            }
+                            if (type == Siphon.Type.PATIENCE) {
+                                int useLevel = held.getOrCreateNbt().contains("useLevel") ? held.getOrCreateNbt().getInt("useLevel") : 1;
+                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 240, useLevel - 1));
+                                if (useLevel >= 2) living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 240, useLevel - 2));
+                            }
+                        }
                     }
                 }
             }
@@ -288,6 +309,18 @@ abstract class PlayerEntityMixin extends LivingEntity {
         if (player.getInventory().selectedSlot == 9) player.getInventory().selectedSlot = 0;
     }
 
+    @ModifyArgs(method = "attack", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(DDD)V"))
+    private void addTridentKnockback(Args args) {
+        if (this.getMainHandStack().isOf(Items.TRIDENT)) {
+            if (this.getMainHandStack().getOrCreateNbt().contains("Siphon")) {
+                Siphon.Type siphonType = Siphon.Type.getSiphon(this.getMainHandStack().getOrCreateNbt().getString("Siphon"));
+                if (siphonType == Type.KINDNESS) {
+                    args.set(0, (float)args.get(0) * 2f);
+                }
+            }
+        }
+    }
+
     @Inject(method = "attack", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;takeKnockback(DDD)V", shift = At.Shift.AFTER))
     private void modifyKnockback(Entity target, CallbackInfo ci) {
         addJusticeKnockback(target);
@@ -301,7 +334,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @Unique
     private void addJusticeKnockback(Entity target) {
         ItemStack heldItem = this.getMainHandStack();
-        if (heldItem.getItem() instanceof SwordItem || heldItem.getItem() instanceof ToolItem || heldItem.getItem() instanceof TridentItem) {
+        if (heldItem.getItem() instanceof SwordItem || heldItem.getItem() instanceof ToolItem) {
             if (target instanceof LivingEntity living) {
                 if (heldItem.getNbt() != null) {
                     if (heldItem.getNbt().contains("Siphon")) {

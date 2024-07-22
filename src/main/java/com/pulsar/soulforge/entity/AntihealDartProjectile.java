@@ -62,8 +62,8 @@ public class AntihealDartProjectile extends ProjectileEntity implements GeoEntit
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
         DamageSource damageSource = this.getDamageSources().thrown(this, this.getOwner());
+        entity.damage(damageSource, 5f);
         if (entity instanceof PlayerEntity player) {
-            entity.damage(damageSource, 5f);
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             playerSoul.setValue("antiheal", 0.1f);
             playerSoul.setValue("antihealDuration", 300);
