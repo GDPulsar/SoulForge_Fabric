@@ -29,6 +29,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -48,6 +49,7 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -90,6 +92,8 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow public abstract ItemCooldownManager getItemCooldownManager();
 
     @Shadow public abstract Arm getMainArm();
+
+    @Shadow public abstract void useRiptide(int riptideTicks);
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -231,15 +235,47 @@ abstract class PlayerEntityMixin extends LivingEntity {
                     }
                     if (held.isOf(Items.TRIDENT)) {
                         if (this.isUsingRiptide()) {
-                            if (type == Type.KINDNESS) {
+                            if (type == Type.KINDNESS || type == Siphon.Type.SPITE) {
                                 living.removeStatusEffect(StatusEffects.DOLPHINS_GRACE);
                                 living.removeStatusEffect(StatusEffects.WATER_BREATHING);
                             }
-                            if (type == Siphon.Type.PATIENCE) {
+                            if (type == Siphon.Type.PATIENCE || type == Siphon.Type.SPITE) {
                                 int useLevel = held.getOrCreateNbt().contains("useLevel") ? held.getOrCreateNbt().getInt("useLevel") : 1;
                                 living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 240, useLevel - 1));
                                 if (useLevel >= 2) living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 240, useLevel - 2));
                             }
+                            if (type == Type.PERSEVERANCE || type == Type.SPITE) {
+                                int j = EnchantmentHelper.getRiptide(held);
+                                float f = this.getYaw();
+                                float g = this.getPitch();
+                                float h = -MathHelper.sin(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
+                                float k = -MathHelper.sin(g * 0.017453292F);
+                                float l = MathHelper.cos(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
+                                float m = MathHelper.sqrt(h * h + k * k + l * l);
+                                float n = 3.0F * ((1.0F + (float) j) / 4.0F);
+                                h *= n / m;
+                                k *= n / m;
+                                l *= n / m;
+                                this.addVelocity(h, k, l);
+                                this.useRiptide(20);
+                                if (this.isOnGround()) {
+                                    this.move(MovementType.SELF, new Vec3d(0.0, 1.1999999284744263, 0.0));
+                                }
+
+                                SoundEvent soundEvent;
+                                if (j >= 3) {
+                                    soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_3;
+                                } else if (j == 2) {
+                                    soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_2;
+                                } else {
+                                    soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_1;
+                                }
+
+                                this.getWorld().playSoundFromEntity(null, this, soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                            }
+                        }
+                        if (type == Siphon.Type.DETERMINATION || type == Siphon.Type.SPITE) {
+                            playerSoul.setMagic(playerSoul.getMagic() + damage);
                         }
                     }
                 }

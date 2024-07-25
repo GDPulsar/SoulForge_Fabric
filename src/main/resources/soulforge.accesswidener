@@ -8,3 +8,4 @@ accessible field net/minecraft/entity/projectile/TridentEntity tridentStack Lnet
 accessible field net/minecraft/client/render/entity/LivingEntityRenderer features Ljava/util/List;
 accessible method net/minecraft/entity/projectile/ProjectileUtil getCollision (Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;)Lnet/minecraft/util/hit/HitResult;
 accessible method net/minecraft/entity/projectile/PersistentProjectileEntity canHit (Lnet/minecraft/entity/Entity;)Z
+accessible field net/minecraft/client/render/entity/EntityRenderer dispatcher Lnet/minecraft/client/render/entity/EntityRenderDispatcher;

@@ -29,6 +29,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,7 +52,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.2.5");
+		LOGGER.info("Loading SoulForge v2.2.6");
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();
@@ -115,7 +116,10 @@ public class SoulForge implements ModInitializer {
 	public static SoulComponent getPlayerSoul(PlayerEntity player) {
 		SoulComponent playerSoul;
 		if (player instanceof ServerPlayerEntity) playerSoul = EntityInitializer.SOUL.get(player);
-		else playerSoul = SoulForgeClient.getPlayerData();
+		else {
+			if (player == MinecraftClient.getInstance().player) playerSoul = SoulForgeClient.getPlayerData();
+			else playerSoul = EntityInitializer.SOUL.get(player);
+		}
 		if (playerSoul == null) playerSoul = new PlayerSoulComponent(player);
 		return playerSoul;
 	}

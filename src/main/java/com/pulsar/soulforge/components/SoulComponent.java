@@ -142,4 +142,8 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     void setDisguise(PlayerEntity target);
     void removeDisguise();
     PlayerEntity getDisguise();
+
+    String getSpokenText();
+    void setSpokenText(String text, int speed, int timeToDisappear);
+    void setSpokenText(String text);
 }

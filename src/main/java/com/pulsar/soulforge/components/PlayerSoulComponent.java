@@ -26,6 +26,7 @@ import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.ResetData;
+import com.pulsar.soulforge.util.SpokenTextRenderer;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
@@ -92,6 +93,7 @@ public class PlayerSoulComponent implements SoulComponent {
     private Pair<UUID, Integer> wormholeRequest = null;
     private PlayerEntity disguisedAs = null;
     private UUID disguisedAsID = null;
+    private final SpokenTextRenderer spokenTextRenderer = new SpokenTextRenderer();
 
     public PlayerSoulComponent(PlayerEntity player) {
         this.player = player;
@@ -532,6 +534,9 @@ public class PlayerSoulComponent implements SoulComponent {
     public void onDeath() {
         for (AbilityBase ability : abilities.getActive()) {
             ability.setActive(false);
+            if (ability instanceof ToggleableAbilityBase toggleable && player instanceof ServerPlayerEntity serverPlayer) {
+                toggleable.end(serverPlayer);
+            }
         }
         updateTags();
         setMagic(100f);
@@ -809,6 +814,8 @@ public class PlayerSoulComponent implements SoulComponent {
             buf.writeBoolean(disguisedAsID != null);
             if (disguisedAsID != null) buf.writeUuid(disguisedAsID);
 
+            spokenTextRenderer.writeBuffer(buf);
+
             return buf;
         } catch (Exception e) {
             return null;
@@ -881,7 +888,10 @@ public class PlayerSoulComponent implements SoulComponent {
         this.disguisedAsID = null;
         if (buf.readBoolean()) {
             disguisedAsID = buf.readUuid();
+            disguisedAs = player.getWorld().getPlayerByUuid(disguisedAsID);
         }
+
+        this.spokenTextRenderer.readBuffer(buf);
     }
 
     @Override
@@ -979,19 +989,38 @@ public class PlayerSoulComponent implements SoulComponent {
 
     @Override
     public void setDisguise(PlayerEntity target) {
-        disguisedAs = target;
         disguisedAsID = target.getUuid();
+        disguisedAs = target;
+        sync();
     }
 
     @Override
     public void removeDisguise() {
-        disguisedAs = null;
         disguisedAsID = null;
+        disguisedAs = null;
+        sync();
     }
 
     @Override
     public PlayerEntity getDisguise() {
         return disguisedAs;
+    }
+
+    @Override
+    public String getSpokenText() {
+        return spokenTextRenderer.toRender();
+    }
+
+    @Override
+    public void setSpokenText(String text, int speed, int timeToDisappear) {
+        spokenTextRenderer.setText(text, speed, timeToDisappear);
+        sync();
+    }
+
+    @Override
+    public void setSpokenText(String text) {
+        spokenTextRenderer.setText(text);
+        sync();
     }
 
     @Override
@@ -1266,6 +1295,10 @@ public class PlayerSoulComponent implements SoulComponent {
                 SoulForge.LOGGER.warn("{} soul tick took more than 5 milliseconds: {}", player.getName(), tickDuration);
                 lastTickWasShitAss = true;
             }
+            this.spokenTextRenderer.tick();
+        }
+        if (disguisedAsID != null) {
+            if (disguisedAs == null || (disguisedAs.getUuid() != disguisedAsID)) disguisedAs = player.getWorld().getPlayerByUuid(disguisedAsID);
         }
     }
 
@@ -1337,7 +1370,12 @@ public class PlayerSoulComponent implements SoulComponent {
             wormholeRequest = new Pair<>(wormhole.getUuid("target"), wormhole.getInt("time"));
         }
 
-        if (tag.contains("disguisedAs")) disguisedAsID = tag.getUuid("disguisedAs");
+        if (tag.contains("disguisedAs")) {
+            disguisedAsID = tag.getUuid("disguisedAs");
+            disguisedAs = player.getWorld().getPlayerByUuid(disguisedAsID);
+        }
+
+        spokenTextRenderer.readNbt(tag.getCompound("spokenTextRenderer"));
 
         updateTags();
     }
@@ -1380,6 +1418,7 @@ public class PlayerSoulComponent implements SoulComponent {
             tag.put("wormhole", wormhole);
         }
         if (disguisedAsID != null) tag.putUuid("disguisedAs", disguisedAsID);
+        tag.put("spokenTextRenderer", spokenTextRenderer.writeNbt());
     }
 
     @Override

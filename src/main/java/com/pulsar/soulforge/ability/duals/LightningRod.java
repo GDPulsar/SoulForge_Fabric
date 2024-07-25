@@ -32,6 +32,7 @@ public class LightningRod extends AbilityBase {
                 LightningRodLightningEntity lightning = new LightningRodLightningEntity(player);
                 lightning.setPosition(lightningRod.getPos());
                 player.getWorld().spawnEntity(lightning);
+                playerSoul.setSpokenText("BANG!", 6, 5);
                 Vec3d chainPos = lightningRod.getPos();
                 List<LivingEntity> chained = new ArrayList<>();
                 boolean found = true;

@@ -57,6 +57,7 @@ public class Snowgrave extends AbilityBase {
             player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
             return false;
         }
+        playerSoul.setSpokenText("Watch what happens when I cast a spell I don't know!", 3, 70);
         HitResult result = player.raycast(50, 1f, false);
         if (result != null) {
             if (result.squaredDistanceTo(player) <= 2500f) {

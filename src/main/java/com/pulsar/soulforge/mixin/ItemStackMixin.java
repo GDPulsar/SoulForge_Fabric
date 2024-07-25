@@ -67,6 +67,8 @@ public abstract class ItemStackMixin {
         braveryWeaponModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
         braveryTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 2, Operation.ADDITION));
         justiceTridentModifier = new AbstractMap.SimpleEntry<>(ReachEntityAttributes.ATTACK_RANGE, new EntityAttributeModifier(UUID.randomUUID(), "Justice Siphon", 1.5, Operation.ADDITION));
+        perseveranceTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Perseverance Siphon", 4, Operation.ADDITION));
+        determinationTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Determination Siphon", 2, Operation.ADDITION));
         integrityWeaponDamageModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", -0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
         integrityWeaponSpeedModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
     }
@@ -77,6 +79,10 @@ public abstract class ItemStackMixin {
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> braveryTridentModifier;
     @Unique
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> justiceTridentModifier;
+    @Unique
+    private static Map.Entry<EntityAttribute, EntityAttributeModifier> perseveranceTridentModifier;
+    @Unique
+    private static Map.Entry<EntityAttribute, EntityAttributeModifier> determinationTridentModifier;
     @Unique
     private static Map.Entry<EntityAttribute, EntityAttributeModifier> integrityWeaponDamageModifier;
     @Unique
@@ -106,6 +112,12 @@ public abstract class ItemStackMixin {
                             if (type == Type.JUSTICE) {
                                 modifiers.put(justiceTridentModifier);
                             }
+                            if (type == Type.PERSEVERANCE) {
+                                modifiers.put(perseveranceTridentModifier);
+                            }
+                            if (type == Type.DETERMINATION) {
+                                modifiers.put(determinationTridentModifier);
+                            }
                         }
                     } else {
                         for (Siphon.Type siphonType : Siphon.Type.values()) {
@@ -124,6 +136,12 @@ public abstract class ItemStackMixin {
                                     }
                                     if (siphonType == Type.JUSTICE) {
                                         modifiers.put(justiceTridentModifier);
+                                    }
+                                    if (siphonType == Type.PERSEVERANCE) {
+                                        modifiers.put(perseveranceTridentModifier);
+                                    }
+                                    if (siphonType == Type.DETERMINATION) {
+                                        modifiers.put(determinationTridentModifier);
                                     }
                                 }
                             }

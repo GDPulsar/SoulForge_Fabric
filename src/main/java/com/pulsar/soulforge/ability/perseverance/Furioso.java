@@ -17,18 +17,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class Furioso extends AbilityBase {
-    public final String name = "Furisoso";
-    public final Identifier id = new Identifier(SoulForge.MOD_ID, "furioso");
-    public final int requiredLv = 20;
-    public final int cost = 100;
-    public final int cooldown = 6000;
-    public final AbilityType type = AbilityType.SPECIAL;
-
     private PVHarpoonProjectile harpoon;
     private int timer = 0;
     private Vec3d castPos;
@@ -36,14 +28,17 @@ public class Furioso extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        if (harpoon == null || harpoon.isRemoved()) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        playerSoul.setSpokenText("Flaming, what does your meat taste like?", 3, 40);
+        return false;
+        /*if (harpoon == null || harpoon.isRemoved()) {
             harpoon = new PVHarpoonProjectile(player.getWorld(), player);
             harpoon.setPosition(player.getEyePos());
             harpoon.setVelocity(player.getRotationVector().multiply(2));
             player.getWorld().spawnEntity(harpoon);
         }
         timer = 0;
-        return super.cast(player);
+        return super.cast(player);*/
     }
 
     @Override
@@ -135,7 +130,7 @@ public class Furioso extends AbilityBase {
 
     public int getCooldown() { return 6000; }
 
-    public AbilityType getType() { return AbilityType.CAST; }
+    public AbilityType getType() { return AbilityType.SPECIAL; }
 
     @Override
     public AbilityBase getInstance() {

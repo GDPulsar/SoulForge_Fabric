@@ -7,12 +7,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
-import java.text.DecimalFormat;
-
-import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
-import static com.mojang.brigadier.arguments.FloatArgumentType.getFloat;
-import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
-import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static net.minecraft.command.argument.EntityArgumentType.getPlayer;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -29,7 +23,7 @@ public class DisguiseCommand {
                                                 SoulComponent playerSoul = SoulForge.getPlayerSoul(getPlayer(context, "player"));
                                                 PlayerEntity target = getPlayer(context, "target");
                                                 playerSoul.setDisguise(target);
-                                                context.getSource().sendMessage(Text.literal("Disguised as " + target.getDisplayName() + "."));
+                                                context.getSource().sendMessage(Text.literal("Disguised as ").append(target.getDisplayName()).append("."));
                                                 return 1;
                                         })
                                 )
