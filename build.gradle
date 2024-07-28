@@ -80,7 +80,7 @@ dependencies {
 
 	include modImplementation("com.github.0x3C50:Renderer:2273f5e")
 
-	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	modCompileOnly "maven.modrinth:soulforge-teams:1.0.4"
 	modCompileOnly("squeek.appleskin:appleskin-fabric:${appleskin_version}") {
