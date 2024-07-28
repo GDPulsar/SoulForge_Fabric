@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -61,8 +62,14 @@ public class EnergyBallProjectile extends ProjectileEntity {
 
         this.checkBlockCollision();
         vec3d = this.getVelocity();
+        /*for (int i = 0; i < 10; i++) {
+            Vec3d pos = this.getPos().lerp(this.getPos().add(this.getVelocity()), i/10f);
+            this.getWorld().addParticle(SoulForgeParticles.FIRE_PARTICLE, pos.x + (Math.random() - 0.5f)*0.2f,
+                    pos.y + (Math.random() - 0.5f)*0.2f, pos.z + (Math.random() - 0.5f)*0.2f, 0.0D, 0.0D, 0.0D);
+        }*/
         this.setPosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
-        this.getWorld().addParticle(ParticleTypes.FLAME, this.getX() + Math.random() - 0.5f, this.getY() + Math.random() - 0.5f, this.getZ() + Math.random() - 0.5f, 0.0D, 0.0D, 0.0D);
+        this.getWorld().addParticle(SoulForgeParticles.FIRE_PARTICLE, getPos().x + (Math.random() - 0.5f)*0.2f,
+                getPos().y + (Math.random() - 0.5f)*0.2f, getPos().z + (Math.random() - 0.5f)*0.2f, 0.0D, 0.0D, 0.0D);
     }
 
     @Override
@@ -71,11 +78,6 @@ public class EnergyBallProjectile extends ProjectileEntity {
             if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return false;
         }
         return super.canHit(entity) && !entity.noClip;
-    }
-
-    @Override
-    public boolean isOnFire() {
-        return true;
     }
 
     @Override

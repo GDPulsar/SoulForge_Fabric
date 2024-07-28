@@ -146,4 +146,6 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     String getSpokenText();
     void setSpokenText(String text, int speed, int timeToDisappear);
     void setSpokenText(String text);
+
+    void setAntiheal(float percent, float duration);
 }

@@ -1,5 +1,5 @@
 package com.pulsar.soulforge.accessors;
 
-public interface EntitySiphonAccessor {
+public interface SiphonableEntity {
     String getSiphonString();
 }

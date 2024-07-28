@@ -3,9 +3,6 @@ package com.pulsar.soulforge.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.WorldComponent;
-import com.pulsar.soulforge.trait.TraitBase;
-import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
@@ -15,8 +12,6 @@ import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
 import static com.mojang.brigadier.arguments.FloatArgumentType.getFloat;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.argument.EntityArgumentType.getPlayer;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -44,6 +39,16 @@ public class AntihealCommand {
                                                 })
                                         )
                                 )
+                                .executes(context -> {
+                                    SoulComponent playerSoul = SoulForge.getPlayerSoul(getPlayer(context, "player"));
+                                    float antiheal = playerSoul.getValue("antiheal");
+                                    int duration = (int)playerSoul.getValue("antihealDuration");
+                                    DecimalFormat df = new DecimalFormat();
+                                    df.setMaximumFractionDigits(2);
+                                    String antihealPercent = df.format(antiheal*100f);
+                                    context.getSource().sendMessage(Text.literal(getPlayer(context, "player").getDisplayName().getString() + " has " + antihealPercent + "% antiheal for " + duration + " ticks."));
+                                    return 1;
+                                })
                         )
         );
     }

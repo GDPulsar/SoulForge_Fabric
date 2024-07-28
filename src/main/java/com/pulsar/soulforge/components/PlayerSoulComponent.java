@@ -1024,6 +1024,15 @@ public class PlayerSoulComponent implements SoulComponent {
     }
 
     @Override
+    public void setAntiheal(float amount, float duration) {
+        if (hasValue("antiheal")) setValue("antiheal", Math.max(getValue("antiheal"), amount));
+        else setValue("antiheal", amount);
+        if (hasValue("antihealDuration")) setValue("antihealDuration", Math.max(getValue("antihealDuration"), duration));
+        else setValue("antihealDuration", duration);
+        sync();
+    }
+
+    @Override
     public void castAbility(AbilityBase ability) {
         if (ability == null) return;
         boolean contains = abilities.has(ability.getName());
@@ -1270,7 +1279,7 @@ public class PlayerSoulComponent implements SoulComponent {
 
             //behold, my antiheal conglomeration
             if (hasValue("antiheal")) {
-                if (hasValue("antihealDuration")) {
+                if (hasValue("antihealDuration") && getValue("antihealDuration") > 0) {
                     setValue("antihealDuration", getValue("antihealDuration") - 1);
                     if (getValue("antihealDuration") <= 0) setValue("antiheal", 0);
                 } else setValue("antiheal", 0);

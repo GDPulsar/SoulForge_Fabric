@@ -121,6 +121,7 @@ public class JusticePelletProjectile extends ProjectileEntity {
             }
             float damage = this.dataTracker.get(DAMAGE);
             if (damage > 0) {
+                entity.timeUntilRegen = 0;
                 if (living.damage(source, damage)) {
                     if (this.getOwner() instanceof PlayerEntity player) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);

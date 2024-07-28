@@ -41,7 +41,7 @@ public class PlayerEntityRendererMixin {
             Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
             PlayerEntityRenderer renderer = (PlayerEntityRenderer)(Object)this;
             Camera camera = renderer.dispatcher.camera;
-            Quaternionf rotation = new Quaternionf().rotationYXZ(0.017453292F * camera.getYaw(), -0.017453292F * camera.getPitch(), 0.0F);
+            Quaternionf rotation = new Quaternionf().rotationYXZ(-0.017453292F * camera.getYaw(), -0.017453292F * camera.getPitch(), 0.0F);
             positionMatrix.rotate(rotation);
             positionMatrix.translate(0f, 2.4f, 0f);
             positionMatrix.scale(-0.025f);

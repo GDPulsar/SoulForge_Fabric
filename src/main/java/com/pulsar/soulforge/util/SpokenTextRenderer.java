@@ -41,7 +41,7 @@ public class SpokenTextRenderer {
             float getCharacterTimer = this.speed;
             if (c == '.' || c == '?' || c == '!') getCharacterTimer *= 3;
             if (c == ',') getCharacterTimer *= 2;
-            if (timer >= t + getCharacterTimer) {
+            if (timer >= t) {
                 toRender.append(c);
                 t += getCharacterTimer;
             } else {

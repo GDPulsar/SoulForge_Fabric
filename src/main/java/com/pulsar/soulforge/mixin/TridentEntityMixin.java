@@ -1,6 +1,6 @@
 package com.pulsar.soulforge.mixin;
 
-import com.pulsar.soulforge.accessors.EntitySiphonAccessor;
+import com.pulsar.soulforge.accessors.SiphonableEntity;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.siphon.Siphon;
 import net.minecraft.entity.Entity;
@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 @Mixin(TridentEntity.class)
-public abstract class TridentEntityMixin extends ProjectileEntity implements EntitySiphonAccessor {
+public abstract class TridentEntityMixin extends ProjectileEntity implements SiphonableEntity {
     @Shadow public ItemStack tridentStack;
     @Unique
     private static final TrackedData<String> SIPHON = DataTracker.registerData(TridentEntity.class, TrackedDataHandlerRegistry.STRING);

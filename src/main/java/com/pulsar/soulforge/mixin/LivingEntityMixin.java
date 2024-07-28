@@ -3,6 +3,7 @@ package com.pulsar.soulforge.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.accessors.OwnableMinion;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.WorldBaseComponent;
@@ -30,6 +31,7 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
@@ -516,5 +518,26 @@ abstract class LivingEntityMixin extends Entity {
             }
         }
         return box;
+    }
+
+    @ModifyArg(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damageShield(F)V"))
+    private float modifyShieldDamage(float original, @Local DamageSource source) {
+        if (source.getAttacker() instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            if (playerSoul.hasValue("shieldBreak")) {
+                return original * playerSoul.getValue("shieldBreak");
+            }
+        }
+        return original;
+    }
+
+    @ModifyReturnValue(method = "canTarget(Lnet/minecraft/entity/LivingEntity;)Z", at = @At("RETURN"))
+    private boolean modifyCanTarget(boolean original, @Local LivingEntity target) {
+        if ((LivingEntity)(Object)this instanceof MobEntity mobEntity) {
+            if (((OwnableMinion)mobEntity).getOwnerUUID() != null) {
+                if (((OwnableMinion)mobEntity).getOwnerUUID().compareTo(target.getUuid()) == 0) return false;
+            }
+        }
+        return original;
     }
 }

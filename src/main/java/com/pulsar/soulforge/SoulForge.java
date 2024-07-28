@@ -52,7 +52,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.2.6");
+		LOGGER.info("Loading SoulForge v2.2.7");
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();
@@ -80,6 +80,7 @@ public class SoulForge implements ModInitializer {
 			WormholeCommand.register(dispatcher, registryAccess);
 			AntihealCommand.register(dispatcher);
 			DisguiseCommand.register(dispatcher);
+			MinionCommand.register(dispatcher, registryAccess);
 		}));
 
 		SoulForgeNetworking.registerPackets();

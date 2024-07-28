@@ -14,6 +14,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -45,7 +46,7 @@ public class Utils {
 
     public static EntityHitResult getFocussedEntity(PlayerEntity player, float distance, Predicate<Entity> predicate) {
         Vec3d start = player.getEyePos();
-        Vec3d direction = player.getRotationVector().multiply(10000);
+        Vec3d direction = player.getRotationVector().multiply(distance);
         Box searchBox = player.getBoundingBox().expand(distance);
         return ProjectileUtil.getEntityCollision(player.getWorld(), player, start, start.add(direction), searchBox, predicate);
     }
@@ -62,10 +63,7 @@ public class Utils {
     }
 
     public static void addAntiheal(float amount, float duration, SoulComponent targetSoul) {
-        if (targetSoul.hasValue("antiheal")) targetSoul.setValue("antiheal", Math.max(targetSoul.getValue("antiheal"), amount));
-        else targetSoul.setValue("antiheal", amount);
-        if (targetSoul.hasValue("antihealDuration")) targetSoul.setValue("antihealDuration", Math.max(targetSoul.getValue("antihealDuration"), duration));
-        else targetSoul.setValue("antihealDuration", duration);
+        targetSoul.setAntiheal(amount, duration);
     }
 
     public static void clearModifiersByName(LivingEntity living, EntityAttribute attribute, String name) {
@@ -223,5 +221,17 @@ public class Utils {
             if (!effect.getEffectType().isBeneficial()) val += effect.getAmplifier();
         }
         return val;
+    }
+
+    public static NbtList vectorToNbt(Vec3d vec) {
+        NbtList list = new NbtList();
+        list.add(NbtDouble.of(vec.x));
+        list.add(NbtDouble.of(vec.y));
+        list.add(NbtDouble.of(vec.z));
+        return list;
+    }
+
+    public static Vec3d nbtToVector(NbtList list) {
+        return new Vec3d(list.getDouble(0), list.getDouble(1), list.getDouble(2));
     }
 }

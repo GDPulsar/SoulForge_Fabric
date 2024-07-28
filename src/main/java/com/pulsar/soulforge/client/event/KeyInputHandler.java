@@ -83,26 +83,32 @@ public class KeyInputHandler {
                 buf.writeBoolean(playerSoul.magicModeActive());
                 if (playerSoul.magicModeActive()) {
                     AbilityBase ability = playerSoul.getLayoutAbility(playerSoul.getAbilityRow(), playerSoul.getAbilitySlot());
-                    buf.writeBoolean(true);
-                    buf.writeString(ability.getName());
-                    if (playerSoul.onCooldown(ability)) break;
-                    if (ability instanceof WeaponWheel || ability instanceof Wormhole || ability instanceof Armory || ability instanceof Reload || ability instanceof MorphingWeaponry) {
-                        float cost = ability.getCost();
-                        if (client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
-                            cost *= (float)client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
+                    if (ability != null) {
+                        buf.writeBoolean(true);
+                        buf.writeString(ability.getName());
+                        if (playerSoul.onCooldown(ability)) break;
+                        if (ability instanceof WeaponWheel || ability instanceof Wormhole || ability instanceof Armory || ability instanceof Reload || ability instanceof MorphingWeaponry) {
+                            float cost = ability.getCost();
+                            if (client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
+                                cost *= (float) client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
+                            }
+                            if (playerSoul.isStrong() && !playerSoul.getTraits().contains(Traits.determination))
+                                cost /= 2f;
+                            if (playerSoul.hasCast("Valiant Heart")) cost /= 2f;
+                            if (cost <= playerSoul.getMagic()) {
+                                if (ability instanceof WeaponWheel) client.setScreen(new WeaponWheelScreen());
+                                else if (ability instanceof Wormhole) client.setScreen(new WormholeScreen());
+                                else if (ability instanceof Armory) client.setScreen(new ArmoryScreen());
+                                else if (ability instanceof Reload) client.setScreen(new ReloadScreen());
+                                else if (ability instanceof MorphingWeaponry)
+                                    client.setScreen(new MorphingWeaponryScreen());
+                            }
                         }
-                        if (playerSoul.isStrong() && !playerSoul.getTraits().contains(Traits.determination)) cost /= 2f;
-                        if (playerSoul.hasCast("Valiant Heart")) cost /= 2f;
-                        if (cost <= playerSoul.getMagic()) {
-                            if (ability instanceof WeaponWheel) client.setScreen(new WeaponWheelScreen());
-                            else if (ability instanceof Wormhole) client.setScreen(new WormholeScreen());
-                            else if (ability instanceof Armory) client.setScreen(new ArmoryScreen());
-                            else if (ability instanceof Reload) client.setScreen(new ReloadScreen());
-                            else if (ability instanceof MorphingWeaponry) client.setScreen(new MorphingWeaponryScreen());
-                        }
+                        ClientPlayNetworking.send(SoulForgeNetworking.CAST_ABILITY, buf);
                     }
+                } else {
+                    ClientPlayNetworking.send(SoulForgeNetworking.CAST_ABILITY, buf);
                 }
-                ClientPlayNetworking.send(SoulForgeNetworking.CAST_ABILITY, buf);
             }
             if (Objects.equals(client.getSession().getUsername(), "GDPulsar")) {
                 if (DomainExpansionKey != null) {

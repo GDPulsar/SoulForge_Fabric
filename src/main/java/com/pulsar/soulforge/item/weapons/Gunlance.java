@@ -1,18 +1,13 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.entity.GunlanceBlastEntity;
-import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -78,24 +73,37 @@ public class Gunlance extends MagicSwordItem implements GeoItem {
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (!world.isClient) {
             if (user instanceof PlayerEntity player) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 int useTicks = getMaxUseTime(stack) - remainingUseTicks;
-                if (useTicks > 20) {
+                if (useTicks > 20 && playerSoul.getMagic() >= 4f) {
                     Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
                     HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
                     if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
                     if (blast == null) {
-                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                         blast = new GunlanceBlastEntity(world, Utils.getArmPosition(player), player, Vec3d.ZERO, end, playerSoul.getLV() * 0.75f);
                         blast.owner = player;
                     } else {
-                        if (useTicks == 33) {
+                        if (useTicks == 25) {
                             ServerWorld serverWorld = (ServerWorld) player.getWorld();
                             serverWorld.spawnEntity(blast);
                             serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
                             serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                         }
-                        blast.setPosition(Utils.getArmPosition(player));
-                        blast.setEnd(end);
+                        if (useTicks >= 25) {
+                            blast.setPosition(Utils.getArmPosition(player));
+                            blast.setEnd(end);
+                            playerSoul.setMagic(playerSoul.getMagic() - 4f);
+                            playerSoul.resetLastCastTime();
+                        }
+                    }
+                }
+                if (useTicks % 20 == 0) {
+                    if (playerSoul.getMagic() < 4f) {
+                        if (blast != null) {
+                            blast.kill();
+                            blast = null;
+                        }
+                        player.getItemCooldownManager().set(this, 1);
                     }
                 }
             }

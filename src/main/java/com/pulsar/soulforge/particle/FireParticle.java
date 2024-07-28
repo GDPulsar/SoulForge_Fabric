@@ -12,11 +12,11 @@ public class FireParticle extends SpriteBillboardParticle {
     protected FireParticle(ClientWorld world, double x, double y, double z, SpriteProvider spriteSet, double dx, double dy, double dz) {
         super(world, x, y, z, dx, dy, dz);
 
-        this.velocityMultiplier = 0f;
+        this.velocityMultiplier = 1f;
         this.x = dx;
         this.y = dy;
         this.z = dz;
-        this.scale = 0.2f;
+        this.scale = 0.5f;
         this.maxAge = 50;
         this.setSpriteForAge(spriteSet);
         this.velocityX = 0f;
@@ -26,17 +26,20 @@ public class FireParticle extends SpriteBillboardParticle {
         this.red = 1f;
         this.green = 1f;
         this.blue = 1f;
+        this.alpha = 1f;
     }
 
     @Override
     public void tick() {
-        this.velocityY += 0.001f;
+        this.velocityY += 0.002f;
+        this.velocityX += (Math.random() - 0.5f) * 0.003f;
+        this.velocityZ += (Math.random() - 0.5f) * 0.003f;
         float color = MathHelper.clampedLerp(1f, 0f, (this.age - 20f) / 30f);
         this.red = color;
         this.green = color;
         this.blue = color;
         this.alpha = MathHelper.clampedLerp(1f, 0f, (this.age - 40f) / 30f);
-        if (this.age >= 25) this.scale *= 0.098f;
+        if (this.age >= 25) this.scale = MathHelper.clampedLerp(0.5f, 0.2f, (this.age - 25f) / 45f);
         super.tick();
     }
 

@@ -2,6 +2,8 @@ package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.util.TeamUtils;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -42,6 +44,14 @@ public class AntihealDartProjectile extends ProjectileEntity implements GeoEntit
     }
 
     @Override
+    protected boolean canHit(Entity entity) {
+        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return false;
+        }
+        return super.canHit(entity) && !entity.noClip;
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (!this.getWorld().isClient) {
@@ -65,8 +75,7 @@ public class AntihealDartProjectile extends ProjectileEntity implements GeoEntit
         entity.damage(damageSource, 5f);
         if (entity instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            playerSoul.setValue("antiheal", 0.1f);
-            playerSoul.setValue("antihealDuration", 300);
+            Utils.addAntiheal(0.1f, 300f, playerSoul);
         }
     }
 
