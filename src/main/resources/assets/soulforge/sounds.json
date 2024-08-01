@@ -123,6 +123,12 @@
       "soulforge:ut_bombsplosion"
     ]
   },
+  "ut_chainsaw": {
+    "subtitle": "subtitles.soulforge.ut_chainsaw",
+    "sounds": [
+      "soulforge:ut_chainsaw"
+    ]
+  },
   "ut_create": {
     "subtitle": "subtitles.soulforge.ut_create",
     "sounds": [
@@ -169,6 +175,12 @@
     "subtitle": "subtitles.soulforge.ut_save",
     "sounds": [
       "soulforge:ut_save"
+    ]
+  },
+  "ut_tick": {
+    "subtitle": "subtitles.soulforge.ut_tick",
+    "sounds": [
+      "soulforge:ut_tick"
     ]
   },
   "vine_boom": {

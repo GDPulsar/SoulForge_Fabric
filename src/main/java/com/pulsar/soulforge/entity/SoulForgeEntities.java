@@ -56,6 +56,7 @@ public class SoulForgeEntities {
     public static EntityType<RailkillerEntity> RAILKILLER_ENTITY_TYPE;
     public static EntityType<PlayerSoulEntity> PLAYER_SOUL_ENTITY_TYPE;
     public static EntityType<DeterminationShotProjectile> DETERMINATION_SHOT_ENTITY_TYPE;
+    public static EntityType<FearBombEntity> FEAR_BOMB_ENTITY_TYPE;
 
     public static void register() {
         SNOWGRAVE_PROJECTILE_TYPE = Registry.register(
@@ -458,6 +459,13 @@ public class SoulForgeEntities {
                         .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
                         .trackRangeBlocks(50).trackedUpdateRate(40)
                         .build()
+        );
+
+        FEAR_BOMB_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "fear_bomb"),
+                FabricEntityTypeBuilder.<FearBombEntity>create(SpawnGroup.MISC, FearBombEntity::new)
+                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .dimensions(EntityDimensions.fixed(0.5f, 0.5f)).build()
         );
 
         FabricDefaultAttributeRegistry.register(TURRET_ENTITY_TYPE, AutoTurretEntity.createMobAttributes());

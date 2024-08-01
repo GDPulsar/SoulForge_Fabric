@@ -32,6 +32,7 @@ public class SoulForgeNetworking {
     public static final Identifier PERFORM_ANIMATION = new Identifier(SoulForge.MOD_ID, "perform_animation");
     public static final Identifier POSITION_VELOCITY = new Identifier(SoulForge.MOD_ID, "position_velocity");
     public static final Identifier SET_THIRD_PERSON = new Identifier(SoulForge.MOD_ID, "set_third_person");
+    public static final Identifier UPDATE_TICK_RATE = new Identifier(SoulForge.MOD_ID, "update_tick_rate");
 
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_ABILITY, CastAbilityPacket::receive);

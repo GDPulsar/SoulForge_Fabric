@@ -1,9 +1,9 @@
 package com.pulsar.soulforge.mixin;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReceiver;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.entity.BlastEntity;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.devices.machines.SiphonImbuer;
 import com.pulsar.soulforge.item.special.CrushingRound;
 import com.pulsar.soulforge.item.special.FrostbiteRound;
@@ -12,10 +12,6 @@ import com.pulsar.soulforge.item.special.SuppressingRound;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -24,18 +20,17 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -45,29 +40,39 @@ import java.awt.*;
 public abstract class BowItemMixin {
     @Shadow public abstract int getMaxUseTime(ItemStack stack);
 
-    @Redirect(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/PersistentProjectileEntity;setVelocity(Lnet/minecraft/entity/Entity;FFFFF)V"))
-    private void modifyProjectileSpeed(PersistentProjectileEntity instance, Entity entity, float pitch, float yaw, float roll, float speed, float divergence) {
-        PlayerEntity player = (PlayerEntity)entity;
-        instance.setVelocity(player, pitch, yaw, roll, speed, divergence);
-        if (player.getMainHandStack().hasNbt() && player.getMainHandStack().getNbt().contains("Siphon")) {
-            Siphon.Type type = Siphon.Type.getSiphon(player.getMainHandStack().getNbt().getString("Siphon"));
-            if (type == Siphon.Type.BRAVERY || type == Siphon.Type.SPITE) {
-                instance.setVelocity(player, pitch, yaw, roll, speed * 1.2f, divergence);
-            }
-        }
-    }
-
-    @Redirect(method = "onStoppedUsing", at=@At(value="INVOKE", target="Lnet/minecraft/enchantment/EnchantmentHelper;getLevel(Lnet/minecraft/enchantment/Enchantment;Lnet/minecraft/item/ItemStack;)I"))
-    private int modifyInfinity(Enchantment enchantment, ItemStack stack) {
-        if (enchantment == Enchantments.INFINITY) {
-            if (stack.hasNbt() && stack.getNbt().contains("Siphon")) {
-                Siphon.Type type = Siphon.Type.getSiphon(stack.getNbt().getString("Siphon"));
-                if (type == Siphon.Type.JUSTICE || type == Siphon.Type.SPITE) {
-                    return 1;
+    @ModifyArg(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/PersistentProjectileEntity;setVelocity(Lnet/minecraft/entity/Entity;FFFFF)V"), index = 4)
+    private float modifyProjectileSpeed(float speed, @Local LivingEntity user) {
+        if (user instanceof PlayerEntity player) {
+            if (player.getMainHandStack().hasNbt() && player.getMainHandStack().getNbt().contains("Siphon")) {
+                Siphon.Type type = Siphon.Type.getSiphon(player.getMainHandStack().getNbt().getString("Siphon"));
+                if (type == Siphon.Type.BRAVERY || type == Siphon.Type.SPITE) {
+                    return speed * 1.2f;
                 }
             }
         }
-        return EnchantmentHelper.getLevel(enchantment, stack);
+        return speed;
+    }
+
+    @ModifyExpressionValue(method = "onStoppedUsing", at=@At(value="INVOKE", target="Lnet/minecraft/enchantment/EnchantmentHelper;getLevel(Lnet/minecraft/enchantment/Enchantment;Lnet/minecraft/item/ItemStack;)I", ordinal = 0))
+    private int modifyInfinity(int original, @Local ItemStack stack) {
+        if (stack.hasNbt() && stack.getNbt().contains("Siphon")) {
+            Siphon.Type type = Siphon.Type.getSiphon(stack.getNbt().getString("Siphon"));
+            if (type == Siphon.Type.JUSTICE || type == Siphon.Type.SPITE) {
+                return 1;
+            }
+        }
+        return original;
+    }
+
+    @ModifyReceiver(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z", ordinal = 0))
+    private ItemStack modifyInfinity(ItemStack stack, Item item) {
+        if (stack.hasNbt() && stack.getNbt().contains("Siphon")) {
+            Siphon.Type type = Siphon.Type.getSiphon(stack.getNbt().getString("Siphon"));
+            if (type == Siphon.Type.JUSTICE || type == Siphon.Type.SPITE) {
+                return new ItemStack(item);
+            }
+        }
+        return stack;
     }
 
     @Inject(method = "onStoppedUsing", at=@At(value = "INVOKE", target = "Lnet/minecraft/item/BowItem;getPullProgress(I)F", shift = At.Shift.AFTER), cancellable = true)

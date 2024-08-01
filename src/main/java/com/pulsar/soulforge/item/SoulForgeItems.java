@@ -14,15 +14,16 @@ import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.*;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
-import java.util.*;
 
 public class SoulForgeItems {
     public static Item RegisterItem(String id, FabricItemSettings settings) {
@@ -58,6 +59,7 @@ public class SoulForgeItems {
     public static Item PATIENCE_ESSENCE;
     public static Item INTEGRITY_ESSENCE;
     public static Item PERSEVERANCE_ESSENCE;
+    public static Item DETERMINATION_ESSENCE;
     public static Item ARNICITE;
     public static Item BRAVERY_ARNICITE;
     public static Item JUSTICE_ARNICITE;
@@ -82,7 +84,7 @@ public class SoulForgeItems {
     public static Item INTEGRITY_ARNICITE_CORE;
     public static Item PERSEVERANCE_ARNICITE_CORE;
     public static Item DETERMINATION_ARNICITE_CORE;
-    public static HashMap<String, Item> SOULS = new HashMap<>();
+    public static Item SOUL;
 
     public static Item SHOTGUN_FIST;
     public static Item JUSTICE_BOW;
@@ -182,21 +184,16 @@ public class SoulForgeItems {
     public static final RegistryKey<ItemGroup> ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(SoulForge.MOD_ID, "item_group"));
 
     public static void registerItems() {
-        ARNICITE = RegisterItem("arnicite", new ArniciteItem());
-        String[] traits = new String[]{"bravery","justice","kindness","patience","perseverance","integrity"};
-        for (int i = 0; i < traits.length; i++) {
-            for (int j = i; j < traits.length; j++) {
-                String key = traits[i] + "_" + traits[j];
-                SOULS.put(key, RegisterItem(key, new FabricItemSettings()));
-            }
-        }
-        SOULS.put("determination", RegisterItem("determination", new FabricItemSettings()));
+        SOUL = RegisterItem("soul", new FabricItemSettings(), false);
+
         INTEGRITY_ESSENCE = RegisterItem("integrity_essence", new FabricItemSettings());
         KINDNESS_ESSENCE = RegisterItem("kindness_essence", new FabricItemSettings());
         PATIENCE_ESSENCE = RegisterItem("patience_essence", new FabricItemSettings());
         JUSTICE_ESSENCE = RegisterItem("justice_essence", new FabricItemSettings());
         BRAVERY_ESSENCE = RegisterItem("bravery_essence", new FabricItemSettings());
         PERSEVERANCE_ESSENCE = RegisterItem("perseverance_essence", new FabricItemSettings());
+        DETERMINATION_ESSENCE = RegisterItem("determination_essence", new FabricItemSettings());
+        ARNICITE = RegisterItem("arnicite", new ArniciteItem());
         INTEGRITY_ARNICITE = RegisterItem("integrity_arnicite", new TraitedArniciteItem(Traits.integrity));
         KINDNESS_ARNICITE = RegisterItem("kindness_arnicite", new TraitedArniciteItem(Traits.kindness));
         PATIENCE_ARNICITE = RegisterItem("patience_arnicite", new TraitedArniciteItem(Traits.patience));
@@ -323,13 +320,11 @@ public class SoulForgeItems {
     }
 
     public static ItemStack getSoulItem(TraitBase trait1, TraitBase trait2) {
-        String trait1str = trait1.getName().toLowerCase();
-        String trait2str = trait2.getName().toLowerCase();
-        List<String> traits = new ArrayList<>(Arrays.asList("bravery","justice","kindness","patience","perseverance","integrity","determination"));
-        String itemString;
-        if (traits.indexOf(trait1str) < traits.indexOf(trait2str)) itemString = trait1str + "_" + trait2str;
-        else itemString = trait2str + "_" + trait1str;
-        if (trait1str.equals("determination") || trait2str.equals("determination")) itemString = "determination";
-        return new ItemStack(SOULS.get(itemString));
+        String trait1str = trait1.getName();
+        String trait2str = trait2.getName();
+        ItemStack stack = new ItemStack(SOUL);
+        stack.getOrCreateNbt().putString("trait1", trait1str);
+        stack.getOrCreateNbt().putString("trait2", trait2str);
+        return stack;
     }
 }

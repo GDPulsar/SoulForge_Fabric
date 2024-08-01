@@ -5,8 +5,8 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.perseverance.*;
 import com.pulsar.soulforge.trait.TraitBase;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class Perseverance implements TraitBase {
     }
 
     @Override
-    public Formatting getFormatting() { return Formatting.DARK_PURPLE; }
+    public Style getStyle() { return Style.EMPTY.withColor(getColor()); }
 
     @Override
     public int getColor() {

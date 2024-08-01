@@ -52,7 +52,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.2.7");
+		LOGGER.info("Loading SoulForge v2.3.0");
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();
@@ -81,6 +81,7 @@ public class SoulForge implements ModInitializer {
 			AntihealCommand.register(dispatcher);
 			DisguiseCommand.register(dispatcher);
 			MinionCommand.register(dispatcher, registryAccess);
+			//TickCommand.register(dispatcher);
 		}));
 
 		SoulForgeNetworking.registerPackets();
@@ -97,8 +98,6 @@ public class SoulForge implements ModInitializer {
 				}
 			}
 		});
-
-
 
 		LootTableEvents.MODIFY.register(((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (source.isBuiltin()) {

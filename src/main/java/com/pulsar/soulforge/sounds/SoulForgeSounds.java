@@ -22,6 +22,7 @@ public class SoulForgeSounds {
     public static final Identifier UT_A_GRAB = new Identifier(SoulForge.MOD_ID, "ut_a_grab");
     public static final Identifier UT_BLASTER = new Identifier(SoulForge.MOD_ID, "ut_blaster");
     public static final Identifier UT_BOMBSPLOSION = new Identifier(SoulForge.MOD_ID, "ut_bombsplosion");
+    public static final Identifier UT_CHAINSAW = new Identifier(SoulForge.MOD_ID, "ut_chainsaw");
     public static final Identifier UT_CREATE = new Identifier(SoulForge.MOD_ID, "ut_create");
     public static final Identifier UT_EXPLOSION = new Identifier(SoulForge.MOD_ID, "ut_explosion");
     public static final Identifier UT_GRAVITY_CHANGE = new Identifier(SoulForge.MOD_ID, "ut_gravity_change");
@@ -30,6 +31,7 @@ public class SoulForgeSounds {
     public static final Identifier UT_REFLECT = new Identifier(SoulForge.MOD_ID, "ut_reflect");
     public static final Identifier UT_SOUL_CRACK = new Identifier(SoulForge.MOD_ID, "ut_soul_crack");
     public static final Identifier UT_SAVE = new Identifier(SoulForge.MOD_ID, "ut_save");
+    public static final Identifier UT_TICK = new Identifier(SoulForge.MOD_ID, "ut_tick");
     public static final Identifier VINE_BOOM = new Identifier(SoulForge.MOD_ID, "vine_boom");
     public static final Identifier GUN_SHOOT = new Identifier(SoulForge.MOD_ID, "gun_shoot");
     public static final Identifier PELLET_SUMMON = new Identifier(SoulForge.MOD_ID, "pellet_summon");
@@ -55,6 +57,7 @@ public class SoulForgeSounds {
     public static SoundEvent UT_A_GRAB_EVENT = SoundEvent.of(UT_A_GRAB);
     public static SoundEvent UT_BLASTER_EVENT = SoundEvent.of(UT_BLASTER);
     public static SoundEvent UT_BOMBSPLOSION_EVENT = SoundEvent.of(UT_BOMBSPLOSION);
+    public static SoundEvent UT_CHAINSAW_EVENT = SoundEvent.of(UT_CHAINSAW);
     public static SoundEvent UT_CREATE_EVENT = SoundEvent.of(UT_CREATE);
     public static SoundEvent UT_EXPLOSION_EVENT = SoundEvent.of(UT_EXPLOSION);
     public static SoundEvent UT_GRAVITY_CHANGE_EVENT = SoundEvent.of(UT_GRAVITY_CHANGE);
@@ -63,6 +66,7 @@ public class SoulForgeSounds {
     public static SoundEvent UT_REFLECT_EVENT = SoundEvent.of(UT_REFLECT);
     public static SoundEvent UT_SOUL_CRACK_EVENT = SoundEvent.of(UT_SOUL_CRACK);
     public static SoundEvent UT_SAVE_EVENT = SoundEvent.of(UT_SAVE);
+    public static SoundEvent UT_TICK_EVENT = SoundEvent.of(UT_TICK);
     public static SoundEvent VINE_BOOM_EVENT = SoundEvent.of(VINE_BOOM);
     public static SoundEvent GUN_SHOOT_EVENT = SoundEvent.of(GUN_SHOOT);
     public static SoundEvent PELLET_SUMMON_EVENT = SoundEvent.of(PELLET_SUMMON);
@@ -94,6 +98,7 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, UT_A_GRAB, UT_A_GRAB_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_BLASTER, UT_BLASTER_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_BOMBSPLOSION, UT_BOMBSPLOSION_EVENT);
+        Registry.register(Registries.SOUND_EVENT, UT_CHAINSAW, UT_CHAINSAW_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_CREATE, UT_CREATE_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_EXPLOSION, UT_EXPLOSION_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_GRAVITY_CHANGE, UT_GRAVITY_CHANGE_EVENT);
@@ -102,6 +107,7 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, UT_REFLECT, UT_REFLECT_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_SOUL_CRACK, UT_SOUL_CRACK_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_SAVE, UT_SAVE_EVENT);
+        Registry.register(Registries.SOUND_EVENT, UT_TICK, UT_TICK_EVENT);
         Registry.register(Registries.SOUND_EVENT, VINE_BOOM, VINE_BOOM_EVENT);
         Registry.register(Registries.SOUND_EVENT, GUN_SHOOT, GUN_SHOOT_EVENT);
         Registry.register(Registries.SOUND_EVENT, PELLET_SUMMON, PELLET_SUMMON_EVENT);

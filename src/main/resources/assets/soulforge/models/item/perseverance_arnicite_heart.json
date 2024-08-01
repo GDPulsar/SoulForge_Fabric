@@ -1,7 +1,6 @@
 {
   "parent": "soulforge:item/soul",
   "textures": {
-    "0": "soulforge:item/souls/perseverance_perseverance",
-    "particle": "soulforge:item/souls/perseverance_perseverance"
+    "0": "soulforge:item/perseverance"
   }
 }

@@ -13,12 +13,18 @@ import java.util.*;
 
 public class Traits {
     public static TraitBase bravery = new Bravery();
-    public static TraitBase determination = new Determination();
-    public static TraitBase integrity = new Integrity();
     public static TraitBase justice = new Justice();
     public static TraitBase kindness = new Kindness();
     public static TraitBase patience = new Patience();
+    public static TraitBase integrity = new Integrity();
     public static TraitBase perseverance = new Perseverance();
+    public static TraitBase determination = new Determination();
+    public static TraitBase fear = new Fear();
+    public static TraitBase ineptitude = new Ineptitude();
+    public static TraitBase misery = new Misery();
+    public static TraitBase anxiety = new Anxiety();
+    public static TraitBase paranoia = new Paranoia();
+    public static TraitBase despair = new Despair();
     public static TraitBase spite = new Spite();
 
     private static HashMap<String, TraitBase> customTraits = new HashMap<>();
@@ -49,7 +55,9 @@ public class Traits {
     public static List<TraitBase> trueAll() {
         List<TraitBase> traits = new ArrayList<>(Arrays.asList(
                 bravery, justice, kindness, patience,
-                integrity, perseverance, determination, spite));
+                integrity, perseverance, determination,
+                fear, ineptitude, misery, anxiety,
+                paranoia, despair, spite));
         traits.addAll(customTraits.values());
         return traits;
     }
@@ -121,7 +129,7 @@ public class Traits {
                         }
                     }
                     if (soul.isPure() || soul.getTraits().contains(Traits.spite) || Objects.equals(mode, "Determination")) {
-                        if (trait == Traits.perseverance || trait == Traits.determination) continue;
+                        if (trait == Traits.perseverance || trait == Traits.despair || trait == Traits.determination) continue;
                         AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                         if (pureAbility.getLV() <= soul.getLV()) {
                             abilityNames.add(pureAbility.getName());

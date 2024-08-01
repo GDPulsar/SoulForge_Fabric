@@ -62,14 +62,14 @@ public class EnergyBallProjectile extends ProjectileEntity {
 
         this.checkBlockCollision();
         vec3d = this.getVelocity();
-        /*for (int i = 0; i < 10; i++) {
-            Vec3d pos = this.getPos().lerp(this.getPos().add(this.getVelocity()), i/10f);
+        for (int i = 0; i < 4; i++) {
+            Vec3d offset = this.getVelocity().add((Math.random() - 0.5f) * 0.05f, (Math.random() - 0.5f) * 0.05f, (Math.random() - 0.5f) * 0.05f);
+            Vec3d pos = this.getPos().add(offset);
+            Vec3d velocity = offset.normalize().multiply(0.005f);
             this.getWorld().addParticle(SoulForgeParticles.FIRE_PARTICLE, pos.x + (Math.random() - 0.5f)*0.2f,
-                    pos.y + (Math.random() - 0.5f)*0.2f, pos.z + (Math.random() - 0.5f)*0.2f, 0.0D, 0.0D, 0.0D);
-        }*/
+                    pos.y + (Math.random() - 0.5f)*0.2f, pos.z + (Math.random() - 0.5f)*0.2f, velocity.x, velocity.y, velocity.z);
+        }
         this.setPosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
-        this.getWorld().addParticle(SoulForgeParticles.FIRE_PARTICLE, getPos().x + (Math.random() - 0.5f)*0.2f,
-                getPos().y + (Math.random() - 0.5f)*0.2f, getPos().z + (Math.random() - 0.5f)*0.2f, 0.0D, 0.0D, 0.0D);
     }
 
     @Override

@@ -210,40 +210,46 @@ public class Constants {
 
     public static List<AbilityBase> getDualTraitAbilities(List<TraitBase> traits) {
         List<AbilityBase> extras = new ArrayList<>();
-        if ((traits.contains(Traits.bravery) && traits.contains(Traits.justice)) || traits.contains(Traits.spite)) {
+        boolean bravery = traits.contains(Traits.bravery) || traits.contains(Traits.fear) || traits.contains(Traits.spite);
+        boolean justice = traits.contains(Traits.justice) || traits.contains(Traits.ineptitude) || traits.contains(Traits.spite);
+        boolean kindness = traits.contains(Traits.kindness) || traits.contains(Traits.misery) || traits.contains(Traits.spite);
+        boolean patience = traits.contains(Traits.patience) || traits.contains(Traits.anxiety) || traits.contains(Traits.spite);
+        boolean integrity = traits.contains(Traits.integrity) || traits.contains(Traits.paranoia) || traits.contains(Traits.spite);
+        boolean perseverance = traits.contains(Traits.perseverance) || traits.contains(Traits.despair) || traits.contains(Traits.spite);
+        if (bravery && justice) {
             extras.add(new LightningRod());
         }
-        if ((traits.contains(Traits.bravery) && traits.contains(Traits.kindness)) || traits.contains(Traits.spite)) {
+        if (bravery && kindness) {
             extras.add(new HestiasHearth());
         }
-        if ((traits.contains(Traits.bravery) && traits.contains(Traits.integrity)) || traits.contains(Traits.spite)) {
+        if (bravery && integrity) {
             extras.add(new FearlessInstincts());
         }
-        if ((traits.contains(Traits.bravery) && traits.contains(Traits.perseverance)) || traits.contains(Traits.spite)) {
+        if (bravery && perseverance) {
             extras.add(new PerfectedAuraTechnique());
             extras.add(new Stockpile());
         }
-        if ((traits.contains(Traits.justice) && traits.contains(Traits.kindness)) || traits.contains(Traits.spite)) {
+        if (justice && kindness) {
             extras.add(new FriendlinessPellets());
         }
-        if ((traits.contains(Traits.justice) && traits.contains(Traits.patience)) || traits.contains(Traits.spite)) {
+        if (justice && patience) {
             extras.add(new Reload());
         }
-        if ((traits.contains(Traits.justice) && traits.contains(Traits.integrity)) || traits.contains(Traits.spite)) {
+        if (justice && integrity) {
             extras.add(new AcceleratedPelletAura());
         }
-        if ((traits.contains(Traits.justice) && traits.contains(Traits.perseverance)) || traits.contains(Traits.spite)) {
+        if (justice && perseverance) {
             extras.add(new Armory());
         }
-        if ((traits.contains(Traits.kindness) && traits.contains(Traits.patience)) || traits.contains(Traits.spite)) {
+        if (kindness && patience) {
             extras.add(new StatusInversion());
         }
-        if ((traits.contains(Traits.kindness) && traits.contains(Traits.perseverance)) || traits.contains(Traits.spite)) {
+        if (kindness && perseverance) {
             extras.add(new EnduringHeal());
             extras.add(new Nanomachines());
             extras.add(new YourShield());
         }
-        if ((traits.contains(Traits.patience) && traits.contains(Traits.integrity)) || traits.contains(Traits.spite)) {
+        if (patience && integrity) {
             extras.add(new Wormhole());
             extras.add(new WarpPortal());
         }
@@ -255,6 +261,29 @@ public class Constants {
             entry(Traits.kindness, new MartyrsTouch()),
             entry(Traits.bravery, new ResplendentPhoenix()),
             entry(Traits.justice, new BFRCMG()),
-            entry(Traits.integrity, new BoogieWoogie())
+            entry(Traits.integrity, new BoogieWoogie()),
+            entry(Traits.anxiety, new AngelsTempest()),
+            entry(Traits.misery, new MartyrsTouch()),
+            entry(Traits.fear, new ResplendentPhoenix()),
+            entry(Traits.ineptitude, new BFRCMG()),
+            entry(Traits.paranoia, new BoogieWoogie())
+    ));
+
+    public static List<AbilityBase> dualAbilities = new ArrayList<>(List.of(
+            new AcceleratedPelletAura(),
+            new Armory(),
+            new EnduringHeal(),
+            new FearlessInstincts(),
+            new FriendlinessPellets(),
+            new HestiasHearth(),
+            new LightningRod(),
+            new Nanomachines(),
+            new PerfectedAuraTechnique(),
+            new Reload(),
+            new StatusInversion(),
+            new Stockpile(),
+            new WarpPortal(),
+            new Wormhole(),
+            new YourShield()
     ));
 }

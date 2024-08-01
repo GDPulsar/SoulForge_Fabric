@@ -9,19 +9,13 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 public class FireParticle extends SpriteBillboardParticle {
-    protected FireParticle(ClientWorld world, double x, double y, double z, SpriteProvider spriteSet, double dx, double dy, double dz) {
-        super(world, x, y, z, dx, dy, dz);
+    protected FireParticle(ClientWorld world, double x, double y, double z, SpriteProvider spriteSet, double vx, double vy, double vz) {
+        super(world, x, y, z, vx, vy, vz);
 
         this.velocityMultiplier = 1f;
-        this.x = dx;
-        this.y = dy;
-        this.z = dz;
-        this.scale = 0.5f;
-        this.maxAge = 50;
+        this.scale = 0.2f;
+        this.maxAge = 35;
         this.setSpriteForAge(spriteSet);
-        this.velocityX = 0f;
-        this.velocityY = 0f;
-        this.velocityZ = 0f;
 
         this.red = 1f;
         this.green = 1f;
@@ -31,15 +25,16 @@ public class FireParticle extends SpriteBillboardParticle {
 
     @Override
     public void tick() {
-        this.velocityY += 0.002f;
         this.velocityX += (Math.random() - 0.5f) * 0.003f;
+        this.velocityY += (Math.random() - 0.5f) * 0.003f;
         this.velocityZ += (Math.random() - 0.5f) * 0.003f;
-        float color = MathHelper.clampedLerp(1f, 0f, (this.age - 20f) / 30f);
+        this.velocityMultiplier *= 0.995f;
+        float color = MathHelper.clampedLerp(1f, 0f, (this.age - 10f) / 15f);
         this.red = color;
         this.green = color;
         this.blue = color;
-        this.alpha = MathHelper.clampedLerp(1f, 0f, (this.age - 40f) / 30f);
-        if (this.age >= 25) this.scale = MathHelper.clampedLerp(0.5f, 0.2f, (this.age - 25f) / 45f);
+        this.alpha = MathHelper.clampedLerp(1f, 0f, (this.age - 20f) / 15f);
+        if (this.age >= 25) this.scale = MathHelper.clampedLerp(0.2f, 0.05f, (this.age - 15f) / 25f);
         super.tick();
     }
 
@@ -58,8 +53,8 @@ public class FireParticle extends SpriteBillboardParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(DefaultParticleType parameters, ClientWorld world, double x, double y, double z, double dx, double dy, double dz) {
-            return new FireParticle(world, x, y, z, this.sprites, dx, dy, dz);
+        public Particle createParticle(DefaultParticleType parameters, ClientWorld world, double x, double y, double z, double vx, double vy, double vz) {
+            return new FireParticle(world, x, y, z, this.sprites, vx, vy, vz);
         }
     }
 }

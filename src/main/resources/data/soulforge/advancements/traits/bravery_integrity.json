@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "soulforge:bravery_integrity"
+      "item": "soulforge:soul",
+      "nbt": "{trait1:\"Bravery\",trait2:\"Integrity\"}"
     },
     "title": {
       "translate": "advancements.soulforge.bravery_integrity.title"

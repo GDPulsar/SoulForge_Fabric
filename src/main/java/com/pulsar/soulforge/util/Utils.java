@@ -128,27 +128,14 @@ public class Utils {
 
     public static Text getTraitText(SoulComponent playerSoul) {
         MutableText text = Text.literal(playerSoul.getTrait(0).getName());
-        if (playerSoul.isPure()) text = Text.literal("Pure ").append(text);
-        if (playerSoul.getTrait(0) == Traits.bravery) text = text.formatted(Formatting.GOLD);
-        if (playerSoul.getTrait(0) == Traits.justice) text = text.formatted(Formatting.YELLOW);
-        if (playerSoul.getTrait(0) == Traits.kindness) text = text.formatted(Formatting.GREEN);
-        if (playerSoul.getTrait(0) == Traits.patience) text = text.formatted(Formatting.BLUE);
-        if (playerSoul.getTrait(0) == Traits.integrity) text = text.formatted(Formatting.DARK_BLUE);
-        if (playerSoul.getTrait(0) == Traits.perseverance) text = text.formatted(Formatting.DARK_PURPLE);
-        if (playerSoul.getTrait(0) == Traits.determination) text = text.formatted(Formatting.DARK_RED);
+        text = text.setStyle(playerSoul.getTrait(0).getStyle());
         if (playerSoul.getTraitCount() >= 2) {
             text = text.append(Text.literal("-").formatted(Formatting.RESET));
-            MutableText trait2 = Text.literal(playerSoul.getTrait(1).getName());
-            if (playerSoul.getTrait(1) == Traits.bravery) trait2 = trait2.formatted(Formatting.GOLD);
-            if (playerSoul.getTrait(1) == Traits.justice) trait2 = trait2.formatted(Formatting.YELLOW);
-            if (playerSoul.getTrait(1) == Traits.kindness) trait2 = trait2.formatted(Formatting.GREEN);
-            if (playerSoul.getTrait(1) == Traits.patience) trait2 = trait2.formatted(Formatting.BLUE);
-            if (playerSoul.getTrait(1) == Traits.integrity) trait2 = trait2.formatted(Formatting.DARK_BLUE);
-            if (playerSoul.getTrait(1) == Traits.perseverance) trait2 = trait2.formatted(Formatting.DARK_PURPLE);
-            if (playerSoul.getTrait(1) == Traits.determination) trait2 = trait2.formatted(Formatting.DARK_RED);
+            MutableText trait2 = Text.literal(playerSoul.getTrait(1).getName()).setStyle(playerSoul.getTrait(1).getStyle());
             text.append(trait2);
         }
-        if (playerSoul.isStrong() || playerSoul.getTraits().contains(Traits.determination)) text = text.formatted(Formatting.BOLD);
+        if (playerSoul.isPure()) text = Text.literal("Pure ").append(text);
+        if (playerSoul.isStrong() || playerSoul.getTraits().contains(Traits.determination)) text = text.setStyle(text.getStyle().withFormatting(Formatting.BOLD));
         return text;
     }
 
@@ -233,5 +220,18 @@ public class Utils {
 
     public static Vec3d nbtToVector(NbtList list) {
         return new Vec3d(list.getDouble(0), list.getDouble(1), list.getDouble(2));
+    }
+
+    public static boolean isInverted(SoulComponent playerSoul) {
+        if (playerSoul.getTraits().contains(Traits.fear) ||
+                playerSoul.getTraits().contains(Traits.ineptitude) ||
+                playerSoul.getTraits().contains(Traits.misery) ||
+                playerSoul.getTraits().contains(Traits.anxiety) ||
+                playerSoul.getTraits().contains(Traits.paranoia) ||
+                playerSoul.getTraits().contains(Traits.despair) ||
+                playerSoul.getTraits().contains(Traits.spite)) {
+            return true;
+        }
+        return false;
     }
 }

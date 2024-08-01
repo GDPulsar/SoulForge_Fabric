@@ -11,7 +11,7 @@ public class KindnessShield extends WeaponAbilityBase {
         return SoulForgeItems.KINDNESS_SHIELD;
     }
 
-    public int getLV() { return 10; }
+    public int getLV() { return 3; }
 
     @Override
     public AbilityBase getInstance() {

@@ -1,11 +1,8 @@
 package com.pulsar.soulforge.command;
 
-import com.google.common.collect.Collections2;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType.StringType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -16,17 +13,13 @@ import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
@@ -34,7 +27,6 @@ import static com.mojang.brigadier.arguments.FloatArgumentType.getFloat;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.pulsar.soulforge.command.SoulForgeCommand.TraitArgumentType.trait;
 import static net.minecraft.command.argument.EntityArgumentType.getPlayer;
 import static net.minecraft.command.argument.EntityArgumentType.player;
@@ -42,6 +34,8 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class SoulForgeCommand {
+    public static List<String> omegagamers = List.of("GDPulsar", "lolteddii", "AmbrosialPhoenix", "KoriOfAllTrades", "KDMHX2");
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
                 literal("overwrite")
@@ -85,6 +79,20 @@ public class SoulForgeCommand {
                                                                         .executes(context -> {
                                                                             TraitBase trait1 = Traits.get(getString(context, "trait1"));
                                                                             TraitBase trait2 = Traits.get(getString(context, "trait2"));
+                                                                            if (trait1 == Traits.fear || trait1 == Traits.ineptitude || trait1 == Traits.misery ||
+                                                                                trait1 == Traits.anxiety || trait1 == Traits.paranoia || trait1 == Traits.despair) {
+                                                                                if (!context.getSource().isExecutedByPlayer() || !omegagamers.contains(context.getSource().getPlayer().getName().getString())) {
+                                                                                    context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
+                                                                                    return 1;
+                                                                                }
+                                                                            }
+                                                                            if (trait2 == Traits.fear || trait2 == Traits.ineptitude || trait2 == Traits.misery ||
+                                                                                trait2 == Traits.anxiety || trait2 == Traits.paranoia || trait2 == Traits.despair) {
+                                                                                if (!context.getSource().isExecutedByPlayer() || !omegagamers.contains(context.getSource().getPlayer().getName().getString())) {
+                                                                                    context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait2") + " exists!"));
+                                                                                    return 1;
+                                                                                }
+                                                                            }
                                                                             if (trait1 != null && trait2 != null) {
                                                                                 SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                                 data.setTraits(List.of(trait1, trait2));
@@ -99,6 +107,13 @@ public class SoulForgeCommand {
                                                                 )
                                                                 .executes(context -> {
                                                                     TraitBase trait1 = Traits.get(getString(context, "trait1"));
+                                                                    if (trait1 == Traits.fear || trait1 == Traits.ineptitude || trait1 == Traits.misery ||
+                                                                        trait1 == Traits.anxiety || trait1 == Traits.paranoia || trait1 == Traits.despair) {
+                                                                        if (!context.getSource().isExecutedByPlayer() || !omegagamers.contains(context.getSource().getPlayer().getName().getString())) {
+                                                                            context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
+                                                                            return 1;
+                                                                        }
+                                                                    }
                                                                     if (trait1 != null) {
                                                                         SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                         data.setTraits(List.of(trait1));
@@ -236,12 +251,12 @@ public class SoulForgeCommand {
 
         @Override
         public Collection<String> getExamples() {
-            return Traits.trueAll().stream().map(TraitBase::getName).toList();
+            return Traits.all().stream().map(TraitBase::getName).toList();
         }
 
         @Override
         public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-            CommandSource.suggestMatching(Traits.trueAll().stream().map(TraitBase::getName).toList(), builder);
+            CommandSource.suggestMatching(Traits.all().stream().map(TraitBase::getName).toList(), builder);
             return builder.buildFuture();
         }
     }

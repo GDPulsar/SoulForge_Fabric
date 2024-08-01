@@ -9,3 +9,4 @@ accessible field net/minecraft/client/render/entity/LivingEntityRenderer feature
 accessible method net/minecraft/entity/projectile/ProjectileUtil getCollision (Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;)Lnet/minecraft/util/hit/HitResult;
 accessible method net/minecraft/entity/projectile/PersistentProjectileEntity canHit (Lnet/minecraft/entity/Entity;)Z
 accessible field net/minecraft/client/render/entity/EntityRenderer dispatcher Lnet/minecraft/client/render/entity/EntityRenderDispatcher;
+accessible method net/minecraft/client/world/ClientWorld tickTime ()V

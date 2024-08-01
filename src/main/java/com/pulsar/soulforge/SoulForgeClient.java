@@ -25,6 +25,7 @@ import com.pulsar.soulforge.item.weapons.JusticeCrossbow;
 import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.siphon.Siphon;
+import com.pulsar.soulforge.trait.Traits;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
@@ -36,10 +37,7 @@ import me.x150.renderer.render.Renderer3d;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.*;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
@@ -171,6 +169,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.RAILKILLER_ENTITY_TYPE, RailkillerRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.PLAYER_SOUL_ENTITY_TYPE, PlayerSoulRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.DETERMINATION_SHOT_ENTITY_TYPE, DeterminationShotRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.FEAR_BOMB_ENTITY_TYPE, FearBombRenderer::new);
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
 		HudRenderCallback.EVENT.register(new SoulResetOverlay());
@@ -255,6 +254,23 @@ public class SoulForgeClient implements ClientModInitializer {
 			return Float.NEGATIVE_INFINITY;
 		};
 		ModelPredicateProviderRegistry.register(new Identifier("siphon_type"), siphonProvider);
+
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
+			int color = 0x000000;
+			if (tintIndex == 0) {
+				try {
+					return Traits.get(stack.getOrCreateNbt().getString("trait1")).getColor();
+				} catch (NullPointerException ignored) {}
+			}
+			if (tintIndex == 1) {
+				try {
+					return Traits.get(stack.getOrCreateNbt().getString("trait2")).getColor();
+				} catch (NullPointerException ignored) {
+					return 0xFF80FF;
+				}
+			}
+			return color;
+		}, SoulForgeItems.SOUL);
 
 		ClientNetworkingHandler.registerPackets();
 

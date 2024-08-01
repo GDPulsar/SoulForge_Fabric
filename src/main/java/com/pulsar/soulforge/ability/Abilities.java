@@ -21,29 +21,24 @@ public class Abilities {
     }
 
     public static AbilityBase get(String name) {
-        for (TraitBase trait : Traits.all()) {
-            for (AbilityBase ability : List.copyOf(trait.getAbilities())) {
-                if (Objects.equals(ability.getName(), name)) {
-                    return ability.getInstance();
+        // work
+        for (TraitBase trait : Traits.trueAll()) {
+            if (trait != Traits.spite) {
+                for (AbilityBase ability : List.copyOf(trait.getAbilities())) {
+                    if (Objects.equals(ability.getName(), name)) {
+                        return ability.getInstance();
+                    }
                 }
             }
-            if (trait != Traits.determination && trait != Traits.perseverance) {
+            if (Constants.pureAbilities.containsKey(trait)) {
                 if (Objects.equals(Constants.pureAbilities.get(trait).getName(), name)) {
                     return Constants.pureAbilities.get(trait).getInstance();
                 }
             }
         }
-        for (TraitBase trait1 : Traits.all()) {
-            if (trait1 != Traits.determination) {
-                for (TraitBase trait2 : Traits.all()) {
-                    if (trait2 != Traits.determination && trait2 != trait1) {
-                        for (AbilityBase ability : Constants.getDualTraitAbilities(List.of(trait1, trait2))) {
-                            if (Objects.equals(ability.getName(), name)) {
-                                return ability.getInstance();
-                            }
-                        }
-                    }
-                }
+        for (AbilityBase ability : Constants.dualAbilities) {
+            if (Objects.equals(ability.getName(), name)) {
+                return ability.getInstance();
             }
         }
         return null;

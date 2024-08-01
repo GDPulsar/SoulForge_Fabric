@@ -3,7 +3,9 @@ package com.pulsar.soulforge.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.accessors.HasTickManager;
 import com.pulsar.soulforge.accessors.OwnableMinion;
+import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.WorldBaseComponent;
@@ -12,12 +14,14 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.effects.VulnerabilityEffect;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
+import com.pulsar.soulforge.event.LivingEntityTick;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.devices.devices.RevivalIdol;
 import com.pulsar.soulforge.shield.ShieldBlockCallback;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.tag.SoulForgeTags;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -38,6 +42,7 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -54,9 +59,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(LivingEntity.class)
-abstract class LivingEntityMixin extends Entity {
+abstract class LivingEntityMixin extends Entity implements ValueHolder {
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
@@ -106,8 +113,16 @@ abstract class LivingEntityMixin extends Entity {
         return amount * multiplier;
     }
 
-    @Inject(method = "damage", at = @At("HEAD"))
+    @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void whenDamaged(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
+        if (hasInt("HangToAThreadTimer") && getInt("HangToAThreadTimer") > 0
+                && (!hasBool("HangToAThreadDamaging") || !getBool("HangToAThreadDamaging"))) {
+            float totalDamage = 0f;
+            if (hasFloat("HangToAThreadDamage")) totalDamage = getFloat("HangToAThreadDamage");
+            totalDamage += damage;
+            setFloat("HangToAThreadDamage", totalDamage);
+            cir.setReturnValue(false);
+        }
         if (source.getAttacker() instanceof ServerPlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             float targetDefence;
@@ -539,5 +554,123 @@ abstract class LivingEntityMixin extends Entity {
             }
         }
         return original;
+    }
+
+    HashMap<String, Float> floatVals = new HashMap<>();
+    HashMap<String, Integer> intVals = new HashMap<>();
+    HashMap<String, Boolean> boolVals = new HashMap<>();
+    HashMap<String, Vec3d> vecVals = new HashMap<>();
+
+    public float getFloat(String key) {
+        return floatVals.get(key);
+    }
+    public void setFloat(String key, float value) {
+        floatVals.put(key, value);
+    }
+    public void removeFloat(String key) {
+        floatVals.remove(key);
+    }
+    public boolean hasFloat(String key) {
+        return floatVals.containsKey(key);
+    }
+    public int getInt(String key) {
+        return intVals.get(key);
+    }
+    public void setInt(String key, int value) {
+        intVals.put(key, value);
+    }
+    public void removeInt(String key) {
+        intVals.remove(key);
+    }
+    public boolean hasInt(String key) {
+        return intVals.containsKey(key);
+    }
+    public boolean getBool(String key) {
+        return boolVals.get(key);
+    }
+    public void setBool(String key, boolean value) {
+        boolVals.put(key, value);
+    }
+    public void removeBool(String key) {
+        boolVals.remove(key);
+    }
+    public boolean hasBool(String key) {
+        return boolVals.containsKey(key);
+    }
+    public Vec3d getVec(String key) {
+        return vecVals.get(key);
+    }
+    public void setVec(String key, Vec3d value) {
+        vecVals.put(key, value);
+    }
+    public void removeVec(String key) {
+        vecVals.remove(key);
+    }
+    public boolean hasVec(String key) {
+        return vecVals.containsKey(key);
+    }
+
+    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    private void soulforge$addCustomData(NbtCompound nbt, CallbackInfo ci) {
+        NbtCompound floatNbt = new NbtCompound();
+        for (Map.Entry<String, Float> entry : floatVals.entrySet()) {
+            floatNbt.putFloat(entry.getKey(), entry.getValue());
+        }
+        nbt.put("floatVals", floatNbt);
+
+        NbtCompound intNbt = new NbtCompound();
+        for (Map.Entry<String, Integer> entry : intVals.entrySet()) {
+            intNbt.putInt(entry.getKey(), entry.getValue());
+        }
+        nbt.put("intVals", intNbt);
+
+        NbtCompound boolNbt = new NbtCompound();
+        for (Map.Entry<String, Boolean> entry : boolVals.entrySet()) {
+            boolNbt.putBoolean(entry.getKey(), entry.getValue());
+        }
+        nbt.put("boolVals", boolNbt);
+
+        NbtCompound vecNbt = new NbtCompound();
+        for (Map.Entry<String, Vec3d> entry : vecVals.entrySet()) {
+            vecNbt.put(entry.getKey(), Utils.vectorToNbt(entry.getValue()));
+        }
+        nbt.put("vecVals", vecNbt);
+    }
+
+    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+    private void soulforge$readCustomData(NbtCompound nbt, CallbackInfo ci) {
+        NbtCompound floatNbt = nbt.getCompound("floatVals");
+        floatVals = new HashMap<>();
+        for (String key : floatNbt.getKeys()) {
+            floatVals.put(key, floatNbt.getFloat(key));
+        }
+
+        NbtCompound intNbt = nbt.getCompound("intVals");
+        intVals = new HashMap<>();
+        for (String key : intNbt.getKeys()) {
+            intVals.put(key, intNbt.getInt(key));
+        }
+
+        NbtCompound boolNbt = nbt.getCompound("boolVals");
+        boolVals = new HashMap<>();
+        for (String key : boolNbt.getKeys()) {
+            boolVals.put(key, boolNbt.getBoolean(key));
+        }
+
+        NbtCompound vecNbt = nbt.getCompound("vecVals");
+        vecVals = new HashMap<>();
+        for (String key : floatNbt.getKeys()) {
+            vecVals.put(key, Utils.nbtToVector(vecNbt.getList(key, NbtElement.DOUBLE_TYPE)));
+        }
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void soulforge$onEntityTick(CallbackInfo ci) {
+        LivingEntityTick.tick((LivingEntity)(Object)this);
+    }
+
+    @Inject(method = "tickCramming", at = @At("HEAD"), cancellable = true)
+    private void canTickCramming(CallbackInfo ci) {
+        if (!((HasTickManager)this.getWorld()).getTickManager().shouldTick()) ci.cancel();
     }
 }

@@ -1,13 +1,14 @@
 {
   "display": {
     "icon": {
-      "item": "soulforge:bravery_perseverance"
+      "item": "soulforge:soul",
+      "nbt": "{trait1:\"Integrity\",trait2:\"Integrity\"}"
     },
     "title": {
-      "translate": "advancements.soulforge.any_dual.title"
+      "translate": "advancements.soulforge.any_pure.title"
     },
     "description": {
-      "translate": "advancements.soulforge.any_dual.description"
+      "translate": "advancements.soulforge.any_pure.description"
     },
     "frame": "goal",
     "show_toast": true,

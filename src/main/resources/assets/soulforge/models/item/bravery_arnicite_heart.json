@@ -1,7 +1,6 @@
 {
   "parent": "soulforge:item/soul",
   "textures": {
-    "0": "soulforge:item/souls/bravery_bravery",
-    "particle": "soulforge:item/souls/bravery_bravery"
+    "0": "soulforge:item/bravery"
   }
 }

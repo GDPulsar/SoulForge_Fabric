@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "soulforge:kindness_patience"
+      "item": "soulforge:soul",
+      "nbt": "{trait1:\"Kindness\",trait2:\"Patience\"}"
     },
     "title": {
       "translate": "advancements.soulforge.kindness_patience.title"

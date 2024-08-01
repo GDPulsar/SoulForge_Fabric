@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -12,7 +13,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -57,10 +57,10 @@ public class Flamethrower extends MagicItem {
                 playerSoul.resetLastCastTime();
             } else {
                 Vec3d handPos = Utils.getArmPosition(user);
-                for (int i = 0; i < 5; i++) {
-                    world.addParticle(ParticleTypes.FLAME,
+                for (int i = 0; i < 10; i++) {
+                    world.addParticle(SoulForgeParticles.FIRE_PARTICLE,
                             handPos.x, handPos.y, handPos.z,
-                            (user.getRotationVector().x + Math.random() / 2f - 0.25f) / 4f, Math.random() / 8f, (user.getRotationVector().z + Math.random() / 2f - 0.25f) / 4f);
+                            (user.getRotationVector().x + Math.random() / 5f - 0.1f) * 7f, Math.random() / 2f - 0.25f, (user.getRotationVector().z + Math.random() / 5f - 0.1f) * 7f);
                 }
             }
         }

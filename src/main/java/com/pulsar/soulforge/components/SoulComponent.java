@@ -55,8 +55,6 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
     void setStyleRank(int styleRank);
     int getHate();
     void setHate(int hate);
-    boolean getInverted();
-    void setInverted(boolean inverted);
 
     float getMagic();
     void setMagic(float magic);

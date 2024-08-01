@@ -11,8 +11,8 @@ import com.pulsar.soulforge.ability.patience.*;
 import com.pulsar.soulforge.ability.perseverance.*;
 import com.pulsar.soulforge.trait.TraitBase;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -107,10 +107,10 @@ public class Spite implements TraitBase {
     }
 
     @Override
-    public Formatting getFormatting() { return Formatting.DARK_RED; }
+    public Style getStyle() { return Style.EMPTY.withColor(getColor()); }
 
     @Override
     public int getColor() {
-        return 0xFF0000;
+        return 0xB20000;
     }
 }

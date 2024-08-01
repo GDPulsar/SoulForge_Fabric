@@ -1,0 +1,13 @@
+{
+  "type": "soulforge:soul_forge_recipe",
+  "input": {
+    "item": "soulforge:arnicite"
+  },
+  "ingredients": [
+    { "item": "soulforge:determination_essence" }
+  ],
+  "result": {
+    "item": "soulforge:determination_arnicite",
+    "count": 1
+  }
+}

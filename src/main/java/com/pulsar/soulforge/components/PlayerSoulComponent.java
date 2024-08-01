@@ -74,7 +74,6 @@ public class PlayerSoulComponent implements SoulComponent {
     private int styleRank = 0;
     private int lastStyleIncrease = 0;
     private int hate = 0;
-    private boolean inverted = false;
     private float magic = 0;
     private AbilityList abilities = new AbilityList();
     private List<String> tags = new ArrayList<>();
@@ -361,6 +360,9 @@ public class PlayerSoulComponent implements SoulComponent {
         if (traits.contains(Traits.determination)) {
             multiplier += 0.1f * getStyleRank();
         }
+        if (Utils.isInverted(this)) {
+            multiplier += 0.5f;
+        }
         return MathHelper.floor(effLv*multiplier);
     }
 
@@ -457,16 +459,6 @@ public class PlayerSoulComponent implements SoulComponent {
     @Override
     public void setHate(int hate) {
         this.hate = MathHelper.clamp(hate, 0, 100);
-    }
-
-    @Override
-    public boolean getInverted() {
-        return this.inverted;
-    }
-
-    @Override
-    public void setInverted(boolean inverted) {
-        this.inverted = inverted;
     }
 
     @Override
@@ -767,7 +759,6 @@ public class PlayerSoulComponent implements SoulComponent {
             buf.writeVarInt(styleRank);
             buf.writeVarInt(lastStyleIncrease);
             buf.writeVarInt(hate);
-            buf.writeBoolean(inverted);
             buf.writeFloat(magic);
 
             buf.writeVarInt(abilities.getAll().size());
@@ -835,16 +826,16 @@ public class PlayerSoulComponent implements SoulComponent {
         this.styleRank = buf.readVarInt();
         this.lastStyleIncrease = buf.readVarInt();
         this.hate = buf.readVarInt();
-        this.inverted = buf.readBoolean();
         this.magic = buf.readFloat();
 
-        int activeCount = buf.readVarInt();
+        int abilityCount = buf.readVarInt();
         AbilityList abilityList = new AbilityList();
-        for (int i = 0; i < activeCount; i++) {
+        for (int i = 0; i < abilityCount; i++) {
             String abilityName = buf.readString();
             try {
+                NbtCompound nbt = buf.readNbt();
                 AbilityBase ability = Abilities.get(abilityName);
-                ability.readNbt(buf.readNbt());
+                ability.readNbt(nbt);
                 abilityList.add(ability);
             } catch (NullPointerException e) {
                 SoulForge.LOGGER.warn("Ability does not exist: {}", abilityName);
@@ -1325,7 +1316,6 @@ public class PlayerSoulComponent implements SoulComponent {
         lv = tag.getInt("lv");
         exp = tag.getInt("exp");
         hate = tag.getInt("hate");
-        inverted = tag.getBoolean("inverted");
         magic = tag.getFloat("magic");
         strong = tag.getBoolean("strong");
         pure = tag.getBoolean("pure");
@@ -1396,7 +1386,6 @@ public class PlayerSoulComponent implements SoulComponent {
         tag.putInt("lv", lv);
         tag.putInt("exp", exp);
         tag.putInt("hate", hate);
-        tag.putBoolean("inverted", inverted);
         tag.putFloat("magic", magic);
         tag.putBoolean("strong", strong);
         tag.putBoolean("pure", pure);

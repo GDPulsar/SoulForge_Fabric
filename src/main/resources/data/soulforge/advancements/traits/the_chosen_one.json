@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "soulforge:determination"
+      "item": "soulforge:soul",
+      "nbt": "{trait1:\"Determination\",trait2:\"Determination\"}"
     },
     "title": {
       "translate": "advancements.soulforge.the_chosen_one.title"
