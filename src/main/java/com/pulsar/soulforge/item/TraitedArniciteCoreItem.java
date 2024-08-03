@@ -5,7 +5,7 @@ import com.pulsar.soulforge.client.item.TraitedArniciteCoreItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.TraitBase;
-import dev.kosmx.playerAnim.api.layered.AnimationContainer;
+import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,14 +15,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -38,7 +36,20 @@ public class TraitedArniciteCoreItem extends Item implements GeoItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-        return TypedActionResult.pass(itemStack);
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+        if ((playerSoul.getTraits().contains(trait) || playerSoul.getTraits().contains(Utils.getInvertedVariant(trait)))
+                && !user.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) {
+            if (Utils.isInverted(playerSoul) && playerSoul.getMagicGauge() < playerSoul.getMagicGaugeMax()) {
+                float adding = 100f - playerSoul.getMagic();
+                playerSoul.setMagic(playerSoul.getMagic() + 100f);
+                playerSoul.setMagicGauge(playerSoul.getMagicGauge() + (10000f - adding));
+                user.giveItemStack(new ItemStack(SoulForgeItems.ARNICITE_CORE));
+                user.setCurrentHand(hand);
+                user.getStackInHand(hand).decrement(1);
+                return TypedActionResult.consume(itemStack);
+            }
+        }
+        return TypedActionResult.fail(itemStack);
     }
 
     public AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);

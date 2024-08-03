@@ -3,7 +3,10 @@ package com.pulsar.soulforge.trait.traits;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.kindness.*;
+import com.pulsar.soulforge.ability.misery.ChildOfOmelas;
 import com.pulsar.soulforge.ability.misery.HangToAThread;
+import com.pulsar.soulforge.ability.misery.Pestilence;
+import com.pulsar.soulforge.ability.misery.Plaguebearer;
 import com.pulsar.soulforge.trait.TraitBase;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -17,7 +20,7 @@ import java.util.List;
 public class Misery implements TraitBase {
     public final String name = "Misery";
     public final Identifier identifier = new Identifier(SoulForge.MOD_ID, "misery");
-    public final List<AbilityBase> abilities = new ArrayList<>(Arrays.asList(
+    public final List<AbilityBase> abilities = new ArrayList<AbilityBase>(Arrays.asList(
             new AllyHeal(),
             new Overclock(),
             new ExpandingForce(),
@@ -27,7 +30,10 @@ public class Misery implements TraitBase {
             new PainSplit(),
             new ProtectiveTouch(),
             new SelfHeal(),
-            new HangToAThread()
+            new HangToAThread(),
+            new ChildOfOmelas(),
+            new Pestilence(),
+            new Plaguebearer()
     ));
 
     @Override

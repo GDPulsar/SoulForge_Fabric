@@ -43,6 +43,12 @@
       "soulforge:buzzer"
     ]
   },
+  "eepy": {
+    "subtitle": "subtitles.soulforge.eepy",
+    "sounds": [
+      "soulforge:eepy"
+    ]
+  },
   "libmo": {
     "subtitle": "subtitles.soulforge.libmo",
     "sounds": [
@@ -77,6 +83,12 @@
     "subtitle": "subtitles.soulforge.heal",
     "sounds": [
       "soulforge:heal"
+    ]
+  },
+  "trance_heartbeat": {
+    "subtitle": "subtitles.soulforge.trance_heartbeat",
+    "sounds": [
+      "soulforge:trance_heartbeat"
     ]
   },
   "mus_mtgameshow": {

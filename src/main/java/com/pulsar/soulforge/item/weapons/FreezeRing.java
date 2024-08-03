@@ -3,6 +3,7 @@ package com.pulsar.soulforge.item.weapons;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
+import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -10,7 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
@@ -74,8 +74,7 @@ public class FreezeRing extends MagicItem {
                                 if (living instanceof PlayerEntity targetPlayer) {
                                     if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer)) continue;
                                 }
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 30*playerSoul.getLV(), (int)(playerSoul.getLV()/5f) - 1));
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 30*playerSoul.getLV(), Math.max((int)(playerSoul.getLV()/5f) - 1, 1)));
+                                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.EEPY, 30*playerSoul.getLV(), playerSoul.getEffectiveLV()));
                                 styleIncrease += 5f * (1f + Utils.getTotalDebuffLevel(living)/10f);
                             }
                         }

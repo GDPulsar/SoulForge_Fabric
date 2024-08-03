@@ -8,6 +8,7 @@ import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
 import com.pulsar.soulforge.ability.duals.PerfectedAuraTechnique;
 import com.pulsar.soulforge.ability.integrity.Platforms;
+import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.advancement.SoulForgeCriterions;
 import com.pulsar.soulforge.armor.PlatformBootsItem;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
@@ -75,6 +76,7 @@ public class PlayerSoulComponent implements SoulComponent {
     private int lastStyleIncrease = 0;
     private int hate = 0;
     private float magic = 0;
+    private float magicGauge = 0;
     private AbilityList abilities = new AbilityList();
     private List<String> tags = new ArrayList<>();
     private HashMap<String, Float> values = new HashMap<>();
@@ -102,6 +104,7 @@ public class PlayerSoulComponent implements SoulComponent {
         style = 0;
         styleRank = 0;
         magic = 100;
+        if (Utils.isInverted(this)) magicGauge = 1000f;
         updateAbilities();
         updateTags();
     }
@@ -472,6 +475,21 @@ public class PlayerSoulComponent implements SoulComponent {
     }
 
     @Override
+    public float getMagicGauge() {
+        return magicGauge;
+    }
+
+    @Override
+    public float getMagicGaugeMax() {
+        return 30000f;
+    }
+
+    @Override
+    public void setMagicGauge(float magicGauge) {
+        this.magicGauge = Math.min(Math.max(magicGauge, 0), getMagicGaugeMax());
+    }
+
+    @Override
     public List<AbilityBase> getAbilities() { return List.copyOf(this.abilities.getAll()); }
 
     @Override
@@ -531,7 +549,8 @@ public class PlayerSoulComponent implements SoulComponent {
             }
         }
         updateTags();
-        setMagic(100f);
+        magic = 100f;
+        if (Utils.isInverted(this)) magicGauge = 1000f;
     }
 
     @Override
@@ -553,9 +572,11 @@ public class PlayerSoulComponent implements SoulComponent {
         float manaStartTime = 5f - MathHelper.clamp(getStyleRank(), 0, 5);
         if (player.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) manaSicknessAmplifier = Objects.requireNonNull(player.getStatusEffect(SoulForgeEffects.MANA_SICKNESS)).getAmplifier() + 1;
         if (lastCastTime/20f > (manaStartTime*(manaSicknessAmplifier+1))/Math.ceil(lv/5f)) {
-            float moveDist = (float) player.getPos().distanceTo(lastPos);
-            if ((lastCastTime%(60-lv*2) == 0 && moveDist < 0.01f) || (lastCastTime%(120-lv*4) == 0 && moveDist >= 0.01f) && manaSicknessAmplifier < 4) {
-                manaRegenRate += 1/20f - manaSicknessAmplifier/80f;
+            if (getMagic() < 100f) {
+                float moveDist = (float) player.getPos().distanceTo(lastPos);
+                if ((lastCastTime % (60 - lv * 2) == 0 && moveDist < 0.01f) || (lastCastTime % (120 - lv * 4) == 0 && moveDist >= 0.01f) && manaSicknessAmplifier < 4) {
+                    manaRegenRate += 1 / 20f - manaSicknessAmplifier / 80f;
+                }
             }
         } else {
             manaRegenRate = 0;
@@ -567,7 +588,49 @@ public class PlayerSoulComponent implements SoulComponent {
                 }
             } catch (Exception ignored) {}
         }
-        setMagic(magic + manaRegenRate);
+        ValueHolder values = (ValueHolder)player;
+        float tumorMultiplier = 1f;
+        if (player.hasStatusEffect(SoulForgeEffects.MANA_TUMOR)) {
+            StatusEffectInstance tumor = player.getStatusEffect(SoulForgeEffects.MANA_TUMOR);
+            if (tumor.getAmplifier() == 1) {
+                tumorMultiplier = 0.9f;
+            }
+            if (tumor.getAmplifier() == 2) {
+                tumorMultiplier = 0.75f;
+            }
+            if (values.hasUUID("TumorOwner")) {
+                PlayerEntity tumorOwner = player.getWorld().getPlayerByUuid(values.getUUID("TumorOwner"));
+                if (tumorOwner != null) {
+                    SoulComponent playerSoul = SoulForge.getPlayerSoul(tumorOwner);
+                    playerSoul.setMagic(playerSoul.getMagic() + manaRegenRate * (1f - tumorMultiplier));
+                }
+            }
+        }
+        float drainingMultiplier = 1f;
+        if (values.hasUUID("DrainingField")) {
+            PlayerEntity drainedBy = player.getWorld().getPlayerByUuid(values.getUUID("DrainingField"));
+            if (drainedBy != null) {
+                drainingMultiplier = 2f/3f;
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(drainedBy);
+                if (playerSoul.getMagic() >= 100f) playerSoul.setMagicGauge(playerSoul.getMagicGauge() + manaRegenRate * (1f - drainingMultiplier));
+                else playerSoul.setMagic(playerSoul.getMagic() + manaRegenRate * (1f - drainingMultiplier));
+            }
+        }
+        if (values.hasUUID("ReapingField") && values.hasFloat("ReapingFieldAmount")) {
+            PlayerEntity reapedBy = player.getWorld().getPlayerByUuid(values.getUUID("ReapingField"));
+            if (reapedBy != null) {
+                drainingMultiplier = 1f - values.getFloat("ReapingFieldAmount");
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(reapedBy);
+                if (playerSoul.getMagic() >= 100f) playerSoul.setMagicGauge(playerSoul.getMagicGauge() + manaRegenRate * (1f - drainingMultiplier));
+                else playerSoul.setMagic(playerSoul.getMagic() + manaRegenRate * (1f - drainingMultiplier));
+            }
+        }
+        float magicIncrease = manaRegenRate * tumorMultiplier * drainingMultiplier;
+        if (Utils.isInverted(this)) {
+            magicIncrease = Math.min(magicIncrease, magicGauge);
+            magicGauge -= magicIncrease;
+        }
+        setMagic(magic + magicIncrease);
         lastCastTime++;
         lastPos = player.getPos();
 
@@ -760,6 +823,7 @@ public class PlayerSoulComponent implements SoulComponent {
             buf.writeVarInt(lastStyleIncrease);
             buf.writeVarInt(hate);
             buf.writeFloat(magic);
+            buf.writeFloat(magicGauge);
 
             buf.writeVarInt(abilities.getAll().size());
             for (AbilityBase ability : abilities.getAll()) {
@@ -827,6 +891,7 @@ public class PlayerSoulComponent implements SoulComponent {
         this.lastStyleIncrease = buf.readVarInt();
         this.hate = buf.readVarInt();
         this.magic = buf.readFloat();
+        this.magicGauge = buf.readFloat();
 
         int abilityCount = buf.readVarInt();
         AbilityList abilityList = new AbilityList();
@@ -1317,6 +1382,7 @@ public class PlayerSoulComponent implements SoulComponent {
         exp = tag.getInt("exp");
         hate = tag.getInt("hate");
         magic = tag.getFloat("magic");
+        magicGauge = tag.getFloat("magicGauge");
         strong = tag.getBoolean("strong");
         pure = tag.getBoolean("pure");
         NbtCompound abilityNbt = tag.getCompound("abilities");
@@ -1387,6 +1453,7 @@ public class PlayerSoulComponent implements SoulComponent {
         tag.putInt("exp", exp);
         tag.putInt("hate", hate);
         tag.putFloat("magic", magic);
+        tag.putFloat("magicGauge", magicGauge);
         tag.putBoolean("strong", strong);
         tag.putBoolean("pure", pure);
         NbtCompound abilityNbt = new NbtCompound();
@@ -1432,6 +1499,7 @@ public class PlayerSoulComponent implements SoulComponent {
         lv = 1;
         exp = 0;
         magic = 100f;
+        if (Utils.isInverted(this)) magicGauge = 1000f;
         monsterSouls = new HashMap<>();
         playerSouls = new HashMap<>();
         removeWeapon(false);
@@ -1452,6 +1520,7 @@ public class PlayerSoulComponent implements SoulComponent {
         lv = 1;
         exp = 0;
         magic = 100f;
+        if (Utils.isInverted(this)) magicGauge = 1000f;
         monsterSouls = new HashMap<>();
         playerSouls = new HashMap<>();
         removeWeapon(false);

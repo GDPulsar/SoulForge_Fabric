@@ -8,12 +8,11 @@ import com.pulsar.soulforge.accessors.OwnableMinion;
 import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.WorldBaseComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.effects.VulnerabilityEffect;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
+import com.pulsar.soulforge.event.LivingDamageEvent;
+import com.pulsar.soulforge.event.LivingDeathEvent;
 import com.pulsar.soulforge.event.LivingEntityTick;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.devices.devices.RevivalIdol;
@@ -26,19 +25,13 @@ import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -52,15 +45,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Mixin(LivingEntity.class)
 abstract class LivingEntityMixin extends Entity implements ValueHolder {
@@ -68,7 +62,6 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
         super(type, world);
     }
 
-    @Shadow public abstract Collection<StatusEffectInstance> getStatusEffects();
     @Shadow public abstract ItemStack getMainHandStack();
 
     @Shadow public abstract ItemStack getStackInHand(Hand hand);
@@ -81,13 +74,9 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
 
     @Shadow public abstract boolean hasStatusEffect(StatusEffect effect);
 
-    @Shadow public abstract boolean isUndead();
+    @Shadow protected abstract boolean isSleepingInBed();
 
-    @Shadow public abstract AttributeContainer getAttributes();
-
-    @Shadow public abstract double getAttributeValue(EntityAttribute attribute);
-
-    @Shadow public abstract boolean isMobOrPlayer();
+    @Shadow @Nullable public abstract StatusEffectInstance getStatusEffect(StatusEffect effect);
 
     @Inject(method = "isBlocking", at=@At("HEAD"), cancellable = true)
     public void parryBlocking(CallbackInfoReturnable<Boolean> cir) {
@@ -102,165 +91,17 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
         }
     }
 
-    @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
-    private float onDamage(float amount) {
-        float multiplier = 1f;
-        for (StatusEffectInstance effect : this.getStatusEffects()) {
-            if (effect.getEffectType() instanceof VulnerabilityEffect) {
-                multiplier = 1f + 0.2f * effect.getAmplifier();
-            }
-        }
-        return amount * multiplier;
-    }
-
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
     private void whenDamaged(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
-        if (hasInt("HangToAThreadTimer") && getInt("HangToAThreadTimer") > 0
-                && (!hasBool("HangToAThreadDamaging") || !getBool("HangToAThreadDamaging"))) {
-            float totalDamage = 0f;
-            if (hasFloat("HangToAThreadDamage")) totalDamage = getFloat("HangToAThreadDamage");
-            totalDamage += damage;
-            setFloat("HangToAThreadDamage", totalDamage);
+        if (!LivingDamageEvent.onTakeDamage((LivingEntity)(Object)this, source, damage)) {
             cir.setReturnValue(false);
-        }
-        if (source.getAttacker() instanceof ServerPlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            float targetDefence;
-            if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float) this.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
-            else targetDefence = 0f;
-
-            float targetDamage;
-            if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDamage = (float) this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-            else targetDamage = 0f;
-
-            int expIncrease = (int)(damage * (1f + (targetDefence / 10f) + (targetDamage / 10f)));
-
-            WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
-            expIncrease = (int)(worldComponent.getExpMultiplier() * expIncrease);
-            if (this.isMobOrPlayer()) {
-                if (this.isPlayer()) {
-                    if (playerSoul.getPlayerSouls().containsKey(this.getUuidAsString())) {
-                        expIncrease = (int)(MathHelper.clamp(1f-playerSoul.getPlayerSouls().get(this.getUuidAsString())/3f, 0f, 1f) * expIncrease);
-                    }
-                } else {
-                    if (playerSoul.getMonsterSouls().containsKey(this.getType().getUntranslatedName())) {
-                        expIncrease = (int)(MathHelper.clamp(1f-playerSoul.getMonsterSouls().get(this.getType().getUntranslatedName())/50f, 0.2f, 1f) * expIncrease);
-                    }
-                }
-            }
-            playerSoul.setEXP(playerSoul.getEXP() + expIncrease);
-
-            if (source.isOf(DamageTypes.ARROW)) {
-                if (source.getSource() instanceof PersistentProjectileEntity projectile) {
-                    if (projectile.inBlockState == null) {
-                        float distance = this.distanceTo(source.getAttacker());
-                        boolean lineOfSight = player.canSee(projectile);
-                        int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
-                        playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
-                    }
-                }
-            }
-            if (source.isOf(DamageTypes.TRIDENT)) {
-                if (source.getSource() instanceof TridentEntity projectile) {
-                    if (projectile.inBlockState == null) {
-                        float distance = this.distanceTo(source.getAttacker());
-                        boolean lineOfSight = player.canSee(projectile);
-                        int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
-                        playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
-                    }
-                }
-            }
-            if (source.isOf(DamageTypes.EXPLOSION)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
-            }
-            if (source.isOf(DamageTypes.FALLING_ANVIL)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 10));
-            }
-            if (source.isOf(DamageTypes.FALLING_STALACTITE)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 5));
-            }
-            if (source.isOf(DamageTypes.FIREWORKS)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(DamageTypes.LIGHTNING_BOLT)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(DamageTypes.PLAYER_ATTACK)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage / 2f));
-            }
-            if (source.isOf(DamageTypes.PLAYER_EXPLOSION)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(DamageTypes.THROWN)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(SoulForgeDamageTypes.PARRY_DAMAGE_TYPE)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 3f));
-            }
-            if ((LivingEntity)(Object)this instanceof PlayerEntity targetPlayer) {
-                if (source.isOf(SoulForgeDamageTypes.PAIN_SPLIT_DAMAGE_TYPE)) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                    targetSoul.setStyle(targetSoul.getStyle() + (int)damage);
-                }
-            }
         }
     }
 
     @Inject(method = "onKilledBy", at = @At("HEAD"))
     private void whenKilled(LivingEntity adversary, CallbackInfo ci) {
-        if (adversary instanceof ServerPlayerEntity player) {
-            SoulComponent soulData = SoulForge.getPlayerSoul(player);
-            float targetHealth;
-            if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_MAX_HEALTH)) targetHealth = (float)this.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH);
-            else targetHealth = 0f;
-
-            float targetDefence;
-            if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float)this.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
-            else targetDefence = 0f;
-
-            float targetDamage;
-            if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDamage = (float)this.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-            else targetDamage = 0f;
-
-            int expIncrease;
-            if (this.isPlayer()) {
-                PlayerEntity targetPlayer = (PlayerEntity)(Object)this;
-                SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                expIncrease = (int)(250*(1+(targetDefence/10)*(targetSoul.getLV()/4)));
-            } else if (this.getType() == EntityType.ENDER_DRAGON) {
-                expIncrease = 3000;
-            } else if (this.getType() == EntityType.WITHER) {
-                expIncrease = 1500;
-            } else if (this.getType() == EntityType.ELDER_GUARDIAN) {
-                expIncrease = 500;
-            } else if (this.getType() == EntityType.EVOKER) {
-                expIncrease = 250;
-            } else if (this.getType() == EntityType.WARDEN) {
-                expIncrease = 1000;
-            } else if (this.getType() == EntityType.PIGLIN_BRUTE) {
-                expIncrease = 250;
-            } else {
-                expIncrease = (int)(targetHealth*(1+(targetDefence/10f)+(targetDamage/10f)));
-            }
-            WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
-            expIncrease = (int)(worldComponent.getExpMultiplier() * expIncrease);
-            if (this.isMobOrPlayer()) {
-                if (this.isPlayer()) {
-                    if (soulData.getPlayerSouls().containsKey(this.getUuidAsString())) {
-                        expIncrease = (int)(MathHelper.clamp(1f-soulData.getPlayerSouls().get(this.getUuidAsString())/3f, 0f, 1f) * expIncrease);
-                    }
-                } else {
-                    if (soulData.getMonsterSouls().containsKey(this.getType().getUntranslatedName())) {
-                        expIncrease = (int)(MathHelper.clamp(1f-soulData.getMonsterSouls().get(this.getType().getUntranslatedName())/50f, 0.2f, 1f) * expIncrease);
-                    }
-                }
-            }
-            soulData.setEXP(soulData.getEXP() + expIncrease);
-            if (this.isMobOrPlayer()) {
-                if (this.isPlayer()) soulData.addPlayerSoul(this.getUuidAsString(), 1);
-                else soulData.addMonsterSoul(this, 1);
-            }
-        }
+        LivingDeathEvent.onDeath((LivingEntity)(Object)this);
+        LivingDeathEvent.onKilledBy((LivingEntity)(Object)this, adversary);
     }
 
     @ModifyReturnValue(method="getJumpVelocity", at=@At("RETURN"))
@@ -327,16 +168,10 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
         return slipperiness;
     }*/
 
-    @Inject(method = "isImmobile", at=@At(value="HEAD"), cancellable = true)
-    protected void isImmobile(CallbackInfoReturnable<Boolean> cir) {
-        LivingEntity living = (LivingEntity)(Object)this;
-        if (living instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul != null) {
-                if (playerSoul.hasTag("immobile")) {
-                    cir.setReturnValue(true);
-                }
-            }
+    @Inject(method = "tickMovement", at=@At(value="HEAD"), cancellable = true)
+    protected void soulforge$isImmobile(CallbackInfo ci) {
+        if (hasBool("Immobilized") && getBool("Immobilized")) {
+            ci.cancel();
         }
     }
 
@@ -389,13 +224,11 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
     protected void jump(LivingEntity living, Vec3d vel) {
         if (living instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul != null) {
-                if (playerSoul.hasCast("Fearless Instincts")) {
-                    Vec3d vec3d = this.getVelocity();
-                    float angle = (float) (Math.atan2(-vec3d.z, -vec3d.x) + Math.PI / 2);
-                    this.setVelocity(this.getVelocity().add((-MathHelper.sin(angle) * 0.2F), 0.0, (MathHelper.cos(angle) * 0.2F)));
-                    return;
-                }
+            if (playerSoul.hasCast("Fearless Instincts")) {
+                Vec3d vec3d = this.getVelocity();
+                float angle = (float) (Math.atan2(-vec3d.z, -vec3d.x) + Math.PI / 2);
+                this.setVelocity(this.getVelocity().add((-MathHelper.sin(angle) * 0.2F), 0.0, (MathHelper.cos(angle) * 0.2F)));
+                return;
             }
         }
         this.setVelocity(vel);
@@ -560,6 +393,8 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
     HashMap<String, Integer> intVals = new HashMap<>();
     HashMap<String, Boolean> boolVals = new HashMap<>();
     HashMap<String, Vec3d> vecVals = new HashMap<>();
+    HashMap<String, UUID> uuidVals = new HashMap<>();
+
 
     public float getFloat(String key) {
         return floatVals.get(key);
@@ -609,6 +444,18 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
     public boolean hasVec(String key) {
         return vecVals.containsKey(key);
     }
+    public UUID getUUID(String key) {
+        return uuidVals.get(key);
+    }
+    public void setUUID(String key, UUID value) {
+        uuidVals.put(key, value);
+    }
+    public void removeUUID(String key) {
+        uuidVals.remove(key);
+    }
+    public boolean hasUUID(String key) {
+        return uuidVals.containsKey(key);
+    }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     private void soulforge$addCustomData(NbtCompound nbt, CallbackInfo ci) {
@@ -635,6 +482,12 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
             vecNbt.put(entry.getKey(), Utils.vectorToNbt(entry.getValue()));
         }
         nbt.put("vecVals", vecNbt);
+
+        NbtCompound uuidNbt = new NbtCompound();
+        for (Map.Entry<String, UUID> entry : uuidVals.entrySet()) {
+            uuidNbt.putUuid(entry.getKey(), entry.getValue());
+        }
+        nbt.put("uuidVals", uuidNbt);
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
@@ -659,8 +512,14 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
 
         NbtCompound vecNbt = nbt.getCompound("vecVals");
         vecVals = new HashMap<>();
-        for (String key : floatNbt.getKeys()) {
+        for (String key : vecNbt.getKeys()) {
             vecVals.put(key, Utils.nbtToVector(vecNbt.getList(key, NbtElement.DOUBLE_TYPE)));
+        }
+
+        NbtCompound uuidNbt = nbt.getCompound("uuidVals");
+        uuidVals = new HashMap<>();
+        for (String key : uuidNbt.getKeys()) {
+            uuidVals.put(key, uuidNbt.getUuid(key));
         }
     }
 
@@ -672,5 +531,57 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
     @Inject(method = "tickCramming", at = @At("HEAD"), cancellable = true)
     private void canTickCramming(CallbackInfo ci) {
         if (!((HasTickManager)this.getWorld()).getTickManager().shouldTick()) ci.cancel();
+    }
+
+    @Inject(method = "wakeUp", at = @At("HEAD"), cancellable = true)
+    private void soulforge$canWakeUp(CallbackInfo ci) {
+        if (this.hasStatusEffect(SoulForgeEffects.EEPY)) {
+            if (this.isSleepingInBed()) {
+                ci.cancel();
+            }
+        }
+    }
+
+    @ModifyConstant(method = "modifyAppliedDamage", constant = @Constant(intValue = 5))
+    private int soulforge$modifyResistanceMultiplier(int constant) {
+        return 10;
+    }
+
+    @ModifyConstant(method = "modifyAppliedDamage", constant = @Constant(intValue = 25))
+    private int soulforge$modifyResistanceSubtraction(int constant) {
+        return 50;
+    }
+
+    @ModifyConstant(method = "modifyAppliedDamage", constant = @Constant(floatValue = 25f))
+    private float soulforge$modifyResistanceDivision(float constant) {
+        return 50f;
+    }
+
+    @ModifyVariable(method = "modifyAppliedDamage", at = @At("STORE"), ordinal = 1)
+    private int soulforge$modifyResistanceDamage(int value) {
+        if (this.hasStatusEffect(SoulForgeEffects.VULNERABILITY)) {
+            return value + 5 * (this.getStatusEffect(SoulForgeEffects.VULNERABILITY).getAmplifier() + 1);
+        }
+        return value;
+    }
+
+    @ModifyArg(method = "modifyAppliedDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/DamageUtil;getInflictedDamage(FF)F"), index = 1)
+    private float soulforge$modifyProtectionLevel(float value) {
+        if (this.hasStatusEffect(SoulForgeEffects.VULNERABILITY)) {
+            for (int i = 0; i < this.getStatusEffect(SoulForgeEffects.VULNERABILITY).getAmplifier() + 1; i++) {
+                value *= 0.9f;
+            }
+        }
+        return value;
+    }
+
+    @ModifyReturnValue(method = "modifyAppliedDamage", at = @At("RETURN"))
+    private float soulforge$modifyAppliedDamage(float value, @Local DamageSource source) {
+        if (!source.isIn(DamageTypeTags.BYPASSES_EFFECTS) && !this.hasStatusEffect(StatusEffects.RESISTANCE)) {
+            if (this.hasStatusEffect(SoulForgeEffects.VULNERABILITY)) {
+                return value * ((this.getStatusEffect(SoulForgeEffects.VULNERABILITY).getAmplifier() + 1) * 0.1f);
+            }
+        }
+        return value;
     }
 }

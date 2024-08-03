@@ -11,6 +11,6 @@ public class CrushedEffect extends StatusEffect {
                 StatusEffectCategory.HARMFUL,
                 0x2e0a61
         );
-        this.addAttributeModifier(EntityAttributes.GENERIC_ARMOR, "fbfb68a5-3642-4fc9-94fa-0ed4806ddb96", -15, EntityAttributeModifier.Operation.ADDITION);
+        this.addAttributeModifier(EntityAttributes.GENERIC_ARMOR, "fbfb68a5-3642-4fc9-94fa-0ed4806ddb96", -8, EntityAttributeModifier.Operation.ADDITION);
     }
 }

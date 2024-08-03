@@ -2,6 +2,8 @@ package com.pulsar.soulforge.accessors;
 
 import net.minecraft.util.math.Vec3d;
 
+import java.util.UUID;
+
 public interface ValueHolder {
     float getFloat(String key);
     void setFloat(String key, float value);
@@ -19,4 +21,8 @@ public interface ValueHolder {
     void setVec(String key, Vec3d value);
     void removeVec(String key);
     boolean hasVec(String key);
+    UUID getUUID(String key);
+    void setUUID(String key, UUID value);
+    void removeUUID(String key);
+    boolean hasUUID(String key);
 }

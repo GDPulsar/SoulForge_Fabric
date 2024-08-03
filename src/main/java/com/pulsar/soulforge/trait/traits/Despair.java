@@ -2,6 +2,7 @@ package com.pulsar.soulforge.trait.traits;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
+import com.pulsar.soulforge.ability.despair.DrainingField;
 import com.pulsar.soulforge.ability.perseverance.*;
 import com.pulsar.soulforge.trait.TraitBase;
 import net.minecraft.text.MutableText;
@@ -16,13 +17,14 @@ import java.util.List;
 public class Despair implements TraitBase {
     public final String name = "Despair";
     public final Identifier identifier = new Identifier(SoulForge.MOD_ID, "despair");
-    public final List<AbilityBase> abilities = new ArrayList<>(Arrays.asList(
+    public final List<AbilityBase> abilities = new ArrayList<AbilityBase>(Arrays.asList(
             new Furioso(),
             new ColossalClaymore(),
             new MorphingWeaponry(),
             new Onrush(),
             new PerseveranceAura(),
-            new RendAsunder()
+            new RendAsunder(),
+            new DrainingField()
     ));
 
     @Override

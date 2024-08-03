@@ -70,7 +70,7 @@ public class FearBombs extends AbilityBase {
         float ticksToNextSummon = (float)Math.pow(2, -(Math.floor(toSummon.size()/5f)-1));
         int amountToSummon = Math.max((int)(1f/ticksToNextSummon), 1);
         timer++;
-        if (ticksToNextSummon >= timer) {
+        if (ticksToNextSummon <= timer) {
             for (int i = 0; i < amountToSummon; i++) {
                 if (!toSummon.isEmpty()) {
                     FearBombEntity bomb = toSummon.get((int) (Math.random() * toSummon.size()));

@@ -586,4 +586,13 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
         return original;
     }*/
+
+    @Inject(method = "wakeUp(ZZ)V", at = @At("HEAD"), cancellable = true)
+    private void soulforge$canWakeUp(CallbackInfo ci) {
+        if (this.hasStatusEffect(SoulForgeEffects.EEPY)) {
+            if (this.isSleepingInBed()) {
+                ci.cancel();
+            }
+        }
+    }
 }

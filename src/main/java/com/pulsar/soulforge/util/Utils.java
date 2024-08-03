@@ -3,6 +3,7 @@ package com.pulsar.soulforge.util;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -233,5 +234,16 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    public static TraitBase getInvertedVariant(TraitBase trait) {
+        if (trait == Traits.bravery) return Traits.fear;
+        if (trait == Traits.justice) return Traits.ineptitude;
+        if (trait == Traits.kindness) return Traits.misery;
+        if (trait == Traits.patience) return Traits.anxiety;
+        if (trait == Traits.integrity) return Traits.paranoia;
+        if (trait == Traits.perseverance) return Traits.despair;
+        if (trait == Traits.determination) return Traits.spite;
+        return null;
     }
 }

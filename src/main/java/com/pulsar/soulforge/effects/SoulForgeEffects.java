@@ -16,6 +16,9 @@ public class SoulForgeEffects {
     public static final StatusEffect FROSTBITE = new FrostbiteEffect();
     public static final StatusEffect FROSTBURN = new FrostburnEffect();
     public static final StatusEffect CREATIVE_ZONE = new CreativeZoneEffect();
+    public static final StatusEffect EEPY = new EepyEffect();
+    public static final StatusEffect MANA_TUMOR = new ManaTumorEffect();
+    public static final StatusEffect TUMOR_IMMUNITY = new TumorImmunityEffect();
     //public static final StatusEffect UNCHAINED_EFFECT = new UnchainedEffect();
 
     public static void registerEffects() {
@@ -28,6 +31,9 @@ public class SoulForgeEffects {
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "frostbite"), FROSTBITE);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "frostburn"), FROSTBURN);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "creative_zone"), CREATIVE_ZONE);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "eepy"), EEPY);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "mana_tumor"), MANA_TUMOR);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "tumor_immunity"), TUMOR_IMMUNITY);
         //Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "unchained_soul"), UNCHAINED_EFFECT);
     }
 }

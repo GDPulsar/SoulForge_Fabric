@@ -18,6 +18,7 @@ public class SoulForgeSounds {
     public static final Identifier SNOWGRAVE = new Identifier(SoulForge.MOD_ID, "snowgrave");
     public static final Identifier HEAL = new Identifier(SoulForge.MOD_ID, "heal");
     public static final Identifier PARRY = new Identifier(SoulForge.MOD_ID, "parry");
+    public static final Identifier EEPY = new Identifier(SoulForge.MOD_ID, "eepy");
     public static final Identifier UT_A_BULLET = new Identifier(SoulForge.MOD_ID, "ut_a_bullet");
     public static final Identifier UT_A_GRAB = new Identifier(SoulForge.MOD_ID, "ut_a_grab");
     public static final Identifier UT_BLASTER = new Identifier(SoulForge.MOD_ID, "ut_blaster");
@@ -53,6 +54,7 @@ public class SoulForgeSounds {
     public static SoundEvent SNOWGRAVE_EVENT = SoundEvent.of(SNOWGRAVE);
     public static SoundEvent HEAL_EVENT = SoundEvent.of(HEAL);
     public static SoundEvent PARRY_EVENT = SoundEvent.of(PARRY);
+    public static SoundEvent EEPY_EVENT = SoundEvent.of(EEPY);
     public static SoundEvent UT_A_BULLET_EVENT = SoundEvent.of(UT_A_BULLET);
     public static SoundEvent UT_A_GRAB_EVENT = SoundEvent.of(UT_A_GRAB);
     public static SoundEvent UT_BLASTER_EVENT = SoundEvent.of(UT_BLASTER);
@@ -94,6 +96,7 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, SNOWGRAVE, SNOWGRAVE_EVENT);
         Registry.register(Registries.SOUND_EVENT, HEAL, HEAL_EVENT);
         Registry.register(Registries.SOUND_EVENT, PARRY, PARRY_EVENT);
+        Registry.register(Registries.SOUND_EVENT, EEPY, EEPY_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_A_BULLET, UT_A_BULLET_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_A_GRAB, UT_A_GRAB_EVENT);
         Registry.register(Registries.SOUND_EVENT, UT_BLASTER, UT_BLASTER_EVENT);

@@ -58,6 +58,9 @@ public interface SoulComponent extends AutoSyncedComponent, CommonTickingCompone
 
     float getMagic();
     void setMagic(float magic);
+    float getMagicGauge();
+    float getMagicGaugeMax();
+    void setMagicGauge(float magicGauge);
 
     List<AbilityBase> getAbilities();
     List<AbilityBase> getActiveAbilities();

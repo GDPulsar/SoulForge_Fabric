@@ -10,3 +10,5 @@ accessible method net/minecraft/entity/projectile/ProjectileUtil getCollision (L
 accessible method net/minecraft/entity/projectile/PersistentProjectileEntity canHit (Lnet/minecraft/entity/Entity;)Z
 accessible field net/minecraft/client/render/entity/EntityRenderer dispatcher Lnet/minecraft/client/render/entity/EntityRenderDispatcher;
 accessible method net/minecraft/client/world/ClientWorld tickTime ()V
+accessible method net/minecraft/entity/LivingEntity isSleepingInBed ()Z
+accessible method net/minecraft/entity/LivingEntity setPositionInBed (Lnet/minecraft/util/math/BlockPos;)V

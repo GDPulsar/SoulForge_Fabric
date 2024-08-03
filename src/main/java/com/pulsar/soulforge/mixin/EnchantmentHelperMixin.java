@@ -1,5 +1,7 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.weapons.BraverySpear;
@@ -21,16 +23,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EnchantmentHelper.class)
 public class EnchantmentHelperMixin {
-    @Inject(method = "getLevel", at=@At("RETURN"), cancellable = true)
-    private static void modifyEnchantmentLevel(Enchantment enchantment, ItemStack stack, CallbackInfoReturnable<Integer> cir) {
+    @ModifyReturnValue(method = "getLevel", at=@At("RETURN"))
+    private static int soulforge$modifyEnchantmentLevel(int original, @Local Enchantment enchantment, @Local ItemStack stack) {
         if (enchantment == Enchantments.PIERCING) {
             if (stack.hasNbt() && stack.getNbt().contains("Siphon")) {
                 Siphon.Type type = Siphon.Type.getSiphon(stack.getNbt().getString("Siphon"));
                 if (type == Siphon.Type.PERSEVERANCE || type == Siphon.Type.SPITE) {
-                    cir.setReturnValue(cir.getReturnValue() + 1);
+                    return original + 1;
                 }
             }
         }
+        return original;
     }
 
     @Inject(method="getFireAspect", at=@At("HEAD"), cancellable = true)

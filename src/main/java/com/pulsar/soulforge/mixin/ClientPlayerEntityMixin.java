@@ -10,14 +10,11 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.MovementType;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
@@ -41,11 +38,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
                 playerSoul.removeWeapon();
             }
         }
-    }
-
-    @Inject(method = "tickMovement", at=@At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;tick(ZF)V", shift = At.Shift.AFTER))
-    protected void modifySlowdown(CallbackInfo ci) {
-
     }
 
     @ModifyConstant(method = "tickMovement", constant = @Constant(floatValue = 0.2f))
