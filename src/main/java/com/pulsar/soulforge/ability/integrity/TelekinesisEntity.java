@@ -46,7 +46,7 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
             target.setVelocity(target.getPos().subtract(target.prevX, target.prevY, target.prevZ));
             target.velocityModified = true;
             target = null;
-            setActive(false);
+            return super.cast(player);
         }
         return false;
     }

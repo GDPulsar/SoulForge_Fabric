@@ -1382,7 +1382,7 @@ public class PlayerSoulComponent implements SoulComponent {
         exp = tag.getInt("exp");
         hate = tag.getInt("hate");
         magic = tag.getFloat("magic");
-        magicGauge = tag.getFloat("magicGauge");
+        magicGauge = tag.contains("magicGauge") ? tag.getFloat("magicGauge") : 0;
         strong = tag.getBoolean("strong");
         pure = tag.getBoolean("pure");
         NbtCompound abilityNbt = tag.getCompound("abilities");
