@@ -121,7 +121,7 @@ public class Traits {
                 if (Objects.equals(trait.getName(), mode)) {
                     for (AbilityBase ability : trait.getAbilities()) {
                         if (ability.getLV() <= soul.getLV() || soul.getTraits().contains(Traits.spite)) {
-                            if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_NOCAST) {
+                            if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_ON_HIT) {
                                 if (ability instanceof DeterminationSword && soul.getLV() == 20) continue;
                                 if (ability instanceof Iceshock && soul.getLV() >= 10) continue;
                                 abilityNames.add(ability.getName());
@@ -147,7 +147,7 @@ public class Traits {
             for (TraitBase trait : soul.getTraits()) {
                 for (AbilityBase ability : trait.getAbilities()) {
                     if (ability.getLV() <= soul.getLV()) {
-                        if (ability.getType() == AbilityType.PASSIVE || ability.getType() == AbilityType.PASSIVE_NOCAST) {
+                        if (ability.getType() == AbilityType.PASSIVE || ability.getType() == AbilityType.PASSIVE_ON_HIT) {
                             abilityNames.add(ability.getName());
                         }
                     }

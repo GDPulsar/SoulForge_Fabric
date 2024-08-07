@@ -72,7 +72,7 @@ public class OrbitalStrike extends AbilityBase {
 
     public int getCooldown() { return 6000; }
 
-    public AbilityType getType() { return AbilityType.SPECIAL; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

@@ -17,6 +17,7 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.recipe.SoulForgeRecipes;
+import com.pulsar.soulforge.registries.TraitReloadListener;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.SoulForgeCustomTrades;
@@ -28,14 +29,17 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -52,7 +56,9 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.3.2");
+		LOGGER.info("Loading SoulForge v2.3.3");
+
+		//registerResourceListeners();
 
 		SoulForgeBlocks.registerBlocks();
 		SoulForgeItems.registerItems();
@@ -113,6 +119,12 @@ public class SoulForge implements ModInitializer {
 		}));
 	}
 
+	public static void registerResourceListeners() {
+		SoulForge.LOGGER.info("Registering resource listeners");
+
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new TraitReloadListener());
+	}
+
 	public static SoulComponent getPlayerSoul(PlayerEntity player) {
 		SoulComponent playerSoul;
 		if (player instanceof ServerPlayerEntity) playerSoul = EntityInitializer.SOUL.get(player);
@@ -126,5 +138,9 @@ public class SoulForge implements ModInitializer {
 
 	public static WorldComponent getWorldComponent(World world) {
 		return (WorldComponent)WorldInitializer.WORLD_CONFIG.get(world);
+	}
+
+	public static ValueComponent getValues(LivingEntity living) {
+		return EntityInitializer.VALUES.get(living);
 	}
 }

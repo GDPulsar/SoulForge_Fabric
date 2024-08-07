@@ -80,8 +80,9 @@ public class JusticeBow extends MagicRangedItem {
                 for (int i = 0; i < (4+playerSoul.getLV()/4); i++) {
                     JusticePelletProjectile pellet = new JusticePelletProjectile(player.getWorld(), player);
                     pellet.setPos(new Vec3d(arrow.getX(), arrow.getY(), arrow.getZ()));
-                    Vec3d vec3d = (new Vec3d(arrow.getVelocity().x, arrow.getVelocity().y, arrow.getVelocity().z)).normalize().multiply(2.5f);
-                    pellet.setVelocity(vec3d);
+                    Vec3d pelletVel = arrow.getVelocity().normalize().multiply(2f)
+                            .add(new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f,Math.random() - 0.5f)).normalize().multiply(4f);
+                    pellet.setVelocity(pelletVel);
                     player.getWorld().spawnEntity(pellet);
                 }
                 playerSoul.setMagic(playerSoul.getMagic()-10f);

@@ -64,7 +64,7 @@ public class ValiantHeart extends AbilityBase {
 
     public int getCooldown() { return 15600; }
 
-    public AbilityType getType() { return AbilityType.SPECIAL; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

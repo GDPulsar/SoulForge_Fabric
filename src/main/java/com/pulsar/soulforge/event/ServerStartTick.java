@@ -2,12 +2,12 @@ package com.pulsar.soulforge.event;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.trait.Traits;
-import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -32,13 +32,11 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
     private final HashMap<ServerPlayerEntity, Boolean> wasSneaking = new HashMap<>();
     private final HashMap<ServerPlayerEntity, Boolean> hadCreativeFlight = new HashMap<>();
 
-    private boolean lastTickWasShitAss = false;
-
     @Override
     public void onStartTick(MinecraftServer server) {
-        long startTickTimer = System.currentTimeMillis();
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            ValueComponent values = SoulForge.getValues(player);
             /* frost floor no longer exists but i'm still keeping this code just in case i need to slip and slide at home
             float maxSlip = -1;
             for (ServerPlayerEntity target : server.getPlayerManager().getPlayerList()) {
@@ -67,39 +65,17 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                 player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("5d1370cc-507b-410a-a94a-b65e5f48f012"), "limit_break", value, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
             }
 
-            if (lastTickWasShitAss) startTickTimer = System.currentTimeMillis();
-            boolean globing = playerSoul.hasCast("Snowglobe");
-            if (!globing) Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "snowglobe");
-            for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
-                if (player == other) continue;
-                if (player.distanceTo(other) > 4f) continue;
-                if (!TeamUtils.canDamagePlayer(server, other, player)) continue;
-                SoulComponent otherSoul = SoulForge.getPlayerSoul(other);
-                if (otherSoul.hasCast("Snowglobe")) {
-                    player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("snowglobe", MathHelper.clamp(-(otherSoul.getEffectiveLV() * 0.03f), -0.95, 0), EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                }
-            }
-            if (lastTickWasShitAss) {
-                long tickDuration = System.currentTimeMillis() - startTickTimer;
-                SoulForge.LOGGER.warn("snowglobing took {} milliseconds", tickDuration);
-            }
-
             // other
-            if (playerSoul.hasTag("preventMove") || playerSoul.hasTag("immobile")) {
+            if (playerSoul.hasTag("preventMove") || values.getBool("Immobilized")) {
                 player.setVelocity(0, 0, 0);
                 player.velocityModified = true;
             }
 
             // magic tick + sync
-            if (lastTickWasShitAss) startTickTimer = System.currentTimeMillis();
             playerSoul.magicTick();
             PacketByteBuf soulBuf = playerSoul.toBuffer();
             if (soulBuf != null) {
                 ServerPlayNetworking.send(player, SoulForgeNetworking.PLAYER_SOUL, soulBuf);
-            }
-            if (lastTickWasShitAss) {
-                long tickDuration = System.currentTimeMillis() - startTickTimer;
-                SoulForge.LOGGER.warn("magic tick took {} milliseconds", tickDuration);
             }
 
             //platforms
@@ -144,7 +120,6 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                 }
             }
 
-            if (lastTickWasShitAss) startTickTimer = System.currentTimeMillis();
             if (!player.isCreative() && !player.isSpectator()) {
                 if (!hadCreativeFlight.containsKey(player)) hadCreativeFlight.put(player, false);
                 if (player.hasStatusEffect(SoulForgeEffects.CREATIVE_ZONE)) {
@@ -158,16 +133,6 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                     hadCreativeFlight.put(player, false);
                 }
             }
-            if (lastTickWasShitAss) {
-                long tickDuration = System.currentTimeMillis() - startTickTimer;
-                SoulForge.LOGGER.warn("creative zone took {} milliseconds", tickDuration);
-            }
-        }
-        lastTickWasShitAss = false;
-        long tickDuration = System.currentTimeMillis() - startTickTimer;
-        if (tickDuration >= 20) {
-            SoulForge.LOGGER.warn("AHHH SHIT ASS: {}", tickDuration);
-            lastTickWasShitAss = true;
         }
     }
 }

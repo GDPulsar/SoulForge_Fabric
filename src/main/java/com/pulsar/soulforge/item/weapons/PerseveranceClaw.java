@@ -47,7 +47,7 @@ public class PerseveranceClaw extends MagicSwordItem implements GeoItem {
         ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-            playerSoul.addTag("immobile");
+            SoulForge.getValues(user).setBool("Immobilized", true);
             playerSoul.setValue("clawGouge", 23);
             user.getItemCooldownManager().set(this, 300);
         }

@@ -1,8 +1,8 @@
 package com.pulsar.soulforge.event;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.components.WorldBaseComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +24,7 @@ public class LivingDamageEvent {
      * @return Whether the entity should take damage. Cancels all other methods if false.
      */
     public static boolean onTakeDamage(LivingEntity living, DamageSource source, float damage) {
-        ValueHolder values = (ValueHolder)living;
+        ValueComponent values = SoulForge.getValues(living);
         if (values.hasInt("HangToAThreadTimer") && values.getInt("HangToAThreadTimer") > 0
                 && (!values.hasBool("HangToAThreadDamaging") || !values.getBool("HangToAThreadDamaging"))) {
             float totalDamage = 0f;
@@ -118,7 +118,7 @@ public class LivingDamageEvent {
     }
 
     public static void onApplyDamage(LivingEntity living, DamageSource source, float damage) {
-        ValueHolder values = (ValueHolder)living;
+        ValueComponent values = SoulForge.getValues(living);
         if (values.hasInt("ChildOfOmelasTimer") && values.getInt("ChildOfOmelasTimer") > 0) {
             if (source.getAttacker() instanceof LivingEntity attacker) {
                 attacker.heal(damage);

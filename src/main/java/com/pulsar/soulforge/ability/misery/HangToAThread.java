@@ -3,7 +3,6 @@ package com.pulsar.soulforge.ability.misery;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -17,8 +16,8 @@ public class HangToAThread extends AbilityBase {
         if (result != null) {
             if (result.getEntity() instanceof LivingEntity living) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                ((ValueHolder)living).setInt("HangToAThreadTimer", Math.round(playerSoul.getEffectiveLV() * 20f / 3f));
-                ((ValueHolder)living).setFloat("HangToAThreadDamage", 0f);
+                SoulForge.getValues(living).setInt("HangToAThreadTimer", Math.round(playerSoul.getEffectiveLV() * 20f / 3f));
+                SoulForge.getValues(living).setFloat("HangToAThreadDamage", 0f);
                 return super.cast(player);
             }
         }

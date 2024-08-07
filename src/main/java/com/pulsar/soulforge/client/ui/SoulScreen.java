@@ -95,7 +95,7 @@ public class SoulScreen extends Screen {
         }
         boolean hasPassives = false;
         for (AbilityBase ability : playerSoul.getAbilities()) {
-            if (ability.getType() == AbilityType.PASSIVE || ability.getType() == AbilityType.PASSIVE_NOCAST) {
+            if (ability.getType() == AbilityType.PASSIVE || ability.getType() == AbilityType.PASSIVE_ON_HIT) {
                 hasPassives = true;
             }
         }

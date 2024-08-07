@@ -6,14 +6,19 @@ import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 public final class EntityInitializer implements EntityComponentInitializer {
     public static final ComponentKey<SoulComponent> SOUL;
+    public static final ComponentKey<TemporaryModifierComponent> TEMPORARY_MODIFIERS;
+    public static final ComponentKey<ValueComponent> VALUES;
 
     static {
         SOUL = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "trait"), SoulComponent.class);
+        TEMPORARY_MODIFIERS = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "temporary_modifiers"), TemporaryModifierComponent.class);
+        VALUES = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "values"), ValueComponent.class);
     }
 
     public static void register() {}
@@ -21,7 +26,11 @@ public final class EntityInitializer implements EntityComponentInitializer {
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         registry.beginRegistration(PlayerEntity.class, SOUL)
-                .respawnStrategy(RespawnCopyStrategy.CHARACTER)
+                .respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY)
                 .end(PlayerSoulComponent::new);
+        registry.beginRegistration(LivingEntity.class, TEMPORARY_MODIFIERS)
+                .end(TemporaryModifierComponent::new);
+        registry.beginRegistration(LivingEntity.class, VALUES)
+                .end(ValueComponent::new);
     }
 }

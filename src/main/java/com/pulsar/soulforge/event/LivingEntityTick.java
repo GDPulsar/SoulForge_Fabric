@@ -2,8 +2,8 @@ package com.pulsar.soulforge.event;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.despair.DrainingField;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class LivingEntityTick {
     public static void tick(LivingEntity living) {
-        ValueHolder values = ((ValueHolder)living);
+        ValueComponent values = SoulForge.getValues(living);
         if (values.hasInt("HangToAThreadTimer")) {
             values.setInt("HangToAThreadTimer", values.getInt("HangToAThreadTimer") - 1);
             if (!values.hasBool("HangToAThreadDamaging") || !values.getBool("HangToAThreadDamaging")) {
@@ -125,8 +125,8 @@ public class LivingEntityTick {
                 int duration = (int)Math.floor((Math.random() + 1) * 72000) * tumor.getAmplifier() == 0 ? 3 : 1;
                 living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_TUMOR, duration, tumor.getAmplifier() + 1));
             } else if (tumor.getDuration() <= 1) {
-                if (((ValueHolder)living).hasBool("PestilenceTumor") && ((ValueHolder)living).getBool("PestilenceTumor")) {
-                    ((ValueHolder)living).removeBool("PestilenceTumor");
+                if (SoulForge.getValues(living).hasBool("PestilenceTumor") && SoulForge.getValues(living).getBool("PestilenceTumor")) {
+                    SoulForge.getValues(living).removeBool("PestilenceTumor");
                 } else {
                     living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.TUMOR_IMMUNITY, 144000, 0));
                 }

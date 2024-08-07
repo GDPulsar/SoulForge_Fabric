@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "soulforge",
-	"version": "2.3.2",
+	"version": "2.3.3",
 	"name": "SoulForge",
 	"description": "A Minecraft mod built around UNDERTALE!",
 	"authors": [
@@ -52,6 +52,8 @@
 	"custom": {
 		"cardinal-components": [
 			"soulforge:trait",
+			"soulforge:temporary_modifiers",
+			"soulforge:values",
 			"soulforge:world_config"
 		],
 		"modmenu": {

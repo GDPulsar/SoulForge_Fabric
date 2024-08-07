@@ -22,7 +22,7 @@ public class StartSoulResetPacket {
                 player.getInventory().removeStack(player.getInventory().indexOf(new ItemStack(SoulForgeItems.DETERMINATION_ARNICITE_HEART)), 1);
             }
             playerSoul.addTag("resettingSoul");
-            playerSoul.addTag("immobile");
+            SoulForge.getValues(player).setBool("Immobilized", true);
             PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb");
             buffer.writeBoolean(false);
             SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);

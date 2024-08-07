@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.util;
 
 import com.pulsar.soulforge.ability.AbilityBase;
+import com.pulsar.soulforge.components.EntityInitializer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.trait.TraitBase;
@@ -229,8 +230,7 @@ public class Utils {
                 playerSoul.getTraits().contains(Traits.misery) ||
                 playerSoul.getTraits().contains(Traits.anxiety) ||
                 playerSoul.getTraits().contains(Traits.paranoia) ||
-                playerSoul.getTraits().contains(Traits.despair) ||
-                playerSoul.getTraits().contains(Traits.spite)) {
+                playerSoul.getTraits().contains(Traits.despair)) {
             return true;
         }
         return false;
@@ -245,5 +245,13 @@ public class Utils {
         if (trait == Traits.perseverance) return Traits.despair;
         if (trait == Traits.determination) return Traits.spite;
         return null;
+    }
+
+    public static void addTemporaryAttribute(LivingEntity entity, EntityAttribute attribute, EntityAttributeModifier modifier, int duration) {
+        EntityInitializer.TEMPORARY_MODIFIERS.get(entity).addTemporaryModifier(attribute, modifier, duration);
+    }
+
+    public static void removeTemporaryAttribute(LivingEntity entity, EntityAttribute attribute, EntityAttributeModifier modifier) {
+        EntityInitializer.TEMPORARY_MODIFIERS.get(entity).removeTemporaryModifier(attribute, modifier);
     }
 }

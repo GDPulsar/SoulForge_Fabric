@@ -83,7 +83,7 @@ public class Overclock extends AbilityBase {
 
     public int getCooldown() { return 8400; }
 
-    public AbilityType getType() { return AbilityType.SPECIAL; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

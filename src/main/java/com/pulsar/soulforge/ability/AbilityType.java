@@ -2,10 +2,8 @@ package com.pulsar.soulforge.ability;
 
 public enum AbilityType {
     CAST,
-    PASSIVE,
     TOGGLE,
-    SPECIAL,
     WEAPON,
-    BOOST,
-    PASSIVE_NOCAST
+    PASSIVE,
+    PASSIVE_ON_HIT
 }

@@ -37,7 +37,7 @@ public class SkewerWeakpoint extends AbilityBase {
         return timer <= 0;
     }
 
-    public int getLV() { return 15; }
+    public int getLV() { return 7; }
 
     public int getCost() { return 30; }
 

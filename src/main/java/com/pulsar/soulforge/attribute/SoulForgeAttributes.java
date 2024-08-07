@@ -12,6 +12,7 @@ public class SoulForgeAttributes {
     public static final EntityAttribute MAGIC_POWER = make("magic_power", 1.0, 0, 1024);
     public static final EntityAttribute MAGIC_COST = make("magic_cost", 1.0, 0, 1024);
     public static final EntityAttribute AIR_SPEED_BECAUSE_MOJANG_SUCKS = make("air_speed", 1.0, 0, 1024);
+    public static final EntityAttribute DAMAGE_REDUCTION = make("damage_reduction", 1.0, 0, 1024);
 
     private static EntityAttribute make(final String name, final double base, final double min, final double max) {
         return new ClampedEntityAttribute("attribute.name.generic." + SoulForge.MOD_ID + '.' + name, base, min, max).setTracked(true);
@@ -22,5 +23,6 @@ public class SoulForgeAttributes {
         Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "magic_power"), MAGIC_POWER);
         Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "magic_cost"), MAGIC_COST);
         Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "air_speed"), AIR_SPEED_BECAUSE_MOJANG_SUCKS);
+        Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "damage_reduction"), DAMAGE_REDUCTION);
     }
 }

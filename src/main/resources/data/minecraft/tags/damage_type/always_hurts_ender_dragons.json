@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "soulforge:ability",
+    "soulforge:ability_pierce",
+    "soulforge:ability_projectile",
+    "soulforge:auto_turret",
+    "soulforge:frostburn",
+    "soulforge:gun_shot",
+    "soulforge:parry",
+    "soulforge:shield_shard",
+    "soulforge:skewer_weakpoint",
+    "soulforge:stockpile",
+    "soulforge:stuck_spear",
+    "soulforge:summon_weapon",
+    "soulforge:warpspeed"
+  ]
+}

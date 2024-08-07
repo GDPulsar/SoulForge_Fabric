@@ -9,7 +9,6 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.SnowgraveProjectile;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
-import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -30,9 +29,7 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -52,7 +49,8 @@ public class Snowgrave extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        return false;
+        /*SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (playerSoul.getStyleRank() < 5) {
             player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
             return false;
@@ -72,16 +70,16 @@ public class Snowgrave extends AbilityBase {
                 playerPos = castPos;
                 particleVel = new Vec3d(Math.random() * 5 - 2.5, Math.random() - 2, Math.random() * 5 - 2.5);
                 player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.SNOWGRAVE_EVENT, SoundCategory.MASTER, 3f, 1f);
-                /*if (player.getServer() != null) {
+                if (player.getServer() != null) {
                     PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("snowgrave");
                     buf.writeBoolean(false);
                     SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-                }*/
+                }
                 player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 2740, 0));
                 return super.cast(player);
             }
         }
-        return false;
+        return false;*/
     }
 
     @Override
@@ -255,7 +253,7 @@ public class Snowgrave extends AbilityBase {
 
     public int getCooldown() { return 9600; }
 
-    public AbilityType getType() { return AbilityType.SPECIAL; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

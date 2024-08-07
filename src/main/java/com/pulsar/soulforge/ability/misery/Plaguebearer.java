@@ -1,9 +1,9 @@
 package com.pulsar.soulforge.ability.misery;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -18,7 +18,7 @@ public class Plaguebearer extends AbilityBase {
         if (result != null) {
             if (result.getEntity() instanceof LivingEntity living) {
                 if (!living.hasStatusEffect(SoulForgeEffects.MANA_TUMOR)) {
-                    ((ValueHolder)living).setUUID("TumorOwner", player.getUuid());
+                    SoulForge.getValues(living).setUUID("TumorOwner", player.getUuid());
                     living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_TUMOR, (int)Math.floor((Math.random() + 0.5f) * 36000)));
                 } else {
                     StatusEffectInstance tumor = living.getStatusEffect(SoulForgeEffects.MANA_TUMOR);
@@ -26,8 +26,8 @@ public class Plaguebearer extends AbilityBase {
                         int duration = (int)Math.floor((Math.random() + 1) * 72000) * tumor.getAmplifier() == 0 ? 3 : 1;
                         living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_TUMOR, duration, tumor.getAmplifier() + 1));
                     } else {
-                        if (((ValueHolder)living).hasBool("PestilenceTumor") && ((ValueHolder)living).getBool("PestilenceTumor")) {
-                            ((ValueHolder)living).removeBool("PestilenceTumor");
+                        if (SoulForge.getValues(living).hasBool("PestilenceTumor") && SoulForge.getValues(living).getBool("PestilenceTumor")) {
+                            SoulForge.getValues(living).removeBool("PestilenceTumor");
                         } else {
                             living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.TUMOR_IMMUNITY, 144000, 0));
                         }

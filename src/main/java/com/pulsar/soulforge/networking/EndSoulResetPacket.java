@@ -1,9 +1,8 @@
 package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.item.SoulJarItem;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
@@ -26,9 +25,10 @@ public class EndSoulResetPacket {
         buffer.writeBoolean(false);
         SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);
         AbilityLayout newLayout = new AbilityLayout();
-        if (player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR)) {
-            ItemStack soulJar = player.getMainHandStack();
-            if (soulJar.isOf(SoulForgeItems.SOUL_JAR) && SoulJarItem.getHasSoul(soulJar)) {
+        boolean hasJar = buf.readBoolean();
+        if (hasJar) {
+            ItemStack soulJar = buf.readItemStack();
+            if (SoulJarItem.getHasSoul(soulJar)) {
                 newLayout = SoulJarItem.getLayout(soulJar);
             }
             SoulJarItem.setFromPlayer(soulJar, player);
@@ -70,7 +70,7 @@ public class EndSoulResetPacket {
         }
         playerSoul.setAbilityLayout(newLayout);
         playerSoul.removeTag("resettingSoul");
-        playerSoul.removeTag("immobile");
+        SoulForge.getValues(player).removeBool("Immobilized");
         //SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb"));
     }
 }

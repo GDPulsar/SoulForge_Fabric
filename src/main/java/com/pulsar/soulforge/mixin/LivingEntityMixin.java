@@ -5,9 +5,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.accessors.HasTickManager;
 import com.pulsar.soulforge.accessors.OwnableMinion;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
@@ -20,12 +20,13 @@ import com.pulsar.soulforge.shield.ShieldBlockCallback;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.tag.SoulForgeTags;
-import com.pulsar.soulforge.util.Utils;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -35,7 +36,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -52,12 +52,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 @Mixin(LivingEntity.class)
-abstract class LivingEntityMixin extends Entity implements ValueHolder {
+abstract class LivingEntityMixin extends Entity {
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
@@ -77,6 +73,16 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
     @Shadow protected abstract boolean isSleepingInBed();
 
     @Shadow @Nullable public abstract StatusEffectInstance getStatusEffect(StatusEffect effect);
+
+    @Shadow @Nullable public abstract EntityAttributeInstance getAttributeInstance(EntityAttribute attribute);
+
+    @Shadow public abstract float getBodyYaw();
+
+    @Shadow protected boolean jumping;
+
+    @Shadow public float sidewaysSpeed;
+
+    @Shadow public float forwardSpeed;
 
     @Inject(method = "isBlocking", at=@At("HEAD"), cancellable = true)
     public void parryBlocking(CallbackInfoReturnable<Boolean> cir) {
@@ -168,10 +174,34 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
         return slipperiness;
     }*/
 
-    @Inject(method = "tickMovement", at=@At(value="HEAD"), cancellable = true)
-    protected void soulforge$isImmobile(CallbackInfo ci) {
-        if (hasBool("Immobilized") && getBool("Immobilized")) {
-            ci.cancel();
+    /*@Inject(method = "isImmobile", at=@At(value="HEAD"), cancellable = true)
+    protected void isImmobile(CallbackInfoReturnable<Boolean> cir) {
+        ValueComponent values = SoulForge.getValues((LivingEntity)(Object)this);
+        LivingEntity living = (LivingEntity)(Object)this;
+        if (values.getBool("Immobilized")) {
+            cir.setReturnValue(true);
+        }
+    }*/
+
+    @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = At.Shift.AFTER))
+    protected void soulforge$modifyImmobility(CallbackInfo ci) {
+        if (!this.canMoveVoluntarily()) {
+            ValueComponent values = SoulForge.getValues((LivingEntity) (Object) this);
+            if (values.getBool("Immobilized")) {
+                this.jumping = false;
+                this.sidewaysSpeed = 0.0F;
+                this.forwardSpeed = 0.0F;
+            }
+        }
+    }
+
+    @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tickNewAi()V", shift = At.Shift.AFTER))
+    protected void soulforge$resetImmobilityMovement(CallbackInfo ci) {
+        ValueComponent values = SoulForge.getValues((LivingEntity)(Object)this);
+        if (values.getBool("Immobilized")) {
+            this.jumping = false;
+            this.sidewaysSpeed = 0.0F;
+            this.forwardSpeed = 0.0F;
         }
     }
 
@@ -180,7 +210,8 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
         LivingEntity living = (LivingEntity)(Object)this;
         if (living instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasTag("immobile")) return 0f;
+            ValueComponent values = SoulForge.getValues(living);
+            if (values.getBool("Immobilized")) return 0f;
             if (playerSoul.hasCast("Repulsion Field") || playerSoul.hasCast("Fearless Instincts") || playerSoul.hasCast("Accelerated Pellet Aura")) {
                 baseGravity += 0.04;
             }
@@ -286,6 +317,7 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
     @Inject(method = "createLivingAttributes", require = 1, allow = 1, at = @At("RETURN"))
     private static void addAttributes(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
         info.getReturnValue()
+                .add(SoulForgeAttributes.DAMAGE_REDUCTION)
                 .add(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS);
     }
 
@@ -389,139 +421,7 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
         return original;
     }
 
-    HashMap<String, Float> floatVals = new HashMap<>();
-    HashMap<String, Integer> intVals = new HashMap<>();
-    HashMap<String, Boolean> boolVals = new HashMap<>();
-    HashMap<String, Vec3d> vecVals = new HashMap<>();
-    HashMap<String, UUID> uuidVals = new HashMap<>();
 
-
-    public float getFloat(String key) {
-        return floatVals.get(key);
-    }
-    public void setFloat(String key, float value) {
-        floatVals.put(key, value);
-    }
-    public void removeFloat(String key) {
-        floatVals.remove(key);
-    }
-    public boolean hasFloat(String key) {
-        return floatVals.containsKey(key);
-    }
-    public int getInt(String key) {
-        return intVals.get(key);
-    }
-    public void setInt(String key, int value) {
-        intVals.put(key, value);
-    }
-    public void removeInt(String key) {
-        intVals.remove(key);
-    }
-    public boolean hasInt(String key) {
-        return intVals.containsKey(key);
-    }
-    public boolean getBool(String key) {
-        return boolVals.get(key);
-    }
-    public void setBool(String key, boolean value) {
-        boolVals.put(key, value);
-    }
-    public void removeBool(String key) {
-        boolVals.remove(key);
-    }
-    public boolean hasBool(String key) {
-        return boolVals.containsKey(key);
-    }
-    public Vec3d getVec(String key) {
-        return vecVals.get(key);
-    }
-    public void setVec(String key, Vec3d value) {
-        vecVals.put(key, value);
-    }
-    public void removeVec(String key) {
-        vecVals.remove(key);
-    }
-    public boolean hasVec(String key) {
-        return vecVals.containsKey(key);
-    }
-    public UUID getUUID(String key) {
-        return uuidVals.get(key);
-    }
-    public void setUUID(String key, UUID value) {
-        uuidVals.put(key, value);
-    }
-    public void removeUUID(String key) {
-        uuidVals.remove(key);
-    }
-    public boolean hasUUID(String key) {
-        return uuidVals.containsKey(key);
-    }
-
-    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    private void soulforge$addCustomData(NbtCompound nbt, CallbackInfo ci) {
-        NbtCompound floatNbt = new NbtCompound();
-        for (Map.Entry<String, Float> entry : floatVals.entrySet()) {
-            floatNbt.putFloat(entry.getKey(), entry.getValue());
-        }
-        nbt.put("floatVals", floatNbt);
-
-        NbtCompound intNbt = new NbtCompound();
-        for (Map.Entry<String, Integer> entry : intVals.entrySet()) {
-            intNbt.putInt(entry.getKey(), entry.getValue());
-        }
-        nbt.put("intVals", intNbt);
-
-        NbtCompound boolNbt = new NbtCompound();
-        for (Map.Entry<String, Boolean> entry : boolVals.entrySet()) {
-            boolNbt.putBoolean(entry.getKey(), entry.getValue());
-        }
-        nbt.put("boolVals", boolNbt);
-
-        NbtCompound vecNbt = new NbtCompound();
-        for (Map.Entry<String, Vec3d> entry : vecVals.entrySet()) {
-            vecNbt.put(entry.getKey(), Utils.vectorToNbt(entry.getValue()));
-        }
-        nbt.put("vecVals", vecNbt);
-
-        NbtCompound uuidNbt = new NbtCompound();
-        for (Map.Entry<String, UUID> entry : uuidVals.entrySet()) {
-            uuidNbt.putUuid(entry.getKey(), entry.getValue());
-        }
-        nbt.put("uuidVals", uuidNbt);
-    }
-
-    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    private void soulforge$readCustomData(NbtCompound nbt, CallbackInfo ci) {
-        NbtCompound floatNbt = nbt.getCompound("floatVals");
-        floatVals = new HashMap<>();
-        for (String key : floatNbt.getKeys()) {
-            floatVals.put(key, floatNbt.getFloat(key));
-        }
-
-        NbtCompound intNbt = nbt.getCompound("intVals");
-        intVals = new HashMap<>();
-        for (String key : intNbt.getKeys()) {
-            intVals.put(key, intNbt.getInt(key));
-        }
-
-        NbtCompound boolNbt = nbt.getCompound("boolVals");
-        boolVals = new HashMap<>();
-        for (String key : boolNbt.getKeys()) {
-            boolVals.put(key, boolNbt.getBoolean(key));
-        }
-
-        NbtCompound vecNbt = nbt.getCompound("vecVals");
-        vecVals = new HashMap<>();
-        for (String key : vecNbt.getKeys()) {
-            vecVals.put(key, Utils.nbtToVector(vecNbt.getList(key, NbtElement.DOUBLE_TYPE)));
-        }
-
-        NbtCompound uuidNbt = nbt.getCompound("uuidVals");
-        uuidVals = new HashMap<>();
-        for (String key : uuidNbt.getKeys()) {
-            uuidVals.put(key, uuidNbt.getUuid(key));
-        }
-    }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void soulforge$onEntityTick(CallbackInfo ci) {
@@ -577,6 +477,10 @@ abstract class LivingEntityMixin extends Entity implements ValueHolder {
 
     @ModifyReturnValue(method = "modifyAppliedDamage", at = @At("RETURN"))
     private float soulforge$modifyAppliedDamage(float value, @Local DamageSource source) {
+        EntityAttributeInstance attribute = this.getAttributeInstance(SoulForgeAttributes.DAMAGE_REDUCTION);
+        if (attribute != null) {
+            value *= (float)attribute.getValue();
+        }
         if (!source.isIn(DamageTypeTags.BYPASSES_EFFECTS) && !this.hasStatusEffect(StatusEffects.RESISTANCE)) {
             if (this.hasStatusEffect(SoulForgeEffects.VULNERABILITY)) {
                 return value * ((this.getStatusEffect(SoulForgeEffects.VULNERABILITY).getAmplifier() + 1) * 0.1f);

@@ -6,11 +6,10 @@ import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.ImmobilizationEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -26,44 +25,36 @@ public class Immobilization extends ToggleableAbilityBase {
         if (!getActive()) {
             if (entity != null) {
                 if (target != null) {
-                    if (target.isPlayer()) {
-                        SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity)target);
-                        targetSoul.removeTag("immobile");
-                    } else if (target instanceof MobEntity mob) {
-                        mob.setAiDisabled(true);
-                    }
+                    SoulForge.getValues(target).removeBool("Immobilized");
                     target.setInvulnerable(true);
                     target = null;
                     setActive(false);
-                    return true;
                 }
                 entity.remove(Entity.RemovalReason.DISCARDED);
+                return true;
             }
             EntityHitResult result = Utils.getFocussedEntity(player, 10);
             if (result != null) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                if (result.getEntity() instanceof PlayerEntity playerTarget) {
-                    target = playerTarget;
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(playerTarget);
-                    targetSoul.addTag("immobile");
-                } else if (result.getEntity() instanceof MobEntity mob) {
-                    target = mob;
-                    mob.setAiDisabled(true);
-                }
-                if (target != null) {
-                    player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                    entity = new ImmobilizationEntity(player.getWorld(), target.getPos(), playerSoul.getEffectiveLV() * 5, target, player);
-                    entity.maxHealth = playerSoul.getEffectiveLV() * 5;
-                    entity.health = playerSoul.getEffectiveLV() * 5;
-                    entity.setPosition(target.getPos());
-                    entity.setEntity(target);
-                    entity.setSize((float)Math.max(target.getBoundingBox().getXLength(), target.getBoundingBox().getZLength()), (float)target.getBoundingBox().getYLength());
-                    entity.calculateDimensions();
-                    ServerWorld serverWorld = player.getServerWorld();
-                    serverWorld.spawnEntity(entity);
-                    serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
-                    target.setInvulnerable(true);
-                    return super.cast(player);
+                if (result.getEntity() instanceof LivingEntity living) {
+                    if (living.getType().isIn(SoulForgeTags.BOSS_ENTITY)) return false;
+                    target = living;
+                    SoulForge.getValues(target).setBool("Immobilized", true);
+                    if (target != null) {
+                        player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
+                        entity = new ImmobilizationEntity(player.getWorld(), target.getPos(), playerSoul.getEffectiveLV() * 5, target, player);
+                        entity.maxHealth = playerSoul.getEffectiveLV() * 5;
+                        entity.health = playerSoul.getEffectiveLV() * 5;
+                        entity.setPosition(target.getPos());
+                        entity.setEntity(target);
+                        entity.setSize((float) Math.max(target.getBoundingBox().getXLength(), target.getBoundingBox().getZLength()), (float) target.getBoundingBox().getYLength());
+                        entity.calculateDimensions();
+                        ServerWorld serverWorld = player.getServerWorld();
+                        serverWorld.spawnEntity(entity);
+                        serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
+                        target.setInvulnerable(true);
+                        return super.cast(player);
+                    }
                 }
             }
         } else {
@@ -71,7 +62,7 @@ public class Immobilization extends ToggleableAbilityBase {
             entity = null;
             setActive(false);
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -84,12 +75,7 @@ public class Immobilization extends ToggleableAbilityBase {
     public boolean end(ServerPlayerEntity player) {
         setActive(false);
         if (target != null) {
-            if (target.isPlayer()) {
-                SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity)target);
-                targetSoul.removeTag("immobile");
-            } else if (target instanceof MobEntity mob) {
-                mob.setAiDisabled(false);
-            }
+            SoulForge.getValues(target).removeBool("Immobilized");
             target.setInvulnerable(false);
         }
         return super.end(player);

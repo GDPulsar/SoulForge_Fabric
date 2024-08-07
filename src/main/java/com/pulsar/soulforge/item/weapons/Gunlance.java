@@ -117,7 +117,7 @@ public class Gunlance extends MagicSwordItem implements GeoItem {
                 int useTicks = getMaxUseTime(stack) - remainingUseTicks;
                 if (useTicks < 20) {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                    playerSoul.addTag("immobile");
+                    SoulForge.getValues(player).setBool("Immobilized", true);
                     playerSoul.setValue("clawGouge", 23);
                     player.getItemCooldownManager().set(this, 200);
                 } else {

@@ -11,7 +11,7 @@ public class FrostWave extends WeaponAbilityBase {
         return SoulForgeItems.FROST_WAVE;
     }
 
-    public int getLV() { return 7; }
+    public int getLV() { return 3; }
 
     @Override
     public AbilityBase getInstance() {

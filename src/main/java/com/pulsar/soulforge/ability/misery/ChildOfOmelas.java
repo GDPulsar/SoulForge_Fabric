@@ -3,7 +3,6 @@ package com.pulsar.soulforge.ability.misery;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -17,7 +16,7 @@ public class ChildOfOmelas extends AbilityBase {
         if (result != null) {
             if (result.getEntity() instanceof LivingEntity living) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                ((ValueHolder)living).setInt("ChildOfOmelasTimer", playerSoul.getEffectiveLV() * 20);
+                SoulForge.getValues(living).setInt("ChildOfOmelasTimer", playerSoul.getEffectiveLV() * 20);
                 return super.cast(player);
             }
         }

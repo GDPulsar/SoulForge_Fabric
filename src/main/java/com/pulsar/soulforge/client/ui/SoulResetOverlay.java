@@ -313,6 +313,8 @@ public class SoulResetOverlay implements HudRenderCallback {
                         }
                         if (tickTimer == 450) {
                             PacketByteBuf buf = PacketByteBufs.create();
+                            buf.writeBoolean(!soulJar.isEmpty());
+                            if (!soulJar.isEmpty()) buf.writeItemStack(soulJar);
                             buf.writeString(chosenTraits.get(0).getName());
                             buf.writeString("");
                             buf.writeBoolean(chosenPower >= 1);
@@ -389,6 +391,8 @@ public class SoulResetOverlay implements HudRenderCallback {
                         }
                         if (tickTimer == (rerollType != RerollType.NORMAL ? 200 : 175)) {
                             PacketByteBuf buf = PacketByteBufs.create();
+                            buf.writeBoolean(!soulJar.isEmpty());
+                            if (!soulJar.isEmpty()) buf.writeItemStack(soulJar);
                             buf.writeString(chosenTraits.get(0).getName());
                             buf.writeString(chosenTraits.size() == 2 ? chosenTraits.get(1).getName() : "");
                             buf.writeBoolean(chosenPower >= 1);
@@ -421,6 +425,8 @@ public class SoulResetOverlay implements HudRenderCallback {
                         }
                         if (tickTimer == 150) {
                             PacketByteBuf buf = PacketByteBufs.create();
+                            buf.writeBoolean(true);
+                            buf.writeItemStack(soulJar);
                             buf.writeString(SoulJarItem.getTrait1(soulJar));
                             buf.writeString(SoulJarItem.getTrait2(soulJar));
                             buf.writeBoolean(SoulJarItem.getStrong(soulJar));

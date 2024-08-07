@@ -13,6 +13,7 @@ import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -81,14 +82,14 @@ public class SoulForgeCommand {
                                                                             TraitBase trait2 = Traits.get(getString(context, "trait2"));
                                                                             if (trait1 == Traits.fear || trait1 == Traits.ineptitude || trait1 == Traits.misery ||
                                                                                 trait1 == Traits.anxiety || trait1 == Traits.paranoia || trait1 == Traits.despair) {
-                                                                                if (!context.getSource().isExecutedByPlayer() || !omegagamers.contains(context.getSource().getPlayer().getName().getString())) {
+                                                                                if (!canAccessInverteds(context)) {
                                                                                     context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
                                                                                     return 1;
                                                                                 }
                                                                             }
                                                                             if (trait2 == Traits.fear || trait2 == Traits.ineptitude || trait2 == Traits.misery ||
                                                                                 trait2 == Traits.anxiety || trait2 == Traits.paranoia || trait2 == Traits.despair) {
-                                                                                if (!context.getSource().isExecutedByPlayer() || !omegagamers.contains(context.getSource().getPlayer().getName().getString())) {
+                                                                                if (!canAccessInverteds(context)) {
                                                                                     context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait2") + " exists!"));
                                                                                     return 1;
                                                                                 }
@@ -109,7 +110,7 @@ public class SoulForgeCommand {
                                                                     TraitBase trait1 = Traits.get(getString(context, "trait1"));
                                                                     if (trait1 == Traits.fear || trait1 == Traits.ineptitude || trait1 == Traits.misery ||
                                                                         trait1 == Traits.anxiety || trait1 == Traits.paranoia || trait1 == Traits.despair) {
-                                                                        if (!context.getSource().isExecutedByPlayer() || !omegagamers.contains(context.getSource().getPlayer().getName().getString())) {
+                                                                        if (!canAccessInverteds(context)) {
                                                                             context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
                                                                             return 1;
                                                                         }
@@ -226,6 +227,10 @@ public class SoulForgeCommand {
                                 )
                         )
         );
+    }
+
+    public static boolean canAccessInverteds(CommandContext<ServerCommandSource> context) {
+        return context.getSource().isExecutedByPlayer() && (omegagamers.contains(context.getSource().getPlayer().getName().getString()) || FabricLoader.getInstance().isDevelopmentEnvironment());
     }
 
     public static class TraitArgumentType implements ArgumentType<String> {

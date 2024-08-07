@@ -1,8 +1,8 @@
 package com.pulsar.soulforge.ability.misery;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +16,7 @@ public class Pestilence extends AbilityBase {
                 StatusEffectInstance tumor = target.getStatusEffect(SoulForgeEffects.MANA_TUMOR);
                 if (tumor.getAmplifier() < 2) {
                     target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_TUMOR, (int)Math.floor((Math.random() + 1) * 72000), 2));
-                    ((ValueHolder)target).setBool("PestilenceTumor", true);
+                    SoulForge.getValues(target).setBool("PestilenceTumor", true);
                 }
             }
         }

@@ -8,7 +8,6 @@ import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
 import com.pulsar.soulforge.ability.duals.PerfectedAuraTechnique;
 import com.pulsar.soulforge.ability.integrity.Platforms;
-import com.pulsar.soulforge.accessors.ValueHolder;
 import com.pulsar.soulforge.advancement.SoulForgeCriterions;
 import com.pulsar.soulforge.armor.PlatformBootsItem;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
@@ -588,7 +587,7 @@ public class PlayerSoulComponent implements SoulComponent {
                 }
             } catch (Exception ignored) {}
         }
-        ValueHolder values = (ValueHolder)player;
+        ValueComponent values = SoulForge.getValues(player);
         float tumorMultiplier = 1f;
         if (player.hasStatusEffect(SoulForgeEffects.MANA_TUMOR)) {
             StatusEffectInstance tumor = player.getStatusEffect(SoulForgeEffects.MANA_TUMOR);
@@ -1092,7 +1091,7 @@ public class PlayerSoulComponent implements SoulComponent {
     public void castAbility(AbilityBase ability) {
         if (ability == null) return;
         boolean contains = abilities.has(ability.getName());
-        if ((contains || ability.getType() == AbilityType.PASSIVE) && ability.getType() != AbilityType.PASSIVE_NOCAST) {
+        if ((contains || ability.getType() == AbilityType.PASSIVE) && ability.getType() != AbilityType.PASSIVE_ON_HIT) {
             float cost = ability.getCost();
             if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
                 cost *= (float)player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
@@ -1233,7 +1232,7 @@ public class PlayerSoulComponent implements SoulComponent {
                 if (getValue("clawGouge") > 0) {
                     setValue("clawGouge", (int)getValue("clawGouge") - 1);
                     if (getValue("clawGouge") == 15) {
-                        removeTag("immobile");
+                        SoulForge.getValues(player).removeBool("Immobilized");
                         Vec3d velAdd = player.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize().multiply(player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW) ? 3.5f : 2f);
                         player.addVelocity(velAdd);
                         player.velocityModified = true;

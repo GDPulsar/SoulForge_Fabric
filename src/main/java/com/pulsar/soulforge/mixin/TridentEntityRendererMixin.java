@@ -2,6 +2,7 @@ package com.pulsar.soulforge.mixin;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.accessors.SiphonableEntity;
+import com.pulsar.soulforge.siphon.Siphon;
 import net.minecraft.client.render.entity.TridentEntityRenderer;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.util.Identifier;
@@ -18,7 +19,10 @@ public class TridentEntityRendererMixin {
     private void modifyTridentTexture(TridentEntity tridentEntity, CallbackInfoReturnable<Identifier> cir) {
         String siphon = ((SiphonableEntity)tridentEntity).getSiphonString();
         if (!Objects.equals(siphon, "")) {
-            cir.setReturnValue(new Identifier(SoulForge.MOD_ID, "textures/entity/" + siphon + "_trident.png"));
+            Siphon.Type type = Siphon.Type.getSiphon(siphon);
+            if (type != null) {
+                cir.setReturnValue(new Identifier(SoulForge.MOD_ID, "textures/entity/" + siphon + "_trident.png"));
+            }
         }
     }
 }

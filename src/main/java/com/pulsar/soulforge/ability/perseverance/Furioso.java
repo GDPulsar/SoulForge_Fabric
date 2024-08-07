@@ -28,8 +28,6 @@ public class Furioso extends AbilityBase {
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.setSpokenText("Flaming, what does your meat taste like?", 3, 40);
         return false;
         /*if (harpoon == null || harpoon.isRemoved()) {
             harpoon = new PVHarpoonProjectile(player.getWorld(), player);
@@ -130,7 +128,7 @@ public class Furioso extends AbilityBase {
 
     public int getCooldown() { return 6000; }
 
-    public AbilityType getType() { return AbilityType.SPECIAL; }
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {

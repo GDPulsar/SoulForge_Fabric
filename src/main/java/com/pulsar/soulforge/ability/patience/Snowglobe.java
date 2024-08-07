@@ -2,83 +2,60 @@ package com.pulsar.soulforge.ability.patience;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
+import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 
-public class Snowglobe extends ToggleableAbilityBase {
+import java.util.UUID;
+
+public class Snowglobe extends AbilityBase {
     public int timer = 0;
+
+    @Override
+    public boolean cast(ServerPlayerEntity player) {
+        super.cast(player);
+        if (getActive()) {
+            SoulForge.getValues(player).setBool("Immobilized", true);
+            timer = 200;
+            Utils.addTemporaryAttribute(player, SoulForgeAttributes.DAMAGE_REDUCTION,
+                    new EntityAttributeModifier(UUID.fromString("dcb6e304-2e3f-44e2-b2dd-81dd409fdaae"), "snowglobe",
+                            -0.8, EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 200);
+        }
+        return getActive();
+    }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        boolean frostburn = playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience);
-        timer++;
-        if (timer >= 20) {
-            if (playerSoul.getMagic() >= 5f) {
-                playerSoul.setMagic(playerSoul.getMagic() - 5f);
-                playerSoul.resetLastCastTime();
-            } else {
-                setActive(false);
-                return true;
-            }
-            timer = 0;
-            if (getActive()) {
-                Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "snowglobe");
-                Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "snowglobe");
-                player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("snowglobe", -0.85f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier("snowglobe", -0.85f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-                boolean affected = false;
-                for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 8, 8, 8))) {
-                    if (entity instanceof LivingEntity living) {
-                        if (living.distanceTo(player) > 4f) continue;
-                        if (living instanceof PlayerEntity targetPlayer) {
-                            if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
-                        }
-                        living.addStatusEffect(new StatusEffectInstance(frostburn ? SoulForgeEffects.FROSTBURN : SoulForgeEffects.FROSTBITE, 20 * playerSoul.getEffectiveLV(), 0));
-                        living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV() / 6f);
-                        if (playerSoul.getLV() >= 10) {
-                            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140,  MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
-                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 140, MathHelper.ceil(playerSoul.getEffectiveLV() / 5f) - 1));
-                        }
-                        affected = true;
-                    }
-                }
-                if (affected) {
-                    playerSoul.setStyle(playerSoul.getStyle() + 1);
-                }
-            }
+        timer--;
+        for (PlayerEntity nearby : player.getWorld().getEntitiesByClass(PlayerEntity.class, Box.of(player.getPos(), 10, 10, 10),
+                (entity) -> entity != player && TeamUtils.canHealPlayer(player.getServer(), player, entity) && entity.distanceTo(player) <= 5f)) {
+            Utils.addTemporaryAttribute(nearby, SoulForgeAttributes.MAGIC_POWER,
+                    new EntityAttributeModifier(UUID.fromString("e8afbcd4-462a-42b0-8f9f-d7dae0e71dc7"), "snowglobe_boost",
+                            playerSoul.getEffectiveLV() * 0.025f, EntityAttributeModifier.Operation.ADDITION), 2);
         }
-        return super.tick(player);
+        return super.tick(player) && timer <= 0;
     }
 
     @Override
     public boolean end(ServerPlayerEntity player) {
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "snowglobe");
-        Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "snowglobe");
+        SoulForge.getValues(player).removeBool("Immobilized");
         return super.cast(player);
     }
 
-    public int getLV() { return 3; }
+    public int getLV() { return 15; }
 
     public int getCost() { return 30; }
 
     public int getCooldown() { return 300; }
+
+    public AbilityType getType() { return AbilityType.CAST; }
 
     @Override
     public AbilityBase getInstance() {
