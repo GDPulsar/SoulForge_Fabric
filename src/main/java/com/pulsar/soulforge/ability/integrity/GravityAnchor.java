@@ -29,7 +29,7 @@ public class GravityAnchor extends AbilityBase {
         EntityHitResult result = Utils.getFocussedEntity(player, 15);
         if (result != null && result.getEntity() instanceof LivingEntity living) {
             if (living instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) return false;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) return false;
             }
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             target = living;

@@ -28,7 +28,7 @@ public class Determination implements TraitBase {
             new Regeneration(),
             new SAVELOAD(),
             new TrueLOVE(),
-            //new UnchainedSoul(),
+            new UnchainedSoul(),
             new WeaponWheel()
     ));
 

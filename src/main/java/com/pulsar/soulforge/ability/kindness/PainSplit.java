@@ -21,7 +21,7 @@ public class PainSplit extends AbilityBase {
             if (hit != null) {
                 Entity entity = hit.getEntity();
                 if (entity instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) return false;
+                    if (!TeamUtils.canHealEntity(player.getServer(), player, targetPlayer)) return false;
                     target = targetPlayer;
                     player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                     return super.cast(player);

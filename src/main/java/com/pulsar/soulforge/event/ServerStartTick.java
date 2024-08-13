@@ -37,26 +37,6 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             ValueComponent values = SoulForge.getValues(player);
-            /* frost floor no longer exists but i'm still keeping this code just in case i need to slip and slide at home
-            float maxSlip = -1;
-            for (ServerPlayerEntity target : server.getPlayerManager().getPlayerList()) {
-                if (player.distanceTo(target) > 0.001f) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
-                    for (AbilityBase ability : targetSoul.getActiveAbilities()) {
-                        if (ability instanceof Snowglobe frostFloor) {
-                            if (player.getPos().distanceTo(frostFloor.origin) < 15 + targetSoul.getLV()) {
-                                float slip = 0.6f + 0.02f * targetSoul.getLV();
-                                if (slip > maxSlip) maxSlip = slip;
-                            }
-                        }
-                    }
-                }
-            }
-            if (maxSlip != -1) {
-                playerSoul.setValue("slip", maxSlip);
-            } else {
-                playerSoul.setValue("slip", 0);
-            }*/
 
             // limit break
             Utils.clearModifiersByUUID(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, UUID.fromString("5d1370cc-507b-410a-a94a-b65e5f48f012"));

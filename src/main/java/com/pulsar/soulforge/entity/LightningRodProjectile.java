@@ -51,7 +51,7 @@ public class LightningRodProjectile extends PersistentProjectileEntity {
                         if (entity == this.getOwner()) continue;
                         if (entity instanceof LivingEntity target) {
                             if (entity instanceof PlayerEntity targetPlayer) {
-                                if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+                                if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return;
                             }
                             float distance = target.distanceTo(this);
                             if (distance < 2f) {

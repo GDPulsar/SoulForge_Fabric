@@ -3,6 +3,7 @@ package com.pulsar.soulforge.util;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.components.EntityInitializer;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
@@ -16,7 +17,8 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -209,6 +211,8 @@ public class Utils {
         for (StatusEffectInstance effect : target.getStatusEffects()) {
             if (!effect.getEffectType().isBeneficial()) val += effect.getAmplifier();
         }
+        TemporaryModifierComponent modifiers = EntityInitializer.TEMPORARY_MODIFIERS.get(target);
+        val += modifiers.getModifierCount();
         return val;
     }
 

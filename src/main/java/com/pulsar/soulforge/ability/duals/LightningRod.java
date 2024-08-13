@@ -42,7 +42,7 @@ public class LightningRod extends AbilityBase {
                         if (near == player) continue;
                         if (near instanceof LivingEntity living) {
                             if (living instanceof PlayerEntity targetPlayer) {
-                                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                             }
                             if (chained.contains(living)) continue;
                             if (closest == null) {
@@ -76,7 +76,7 @@ public class LightningRod extends AbilityBase {
                     for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(pos, 2, 2, 2))) {
                         if (entity instanceof LivingEntity living) {
                             if (living instanceof PlayerEntity targetPlayer) {
-                                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                             }
                             living.damage(player.getDamageSources().playerAttack(player), 5 + playerSoul.getEffectiveLV()/2f);
                         }

@@ -62,8 +62,8 @@ public class SOJProjectile extends ProjectileEntity implements GeoEntity {
     }
 
     protected boolean canHit(Entity entity) {
-        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return false;
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return false;
         }
         return super.canHit(entity) && !entity.noClip;
     }

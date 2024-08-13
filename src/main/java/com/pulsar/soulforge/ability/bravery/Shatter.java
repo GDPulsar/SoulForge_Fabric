@@ -44,7 +44,7 @@ public class Shatter extends AbilityBase {
         Vec3d vec3d = new Vec3d(player.getX(), player.getY(), player.getZ());
         for (Entity entity : list) {
             if (entity instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
             }
             double ac;
             double y;

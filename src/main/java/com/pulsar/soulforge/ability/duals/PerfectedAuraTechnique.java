@@ -69,7 +69,7 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 20, 20, 20))) {
                 if (entity instanceof LivingEntity target) {
                     if (entity instanceof PlayerEntity) {
-                        if (!TeamUtils.canDamagePlayer(player.getServer(), player, (PlayerEntity)target)) continue;
+                        if (!TeamUtils.canDamageEntity(player.getServer(), player, (PlayerEntity)target)) continue;
                     }
                     if (target.distanceTo(player) < 10f) {
                         if (entity.getFireTicks() < 40) { entity.setFireTicks(50); }

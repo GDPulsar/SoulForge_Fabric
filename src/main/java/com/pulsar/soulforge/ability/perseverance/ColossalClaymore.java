@@ -47,7 +47,7 @@ public class ColossalClaymore extends AbilityBase {
             greaterSlash = true;
             for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 5f, 8f, 2f, 2f)) {
                 if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                 }
                 target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), damage);
             }
@@ -72,7 +72,7 @@ public class ColossalClaymore extends AbilityBase {
         Vec3d velocity = new Vec3d(i*2.5f, 1f, h*2.5f);
         for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 1f, 5f, 1f, 1f)) {
             if (target instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
             }
             if (target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), playerSoul.getEffectiveLV()*0.8f)) {
                 playerSoul.setStyle(playerSoul.getStyle() + (int)(playerSoul.getEffectiveLV()*0.8f));

@@ -3,7 +3,6 @@ package com.pulsar.soulforge.item.devices.trinkets;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.entity.WormholeEntity;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.devices.machines.DeterminationInjector;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -19,7 +18,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +29,6 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -59,7 +56,7 @@ public class WarpDiamond extends Item implements GeoItem {
                     }
                 }
                 Vec3d end = new Vec3d(stack.getNbt().getFloat("x"), stack.getNbt().getFloat("y"), stack.getNbt().getFloat("z"));
-                WormholeEntity startWormhole = new WormholeEntity(savedWorld, user.getPos().add(0, 1.25f, 0), savedWorld, end, user.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize());
+                WormholeEntity startWormhole = new WormholeEntity(savedWorld, user.getX(), user.getY() + 1.25f, user.getZ(), savedWorld, end, 0.25f, new Vec3d(1f, 1f, 1f));
                 user.teleport(savedWorld, end.x, end.y, end.z, PositionFlag.VALUES, user.getYaw(), user.getPitch());
                 savedWorld.spawnEntity(startWormhole);
                 stack.decrement(1);

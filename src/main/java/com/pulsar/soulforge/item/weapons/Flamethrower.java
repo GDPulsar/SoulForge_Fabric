@@ -39,7 +39,7 @@ public class Flamethrower extends MagicItem {
             if (!world.isClient) {
                 for (LivingEntity entity : Utils.getEntitiesInFrontOf(user, 1.5f + playerSoul.getEffectiveLV()/4f, 3f + playerSoul.getEffectiveLV()/2f, 1f, 2f)) {
                     if (entity instanceof PlayerEntity targetPlayer) {
-                        if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer)) continue;
+                        if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer)) continue;
                     }
                     if (entity.damage(SoulForgeDamageTypes.of(user, world, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 2f + playerSoul.getEffectiveLV() / 4f)) {
                         playerSoul.setStyle(playerSoul.getStyle() + 1);

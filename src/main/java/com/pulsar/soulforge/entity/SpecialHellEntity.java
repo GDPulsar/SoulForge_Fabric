@@ -47,7 +47,7 @@ public class SpecialHellEntity extends Entity {
             for (Entity entity : getWorld().getOtherEntities(this, getBoundingBox())) {
                 if (entity instanceof LivingEntity && entity != owner) {
                     if (entity instanceof PlayerEntity targetPlayer && this.owner != null) {
-                        if (!TeamUtils.canDamagePlayer(this.getServer(), this.owner, targetPlayer)) return;
+                        if (!TeamUtils.canDamageEntity(this.getServer(), this.owner, targetPlayer)) return;
                     }
                     float horizDist = (float)this.getPos().withAxis(Direction.Axis.Y, 0).distanceTo(entity.getPos().withAxis(Direction.Axis.Y, 0));
                     if (horizDist <= 10f) {

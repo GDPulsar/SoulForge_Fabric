@@ -27,7 +27,7 @@ public class EndSoulResetPacket {
         AbilityLayout newLayout = new AbilityLayout();
         boolean hasJar = buf.readBoolean();
         if (hasJar) {
-            ItemStack soulJar = buf.readItemStack();
+            ItemStack soulJar = player.getInventory().getStack(player.getInventory().getSlotWithStack(buf.readItemStack()));
             if (SoulJarItem.getHasSoul(soulJar)) {
                 newLayout = SoulJarItem.getLayout(soulJar);
             }

@@ -28,7 +28,7 @@ public class MartyrsTouch extends AbilityBase {
         EntityHitResult hit = Utils.getFocussedEntity(player, 32f);
         if (hit != null) {
             if (hit.getEntity() instanceof PlayerEntity target) {
-                if (!TeamUtils.canHealPlayer(player.getServer(), player, target)) return false;
+                if (!TeamUtils.canHealEntity(player.getServer(), player, target)) return false;
                 if (player.isSneaking()) {
                     for (PlayerEntity selected : players) {
                         if (selected.getName() == target.getName()) {

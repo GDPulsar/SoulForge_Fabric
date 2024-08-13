@@ -94,7 +94,7 @@ public class BouncingShieldEntity extends ProjectileEntity implements GeoEntity 
 
     protected boolean canHit(Entity entity) {
         if (entity instanceof PlayerEntity targetPlayer && owner != null) {
-            if (!TeamUtils.canDamagePlayer(this.getServer(), owner, targetPlayer)) return false;
+            if (!TeamUtils.canDamageEntity(this.getServer(), owner, targetPlayer)) return false;
         }
         return !entity.noClip && super.canHit(entity) && this.owner != entity;
     }

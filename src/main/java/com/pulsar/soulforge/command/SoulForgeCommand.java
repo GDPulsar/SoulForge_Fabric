@@ -190,6 +190,17 @@ public class SoulForgeCommand {
                                                                 })
                                                         )
                                                 )
+                                                .then(literal("styleRank")
+                                                        .then(argument("amount", integer())
+                                                                .executes(context -> {
+                                                                    SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
+                                                                    data.setStyleRank(getInteger(context, "amount"));
+                                                                    data.setStyle(data.getStyleRequirement() - 1);
+                                                                    context.getSource().sendMessage(Text.literal("Set style rank to " + data.getStyleRank()));
+                                                                    return 1;
+                                                                })
+                                                        )
+                                                )
                                         ).then(literal("reset")
                                                 .executes(context -> {
                                                     SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));

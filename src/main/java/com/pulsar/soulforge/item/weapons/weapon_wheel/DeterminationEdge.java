@@ -4,7 +4,6 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -47,7 +46,7 @@ public class DeterminationEdge extends MagicSweepingSwordItem implements GeoItem
         for (Entity entity : attacker.getEntityWorld().getOtherEntities(attacker, Box.of(attacker.getPos(), 4, 4, 4))) {
             if (entity instanceof LivingEntity living && living != target) {
                 if (entity instanceof PlayerEntity targetPlayer && attacker instanceof PlayerEntity player) {
-                    if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                 }
                 if (living.damage(attacker.getDamageSources().playerAttack((PlayerEntity)attacker), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()))) {
                     playerSoul.setStyle(playerSoul.getStyle() + (int)(this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()));

@@ -53,8 +53,8 @@ public class DeterminationSpearProjectile extends PersistentProjectileEntity imp
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
-        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return;
         }
         float f = 5.0f;
         DamageSource damageSource = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);

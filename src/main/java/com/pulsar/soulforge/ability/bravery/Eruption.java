@@ -42,7 +42,7 @@ public class Eruption extends AbilityBase {
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(centerPoint, aoeDist * 2f, aoeDist * 2f, aoeDist * 2f))) {
                 if (entity instanceof LivingEntity living) {
                     if (entity instanceof PlayerEntity targetPlayer) {
-                        if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                        if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                     }
                     float dist = (float) living.getPos().distanceTo(centerPoint);
                     if (dist <= aoeDist) {

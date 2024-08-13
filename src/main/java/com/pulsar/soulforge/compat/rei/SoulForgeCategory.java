@@ -29,7 +29,7 @@ public class SoulForgeCategory implements DisplayCategory<BasicDisplay> {
 
     @Override
     public Text getTitle() {
-        return Text.translatable("soulforge.rei_category.title");
+        return Text.translatable("soulforge.rei_category.soul_forge.title");
     }
 
     @Override

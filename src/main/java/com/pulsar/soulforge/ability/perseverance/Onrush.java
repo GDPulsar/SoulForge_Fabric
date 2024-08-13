@@ -43,7 +43,7 @@ public class Onrush extends AbilityBase {
         for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 1, 1, 1))) {
             if (target instanceof LivingEntity living) {
                 if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                 }
                 if (!damaged.contains(living)) {
                     if (living.damage(source, damage)) {

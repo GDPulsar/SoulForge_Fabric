@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.SoulForgeClient;
@@ -45,6 +46,8 @@ public abstract class InGameHudMixin {
     @Shadow public abstract TextRenderer getTextRenderer();
 
     @Shadow private int heldItemTooltipFade;
+
+    @Shadow public float vignetteDarkness;
 
     @Inject(method = "renderHotbar", at = @At("HEAD"), cancellable = true)
     private void renderHotbarExtras(float tickDelta, DrawContext context, CallbackInfo ci) {
@@ -209,8 +212,6 @@ public abstract class InGameHudMixin {
     }
 
     @Unique
-    private boolean hadMagicModeActive = false;
-    @Unique
     private int selectedAbilityTooltipFade = 0;
     @Unique
     private String currentAbility = "";
@@ -244,5 +245,15 @@ public abstract class InGameHudMixin {
                 context.drawTextWithShadow(this.getTextRenderer(), mutableText, j, k, 16777215 + (l << 24));
             }
         }
+    }
+
+    @ModifyExpressionValue(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;isFancyGraphicsOrBetter()Z"))
+    private boolean soulforge$doProceedVignette(boolean original) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(this.client.player);
+        if (playerSoul.hasCast("Proceed")) {
+            this.vignetteDarkness = 1f;
+            return true;
+        }
+        return original;
     }
 }

@@ -3,7 +3,7 @@ package com.pulsar.soulforge.trait;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.determination.DeterminationSword;
-import com.pulsar.soulforge.ability.patience.Iceshock;
+import com.pulsar.soulforge.ability.patience.Slowball;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.trait.traits.*;
 import com.pulsar.soulforge.util.Constants;
@@ -79,7 +79,6 @@ public class Traits {
                 if (!Constants.isAllowedForDualTrait(ability, traits, lv)) continue;
                 if (ability.getLV() <= lv) {
                     if (ability instanceof DeterminationSword && lv >= 20) continue;
-                    if (ability instanceof Iceshock && lv >= 10) continue;
                     abilities.add(ability.getInstance());
                 }
             }
@@ -123,7 +122,6 @@ public class Traits {
                         if (ability.getLV() <= soul.getLV() || soul.getTraits().contains(Traits.spite)) {
                             if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_ON_HIT) {
                                 if (ability instanceof DeterminationSword && soul.getLV() == 20) continue;
-                                if (ability instanceof Iceshock && soul.getLV() >= 10) continue;
                                 abilityNames.add(ability.getName());
                             }
                         }

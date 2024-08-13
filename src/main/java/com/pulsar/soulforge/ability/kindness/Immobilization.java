@@ -26,7 +26,7 @@ public class Immobilization extends ToggleableAbilityBase {
             if (entity != null) {
                 if (target != null) {
                     SoulForge.getValues(target).removeBool("Immobilized");
-                    target.setInvulnerable(true);
+                    target.setInvulnerable(false);
                     target = null;
                     setActive(false);
                 }

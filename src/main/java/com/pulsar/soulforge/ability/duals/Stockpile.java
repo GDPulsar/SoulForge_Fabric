@@ -25,7 +25,7 @@ public class Stockpile extends AbilityBase {
         if (hit != null) {
             if (hit.getEntity() instanceof LivingEntity target) {
                 if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) return false;
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) return false;
                 }
                 if (!playerSoul.hasValue("stockpiles")) playerSoul.setValue("stockpiles", 0);
                 playerSoul.setValue("stockpiles", playerSoul.getValue("stockpiles")+1);

@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.effects;
 
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -14,8 +15,9 @@ public class EepyEffect extends StatusEffect {
                 0x2e0a61
         );
         this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "ab7c8dfa-e8c0-4eb1-a7ad-e33a34b180cd", -0.02, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-        this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "88520988-2817-4564-8d63-5de49b56cd43", -0.01, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-        this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "2b619887-378d-4f9e-8161-15e0a2ab72eb", -0.01, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+        this.addAttributeModifier(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "ab7c8dfa-e8c0-4eb1-a7ad-e33a34b180cd", -0.02, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+        this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "ab7c8dfa-e8c0-4eb1-a7ad-e33a34b180cd", -0.01, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+        this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED, "ab7c8dfa-e8c0-4eb1-a7ad-e33a34b180cd", -0.01, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
     }
 
     @Override

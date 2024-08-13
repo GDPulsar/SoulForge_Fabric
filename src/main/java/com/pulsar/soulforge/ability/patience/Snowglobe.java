@@ -35,7 +35,7 @@ public class Snowglobe extends AbilityBase {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         timer--;
         for (PlayerEntity nearby : player.getWorld().getEntitiesByClass(PlayerEntity.class, Box.of(player.getPos(), 10, 10, 10),
-                (entity) -> entity != player && TeamUtils.canHealPlayer(player.getServer(), player, entity) && entity.distanceTo(player) <= 5f)) {
+                (entity) -> entity != player && TeamUtils.canHealEntity(player.getServer(), player, entity) && entity.distanceTo(player) <= 5f)) {
             Utils.addTemporaryAttribute(nearby, SoulForgeAttributes.MAGIC_POWER,
                     new EntityAttributeModifier(UUID.fromString("e8afbcd4-462a-42b0-8f9f-d7dae0e71dc7"), "snowglobe_boost",
                             playerSoul.getEffectiveLV() * 0.025f, EntityAttributeModifier.Operation.ADDITION), 2);
@@ -51,9 +51,9 @@ public class Snowglobe extends AbilityBase {
 
     public int getLV() { return 15; }
 
-    public int getCost() { return 30; }
+    public int getCost() { return 60; }
 
-    public int getCooldown() { return 300; }
+    public int getCooldown() { return 1200; }
 
     public AbilityType getType() { return AbilityType.CAST; }
 

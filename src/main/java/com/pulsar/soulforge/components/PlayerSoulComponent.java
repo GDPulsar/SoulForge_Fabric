@@ -444,9 +444,13 @@ public class PlayerSoulComponent implements SoulComponent {
     public void setStyleRank(int styleRank) {
         this.styleRank = styleRank;
         if (styleRank >= 5) {
-            player.playSound(SoulForgeSounds.UT_CREATE_EVENT, 1f, 1f);
+            player.getWorld().playSound(null, player.getBlockPos(), SoulForgeSounds.UT_CREATE_EVENT, SoundCategory.MASTER, 1f, 1f);
         } else if (styleRank > 0) {
-            player.playSound(SoulForgeSounds.UT_A_GRAB_EVENT, 1f, 1f);
+            player.getWorld().playSound(null, player.getBlockPos(), SoulForgeSounds.UT_A_GRAB_EVENT, SoundCategory.MASTER, 1f, 1f);
+        }
+        while (this.style >= getStyleRequirement()) {
+            this.style -= getStyleRequirement();
+            this.styleRank++;
         }
         if (styleRank > 5) {
             player.sendMessage(Text.literal("what sort of frog magic is this"));

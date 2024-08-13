@@ -24,6 +24,7 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.JusticeCrossbow;
 import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
+import com.pulsar.soulforge.shader.TestPostProcessor;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.trait.Traits;
 import dev.architectury.event.events.client.ClientRawInputEvent;
@@ -49,6 +50,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.LightningEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
@@ -61,6 +63,7 @@ import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.client.HUDOverlayHandler;
+import team.lodestar.lodestone.systems.postprocess.PostProcessHandler;
 
 import java.awt.*;
 import java.io.IOException;
@@ -71,6 +74,11 @@ import static net.minecraft.client.render.VertexFormats.POSITION_COLOR_TEXTURE_L
 
 public class SoulForgeClient implements ClientModInitializer {
 	public static EntityModelLayer MODEL_FROZEN_ENERGY_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "frozen_energy"), "Frozen Energy");
+	public static EntityModelLayer MODEL_ICE_SPIKE_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "ice_spike"), "Ice Spike");
+	public static EntityModelLayer MODEL_TOTAL_FROSTBITE_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "total_frostbite"), "Total Frostbite");
+
+	public static SoundInstance snowstormSound = null;
+	public static SoundInstance heartbeatSound = null;
 
 	public static RenderPhase.ShaderProgram energyBeamProgram;
 
@@ -82,6 +90,14 @@ public class SoulForgeClient implements ClientModInitializer {
 						2048, false, false, mpp);
 		return layer;
 		//return energyBeamBuffer.getRenderLayer(layer);
+	}
+
+	public static RenderLayer getRiftLayer(Identifier texture) {
+		RenderLayer.MultiPhaseParameters mpp = RenderLayer.MultiPhaseParameters.builder().program(POSITION_COLOR_TEXTURE_LIGHTMAP_PROGRAM)
+				.texture(new RenderPhase.Texture(texture, false, false)).transparency(ADDITIVE_TRANSPARENCY)
+				.lightmap(DISABLE_LIGHTMAP).build(false);
+        return RenderLayer.of("rift", POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.TRIANGLES,
+				FabricLoader.getInstance().isModLoaded("sodium") ? 4194304 : 256, false, false, mpp);
 	}
 
 	public static final ManagedShaderEffect energyBeamEffect = ShaderEffectManager.getInstance().manage(new Identifier(SoulForge.MOD_ID, "shaders/post/energy_beam.json"));
@@ -109,8 +125,6 @@ public class SoulForgeClient implements ClientModInitializer {
 		if (MinecraftClient.getInstance().getSession().getUsername().equals("GDPulsar")) {
 			KeyInputHandler.registerThePulsarFunnyThings();
 		}
-
-		EntityModelLayerRegistry.registerModelLayer(MODEL_FROZEN_ENERGY_LAYER, FrozenEnergyModel::getTexturedModelData);
 
 		HandledScreens.register(SoulForge.SOUL_FORGE_SCREEN_HANDLER, SoulForgeScreen::new);
 		HandledScreens.register(SoulForge.CREATIVE_ZONE_SCREEN_HANDLER, CreativeZoneScreen::new);
@@ -170,6 +184,15 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.PLAYER_SOUL_ENTITY_TYPE, PlayerSoulRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.DETERMINATION_SHOT_ENTITY_TYPE, DeterminationShotRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.FEAR_BOMB_ENTITY_TYPE, FearBombRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.SLOWBALL_ENTITY_TYPE, SlowballRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.ICE_SPIKE_ENTITY_TYPE, IceSpikeRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.TOTAL_FROSTBITE_ENTITY_TYPE, TotalFrostbiteEntityRenderer::new);
+
+		EntityModelLayerRegistry.registerModelLayer(MODEL_FROZEN_ENERGY_LAYER, FrozenEnergyModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(MODEL_ICE_SPIKE_LAYER, IceSpikeModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(MODEL_TOTAL_FROSTBITE_LAYER, TotalFrostbiteModel::getTexturedModelData);
+
+		WormholeEntityRenderer.initialiseCrackRenderTypes();
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
 		HudRenderCallback.EVENT.register(new SoulResetOverlay());
@@ -294,6 +317,8 @@ public class SoulForgeClient implements ClientModInitializer {
 				}
 			}
 		});
+
+		PostProcessHandler.addInstance(TestPostProcessor.INSTANCE);
 
 		CoreShaderRegistrationCallback.EVENT.register(ctx -> {
 			SoulForgeRendering.initializeShaders(

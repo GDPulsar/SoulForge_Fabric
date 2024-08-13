@@ -56,7 +56,7 @@ public class WeatherWarningLightningEntity extends LightningEntity {
                     if (entity == this.owner) continue;
                     if (entity instanceof DomePart) continue;
                     if (entity instanceof PlayerEntity targetPlayer && this.owner != null) {
-                        if (!TeamUtils.canDamagePlayer(this.getServer(), this.owner, targetPlayer)) return;
+                        if (!TeamUtils.canDamageEntity(this.getServer(), this.owner, targetPlayer)) return;
                     }
                     entity.onStruckByLightning((ServerWorld) this.getWorld(), this);
                     if (entity instanceof LivingEntity living) {

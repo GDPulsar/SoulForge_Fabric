@@ -1,17 +1,16 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.kindness.PainSplit;
-import com.pulsar.soulforge.ability.patience.FrozenGrasp;
 import com.pulsar.soulforge.ability.pures.MartyrsTouch;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -22,14 +21,11 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
-import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -45,11 +41,9 @@ import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -93,35 +87,8 @@ abstract class PlayerEntityMixin extends LivingEntity {
 
     @Shadow public abstract Arm getMainArm();
 
-    @Shadow public abstract void useRiptide(int riptideTicks);
-
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
-    }
-
-    @Inject(method="handleFallDamage", at=@At("HEAD"), cancellable = true)
-    protected void modifyFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        PlayerEntity player = ((PlayerEntity)(Object)this);
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul != null) {
-            if (playerSoul.hasTag("fallImmune") || playerSoul.hasCast("Antigravity Zone")) {
-                cir.setReturnValue(false);
-                playerSoul.handleEvent(EventType.FALL_IMMUNITY);
-                return;
-            }
-            if (player.getServer() != null) {
-                for (ServerPlayerEntity target : player.getServer().getPlayerManager().getPlayerList()) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
-                    if (target.distanceTo(player) < 15f) {
-                        if (targetSoul.hasCast("Antigravity Zone")) {
-                            cir.setReturnValue(false);
-                            playerSoul.handleEvent(EventType.FALL_IMMUNITY);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     @Inject(method="jump", at=@At("HEAD"), cancellable = true)
@@ -198,125 +165,20 @@ abstract class PlayerEntityMixin extends LivingEntity {
         return damageMultiplier;
     }
 
-    @Redirect(method="attack", at= @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
-    protected boolean onDamageEntity(Entity target, DamageSource source, float damage) {
-        if (target instanceof LivingEntity living) {
-            PlayerEntity player = (PlayerEntity)(Object)this;
-            if (target instanceof PlayerEntity targetPlayer) {
-                if (!player.shouldDamagePlayer(targetPlayer)) return target.damage(source, damage);
-            }
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-
-            // siphon
-            ItemStack held = player.getMainHandStack();
-            if (held.getNbt() != null) {
-                if (held.getNbt().contains("Siphon")) {
-                    Siphon.Type type = Siphon.Type.getSiphon(held.getNbt().getString("Siphon"));
-                    if (held.isIn(ItemTags.SWORDS) || held.isIn(ItemTags.AXES)) {
-                        if (type == Siphon.Type.PATIENCE || type == Siphon.Type.SPITE) {
-                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 60, 1));
-                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 60, 0));
-                        }
-                        if (type == Siphon.Type.DETERMINATION || type == Siphon.Type.SPITE) {
-                            playerSoul.setMagic(playerSoul.getMagic() + damage);
-                        }
-                        if (type == Siphon.Type.PERSEVERANCE || type == Siphon.Type.SPITE) {
-                            if (player.getAttackCooldownProgress(0.5f) >= 0.99f) {
-                                if (target instanceof PlayerEntity targetPlayer) {
-                                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                                    Utils.addAntiheal(0.6f, (int) (player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).getValue() * 20), targetSoul);
-                                }
-                            }
-                        }
-                        if (type == Siphon.Type.KINDNESS || type == Siphon.Type.SPITE) {
-                            if (player.getAbsorptionAmount() < 8f)
-                                player.setAbsorptionAmount(player.getAbsorptionAmount() + 1f);
-                        }
-                    }
-                    if (held.isOf(Items.TRIDENT)) {
-                        if (this.isUsingRiptide()) {
-                            if (type == Type.KINDNESS || type == Siphon.Type.SPITE) {
-                                living.removeStatusEffect(StatusEffects.DOLPHINS_GRACE);
-                                living.removeStatusEffect(StatusEffects.WATER_BREATHING);
-                            }
-                            if (type == Siphon.Type.PATIENCE || type == Siphon.Type.SPITE) {
-                                int useLevel = held.getOrCreateNbt().contains("useLevel") ? held.getOrCreateNbt().getInt("useLevel") : 1;
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 240, useLevel - 1));
-                                if (useLevel >= 2) living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 240, useLevel - 2));
-                            }
-                            if (type == Type.PERSEVERANCE || type == Type.SPITE) {
-                                int j = EnchantmentHelper.getRiptide(held);
-                                float f = this.getYaw();
-                                float g = this.getPitch();
-                                float h = -MathHelper.sin(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
-                                float k = -MathHelper.sin(g * 0.017453292F);
-                                float l = MathHelper.cos(f * 0.017453292F) * MathHelper.cos(g * 0.017453292F);
-                                float m = MathHelper.sqrt(h * h + k * k + l * l);
-                                float n = 3.0F * ((1.0F + (float) j) / 4.0F);
-                                h *= n / m;
-                                k *= n / m;
-                                l *= n / m;
-                                this.addVelocity(h, k, l);
-                                this.useRiptide(20);
-                                if (this.isOnGround()) {
-                                    this.move(MovementType.SELF, new Vec3d(0.0, 1.1999999284744263, 0.0));
-                                }
-
-                                SoundEvent soundEvent;
-                                if (j >= 3) {
-                                    soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_3;
-                                } else if (j == 2) {
-                                    soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_2;
-                                } else {
-                                    soundEvent = SoundEvents.ITEM_TRIDENT_RIPTIDE_1;
-                                }
-
-                                this.getWorld().playSoundFromEntity(null, this, soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                            }
-                        }
-                        if (type == Siphon.Type.DETERMINATION || type == Siphon.Type.SPITE) {
-                            playerSoul.setMagic(playerSoul.getMagic() + damage);
-                        }
-                    }
-                }
-            }
-
-            boolean frostburn = playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience);
-            // abilities
-            for (AbilityBase ability : playerSoul.getActiveAbilities()) {
-                if (ability instanceof FrozenGrasp frozenGrasp) {
-                    if (!frozenGrasp.used) {
-                        frozenGrasp.target = living;
-                        frozenGrasp.used = true;
-                        living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 20 * playerSoul.getEffectiveLV(), MathHelper.ceil(playerSoul.getEffectiveLV() / 5f)));
-                        living.addStatusEffect(new StatusEffectInstance(
-                                frostburn ? SoulForgeEffects.FROSTBURN : SoulForgeEffects.FROSTBITE,
-                                40 * playerSoul.getEffectiveLV(), 0));
-                    }
-                }
-            }
-
-            if (playerSoul.hasCast("Bravery Boost") && frostburn) {
-                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 100, 0));
-            }
-        }
-        return target.damage(source, damage);
-    }
-
-    @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
-    private Item allowSweepingFor(ItemStack instance) {
-        if (instance.getItem() instanceof TridentItem) {
-            if (instance.getOrCreateNbt().contains("Siphon")) {
-                Siphon.Type siphonType = Siphon.Type.getSiphon(instance.getOrCreateNbt().getString("Siphon"));
+    @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;"))
+    private Item soulforge$allowSweepingFor(Item original, @Local ItemStack stack) {
+        if (stack.getItem() instanceof TridentItem) {
+            if (stack.getOrCreateNbt().contains("Siphon")) {
+                Siphon.Type siphonType = Siphon.Type.getSiphon(stack.getOrCreateNbt().getString("Siphon"));
                 if (siphonType == Type.BRAVERY) {
                     return Items.GOLDEN_SWORD;
                 }
             }
         }
-        if (instance.getItem() instanceof MagicSweepingSwordItem) {
+        if (stack.getItem() instanceof MagicSweepingSwordItem) {
             return Items.GOLDEN_SWORD;
         }
-        return instance.getItem();
+        return original;
     }
 
     @ModifyVariable(method = "attack", at = @At("STORE"), ordinal = 0)
@@ -436,7 +298,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
             cir.setReturnValue(false);
         }
         if (source.getAttacker() instanceof PlayerEntity attacker) {
-            if (!TeamUtils.canDamagePlayer(player.getServer(), player, attacker)) {
+            if (!TeamUtils.canDamageEntity(player.getServer(), player, attacker)) {
                 cir.setReturnValue(false);
                 return;
             }
@@ -481,8 +343,8 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 .add(SoulForgeAttributes.MAGIC_POWER);
     }
 
-    @Inject(method = "getBlockBreakingSpeed", at=@At("RETURN"), cancellable = true)
-    private void modifyMiningSpeed(BlockState block, CallbackInfoReturnable<Float> cir) {
+    @ModifyReturnValue(method = "getBlockBreakingSpeed", at=@At("RETURN"))
+    private float modifyMiningSpeed(float original) {
         ItemStack stack = this.getMainHandStack();
         if (stack.getNbt() != null) {
             if (stack.getNbt().contains("Siphon")) {
@@ -490,16 +352,17 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 if (type == Siphon.Type.DETERMINATION || type == Siphon.Type.SPITE) {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)(Object)this);
                     if (playerSoul.getMagic() > 60f) {
-                        cir.setReturnValue(cir.getReturnValue()*1.2f);
+                        return original * 1.2f;
                     } else {
-                        cir.setReturnValue(cir.getReturnValue()*0.8f);
+                        return original * 0.8f;
                     }
                 }
                 if (type == Siphon.Type.PATIENCE || type == Siphon.Type.SPITE) {
-                    cir.setReturnValue(cir.getReturnValue()*0.65f);
+                    return original * 0.65f;
                 }
             }
         }
+        return original;
     }
 
     @Inject(method = "disableShield", at=@At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
@@ -515,15 +378,15 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
-    @Redirect(method = "interact", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;interact(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
-    public ActionResult interact(Entity instance, PlayerEntity player, Hand hand) {
-        ActionResult result = instance.interact(player, hand);
-        if (!result.isAccepted()) {
+    @ModifyExpressionValue(method = "interact", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;interact(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
+    public ActionResult interact(ActionResult original, @Local Entity entity, @Local Hand hand) {
+        PlayerEntity player = (PlayerEntity)(Object)this;
+        if (!original.isAccepted()) {
             if (!player.getWorld().isClient) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 if (!(playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.integrity)))
-                    return result;
-                if (!playerSoul.hasCast("Valiant Heart")) return result;
+                    return original;
+                if (!playerSoul.hasCast("Valiant Heart")) return original;
                 if (!playerSoul.hasValue("parryCooldown")) playerSoul.setValue("parryCooldown", 0f);
                 if (playerSoul.getValue("parryCooldown") == 0f) {
                     player.getItemCooldownManager().set(player.getMainHandStack().getItem(), 25);
@@ -536,34 +399,36 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 }
             }
         }
-        return result;
+        return original;
     }
 
-    @Inject(method = "getEntityName", at=@At("HEAD"), cancellable = true)
-    public void getEntityName(CallbackInfoReturnable<String> cir) {
+    @ModifyReturnValue(method = "getEntityName", at=@At("RETURN"))
+    public String getEntityName(String original) {
         PlayerEntity player = (PlayerEntity)(Object)this;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (playerSoul.getDisguise() != null) {
             if (playerSoul.getDisguise() != player) {
-                cir.setReturnValue(playerSoul.getDisguise().getEntityName());
+                return playerSoul.getDisguise().getEntityName();
             }
         }
+        return original;
     }
 
-    @Inject(method = "getName", at=@At("HEAD"), cancellable = true)
-    public void getName(CallbackInfoReturnable<Text> cir) {
+    @ModifyReturnValue(method = "getName", at=@At("RETURN"))
+    public Text getName(Text original) {
         PlayerEntity player = (PlayerEntity)(Object)this;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (playerSoul.getDisguise() != null) {
             if (playerSoul.getDisguise() != player) {
-                cir.setReturnValue(playerSoul.getDisguise().getName());
+                return playerSoul.getDisguise().getName();
             }
         }
+        return original;
     }
 
     @ModifyReturnValue(method = "shouldDamagePlayer", at=@At("RETURN"))
     private boolean modifyShouldDamagePlayer(boolean original, @Local PlayerEntity player) {
-        return original && TeamUtils.canDamagePlayer(getServer(), (PlayerEntity)(Object)this, player);
+        return original && TeamUtils.canDamageEntity(getServer(), (PlayerEntity)(Object)this, player);
     }
 
     @ModifyReturnValue(method = "getOffGroundSpeed", at=@At("RETURN"))
@@ -574,18 +439,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
         return original;
     }
-
-    /*@ModifyVariable(method = "interact", at = @At("STORE"), ordinal = 0)
-    private ItemStack modifyInteractingStack(ItemStack original, @Local Hand hand) {
-        if (hand == Hand.OFF_HAND) {
-            PlayerEntity player = (PlayerEntity)(Object)this;
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasWeapon() && playerSoul.getWeapon().isOf(SoulForgeItems.KINDNESS_SHIELD)) {
-                return playerSoul.getWeapon();
-            }
-        }
-        return original;
-    }*/
 
     @Inject(method = "wakeUp(ZZ)V", at = @At("HEAD"), cancellable = true)
     private void soulforge$canWakeUp(CallbackInfo ci) {

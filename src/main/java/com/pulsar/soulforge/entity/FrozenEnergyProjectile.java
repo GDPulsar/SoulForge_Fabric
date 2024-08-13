@@ -3,18 +3,14 @@ package com.pulsar.soulforge.entity;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
+import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
@@ -41,7 +37,6 @@ public class FrozenEnergyProjectile extends ProjectileEntity {
 
     public void tick() {
         super.tick();
-        Vec3d vec3d;
         if (!this.getWorld().isClient) {
             HitResult hitResult = ProjectileUtil.getCollision(this, this::canHit);
             if (hitResult.getType() != HitResult.Type.MISS) {
@@ -50,12 +45,17 @@ public class FrozenEnergyProjectile extends ProjectileEntity {
         }
 
         this.checkBlockCollision();
-        vec3d = this.getVelocity();
-        this.setPosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
+        Vec3d vel = this.getVelocity();
+        this.setVelocity(vel.multiply(1.15f));
+        this.setPosition(this.getX() + vel.x, this.getY() + vel.y, this.getZ() + vel.z);
         ProjectileUtil.setRotationFromVelocity(this, 1f);
     }
 
+    @Override
     protected boolean canHit(Entity entity) {
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return false;
+        }
         return super.canHit(entity) && !entity.noClip;
     }
 
@@ -70,44 +70,23 @@ public class FrozenEnergyProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        float damage = 6f;
-        if (this.getOwner() != null) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)this.getOwner());
-            damage = playerSoul.getEffectiveLV()*0.4f;
-        }
-        if (entity instanceof LivingEntity living) {
-            for (StatusEffectInstance effect : living.getStatusEffects()) {
-                if (!effect.getEffectType().isBeneficial() && effect.getEffectType() != StatusEffects.UNLUCK) damage += effect.getAmplifier();
+        if (entity instanceof LivingEntity living && this.age > 20) {
+            if (this.getOwner() != null) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) this.getOwner());
+                float damage = playerSoul.getEffectiveLV() + 10f;
+                DamageSource source = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE);
+                living.damage(source, damage);
             }
         }
-        entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SKEWER_WEAKPOINT_DAMAGE_TYPE), damage);
-        entity.timeUntilRegen = 14;
     }
 
     private void destroy() {
         this.discard();
-        this.getWorld().emitGameEvent(GameEvent.ENTITY_DAMAGE, this.getPos(), GameEvent.Emitter.of(this));
+        this.getWorld().emitGameEvent(GameEvent.ENTITY_DIE, this.getPos(), GameEvent.Emitter.of(this));
     }
 
     protected void onCollision(HitResult hitResult) {
         super.onCollision(hitResult);
         this.destroy();
-    }
-
-    public boolean damage(DamageSource source, float amount) {
-        if (!this.getWorld().isClient) {
-            ((ServerWorld)this.getWorld()).spawnParticles(ParticleTypes.CRIT, this.getX(), this.getY(), this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-            this.destroy();
-        }
-
-        return true;
-    }
-
-    public void onSpawnPacket(EntitySpawnS2CPacket packet) {
-        super.onSpawnPacket(packet);
-        double d = packet.getVelocityX();
-        double e = packet.getVelocityY();
-        double f = packet.getVelocityZ();
-        this.setVelocity(d, e, f);
     }
 }

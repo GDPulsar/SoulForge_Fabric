@@ -26,7 +26,7 @@ public class AllyHeal extends AbilityBase {
             if (result.getEntity() instanceof LivingEntity) {
                 target = (LivingEntity)result.getEntity();
                 if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) return false;
+                    if (!TeamUtils.canHealEntity(player.getServer(), player, targetPlayer)) return false;
                 }
                 timer = 200;
                 player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.HEAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);

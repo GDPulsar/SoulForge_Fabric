@@ -51,7 +51,7 @@ public class Warpspeed extends AbilityBase {
         else player.setStepHeight(3.6f);
         for (Entity entity : player.getEntityWorld().getOtherEntities(player, new Box(player.getPos().subtract(1, 1, 1), player.getPos().add(1, 1, 1)))) {
             if (entity instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) return false;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) return false;
             }
             entity.damage(SoulForgeDamageTypes.of(player.getWorld(), SoulForgeDamageTypes.WARPSPEED_DAMAGE_TYPE), player.getMovementSpeed()*8f);
             entity.setVelocity(player.getRotationVector().x*5f, 1.5f, player.getRotationVector().z*5f);

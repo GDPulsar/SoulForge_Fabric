@@ -26,14 +26,14 @@ public class RendAsunder extends AbilityBase {
         int affectedCount = 0;
         for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 2f, 3f, 1f, 2f)) {
             if (target instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
             }
             if (target.damage(damageSource, 0.5f*playerSoul.getEffectiveLV())) {
                 affectedCount++;
             }
             target.addStatusEffect(effect, player);
             if (target instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                 SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
                 Utils.addAntiheal(0.4f, playerSoul.getEffectiveLV()*20, targetSoul);
             }

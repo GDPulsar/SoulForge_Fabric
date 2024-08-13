@@ -4,6 +4,7 @@ import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -64,8 +65,8 @@ public class SwordSlashProjectile extends ProjectileEntity implements GeoAnimata
     }
 
     protected boolean canHit(Entity entity) {
-        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return false;
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return false;
         }
         return super.canHit(entity) && !entity.noClip;
     }

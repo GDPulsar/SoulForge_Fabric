@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.components;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.util.Utils;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.entity.LivingEntity;
@@ -108,8 +107,6 @@ public class ValueComponent implements AutoSyncedComponent {
 
     @Override
     public void readFromNbt(NbtCompound nbt) {
-        SoulForge.LOGGER.info("reading: {}, entity: {}", nbt, entity);
-
         NbtCompound floatNbt = nbt.getCompound("floatVals");
         floatVals = new HashMap<>();
         for (String key : floatNbt.getKeys()) {
@@ -172,7 +169,5 @@ public class ValueComponent implements AutoSyncedComponent {
             uuidNbt.putUuid(entry.getKey(), entry.getValue());
         }
         nbt.put("uuidVals", uuidNbt);
-
-        SoulForge.LOGGER.info("writing: {}, entity: {}", nbt, entity);
     }
 }

@@ -10,6 +10,7 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoubleBlockProperties;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -99,6 +100,9 @@ public class LivingEntityTick {
 
         if (living.hasStatusEffect(SoulForgeEffects.EEPY)) {
             if (living.getSleepingPosition().isEmpty()) {
+                 if (values.getBool("WasEepy")) {
+                    living.setInvulnerable(false);
+                }
                 for (int x = -4; x < 4; x++) {
                     for (int y = -2; y < 2; y++) {
                         for (int z = -4; z < 4; z++) {
@@ -115,8 +119,12 @@ public class LivingEntityTick {
                     }
                 }
             } else if (living.isSleepingInBed()) {
+                living.setInvulnerable(true);
+                values.setBool("WasEepy", true);
                 living.setPositionInBed(living.getSleepingPosition().get());
             }
+        } else if (values.getBool("WasEepy")) {
+            living.setInvulnerable(false);
         }
 
         if (living.hasStatusEffect(SoulForgeEffects.MANA_TUMOR)) {
@@ -151,6 +159,23 @@ public class LivingEntityTick {
                     List<LivingEntity> near = living.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(living.getPos(), 12, 12,12),
                             (entity) -> entity.distanceTo(living) < 6f);
                     near.get((int)Math.floor(Math.random()*near.size())).addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_TUMOR, (int)Math.floor((Math.random() + 0.5f) * 36000)));
+                }
+            }
+        }
+
+        if (living instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            if (playerSoul.hasCast("Proceed")) {
+                LivingEntity nearest = null;
+                for (LivingEntity nearby : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 50, 50, 50), entity -> player.canHit())) {
+                    if (nearby == player) continue;
+                    if (nearest == null) nearest = nearby;
+                    else if (nearby.distanceTo(player) < nearest.distanceTo(player)) {
+                        nearest = nearby;
+                    }
+                }
+                if (nearest != null) {
+                    player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, nearest.getEyePos());
                 }
             }
         }

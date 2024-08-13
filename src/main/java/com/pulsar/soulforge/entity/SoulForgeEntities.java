@@ -57,6 +57,9 @@ public class SoulForgeEntities {
     public static EntityType<PlayerSoulEntity> PLAYER_SOUL_ENTITY_TYPE;
     public static EntityType<DeterminationShotProjectile> DETERMINATION_SHOT_ENTITY_TYPE;
     public static EntityType<FearBombEntity> FEAR_BOMB_ENTITY_TYPE;
+    public static EntityType<SlowballProjectile> SLOWBALL_ENTITY_TYPE;
+    public static EntityType<IceSpikeProjectile> ICE_SPIKE_ENTITY_TYPE;
+    public static EntityType<TotalFrostbiteEntity> TOTAL_FROSTBITE_ENTITY_TYPE;
 
     public static void register() {
         SNOWGRAVE_PROJECTILE_TYPE = Registry.register(
@@ -466,6 +469,28 @@ public class SoulForgeEntities {
                 FabricEntityTypeBuilder.<FearBombEntity>create(SpawnGroup.MISC, FearBombEntity::new)
                         .trackRangeBlocks(100).trackedUpdateRate(40)
                         .dimensions(EntityDimensions.fixed(0.5f, 0.5f)).build()
+        );
+
+        SLOWBALL_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "slowball"),
+                FabricEntityTypeBuilder.<SlowballProjectile>create(SpawnGroup.MISC, SlowballProjectile::new)
+                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .dimensions(EntityDimensions.fixed(0.5f, 0.5f)).build()
+        );
+
+        ICE_SPIKE_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "ice_spike"),
+                FabricEntityTypeBuilder.<IceSpikeProjectile>create(SpawnGroup.MISC, IceSpikeProjectile::new)
+                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .dimensions(EntityDimensions.changing(4f, 3f)).build()
+        );
+
+        TOTAL_FROSTBITE_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "total_frostbite_entity"),
+                FabricEntityTypeBuilder.<TotalFrostbiteEntity>create(SpawnGroup.MISC, TotalFrostbiteEntity::new)
+                        .dimensions(EntityDimensions.changing(1.5f, 3f))
+                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .build()
         );
 
         FabricDefaultAttributeRegistry.register(TURRET_ENTITY_TYPE, AutoTurretEntity.createMobAttributes());

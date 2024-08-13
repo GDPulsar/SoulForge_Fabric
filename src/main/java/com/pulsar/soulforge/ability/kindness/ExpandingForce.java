@@ -20,7 +20,7 @@ public class ExpandingForce extends AbilityBase {
         for (Entity target : world.getOtherEntities(player, box)) {
             if (target.distanceTo(player) < 4f) {
                 if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) return false;
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) return false;
                 }
                 Vec3d diff = target.getPos().subtract(player.getPos());
                 float dist = (float) diff.length();

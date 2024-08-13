@@ -21,7 +21,7 @@ public class ProtectiveTouch extends AbilityBase {
         if (hit != null && hit.getEntity() instanceof LivingEntity target) {
             if (target.isPlayer()) {
                 if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) return false;
+                    if (!TeamUtils.canHealEntity(player.getServer(), player, targetPlayer)) return false;
                 }
                 float newAbsorptionAmount = Math.max(target.getAbsorptionAmount(), (float)(playerSoul.getEffectiveLV()));
                 float absorptionIncrease = newAbsorptionAmount - target.getAbsorptionAmount();

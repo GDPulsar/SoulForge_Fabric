@@ -94,9 +94,9 @@ public class JusticePelletProjectile extends ProjectileEntity {
     }
 
     protected boolean canHit(Entity entity) {
-        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-            if (this.dataTracker.get(DAMAGE) > 0 && !TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return false;
-            if (this.dataTracker.get(DAMAGE) < 0 && !TeamUtils.canHealPlayer(this.getServer(), player, targetPlayer)) return false;
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (this.dataTracker.get(DAMAGE) > 0 && !TeamUtils.canDamageEntity(this.getServer(), player, target)) return false;
+            if (this.dataTracker.get(DAMAGE) < 0 && !TeamUtils.canHealEntity(this.getServer(), player, target)) return false;
         }
         return super.canHit(entity) && !entity.noClip;
     }

@@ -62,7 +62,7 @@ public class OrbitalStrikeEntity extends Entity {
             for (Entity entity : getWorld().getOtherEntities(this, getBoundingBox())) {
                 if (entity instanceof LivingEntity && entity != this.owner) {
                     if (entity instanceof PlayerEntity targetPlayer && this.owner != null) {
-                        if (!TeamUtils.canDamagePlayer(this.getServer(), this.owner, targetPlayer)) return;
+                        if (!TeamUtils.canDamageEntity(this.getServer(), this.owner, targetPlayer)) return;
                     }
                     float horizDist = (float) new Vec3d(getX(), 0f, getZ()).distanceTo(new Vec3d(entity.getX(), 0f, entity.getZ()));
                     if (horizDist <= 2f) {

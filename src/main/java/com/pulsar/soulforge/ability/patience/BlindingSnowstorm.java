@@ -3,12 +3,15 @@ package com.pulsar.soulforge.ability.patience;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
@@ -21,6 +24,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.RaycastContext;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class BlindingSnowstorm extends ToggleableAbilityBase {
     public BlockPos location;
@@ -47,17 +51,22 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
             setActive(false);
             return true;
         }
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float styleChange = 0f;
         for (Entity entity : player.getEntityWorld().getOtherEntities(null, Box.of(location.toCenterPos(), size*2, size*2, size*2))) {
             if (entity instanceof LivingEntity target) {
                 if (target.squaredDistanceTo(location.toCenterPos()) <= size * size) {
                     target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.SNOWED_VISION, 5, 0));
+                    TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
+                    float level = 1f / Math.min(1f + 0.015f * playerSoul.getEffectiveLV(), 1.6f) - 1f;
+                    modifiers.addTemporaryModifier(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER, new EntityAttributeModifier(
+                            UUID.fromString("2ab10d5f-e29a-468e-b77b-c8faba1b16c7"), "snowstorm",
+                            level, EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 2);
+                    if (target != player) styleChange += (1f + Utils.getTotalDebuffLevel(target) / 10f);
                 }
-                if (target != player) styleChange += (1f + Utils.getTotalDebuffLevel(target) / 10f);
             }
         }
         if (timer % 20 == 0) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             playerSoul.setStyle(playerSoul.getStyle() + (int)styleChange);
         }
         timer = (timer + 1) % 20;
@@ -76,7 +85,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
                 }
             }
         }
-        if (player.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) setActive(false);
+        if (player.hasStatusEffect(SoulForgeEffects.MANA_OVERLOAD)) setActive(false);
         return super.tick(player);
     }
 

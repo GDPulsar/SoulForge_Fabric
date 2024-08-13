@@ -90,8 +90,8 @@ public class PolarityBallEntity extends ProjectileEntity {
         float totalDamage = 0f;
         for (Entity entity : this.getEntityWorld().getOtherEntities(null, Box.of(this.getPos(), 24, 24, 24))) {
             if (entity instanceof LivingEntity target && target != this.getOwner()) {
-                if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-                    if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+                if (this.getOwner() instanceof PlayerEntity player) {
+                    if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return;
                 }
                 float dist = (float)entity.getPos().distanceTo(this.getPos());
                 if (dist <= 12f) {

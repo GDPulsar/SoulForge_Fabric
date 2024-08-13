@@ -45,7 +45,7 @@ public class FireTornadoProjectile extends Entity implements GeoEntity {
                 if (entity == owner) continue;
                 if (entity instanceof LivingEntity living) {
                     if (entity instanceof PlayerEntity targetPlayer && this.owner != null) {
-                        if (!TeamUtils.canDamagePlayer(this.getServer(), this.owner, targetPlayer)) return;
+                        if (!TeamUtils.canDamageEntity(this.getServer(), this.owner, targetPlayer)) return;
                     }
                     float horizDist = (float) living.getPos().subtract(this.getPos()).withAxis(Direction.Axis.Y, 0).length();
                     float vertDist = (float) living.getPos().subtract(this.getPos()).getY();

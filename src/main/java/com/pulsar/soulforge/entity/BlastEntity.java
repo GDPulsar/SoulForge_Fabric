@@ -22,6 +22,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BlastEntity extends Entity {
@@ -34,7 +35,9 @@ public class BlastEntity extends Entity {
     private static final TrackedData<Float> DAMAGE = DataTracker.registerData(BlastEntity.class, TrackedDataHandlerRegistry.FLOAT);
     private static final TrackedData<Boolean> IGNORES_IFRAMES = DataTracker.registerData(BlastEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Integer> DURATION = DataTracker.registerData(BlastEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Integer> HIT_INTERVAL = DataTracker.registerData(BlastEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private Consumer<LivingEntity> onDamageEvent = null;
+    private BiConsumer<BlastEntity, LivingEntity> onBlastDamageEvent = null;
 
     public BlastEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
@@ -105,6 +108,23 @@ public class BlastEntity extends Entity {
         this.onDamageEvent = onDamageEvent;
     }
 
+    public BlastEntity(World world, Vec3d pos, LivingEntity owner, float radius, Vec3d start, Vec3d end, float damage, Color color, boolean ignoresIframes, int duration, int hitInterval, BiConsumer<BlastEntity, LivingEntity> onBlastDamageEvent) {
+        super(SoulForgeEntities.HORIZONTAL_BLAST_ENTITY_TYPE, world);
+        this.setPosition(pos);
+        this.owner = owner;
+        this.dataTracker.set(POSITION, pos.toVector3f());
+        this.dataTracker.set(START, start.toVector3f());
+        this.dataTracker.set(END, end.toVector3f());
+        this.dataTracker.set(COLOR, color.getRGB());
+        this.dataTracker.set(RADIUS, radius);
+        this.dataTracker.set(DAMAGE, damage);
+        this.dataTracker.set(IGNORES_IFRAMES, ignoresIframes);
+        this.dataTracker.set(DURATION, duration);
+        this.dataTracker.set(HIT_INTERVAL, hitInterval);
+        this.ignoreCameraFrustum = true;
+        this.onBlastDamageEvent = onBlastDamageEvent;
+    }
+
     @Override
     protected void initDataTracker() {
         this.dataTracker.startTracking(POSITION, new Vector3f(0, 0, 0));
@@ -115,6 +135,7 @@ public class BlastEntity extends Entity {
         this.dataTracker.startTracking(DAMAGE, 5f);
         this.dataTracker.startTracking(IGNORES_IFRAMES, false);
         this.dataTracker.startTracking(DURATION, 20);
+        this.dataTracker.startTracking(HIT_INTERVAL, 5);
     }
 
     @Override
@@ -132,12 +153,13 @@ public class BlastEntity extends Entity {
     public float getDamage() { return this.dataTracker.get(DAMAGE); }
     public boolean getIgnoresIframes() { return this.dataTracker.get(IGNORES_IFRAMES); }
     public int getDuration() { return this.dataTracker.get(DURATION); }
+    public int getHitInterval() { return this.dataTracker.get(HIT_INTERVAL); }
 
     public int timer = 0;
     @Override
     public void tick() {
         this.setPosition(Utils.vector3fToVec3d(this.dataTracker.get(POSITION)));
-        if (this.timer % 5 == 0) {
+        if (this.timer % getHitInterval() == 0) {
             List<UUID> affected = new ArrayList<>();
             for (int i = 0; i < 40; i++) {
                 Vec3d pos = getStart().lerp(getEnd(), i/40f).add(getPos());
@@ -147,8 +169,8 @@ public class BlastEntity extends Entity {
                         if (living.isUsingItem() && (living.getActiveItem().isOf(SoulForgeItems.PERSEVERANCE_EDGE) || living.getActiveItem().isOf(SoulForgeItems.DETERMINATION_EDGE))) {
                             continue;
                         }
-                        if (entity instanceof PlayerEntity targetPlayer && this.owner instanceof PlayerEntity player) {
-                            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) continue;
+                        if (entity instanceof LivingEntity target && this.owner instanceof PlayerEntity player) {
+                            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) continue;
                         }
                         DamageSource source;
                         assert owner instanceof PlayerEntity;
@@ -160,6 +182,9 @@ public class BlastEntity extends Entity {
                         }
                         if (this.onDamageEvent != null) {
                             this.onDamageEvent.accept(living);
+                        }
+                        if (this.onBlastDamageEvent != null) {
+                            this.onBlastDamageEvent.accept(this, living);
                         }
                         affected.add(living.getUuid());
                     }

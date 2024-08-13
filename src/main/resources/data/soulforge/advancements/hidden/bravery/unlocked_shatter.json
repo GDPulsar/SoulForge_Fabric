@@ -1,0 +1,18 @@
+{
+  "criteria": {
+    "lv": {
+      "trigger": "soulforge:player_lv",
+      "conditions": {
+        "min": 17
+      }
+    },
+    "traits": {
+      "trigger": "soulforge:player_trait",
+      "conditions": {
+        "trait": [
+          "Bravery"
+        ]
+      }
+    }
+  }
+}

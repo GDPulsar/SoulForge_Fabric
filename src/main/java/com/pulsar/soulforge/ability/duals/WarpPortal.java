@@ -24,9 +24,9 @@ public class WarpPortal extends AbilityBase {
             Vec3d end = target.getBlockPos().toCenterPos().add(0, 1.5, 0);
             Vec3d start = player.getPos().add(direction.normalize().multiply(2.5f)).add(0, 1, 0);
             ServerWorld serverWorld = player.getServerWorld();
-            WormholeEntity startWormhole = new WormholeEntity(serverWorld, start, serverWorld, end.add(direction.multiply(1.5f)), player.getRotationVector().withAxis(Direction.Axis.Y, 0));
+            WormholeEntity startWormhole = new WormholeEntity(serverWorld, start.x, start.y, start.z, serverWorld, end.add(direction.multiply(1.5f)), 0.25f, new Vec3d(1f, 1f, 1f));
             serverWorld.spawnEntity(startWormhole);
-            WormholeEntity endWormhole = new WormholeEntity(serverWorld, end, serverWorld, start.add(direction.multiply(-1.5f)), player.getRotationVector().withAxis(Direction.Axis.Y, 0).negate());
+            WormholeEntity endWormhole = new WormholeEntity(serverWorld, end.x, end.y, end.z, serverWorld, start.add(direction.multiply(-1.5f)), 0.25f, new Vec3d(1f, 1f, 1f));
             serverWorld.spawnEntity(endWormhole);
             return super.cast(player);
         }

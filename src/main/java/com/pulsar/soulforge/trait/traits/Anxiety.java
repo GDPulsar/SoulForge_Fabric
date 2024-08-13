@@ -22,10 +22,10 @@ public class Anxiety implements TraitBase {
             new Snowglobe(),
             new FrostWave(),
             new SkewerWeakpoint(),
-            new FrozenGrasp(),
-            new Iceshock(),
-            new WeatherWarning(),
-            new Snowgrave()
+            new IceSpike(),
+            new Slowball(),
+            new TotalFrostbite(),
+            new Proceed()
     ));
 
     @Override

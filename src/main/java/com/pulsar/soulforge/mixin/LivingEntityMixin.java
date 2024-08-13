@@ -84,6 +84,8 @@ abstract class LivingEntityMixin extends Entity {
 
     @Shadow public float forwardSpeed;
 
+    @Shadow public abstract double getAttributeValue(EntityAttribute attribute);
+
     @Inject(method = "isBlocking", at=@At("HEAD"), cancellable = true)
     public void parryBlocking(CallbackInfoReturnable<Boolean> cir) {
         LivingEntity living = (LivingEntity)(Object)this;
@@ -138,50 +140,15 @@ abstract class LivingEntityMixin extends Entity {
         return original * multiplier;
     }
 
-    /* frost floor no longer exists but i'm still keeping this code just in case i need to slip and slide at home
     @ModifyVariable(method = "travel", at=@At(value="STORE"), ordinal = 0)
     private float modifySlipperiness(float slipperiness) {
-        float maxSlip = -1;
-        LivingEntity living = (LivingEntity)(Object)this;
-        if (!(living instanceof PlayerEntity)) {
-            for (PlayerEntity player : this.getWorld().getPlayers()) {
-                if (this.distanceTo(player) > 0.001f) {
-                    SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                    for (AbilityBase ability : playerSoul.getActiveAbilities()) {
-                        if (ability instanceof Snowglobe frostFloor) {
-                            if (this.getPos().distanceTo(frostFloor.origin) < 15 + playerSoul.getLV()) {
-                                float slip = 0.6f + 0.02f * playerSoul.getLV();
-                                if (slip > maxSlip) maxSlip = slip;
-                            }
-                        }
-                        if (ability instanceof FrozenGrasp frozenGrasp) {
-                            if (frozenGrasp.target == living && frozenGrasp.timer > 0) {
-                                maxSlip = 1f/0.91f;
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)living);
-            if (playerSoul.hasValue("slip")) {
-                if (playerSoul.getValue("slip") > 0) return Math.min(1f, Math.max(playerSoul.getValue("slip"), slipperiness));
-            }
-        }
-        if (maxSlip != -1) {
-            return Math.min(1f, Math.max(maxSlip, slipperiness));
-        }
-        return slipperiness;
-    }*/
-
-    /*@Inject(method = "isImmobile", at=@At(value="HEAD"), cancellable = true)
-    protected void isImmobile(CallbackInfoReturnable<Boolean> cir) {
-        ValueComponent values = SoulForge.getValues((LivingEntity)(Object)this);
-        LivingEntity living = (LivingEntity)(Object)this;
-        if (values.getBool("Immobilized")) {
-            cir.setReturnValue(true);
-        }
-    }*/
+        float slipMultiplier = (float)this.getAttributeValue(SoulForgeAttributes.SLIP_MODIFIER);
+        // actually what the fuck is this
+        float newSlipperiness = slipperiness;
+        if (slipMultiplier > 0f) newSlipperiness = 1f/((-1f-slipMultiplier)/(1-slipperiness)) + 1f;
+        else if (slipMultiplier < 0f) newSlipperiness = 1f/(slipMultiplier/slipperiness);
+        return newSlipperiness;
+    }
 
     @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = At.Shift.AFTER))
     protected void soulforge$modifyImmobility(CallbackInfo ci) {
@@ -318,6 +285,9 @@ abstract class LivingEntityMixin extends Entity {
     private static void addAttributes(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
         info.getReturnValue()
                 .add(SoulForgeAttributes.DAMAGE_REDUCTION)
+                .add(SoulForgeAttributes.KNOCKBACK_MULTIPLIER)
+                .add(SoulForgeAttributes.SLIP_MODIFIER)
+                .add(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER)
                 .add(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS);
     }
 
@@ -483,9 +453,14 @@ abstract class LivingEntityMixin extends Entity {
         }
         if (!source.isIn(DamageTypeTags.BYPASSES_EFFECTS) && !this.hasStatusEffect(StatusEffects.RESISTANCE)) {
             if (this.hasStatusEffect(SoulForgeEffects.VULNERABILITY)) {
-                return value * ((this.getStatusEffect(SoulForgeEffects.VULNERABILITY).getAmplifier() + 1) * 0.1f);
+                return value * ((this.getStatusEffect(SoulForgeEffects.VULNERABILITY).getAmplifier() + 1) * 0.1f + 1);
             }
         }
         return value;
+    }
+
+    @ModifyVariable(method = "takeKnockback", at = @At("HEAD"), ordinal = 0)
+    private double soulforge$modifyKnockbackStrength(double original) {
+        return original * this.getAttributeValue(SoulForgeAttributes.KNOCKBACK_MULTIPLIER);
     }
 }

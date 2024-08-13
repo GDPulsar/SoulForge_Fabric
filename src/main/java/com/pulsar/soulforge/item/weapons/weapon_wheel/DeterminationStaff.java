@@ -52,7 +52,7 @@ public class DeterminationStaff extends MagicItem implements GeoItem {
                     if (hit.getEntity() instanceof LivingEntity target) {
                         if (!world.isClient) {
                             if (target instanceof PlayerEntity targetPlayer) {
-                                if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer))
+                                if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer))
                                     return TypedActionResult.pass(user.getStackInHand(hand));
                             }
                             world.playSoundFromEntity(null, user, SoulForgeSounds.DR_ICESHOCK_EVENT, SoundCategory.PLAYERS, 1f, 1f);
@@ -86,7 +86,7 @@ public class DeterminationStaff extends MagicItem implements GeoItem {
                         for (Entity target : user.getEntityWorld().getOtherEntities(user, new Box(pos.subtract(3, 3, 3), pos.add(3, 3, 3)))) {
                             if (target instanceof LivingEntity living) {
                                 if (living instanceof PlayerEntity targetPlayer) {
-                                    if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer)) continue;
+                                    if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer)) continue;
                                 }
                                 living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 30*playerSoul.getLV(), (int)(playerSoul.getLV()/5f) - 1));
                                 living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 30*playerSoul.getLV(), Math.max((int)(playerSoul.getLV()/5f) - 1, 1)));

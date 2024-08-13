@@ -90,8 +90,8 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
-        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return;
         }
         float f = 5.0f;
         Entity entity2 = this.getOwner();

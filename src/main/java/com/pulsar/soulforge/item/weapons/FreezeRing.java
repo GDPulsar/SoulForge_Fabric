@@ -2,6 +2,7 @@ package com.pulsar.soulforge.item.weapons;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
@@ -9,6 +10,8 @@ import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +28,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.UUID;
+
 public class FreezeRing extends MagicItem {
     private int iceshockCooldown = 0;
     private int sleepMistCooldown = 0;
@@ -38,13 +43,17 @@ public class FreezeRing extends MagicItem {
                     if (hit.getEntity() instanceof LivingEntity target) {
                         if (!world.isClient) {
                             if (target instanceof PlayerEntity targetPlayer) {
-                                if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer))
+                                if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer))
                                     return TypedActionResult.pass(user.getStackInHand(hand));
                             }
                             world.playSoundFromEntity(null, user, SoulForgeSounds.DR_ICESHOCK_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                             DamageSource damageSource = SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.ABILITY_PIERCE_DAMAGE_TYPE);
                             if (target.damage(damageSource, 5f)) {
                                 SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+                                target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBITE, playerSoul.getEffectiveLV() * 20, 0));
+                                TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
+                                modifiers.addTemporaryModifier(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier(UUID.fromString("21f07aa7-02f6-4722-aa06-5717d140087a"),
+                                        "freeze_ring", -playerSoul.getLV()/4f, EntityAttributeModifier.Operation.ADDITION), playerSoul.getEffectiveLV());
                                 playerSoul.setStyle(playerSoul.getStyle() + (int)(5f * (1f + Utils.getTotalDebuffLevel(target) / 10f)));
                             }
                             iceshockCooldown = 100;
@@ -72,7 +81,7 @@ public class FreezeRing extends MagicItem {
                         for (Entity target : user.getEntityWorld().getOtherEntities(user, new Box(pos.subtract(3, 3, 3), pos.add(3, 3, 3)))) {
                             if (target instanceof LivingEntity living) {
                                 if (living instanceof PlayerEntity targetPlayer) {
-                                    if (!TeamUtils.canDamagePlayer(user.getServer(), user, targetPlayer)) continue;
+                                    if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer)) continue;
                                 }
                                 living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.EEPY, 30*playerSoul.getLV(), playerSoul.getEffectiveLV()));
                                 styleIncrease += 5f * (1f + Utils.getTotalDebuffLevel(living)/10f);

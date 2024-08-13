@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.UUID;
 
@@ -26,8 +27,10 @@ public class SpawnWormholePacket {
             if (serverWorld != null) {
                 SoulComponent targetSoul = SoulForge.getPlayerSoul(toPlayer);
                 targetSoul.removeWormholeRequest();
+                Vec3d start = fromPlayer.getPos();
+                Vec3d end = toPlayer.getPos();
                 fromPlayer.teleport(serverWorld, toPlayer.getX(), toPlayer.getY(), toPlayer.getZ(), null, toPlayer.getYaw(), toPlayer.getPitch());
-                WormholeEntity wormhole = new WormholeEntity(serverWorld, player.getPos(), serverWorld, toPlayer.getPos());
+                WormholeEntity wormhole = new WormholeEntity(serverWorld, start.x, start.y, start.z, serverWorld, end, 0.25f, new Vec3d(1f, 1f, 1f));
                 wormhole.setPosition(player.getPos());
                 serverWorld.spawnEntity(wormhole);
                 fromPlayer.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 200, 0));

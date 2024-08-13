@@ -71,8 +71,8 @@ public class BigSlashProjectile extends ProjectileEntity implements GeoAnimatabl
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        if (entity instanceof PlayerEntity targetPlayer && this.getOwner() instanceof PlayerEntity player) {
-            if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+        if (entity instanceof LivingEntity target && this.getOwner() instanceof PlayerEntity player) {
+            if (!TeamUtils.canDamageEntity(this.getServer(), player, target)) return;
         }
         if (entity instanceof LivingEntity living && entity.getType() != EntityType.ENDERMAN) {
             living.maxHurtTime = 0;

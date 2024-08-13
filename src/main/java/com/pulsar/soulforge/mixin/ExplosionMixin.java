@@ -59,7 +59,7 @@ public abstract class ExplosionMixin {
     private List<Entity> modifyEntityList(World instance, Entity entity, Box box) {
         return instance.getOtherEntities(entity, box, (target) -> {
             if (target instanceof PlayerEntity targetPlayer && entity instanceof PlayerEntity player) {
-                return TeamUtils.canDamagePlayer(instance.getServer(), player, targetPlayer);
+                return TeamUtils.canDamageEntity(instance.getServer(), player, targetPlayer);
             }
             return true;
         });

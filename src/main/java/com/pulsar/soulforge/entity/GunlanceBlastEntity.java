@@ -80,8 +80,8 @@ public class GunlanceBlastEntity extends Entity {
                     Box box = new Box(pos.subtract(getRadius(), getRadius(), getRadius()), pos.add(getRadius(), getRadius(), getRadius()));
                     for (Entity entity : getWorld().getOtherEntities(this, box)) {
                         if (entity instanceof LivingEntity living && !(affected.contains(living)) && !(living == owner)) {
-                            if (entity instanceof PlayerEntity targetPlayer && this.owner instanceof PlayerEntity player) {
-                                if (!TeamUtils.canDamagePlayer(this.getServer(), player, targetPlayer)) return;
+                            if (this.owner instanceof PlayerEntity player) {
+                                if (!TeamUtils.canDamageEntity(this.getServer(), player, living)) return;
                             }
                             DamageSource source;
                             source = SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);

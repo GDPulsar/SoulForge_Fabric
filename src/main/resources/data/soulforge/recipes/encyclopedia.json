@@ -5,11 +5,14 @@
       "item": "minecraft:book"
     },
     {
-      "item": "soulforge:arnicite"
+      "item": "minecraft:amethyst_shard"
     }
   ],
   "result": {
-    "item": "soulforge:encyclopedia",
+    "item": "patchouli:guide_book",
+    "nbt": {
+      "patchouli:book": "soulforge:soulforge_encyclopedia"
+    },
     "count": 1
   }
 }

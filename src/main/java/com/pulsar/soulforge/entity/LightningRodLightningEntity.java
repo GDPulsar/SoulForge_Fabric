@@ -50,7 +50,7 @@ public class LightningRodLightningEntity extends LightningEntity {
                         Entity::isAlive)) {
                     if (entity == this.owner) continue;
                     if (entity instanceof PlayerEntity targetPlayer && this.owner != null) {
-                        if (!TeamUtils.canDamagePlayer(this.getServer(), this.owner, targetPlayer)) return;
+                        if (!TeamUtils.canDamageEntity(this.getServer(), this.owner, targetPlayer)) return;
                     }
                     entity.setFireTicks(entity.getFireTicks() + 1);
                     if (entity.getFireTicks() == 0) {

@@ -47,7 +47,7 @@ public class AngelsTempest extends AbilityBase{
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(snowstorm.location.toCenterPos(), snowstorm.size*2, snowstorm.size*2, snowstorm.size*2))) {
                 if (entity instanceof LivingEntity target) {
                     if (target instanceof PlayerEntity targetPlayer) {
-                        if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                        if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                     }
                     if (target.squaredDistanceTo(snowstorm.location.toCenterPos()) <= snowstorm.size * snowstorm.size) {
                         targets.add(target);
@@ -92,7 +92,7 @@ public class AngelsTempest extends AbilityBase{
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 10, 10, 10))) {
                 if (entity instanceof LivingEntity target) {
                     if (target instanceof PlayerEntity targetPlayer) {
-                        if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                        if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                     }
                     for (StatusEffectInstance effect : effects) {
                         target.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), effect.getDuration(), effect.getAmplifier()*2-1));

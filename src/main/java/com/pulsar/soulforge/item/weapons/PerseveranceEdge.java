@@ -45,7 +45,7 @@ public class PerseveranceEdge extends MagicSweepingSwordItem implements GeoItem 
         for (Entity entity : attacker.getEntityWorld().getOtherEntities(attacker, Box.of(attacker.getPos(), 4, 4, 4))) {
             if (entity instanceof LivingEntity living && living != target) {
                 if (entity instanceof PlayerEntity targetPlayer && attacker instanceof PlayerEntity player) {
-                    if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                 }
                 if (living.damage(attacker.getDamageSources().playerAttack((PlayerEntity)attacker), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()))) {
                     playerSoul.setStyle(playerSoul.getStyle() + (int)(this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()));

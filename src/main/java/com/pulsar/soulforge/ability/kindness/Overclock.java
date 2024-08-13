@@ -36,7 +36,7 @@ public class Overclock extends AbilityBase {
         if (hit != null) {
             Entity entity = hit.getEntity();
             if (entity instanceof PlayerEntity target) {
-                if (!TeamUtils.canHealPlayer(player.getServer(), player, target)) return false;
+                if (!TeamUtils.canHealEntity(player.getServer(), player, target)) return false;
                 boolean removed = false;
                 for (PlayerEntity selected : players) {
                     if (selected.getName() == target.getName()) {

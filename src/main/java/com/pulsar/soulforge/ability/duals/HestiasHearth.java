@@ -86,7 +86,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
                     if (entity.getPos().withAxis(Direction.Axis.Y, 0).distanceTo(hestiaPos.withAxis(Direction.Axis.Y, 0)) > 8) continue;
                     if (entity instanceof LivingEntity living) {
                         if (entity instanceof PlayerEntity targetPlayer) {
-                            if (!TeamUtils.canHealPlayer(player.getServer(), player, targetPlayer)) continue;
+                            if (!TeamUtils.canHealEntity(player.getServer(), player, targetPlayer)) continue;
                         }
                         if (living.getHealth() < living.getMaxHealth()) {
                             playerSoul.setStyle(playerSoul.getStyle() + 1);
@@ -106,7 +106,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
                 if (entity.getPos().withAxis(Direction.Axis.Y, 0).distanceTo(hestiaPos.withAxis(Direction.Axis.Y, 0)) > 8) continue;
                 if (entity instanceof LivingEntity living) {
                     if (entity instanceof PlayerEntity targetPlayer) {
-                        if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                        if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                     }
                     if (entity.getFireTicks() < 60) {
                         entity.setFireTicks(70);

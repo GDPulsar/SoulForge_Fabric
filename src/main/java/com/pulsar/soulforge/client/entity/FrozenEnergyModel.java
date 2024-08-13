@@ -25,7 +25,7 @@ public class FrozenEnergyModel
     private final ModelPart root;
 
     public FrozenEnergyModel(ModelPart root) {
-        super(RenderLayer::getEntitySolid);
+        super(RenderLayer::getEntityTranslucent);
         this.root = root;
     }
 

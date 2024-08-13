@@ -1,5 +1,7 @@
 package com.pulsar.soulforge.components;
 
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
+import com.pulsar.soulforge.util.Triplet;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.minecraft.entity.LivingEntity;
@@ -9,28 +11,39 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.util.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTickingComponent {
     private final LivingEntity entity;
-    private HashMap<EntityAttributeModifier, Pair<EntityAttribute, Integer>> modifierDurations;
+    private List<Triplet<EntityAttributeModifier, EntityAttribute, Float>> modifierDurations;
 
     public TemporaryModifierComponent(LivingEntity living) {
         this.entity = living;
-        this.modifierDurations = new HashMap<>();
+        this.modifierDurations = new ArrayList<>();
     }
 
-    public void addTemporaryModifier(EntityAttribute attribute, EntityAttributeModifier modifier, int duration) {
+    public int getModifierCount() {
+        return this.modifierDurations.size();
+    }
+
+    public void addStackingTemporaryModifier(EntityAttribute attribute, EntityAttributeModifier modifier, float duration) {
         EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
         if (instance != null) {
-            if (instance.getModifier(modifier.getId()) != null) instance.removeModifier(modifier.getId());
+            if (instance.hasModifier(modifier)) {
+                modifier = new EntityAttributeModifier(UUID.randomUUID(), modifier.getName(), modifier.getValue(), modifier.getOperation());
+            }
             instance.addPersistentModifier(modifier);
-            this.modifierDurations.put(modifier, new Pair<>(attribute, duration));
+            this.modifierDurations.add(new Triplet<>(modifier, attribute, duration));
+        }
+    }
+
+    public void addTemporaryModifier(EntityAttribute attribute, EntityAttributeModifier modifier, float duration) {
+        EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
+        if (instance != null) {
+            this.removeTemporaryModifier(attribute, modifier);
+            instance.addPersistentModifier(modifier);
+            this.modifierDurations.add(new Triplet<>(modifier, attribute, duration));
         }
     }
 
@@ -38,17 +51,24 @@ public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTi
         EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
         if (instance != null) {
             instance.tryRemoveModifier(modifier.getId());
-            this.modifierDurations.remove(modifier);
+            Triplet<EntityAttributeModifier, EntityAttribute, Float> match = null;
+            for (Triplet<EntityAttributeModifier, EntityAttribute, Float> testing : Set.copyOf(modifierDurations)) {
+                if (testing.getFirst().getId().compareTo(modifier.getId()) == 0 && testing.getSecond() == attribute) {
+                    match = testing;
+                    break;
+                }
+            }
+            if (match != null) this.modifierDurations.remove(match);
         }
     }
 
     @Override
     public void tick() {
-        for (Map.Entry<EntityAttributeModifier, Pair<EntityAttribute, Integer>> modifier : Set.copyOf(modifierDurations.entrySet())) {
-            int duration = modifier.getValue().getRight();
-            modifier.getValue().setRight(duration - 1);
+        for (Triplet<EntityAttributeModifier, EntityAttribute, Float> modifier : Set.copyOf(modifierDurations)) {
+            float duration = modifier.getThird();
+            modifier.setThird(duration - (float)entity.getAttributeValue(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER));
             if (duration - 1 <= 0) {
-                removeTemporaryModifier(modifier.getValue().getLeft(), modifier.getKey());
+                removeTemporaryModifier(modifier.getSecond(), modifier.getFirst());
             }
         }
     }
@@ -56,8 +76,7 @@ public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTi
     @Override
     public void readFromNbt(NbtCompound tag) {
         if (tag.contains("modifiers")) {
-            modifierDurations = new HashMap<>();
-            HashMap<EntityAttributeModifier, Pair<EntityAttribute, Integer>> newDurations = new HashMap<>();
+            modifierDurations = new ArrayList<>();
             NbtList list = tag.getList("modifiers", NbtElement.COMPOUND_TYPE);
             for (int i = 0; i < list.size(); i++) {
                 NbtCompound modifierNbt = list.getCompound(i);
@@ -69,21 +88,20 @@ public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTi
                         break;
                     }
                 }
-                int duration = modifierNbt.getInt("duration");
-                if (attribute != null) newDurations.put(modifier, new Pair<>(attribute, duration));
+                float duration = modifierNbt.getFloat("duration");
+                if (attribute != null) modifierDurations.add(new Triplet<>(modifier, attribute, duration));
             }
-            modifierDurations = new HashMap<>(Map.copyOf(newDurations));
         }
     }
 
     @Override
     public void writeToNbt(NbtCompound tag) {
         NbtList list = new NbtList();
-        for (Map.Entry<EntityAttributeModifier, Pair<EntityAttribute, Integer>> modifier : Set.copyOf(modifierDurations.entrySet())) {
+        for (Triplet<EntityAttributeModifier, EntityAttribute, Float> modifier : Set.copyOf(modifierDurations)) {
             NbtCompound modifierNbt = new NbtCompound();
-            modifierNbt.put("modifier", modifier.getKey().toNbt());
-            modifierNbt.putString("attribute", modifier.getValue().getLeft().getTranslationKey());
-            modifierNbt.putInt("duration", modifier.getValue().getRight());
+            modifierNbt.put("modifier", modifier.getFirst().toNbt());
+            modifierNbt.putString("attribute", modifier.getSecond().getTranslationKey());
+            modifierNbt.putFloat("duration", modifier.getThird());
             list.add(modifierNbt);
         }
         tag.put("modifiers", list);

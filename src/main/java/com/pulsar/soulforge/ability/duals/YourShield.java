@@ -28,7 +28,7 @@ public class YourShield extends AbilityBase {
                 for (Entity entity : player.getWorld().getOtherEntities(target, Box.of(target.getPos(), 20, 20, 20))) {
                     if (entity instanceof LivingEntity target) {
                         if (target instanceof PlayerEntity targetPlayer) {
-                            if (!TeamUtils.canDamagePlayer(player.getServer(), player, targetPlayer)) continue;
+                            if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                         }
                         nearbyCount++;
                     }

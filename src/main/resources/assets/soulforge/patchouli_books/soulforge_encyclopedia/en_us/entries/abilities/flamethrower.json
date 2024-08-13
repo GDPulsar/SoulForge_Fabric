@@ -1,0 +1,14 @@
+{
+  "name": "Flamethrower",
+  "icon": "soulforge:bravery_arnicite_heart",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Engulf your hand in fire and use to ignite enemies in front of you as well as dealing damage."
+    }
+  ]
+}
