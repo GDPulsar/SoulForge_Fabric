@@ -12,7 +12,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
-public class ColossalClaymore extends MagicSwordItem {
+public class ColossalClaymore extends MagicSweepingSwordItem {
     public ColossalClaymore() {
         super(0f, 0.6f, 1.5f);
     }

@@ -1,0 +1,14 @@
+{
+  "name": "Justice Bow",
+  "icon": "soulforge:justice_bow",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a Justice Bow. Does not require ammo, and shoots arrows that are not affected by gravity. Use the Cast Ability key while holding the bow to scatter the arrow."
+    }
+  ]
+}

@@ -140,6 +140,7 @@ public class SoulForgeItems {
     public static Item JUSTICE_HARPOON;
     public static Item TRICK_ANCHOR;
 
+    public static Item ANTLER;
     public static Item BETE_NOIRE;
     public static Item RESPONDING_FREENIX;
     public static Item NEBULOUS_BREAD;
@@ -271,6 +272,7 @@ public class SoulForgeItems {
         JUSTICE_HARPOON = RegisterItem("justice_harpoon", new JusticeHarpoon());
         TRICK_ANCHOR = RegisterItem("trick_anchor", new TrickAnchor());
 
+        ANTLER = RegisterItem("antler", new AntlerItem());
         BETE_NOIRE = RegisterItem("bete_noire", new BeteNoire());
         RESPONDING_FREENIX = RegisterItem("responding_freenix", new RespondingFreenix());
         NEBULOUS_BREAD = RegisterItem("nebulous_bread", new NebulousBread());

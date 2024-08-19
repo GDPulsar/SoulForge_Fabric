@@ -23,6 +23,7 @@ public class StartSoulResetPacket {
             }
             playerSoul.addTag("resettingSoul");
             SoulForge.getValues(player).setBool("Immobilized", true);
+            playerSoul.sync();
             PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb");
             buffer.writeBoolean(false);
             SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);

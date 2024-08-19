@@ -1,22 +1,9 @@
 package com.pulsar.soulforge.item;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.client.item.ArniciteCoreItemRenderer;
-import com.pulsar.soulforge.client.item.TraitedArniciteCoreItemRenderer;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.trait.TraitBase;
-import com.pulsar.soulforge.trait.traits.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;

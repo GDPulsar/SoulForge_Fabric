@@ -123,7 +123,7 @@ public class BouncingShieldEntity extends ProjectileEntity implements GeoEntity 
                     living.damage(this.getDamageSources().thrown(this, this.owner), playerSoul.getEffectiveLV()*0.75f);
                 }
             }
-            if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.justice)) {
+            if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.justice)) {
                 Vec3d normal = hitResult.getPos().subtract(this.getPos()).normalize();
                 if (hitResult instanceof BlockHitResult hit) {
                     Vector3f unitVec = hit.getSide().getOpposite().getUnitVector();

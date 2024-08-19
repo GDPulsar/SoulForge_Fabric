@@ -119,7 +119,12 @@ public class Constants {
             entry(StatusEffects.LEVITATION, StatusEffects.SLOW_FALLING),
             entry(StatusEffects.NIGHT_VISION, StatusEffects.DARKNESS),
             entry(StatusEffects.DARKNESS, StatusEffects.NIGHT_VISION),
-            entry(StatusEffects.BLINDNESS, StatusEffects.NIGHT_VISION)
+            entry(StatusEffects.BLINDNESS, StatusEffects.NIGHT_VISION),
+            entry(SoulForgeEffects.CRUSHED, StatusEffects.RESISTANCE),
+            entry(SoulForgeEffects.EEPY, StatusEffects.NIGHT_VISION),
+            entry(SoulForgeEffects.FROSTBITE, StatusEffects.FIRE_RESISTANCE),
+            entry(SoulForgeEffects.MANA_OVERLOAD, SoulForgeEffects.MANA_SICKNESS),
+            entry(SoulForgeEffects.MANA_SICKNESS, SoulForgeEffects.MANA_OVERLOAD)
     ));
 
     public static HashMap<StatusEffect, Integer> effectHighest = new HashMap<>(Map.ofEntries(
@@ -171,9 +176,9 @@ public class Constants {
             }
         }
         for (StatusEffectInstance effect : effects) {
-            if (effect.getEffectType() == SoulForgeEffects.MANA_SICKNESS) newEffects.add(effect);
-            if (!effectInversion.containsKey(effect.getEffectType())) continue;
-            newEffects.add(new StatusEffectInstance(effectInversion.get(effect.getEffectType()), (int)(effect.getDuration() * durationModifier), (int)(effect.getAmplifier() * amplifierModifier)));
+            StatusEffect effectType = effect.getEffectType();
+            if (effectInversion.containsKey(effect.getEffectType())) effectType = Constants.effectInversion.get(effectType);
+            newEffects.add(new StatusEffectInstance(effectType, (int)(effect.getDuration() * durationModifier), (int)(effect.getAmplifier() * amplifierModifier)));
         }
         entity.clearStatusEffects();
         for (StatusEffectInstance effect : newEffects) {
@@ -182,11 +187,11 @@ public class Constants {
     }
 
     public static void invertStatusEffects(LivingEntity entity, float durationModifier) {
-        invertStatusEffects(entity, durationModifier, 0.6f);
+        invertStatusEffects(entity, durationModifier, 1f);
     }
 
     public static void invertStatusEffects(LivingEntity entity) {
-        invertStatusEffects(entity, 1f, 0.6f);
+        invertStatusEffects(entity, 1f, 1f);
     }
 
     public static boolean isAllowedForDualTrait(AbilityBase ability, List<TraitBase> traits, int lv) {
@@ -221,6 +226,9 @@ public class Constants {
         }
         if (bravery && kindness) {
             extras.add(new HestiasHearth());
+        }
+        if (bravery && patience) {
+            extras.add(new ShiningSoul());
         }
         if (bravery && integrity) {
             extras.add(new FearlessInstincts());

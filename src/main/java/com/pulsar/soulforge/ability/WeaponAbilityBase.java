@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.ability;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.ability.perseverance.Furioso;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,6 +13,10 @@ public abstract class WeaponAbilityBase extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (playerSoul.hasCast("Furioso") && playerSoul.getAbility("Furioso") instanceof Furioso furioso) {
+            furioso.doSwitch(player);
+            return false;
+        }
         playerSoul.setWeapon(new ItemStack(getItem()));
         return true;
     }

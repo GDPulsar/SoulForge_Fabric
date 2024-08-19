@@ -2,12 +2,9 @@ package com.pulsar.soulforge.item.weapons;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -24,13 +21,7 @@ public class BraveryGauntlets extends MagicSwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        boolean frostburn = false;
-        if (attacker instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            frostburn = playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience);
-        }
-        if (!frostburn) target.setFireTicks(10);
-        else target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 10, 0));
+        target.setFireTicks(10);
         target.timeUntilRegen = 15;
         return super.postHit(stack, target, attacker);
     }
@@ -38,12 +29,10 @@ public class BraveryGauntlets extends MagicSwordItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-        boolean frostburn = playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience);
         EntityHitResult hitResult = Utils.getFocussedEntity(user, 3);
         if (hitResult != null && hitResult.getEntity() instanceof LivingEntity target) {
             user.addVelocity(0, 0.7, 0);
-            if (!frostburn) target.setFireTicks(10);
-            else target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 10, 0));
+            target.setFireTicks(10);
             if (target.damage(user.getDamageSources().playerAttack(user), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV())*2.5f)) {
                 playerSoul.setStyle(playerSoul.getStyle() + (int)((this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()) * 2.5f));
             }
@@ -57,7 +46,7 @@ public class BraveryGauntlets extends MagicSwordItem {
                     serverEntity.velocityModified = true;
                 }
             }
-            user.getItemCooldownManager().set(this, 30);
+            if (!playerSoul.hasCast("Furioso")) user.getItemCooldownManager().set(this, 30);
             return TypedActionResult.success(user.getStackInHand(hand));
         }
         return TypedActionResult.pass(user.getStackInHand(hand));

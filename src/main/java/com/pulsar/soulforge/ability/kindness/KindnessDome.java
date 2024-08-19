@@ -50,7 +50,7 @@ public class KindnessDome extends ToggleableAbilityBase {
                 domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
                 player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 10f, 1f);
                 entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
-                        playerSoul.getEffectiveLV() * 10, false, player, playerSoul.getTraits().contains(Traits.perseverance) && playerSoul.getTraits().contains(Traits.kindness));
+                        playerSoul.getEffectiveLV() * 10, false, player, playerSoul.hasTrait(Traits.perseverance) && playerSoul.hasTrait(Traits.kindness));
                 entity.setPosition(player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f));
                 double radius = domeRadius + 0.5;
                 double radSq = radius * radius;
@@ -124,7 +124,7 @@ public class KindnessDome extends ToggleableAbilityBase {
                     }
                 }
             }
-            if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.integrity)) {
+            if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.integrity)) {
                 for (int i = 0; i < 15; i++) {
                     Vec3d velocity = new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f).normalize().multiply(2f);
                     ShieldShardEntity shard = new ShieldShardEntity(player, center.toCenterPos(), velocity);

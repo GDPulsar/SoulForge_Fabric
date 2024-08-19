@@ -9,7 +9,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.Set;
-import java.util.UUID;
+
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class WormholeCommand {

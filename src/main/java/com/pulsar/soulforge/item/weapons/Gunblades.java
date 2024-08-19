@@ -52,7 +52,7 @@ public class Gunblades extends MagicSwordItem implements GeoItem {
                 Utils.addAntiheal(0.3f, playerSoul.getLV() * 20, targetSoul);
             }
             int ammo = stack.getOrCreateNbt().contains("ammo") ? stack.getOrCreateNbt().getInt("ammo") : 0;
-            ammo = Math.min(ammo+2, playerSoul.getLV()+6);
+            ammo = Math.min(ammo + (playerSoul.hasCast("Furioso") ? 4 : 2), playerSoul.getLV()+6);
             stack.getOrCreateNbt().putInt("ammo", ammo);
         }
         return super.postHit(stack, target, attacker);

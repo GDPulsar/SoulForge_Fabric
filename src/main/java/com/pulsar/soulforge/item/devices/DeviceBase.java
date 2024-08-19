@@ -88,7 +88,7 @@ public class DeviceBase extends Item {
         else return;
         if (getCharge(stack) < maxCharge) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.getTraits().contains(trait)) {
+            if (playerSoul.hasTrait(trait)) {
                 if (maxCharge - 10 <= getCharge(stack)) {
                     playerSoul.setMagic(playerSoul.getMagic() - (maxCharge - getCharge(stack)));
                     setCharge(stack, maxCharge);

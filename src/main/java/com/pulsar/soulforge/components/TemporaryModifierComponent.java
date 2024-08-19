@@ -23,6 +23,10 @@ public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTi
         this.modifierDurations = new ArrayList<>();
     }
 
+    public List<Triplet<EntityAttributeModifier, EntityAttribute, Float>> getModifiers() {
+        return this.modifierDurations;
+    }
+
     public int getModifierCount() {
         return this.modifierDurations.size();
     }

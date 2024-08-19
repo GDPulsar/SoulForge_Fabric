@@ -1,32 +1,19 @@
 package com.pulsar.soulforge.item.devices;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.TraitedArniciteCoreItem;
 import com.pulsar.soulforge.item.TraitedArniciteHeartItem;
 import com.pulsar.soulforge.item.TraitedArniciteItem;
 import com.pulsar.soulforge.trait.TraitBase;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ToolMaterial;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -98,7 +85,7 @@ public class PickaxeDeviceBase extends PickaxeItem {
         else return;
         if (getCharge(stack) < maxCharge) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.getTraits().contains(trait)) {
+            if (playerSoul.hasTrait(trait)) {
                 if (maxCharge - 10 <= getCharge(stack)) {
                     playerSoul.setMagic(playerSoul.getMagic() - (maxCharge - getCharge(stack)));
                     setCharge(stack, maxCharge);

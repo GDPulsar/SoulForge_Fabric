@@ -60,8 +60,11 @@ public class PVHarpoonProjectile extends ProjectileEntity implements GeoEntity {
         if (this.getOwner() != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)getOwner());
             float dist = 8f;
-            if (playerSoul.getTraits().contains(Traits.patience) && playerSoul.getTraits().contains(Traits.perseverance)) {
+            if (playerSoul.hasTrait(Traits.patience) && playerSoul.hasTrait(Traits.perseverance)) {
                 dist += 3f;
+            }
+            if (playerSoul.hasCast("Furioso")) {
+                dist += 5f;
             }
             if (this.distanceTo(this.getOwner()) >= dist) returning = true;
             if (returning) {

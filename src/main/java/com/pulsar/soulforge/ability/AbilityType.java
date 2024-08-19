@@ -5,5 +5,6 @@ public enum AbilityType {
     TOGGLE,
     WEAPON,
     PASSIVE,
-    PASSIVE_ON_HIT
+    PASSIVE_ON_HIT,
+    SIDE_EFFECT
 }

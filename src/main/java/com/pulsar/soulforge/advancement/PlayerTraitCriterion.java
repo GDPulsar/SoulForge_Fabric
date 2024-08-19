@@ -15,7 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
-import java.util.Optional;
 
 public class PlayerTraitCriterion extends AbstractCriterion<PlayerTraitCriterion.Conditions> {
     @Override
@@ -90,15 +89,12 @@ public class PlayerTraitCriterion extends AbstractCriterion<PlayerTraitCriterion
         }
         boolean requirementsMet(SoulComponent playerSoul) {
             List<TraitBase> traits = playerSoul.getTraits();
-            if (strong && !(playerSoul.isStrong() || playerSoul.isPure())) return false;
-            if (pure && !playerSoul.isPure()) return false;
-            if (trait1 != null) {
-                if (trait2 == null) return traits.contains(trait1);
-                return traits.contains(trait1) && traits.contains(trait2);
-            } else if (count != -1) {
-                return traits.size() >= count;
-            }
-            return false;
+            boolean matches = strong && (playerSoul.isStrong() || playerSoul.isPure() || playerSoul.hasTrait(Traits.determination));
+            matches = matches && (pure && (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination)));
+            if (trait1 != null) matches = matches && traits.contains(trait1);
+            if (trait2 != null) matches = matches && traits.contains(trait2);
+            if (count != -1) matches = matches && traits.size() >= count;
+            return matches;
         }
 
         @Override

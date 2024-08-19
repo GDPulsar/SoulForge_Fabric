@@ -25,12 +25,12 @@ public final class EntityInitializer implements EntityComponentInitializer {
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.beginRegistration(PlayerEntity.class, SOUL)
-                .respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY)
-                .end(PlayerSoulComponent::new);
-        registry.beginRegistration(LivingEntity.class, TEMPORARY_MODIFIERS)
-                .end(TemporaryModifierComponent::new);
         registry.beginRegistration(LivingEntity.class, VALUES)
                 .end(ValueComponent::new);
+        registry.beginRegistration(LivingEntity.class, TEMPORARY_MODIFIERS)
+                .end(TemporaryModifierComponent::new);
+        registry.beginRegistration(PlayerEntity.class, SOUL)
+                .respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY)
+                .end(SoulComponent::new);
     }
 }

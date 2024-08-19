@@ -21,7 +21,6 @@ import com.pulsar.soulforge.client.ui.SoulResetOverlay;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.weapons.JusticeCrossbow;
 import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.shader.TestPostProcessor;
@@ -48,6 +47,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.render.entity.LightningEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.sound.SoundInstance;
@@ -187,6 +187,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.SLOWBALL_ENTITY_TYPE, SlowballRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.ICE_SPIKE_ENTITY_TYPE, IceSpikeRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.TOTAL_FROSTBITE_ENTITY_TYPE, TotalFrostbiteEntityRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.ANTLER_ENTITY_TYPE, FlyingItemEntityRenderer::new);
 
 		EntityModelLayerRegistry.registerModelLayer(MODEL_FROZEN_ENERGY_LAYER, FrozenEnergyModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_ICE_SPIKE_LAYER, IceSpikeModel::getTexturedModelData);
@@ -249,7 +250,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		}));
 		ModelPredicateProviderRegistry.register(SoulForgeItems.JUSTICE_CROSSBOW, new Identifier("loaded"), ((stack, world, entity, seed) -> {
 			if (entity == null) return 0f;
-			return ((JusticeCrossbow)stack.getItem()).loaded ? 1f : 0f;
+			return stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded") ? 1f : 0f;
 		}));
 		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_CROSSBOW, new Identifier("pulling"), ((stack, world, entity, seed) -> {
 			if (entity == null) return 0f;
@@ -385,6 +386,7 @@ public class SoulForgeClient implements ClientModInitializer {
 	}
 
 	public static SoulComponent getPlayerData() {
+		if (ClientNetworkingHandler.playerSoul == null) return new SoulComponent(MinecraftClient.getInstance().player);
 		return ClientNetworkingHandler.playerSoul;
 	}
 }

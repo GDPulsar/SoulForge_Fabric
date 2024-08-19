@@ -8,6 +8,7 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -37,6 +38,15 @@ public class PerseveranceClaw extends MagicSwordItem implements GeoItem {
         if (target instanceof PlayerEntity playerTarget) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             SoulComponent targetSoul = SoulForge.getPlayerSoul(playerTarget);
+            if (playerSoul.hasCast("Furioso")) {
+                boolean isCritical = player.getAttackCooldownProgress(0.5F) > 0.9f && player.fallDistance > 0.0F
+                        && !player.isOnGround() && !player.isClimbing() && !player.isTouchingWater()
+                        && !player.hasStatusEffect(StatusEffects.BLINDNESS) && !player.hasVehicle() && !player.isSprinting();
+                if (isCritical) {
+                    Utils.addAntiheal(0.9f, playerSoul.getLV()*15f, targetSoul);
+                    return super.postHit(stack, target, attacker);
+                }
+            }
             Utils.addAntiheal(0.4f, playerSoul.getLV()*20f, targetSoul);
         }
         return super.postHit(stack, target, attacker);

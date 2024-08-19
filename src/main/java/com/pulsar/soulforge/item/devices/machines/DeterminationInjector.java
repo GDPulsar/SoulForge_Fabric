@@ -63,7 +63,7 @@ public class DeterminationInjector extends DeviceBase implements GeoItem {
                 if (playerSoul.hasTag("injected")) {
                     Utils.clearModifiersByName(user, SoulForgeAttributes.MAGIC_POWER, "dt_injector");
                     user.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(new EntityAttributeModifier("dt_injector", 0.5, EntityAttributeModifier.Operation.ADDITION));
-                    if (!playerSoul.getTraits().contains(Traits.determination)) {
+                    if (!playerSoul.hasTrait(Traits.determination)) {
                         Utils.clearModifiersByName(user, EntityAttributes.GENERIC_MAX_HEALTH, "dt_injector_health");
                         Utils.clearModifiersByName(user, EntityAttributes.GENERIC_ATTACK_DAMAGE, "dt_injector_strength");
                         EntityAttributeModifier healthModifier = new EntityAttributeModifier("dt_injector_health", 5f, EntityAttributeModifier.Operation.ADDITION);
@@ -73,7 +73,7 @@ public class DeterminationInjector extends DeviceBase implements GeoItem {
                     }
                     stack.getOrCreateNbt().putInt("timer", 0);
                 } else {
-                    if (!playerSoul.getTraits().contains(Traits.determination)) {
+                    if (!playerSoul.hasTrait(Traits.determination)) {
                         user.damage(SoulForgeDamageTypes.of(world, SoulForgeDamageTypes.INJECTOR_DAMAGE_TYPE), timer / 500f);
                         user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, timer/4, timer/4000));
                         user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, timer/4, timer/4000));

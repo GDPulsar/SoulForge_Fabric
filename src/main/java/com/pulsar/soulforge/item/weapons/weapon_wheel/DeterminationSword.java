@@ -6,7 +6,6 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.SpecialHellEntity;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;

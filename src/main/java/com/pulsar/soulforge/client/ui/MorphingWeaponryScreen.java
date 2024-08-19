@@ -51,8 +51,8 @@ public class MorphingWeaponryScreen extends Screen {
             if (playerSoul.getLV() >= 5) weapons.add(SoulForgeItems.PERSEVERANCE_EDGE);
             if (playerSoul.getLV() >= 10) weapons.add(SoulForgeItems.PERSEVERANCE_CLAW);
             if (playerSoul.getLV() >= 17) weapons.add(SoulForgeItems.PERSEVERANCE_HARPOON);
-            if ((playerSoul.getLV() >= 12 && playerSoul.isPure()) || playerSoul.getTraits().contains(Traits.spite)) weapons.add(SoulForgeItems.COLOSSAL_CLAYMORE);
-            if (playerSoul.getTraits().contains(Traits.integrity) && playerSoul.getTraits().contains(Traits.perseverance)) weapons.add(SoulForgeItems.TRICK_ANCHOR);
+            if ((playerSoul.getLV() >= 12 && playerSoul.isPure()) || playerSoul.hasTrait(Traits.spite)) weapons.add(SoulForgeItems.COLOSSAL_CLAYMORE);
+            if (playerSoul.hasTrait(Traits.integrity) && playerSoul.hasTrait(Traits.perseverance)) weapons.add(SoulForgeItems.TRICK_ANCHOR);
             double anglePer = (2*Math.PI)/weapons.size();
             hovering = null;
             for (int i = 0; i < weapons.size(); i++) {

@@ -21,7 +21,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -42,7 +41,7 @@ public class LeftClickPacket {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (player.isUsingItem()) {
             ItemStack using = player.getActiveItem();
-            if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.justice)) {
+            if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.justice)) {
                 boolean shieldExists = false;
                 for (Entity entity : player.getEntityWorld().getEntitiesByClass(BouncingShieldEntity.class, Box.of(player.getPos(), 200, 200, 200), (shield) -> shield.owner == player)) {
                     if (entity instanceof BouncingShieldEntity shield) {
@@ -148,18 +147,6 @@ public class LeftClickPacket {
                             playerSoul.resetLastCastTime();
                             arrow.setVelocity(target.getPos().subtract(arrow.getPos()).normalize().multiply(3f));
                         }
-                    }
-                }
-            }
-            if (heldItem.isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
-                if (player.getAttackCooldownProgress(0.5f) >= 1f && !player.isUsingItem()) {
-                    for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 2.5f, 3f, 1f, 2f)) {
-                        target.damage(player.getDamageSources().playerAttack(player), playerSoul.getLV());
-                    }
-                    for (int i = 0; i < 3; i ++) {
-                        ServerWorld serverWorld = player.getServerWorld();
-                        Vec3d particlePos = new Vec3d(player.getRotationVector().x, 0.5f, player.getRotationVector().z).add(player.getPos());
-                        serverWorld.spawnParticles(ParticleTypes.SWEEP_ATTACK, particlePos.x, particlePos.y+i/2f, particlePos.z, 1, 0, 0, 0, 0);
                     }
                 }
             }

@@ -56,10 +56,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -69,6 +66,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import java.util.ArrayList;
 import java.util.List;
 
+@Debug(export = true)
 @Mixin(PlayerEntity.class)
 abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow public abstract boolean damage(DamageSource source, float amount);
@@ -181,13 +179,13 @@ abstract class PlayerEntityMixin extends LivingEntity {
         return original;
     }
 
-    @ModifyVariable(method = "attack", at = @At("STORE"), ordinal = 0)
-    private float modifyDamage(float original) {
+    @ModifyVariable(method = "attack", at = @At(value = "STORE", ordinal = 1), ordinal = 0)
+    private float soulforge$modifyDamage(float original) {
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) {
-            original += this.getStatusEffect(StatusEffects.STRENGTH).getAmplifier() * 3;
+            original += (this.getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1) * 3;
         }
         if (this.hasStatusEffect(StatusEffects.WEAKNESS)) {
-            original += this.getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() * -4;
+            original += (this.getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1) * -4;
         }
         if (this.isUsingRiptide()) {
             ItemStack tridentStack = this.getMainHandStack().isOf(Items.TRIDENT) ? this.getMainHandStack() : this.getOffHandStack();
@@ -258,6 +256,33 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
+    @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
+    private Box soulforge$modifySweepingBox(Box original) {
+        if (this.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
+            return original.stretch(2f, 2f, 2f);
+        }
+        return original;
+    }
+
+    @ModifyExpressionValue(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getSweepingMultiplier(Lnet/minecraft/entity/LivingEntity;)F"))
+    private float soulforge$modifySweepingMultiplier(float original) {
+        if (this.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
+            return 2f/3f;
+        }
+        if (this.getMainHandStack().isOf(SoulForgeItems.BRAVERY_SPEAR)) {
+            return 1f/2f;
+        }
+        return original;
+    }
+
+    @ModifyArgs(method = "spawnSweepAttackParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;spawnParticles(Lnet/minecraft/particle/ParticleEffect;DDDIDDDD)I"))
+    private void soulforge$modifySweepParticleScale(Args args) {
+        if (this.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
+            args.set(5, -2);
+            args.set(8, 1);
+        }
+    }
+
     @ModifyVariable(method = "damage", at=@At("HEAD"), ordinal = 0, argsOnly = true)
     protected float modifyDamage(float amount, @Local DamageSource source) {
         if (source.isOf(SoulForgeDamageTypes.PAIN_SPLIT_DAMAGE_TYPE)) return amount;
@@ -309,7 +334,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 if (source.getAttacker() != null) {
                     this.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.PARRY_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                     if (source.getAttacker() instanceof LivingEntity living)
-                        living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 80, 2));
+                        living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, playerSoul.hasCast("Furioso") ? 160 : 80, 2));
                     if (amount < 30f) {
                         source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), amount);
                     } else {
@@ -378,17 +403,28 @@ abstract class PlayerEntityMixin extends LivingEntity {
         }
     }
 
+    @Inject(method = "takeShieldHit", at = @At("HEAD"), cancellable = true)
+    private void soulforge$onShieldHit(LivingEntity attacker, CallbackInfo ci) {
+        if (this.getMainHandStack().isOf(SoulForgeItems.GUNBLADES)) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)(Object)this);
+            if (playerSoul.hasCast("Furioso")) {
+                attacker.takeKnockback(1, MathHelper.sin(this.getYaw() * MathHelper.RADIANS_PER_DEGREE), -MathHelper.cos(this.getYaw() * MathHelper.RADIANS_PER_DEGREE));
+                ci.cancel();
+            }
+        }
+    }
+
     @ModifyExpressionValue(method = "interact", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;interact(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
     public ActionResult interact(ActionResult original, @Local Entity entity, @Local Hand hand) {
         PlayerEntity player = (PlayerEntity)(Object)this;
         if (!original.isAccepted()) {
             if (!player.getWorld().isClient) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                if (!(playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.integrity)))
+                if (!(playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.integrity)))
                     return original;
                 if (!playerSoul.hasCast("Valiant Heart")) return original;
                 if (!playerSoul.hasValue("parryCooldown")) playerSoul.setValue("parryCooldown", 0f);
-                if (playerSoul.getValue("parryCooldown") == 0f) {
+                if (playerSoul.getValue("parryCooldown") <= 0f) {
                     player.getItemCooldownManager().set(player.getMainHandStack().getItem(), 25);
                     playerSoul.setValue("parryCooldown", 25f);
                     playerSoul.setValue("parry", 5f);

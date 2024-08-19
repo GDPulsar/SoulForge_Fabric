@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.item.devices;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.SoulForgeItems;
@@ -9,31 +7,17 @@ import com.pulsar.soulforge.item.TraitedArniciteCoreItem;
 import com.pulsar.soulforge.item.TraitedArniciteHeartItem;
 import com.pulsar.soulforge.item.TraitedArniciteItem;
 import com.pulsar.soulforge.trait.TraitBase;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.UUID;
 
 public class ArmorDeviceBase extends ArmorItem implements Equipment {
     public final int maxCharge;
@@ -103,7 +87,7 @@ public class ArmorDeviceBase extends ArmorItem implements Equipment {
         else return;
         if (getCharge(stack) < maxCharge) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.getTraits().contains(trait)) {
+            if (playerSoul.hasTrait(trait)) {
                 if (maxCharge - 10 <= getCharge(stack)) {
                     playerSoul.setMagic(playerSoul.getMagic() - (maxCharge - getCharge(stack)));
                     setCharge(stack, maxCharge);

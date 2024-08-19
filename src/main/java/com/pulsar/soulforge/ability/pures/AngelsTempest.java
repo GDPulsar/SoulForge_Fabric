@@ -36,7 +36,7 @@ public class AngelsTempest extends AbilityBase{
         for (AbilityBase ability : playerSoul.getActiveAbilities()) {
             if (ability instanceof BlindingSnowstorm) {
                 snowstorm = (BlindingSnowstorm)ability;
-                if (snowstorm.location.toCenterPos().squaredDistanceTo(player.getPos()) < snowstorm.size * snowstorm.size) {
+                if (snowstorm.location.squaredDistanceTo(player.getPos()) < snowstorm.size * snowstorm.size) {
                     inSnowstorm = true;
                 }
             }
@@ -44,12 +44,12 @@ public class AngelsTempest extends AbilityBase{
         if (inSnowstorm) {
             HashMap<StatusEffect, StatusEffectInstance> effects = new HashMap<>();
             List<LivingEntity> targets = new ArrayList<>();
-            for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(snowstorm.location.toCenterPos(), snowstorm.size*2, snowstorm.size*2, snowstorm.size*2))) {
+            for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(snowstorm.location, snowstorm.size*2, snowstorm.size*2, snowstorm.size*2))) {
                 if (entity instanceof LivingEntity target) {
                     if (target instanceof PlayerEntity targetPlayer) {
                         if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                     }
-                    if (target.squaredDistanceTo(snowstorm.location.toCenterPos()) <= snowstorm.size * snowstorm.size) {
+                    if (target.squaredDistanceTo(snowstorm.location) <= snowstorm.size * snowstorm.size) {
                         targets.add(target);
                         List<StatusEffectInstance> targetEffects = new ArrayList<>();
                         for (StatusEffectInstance effect : target.getStatusEffects()) {

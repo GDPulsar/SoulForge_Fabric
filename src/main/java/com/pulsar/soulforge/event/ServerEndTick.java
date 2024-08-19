@@ -1,24 +1,16 @@
 package com.pulsar.soulforge.event;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
-import com.pulsar.soulforge.ability.integrity.Platforms;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.RaycastContext;
 
 import java.util.*;

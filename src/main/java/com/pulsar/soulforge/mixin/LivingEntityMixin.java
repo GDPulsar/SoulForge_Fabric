@@ -24,19 +24,20 @@ import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
@@ -85,6 +86,8 @@ abstract class LivingEntityMixin extends Entity {
     @Shadow public float forwardSpeed;
 
     @Shadow public abstract double getAttributeValue(EntityAttribute attribute);
+
+    @Shadow public abstract AttributeContainer getAttributes();
 
     @Inject(method = "isBlocking", at=@At("HEAD"), cancellable = true)
     public void parryBlocking(CallbackInfoReturnable<Boolean> cir) {
@@ -148,6 +151,25 @@ abstract class LivingEntityMixin extends Entity {
         if (slipMultiplier > 0f) newSlipperiness = 1f/((-1f-slipMultiplier)/(1-slipperiness)) + 1f;
         else if (slipMultiplier < 0f) newSlipperiness = 1f/(slipMultiplier/slipperiness);
         return newSlipperiness;
+    }
+
+    @ModifyReturnValue(method = "canWalkOnFluid", at = @At("RETURN"))
+    private boolean soulforge$canWalkOnWater(boolean original, @Local FluidState fluid) {
+        if ((LivingEntity)(Object)this instanceof PlayerEntity && !fluid.isOf(Fluids.EMPTY)) {
+            if (this.getAttributes().hasAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED)) {
+                try {
+                    if (this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) > 0.3) {
+                        if (fluid.isIn(FluidTags.LAVA)) {
+                            return this.isFireImmune();
+                        } else {
+                            return true;
+                        }
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return original;
     }
 
     @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = At.Shift.AFTER))
@@ -457,6 +479,11 @@ abstract class LivingEntityMixin extends Entity {
             }
         }
         return value;
+    }
+
+    @Inject(method = "applyDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setHealth(F)V"))
+    private void soulforge$onAppliedDamage(DamageSource source, float amount, CallbackInfo ci) {
+        LivingDamageEvent.onApplyDamage((LivingEntity)(Object)this, source, amount);
     }
 
     @ModifyVariable(method = "takeKnockback", at = @At("HEAD"), ordinal = 0)

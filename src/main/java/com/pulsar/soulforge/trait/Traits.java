@@ -3,7 +3,6 @@ package com.pulsar.soulforge.trait;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.determination.DeterminationSword;
-import com.pulsar.soulforge.ability.patience.Slowball;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.trait.traits.*;
 import com.pulsar.soulforge.util.Constants;
@@ -49,7 +48,9 @@ public class Traits {
     }
 
     public static List<TraitBase> all() {
-        return new ArrayList<>(Arrays.asList(bravery, justice, kindness, patience, integrity, perseverance, determination));
+        List<TraitBase> traits = new ArrayList<>(Arrays.asList(bravery, justice, kindness, patience, integrity, perseverance, determination));
+        traits.addAll(customTraits.values());
+        return traits;
     }
 
     public static List<TraitBase> trueAll() {
@@ -119,14 +120,14 @@ public class Traits {
             for (TraitBase trait : Traits.trueAll()) {
                 if (Objects.equals(trait.getName(), mode)) {
                     for (AbilityBase ability : trait.getAbilities()) {
-                        if (ability.getLV() <= soul.getLV() || soul.getTraits().contains(Traits.spite)) {
+                        if (ability.getLV() <= soul.getLV() || soul.hasTrait(Traits.spite)) {
                             if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_ON_HIT) {
                                 if (ability instanceof DeterminationSword && soul.getLV() == 20) continue;
                                 abilityNames.add(ability.getName());
                             }
                         }
                     }
-                    if (soul.isPure() || soul.getTraits().contains(Traits.spite) || Objects.equals(mode, "Determination")) {
+                    if (soul.isPure() || soul.hasTrait(Traits.spite) || Objects.equals(mode, "Determination")) {
                         if (trait == Traits.perseverance || trait == Traits.despair || trait == Traits.determination) continue;
                         AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                         if (pureAbility.getLV() <= soul.getLV()) {

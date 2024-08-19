@@ -1,10 +1,12 @@
 package com.pulsar.soulforge.ability;
 
+import com.pulsar.soulforge.ability.hate.sideeffects.Insanity;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Constants;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,4 +45,8 @@ public class Abilities {
         }
         return null;
     }
+
+    public static List<AbilityBase> hateAbilities = new ArrayList<>(List.<AbilityBase>of(
+            new Insanity()
+    ));
 }

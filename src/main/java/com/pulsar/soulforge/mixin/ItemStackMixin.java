@@ -55,22 +55,22 @@ public abstract class ItemStackMixin {
         armorSiphonModifiers = new HashMap<>();
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             Map<Siphon.Type, Map.Entry<EntityAttribute, EntityAttributeModifier>> slotSiphonModifiers = new HashMap<>();
-            slotSiphonModifiers.put(Siphon.Type.BRAVERY, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 1, EntityAttributeModifier.Operation.ADDITION)));
-            slotSiphonModifiers.put(Siphon.Type.JUSTICE, new AbstractMap.SimpleEntry<>(SoulForgeAttributes.MAGIC_COOLDOWN, new EntityAttributeModifier(UUID.randomUUID(), "Justice Siphon", -0.05, EntityAttributeModifier.Operation.ADDITION)));
-            slotSiphonModifiers.put(Siphon.Type.KINDNESS, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier(UUID.randomUUID(), "Kindness Siphon", 2, EntityAttributeModifier.Operation.ADDITION)));
-            slotSiphonModifiers.put(Siphon.Type.PATIENCE, new AbstractMap.SimpleEntry<>(SoulForgeAttributes.MAGIC_POWER, new EntityAttributeModifier(UUID.randomUUID(), "Patience Siphon", 0.05, EntityAttributeModifier.Operation.ADDITION)));
-            slotSiphonModifiers.put(Siphon.Type.INTEGRITY, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", 0.05, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)));
-            slotSiphonModifiers.put(Siphon.Type.PERSEVERANCE, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, new EntityAttributeModifier(UUID.randomUUID(), "Perseverance Siphon", 1f, EntityAttributeModifier.Operation.ADDITION)));
-            slotSiphonModifiers.put(Siphon.Type.DETERMINATION, new AbstractMap.SimpleEntry<>(SoulForgeAttributes.MAGIC_COST, new EntityAttributeModifier(UUID.randomUUID(), "Determination Siphon", -0.05, EntityAttributeModifier.Operation.ADDITION)));
+            slotSiphonModifiers.put(Siphon.Type.BRAVERY, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("627e288c-5e02-11ef-b496-325096b39f47"), "Bravery Siphon", 1, EntityAttributeModifier.Operation.ADDITION)));
+            slotSiphonModifiers.put(Siphon.Type.JUSTICE, new AbstractMap.SimpleEntry<>(SoulForgeAttributes.MAGIC_COOLDOWN, new EntityAttributeModifier(UUID.fromString("627e28dc-5e02-11ef-91f0-325096b39f47"), "Justice Siphon", -0.05, EntityAttributeModifier.Operation.ADDITION)));
+            slotSiphonModifiers.put(Siphon.Type.KINDNESS, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier(UUID.fromString("627e2922-5e02-11ef-97d5-325096b39f47"), "Kindness Siphon", 2, EntityAttributeModifier.Operation.ADDITION)));
+            slotSiphonModifiers.put(Siphon.Type.PATIENCE, new AbstractMap.SimpleEntry<>(SoulForgeAttributes.MAGIC_POWER, new EntityAttributeModifier(UUID.fromString("627e29e0-5e02-11ef-b462-325096b39f47"), "Patience Siphon", 0.05, EntityAttributeModifier.Operation.ADDITION)));
+            slotSiphonModifiers.put(Siphon.Type.INTEGRITY, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(UUID.fromString("627e2a26-5e02-11ef-accb-325096b39f47"), "Integrity Siphon", 0.05, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)));
+            slotSiphonModifiers.put(Siphon.Type.PERSEVERANCE, new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, new EntityAttributeModifier(UUID.fromString("627e2a6c-5e02-11ef-85b5-325096b39f47"), "Perseverance Siphon", 1f, EntityAttributeModifier.Operation.ADDITION)));
+            slotSiphonModifiers.put(Siphon.Type.DETERMINATION, new AbstractMap.SimpleEntry<>(SoulForgeAttributes.MAGIC_COST, new EntityAttributeModifier(UUID.fromString("627e2aa8-5e02-11ef-82b6-325096b39f47"), "Determination Siphon", -0.05, EntityAttributeModifier.Operation.ADDITION)));
             armorSiphonModifiers.put(slot, slotSiphonModifiers);
         }
-        braveryWeaponModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        braveryTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Bravery Siphon", 2, Operation.ADDITION));
-        justiceTridentModifier = new AbstractMap.SimpleEntry<>(ReachEntityAttributes.ATTACK_RANGE, new EntityAttributeModifier(UUID.randomUUID(), "Justice Siphon", 1.5, Operation.ADDITION));
-        perseveranceTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Perseverance Siphon", 4, Operation.ADDITION));
-        determinationTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Determination Siphon", 2, Operation.ADDITION));
-        integrityWeaponDamageModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", -0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        integrityWeaponSpeedModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.randomUUID(), "Integrity Siphon", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+        braveryWeaponModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("b6dd6fe6-5e02-11ef-91f5-325096b39f47"), "Bravery Siphon", 0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+        braveryTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("b6dd7310-5e02-11ef-8b94-325096b39f47"), "Bravery Siphon", 2, Operation.ADDITION));
+        justiceTridentModifier = new AbstractMap.SimpleEntry<>(ReachEntityAttributes.ATTACK_RANGE, new EntityAttributeModifier(UUID.fromString("b6dd73d8-5e02-11ef-8a9b-325096b39f47"), "Justice Siphon", 1.5, Operation.ADDITION));
+        perseveranceTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("b6dd746e-5e02-11ef-a6b7-325096b39f47"), "Perseverance Siphon", 4, Operation.ADDITION));
+        determinationTridentModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("b6dd74f0-5e02-11ef-b984-325096b39f47"), "Determination Siphon", 2, Operation.ADDITION));
+        integrityWeaponDamageModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("b6dd7568-5e02-11ef-946a-325096b39f47"), "Integrity Siphon", -0.25, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+        integrityWeaponSpeedModifier = new AbstractMap.SimpleEntry<>(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(UUID.fromString("b6dd75e0-5e02-11ef-8775-325096b39f47"), "Integrity Siphon", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
     }
 
     @Unique

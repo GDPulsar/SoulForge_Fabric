@@ -92,7 +92,7 @@ public class KeyInputHandler {
                             if (client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
                                 cost *= (float) client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
                             }
-                            if (playerSoul.isStrong() && !playerSoul.getTraits().contains(Traits.determination))
+                            if (playerSoul.isStrong() && !playerSoul.hasTrait(Traits.determination))
                                 cost /= 2f;
                             if (playerSoul.hasCast("Valiant Heart")) cost /= 2f;
                             if (cost <= playerSoul.getMagic()) {

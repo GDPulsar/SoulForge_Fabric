@@ -8,7 +8,6 @@ import com.pulsar.soulforge.entity.DeterminationSpearProjectile;
 import com.pulsar.soulforge.entity.SOJProjectile;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;

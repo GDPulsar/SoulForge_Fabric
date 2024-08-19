@@ -54,7 +54,7 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COOLDOWN, "pat_cooldown");
             Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "pat_cost");
             Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "pat_speed");
-            EntityAttributeModifier healthModifier = new EntityAttributeModifier("pat_health", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+            EntityAttributeModifier healthModifier = new EntityAttributeModifier("pat_health", Math.max(40, playerSoul.getEffectiveLV() / 2f), EntityAttributeModifier.Operation.ADDITION);
             EntityAttributeModifier strengthModifier = new EntityAttributeModifier("pat_strength", 1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
             EntityAttributeModifier magicModifier = new EntityAttributeModifier("pat_magic", 1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
             EntityAttributeModifier cooldownModifier = new EntityAttributeModifier("pat_cooldown", -0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);

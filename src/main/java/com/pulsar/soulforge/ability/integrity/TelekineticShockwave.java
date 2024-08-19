@@ -22,7 +22,7 @@ public class TelekineticShockwave extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        isGojo = playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.integrity);
+        isGojo = playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.integrity);
         if (!isGojo) {
             ServerWorld world = player.getServer().getWorld(player.getWorld().getRegistryKey());
             if (world != null) {

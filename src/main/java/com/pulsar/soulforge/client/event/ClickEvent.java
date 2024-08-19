@@ -1,23 +1,12 @@
 package com.pulsar.soulforge.client.event;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.determination.WeaponWheel;
-import com.pulsar.soulforge.attribute.SoulForgeAttributes;
-import com.pulsar.soulforge.client.ui.WeaponWheelScreen;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
-import com.pulsar.soulforge.trait.Traits;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.Vec3d;
 
 public class ClickEvent implements ClientRawInputEvent.MouseClicked {
     @Override

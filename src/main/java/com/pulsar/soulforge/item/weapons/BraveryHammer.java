@@ -1,9 +1,10 @@
 package com.pulsar.soulforge.item.weapons;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
+import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -34,7 +35,10 @@ public class BraveryHammer extends MagicSwordItem implements GeoItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
-            BlockHitResult hit = world.raycast(new RaycastContext(user.getEyePos(), user.getEyePos().add(user.getRotationVector().multiply(ReachEntityAttributes.getReachDistance(user, 3f))), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, user));
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+            BlockHitResult hit = world.raycast(new RaycastContext(user.getEyePos(), user.getEyePos().add(
+                    user.getRotationVector().multiply(ReachEntityAttributes.getReachDistance(user, 3f) * (playerSoul.hasCast("Furioso") ? 2f : 1f) )),
+                    RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, user));
             if (hit != null) {
                 Vec3d pos = hit.getBlockPos().toCenterPos();
                 Explosion explosion = world.createExplosion(user, pos.x, pos.y, pos.z, 2f, World.ExplosionSourceType.NONE);

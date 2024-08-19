@@ -3,7 +3,6 @@ package com.pulsar.soulforge.entity;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -11,7 +10,6 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -89,13 +87,9 @@ public class EnergyBallProjectile extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         float damage = 1f;
-        boolean frostburn = false;
         if (this.getOwner() instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             damage = 3f + playerSoul.getEffectiveLV()*0.75f;
-            if (playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience)) {
-                frostburn = true;
-            }
         }
         Entity entity = entityHitResult.getEntity();
         if (entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), damage)) {
@@ -104,8 +98,7 @@ public class EnergyBallProjectile extends ProjectileEntity {
                 playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
             }
             if (entity instanceof LivingEntity living) {
-                if (frostburn) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 250, 0));
-                else living.setFireTicks(250);
+                living.setFireTicks(250);
             }
         }
     }
@@ -137,7 +130,7 @@ public class EnergyBallProjectile extends ProjectileEntity {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             aoeDamage = 2f + playerSoul.getEffectiveLV()/4f;
             aoeSize = Math.max(7, (int)(3 + 2*playerSoul.getEffectiveLV()/6f));
-            if (playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience)) {
+            if (playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.patience)) {
                 frostburn = true;
             }
         }

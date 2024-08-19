@@ -5,6 +5,7 @@ import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.EntityInitializer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.TemporaryModifierComponent;
+import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -17,6 +18,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -69,35 +71,53 @@ public class SlowballProjectile extends ProjectileEntity {
     }
 
     @Override
+    public void onCollision(HitResult hitResult) {
+        super.onCollision(hitResult);
+        if (getOwner() instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            if (playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.patience)) {
+                for (LivingEntity nearby : getWorld().getEntitiesByClass(LivingEntity.class, Box.of(getPos(), 14, 14, 14),
+                        (entity) -> entity.getPos().distanceTo(getPos()) < 7f && TeamUtils.canDamageEntity(player.getServer(), player, entity))) {
+                    doOnHit(player, nearby);
+                }
+            }
+        }
+    }
+
+    @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
         DamageSource damageSource = this.getDamageSources().thrown(this, this.getOwner());
         entity.damage(damageSource, 1f);
         if (getOwner() instanceof PlayerEntity player && entity instanceof LivingEntity living) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            TemporaryModifierComponent modifiers = EntityInitializer.TEMPORARY_MODIFIERS.get(living);
-            modifiers.addTemporaryModifier(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, new EntityAttributeModifier(
-                    UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
-                    -0.02f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-            ), playerSoul.getEffectiveLV() * 20);
-            modifiers.addTemporaryModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(
-                    UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
-                    -0.02f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-            ), playerSoul.getEffectiveLV() * 20);
-            modifiers.addTemporaryModifier(SoulForgeAttributes.KNOCKBACK_MULTIPLIER, new EntityAttributeModifier(
+            doOnHit(player, living);
+        }
+    }
+
+    private void doOnHit(PlayerEntity owner, LivingEntity target) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(owner);
+        TemporaryModifierComponent modifiers = EntityInitializer.TEMPORARY_MODIFIERS.get(target);
+        modifiers.addTemporaryModifier(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, new EntityAttributeModifier(
+                UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
+                -0.02f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+        ), playerSoul.getEffectiveLV() * 20);
+        modifiers.addTemporaryModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier(
+                UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
+                -0.02f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+        ), playerSoul.getEffectiveLV() * 20);
+        modifiers.addTemporaryModifier(SoulForgeAttributes.KNOCKBACK_MULTIPLIER, new EntityAttributeModifier(
+                UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
+                0.04f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+        ), playerSoul.getEffectiveLV() * 20);
+        modifiers.addTemporaryModifier(SoulForgeAttributes.SLIP_MODIFIER, new EntityAttributeModifier(
+                UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
+                0.2f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
+        ), playerSoul.getEffectiveLV() * 20);
+        if (playerSoul.getLV() >= 10) {
+            modifiers.addTemporaryModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(
                     UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
                     0.04f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
             ), playerSoul.getEffectiveLV() * 20);
-            modifiers.addTemporaryModifier(SoulForgeAttributes.SLIP_MODIFIER, new EntityAttributeModifier(
-                    UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
-                    0.2f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-            ), playerSoul.getEffectiveLV() * 20);
-            if (playerSoul.getLV() >= 10) {
-                modifiers.addTemporaryModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(
-                        UUID.fromString("41f1ed9f-7c16-41b3-b07b-95c944067a46"), "slowball",
-                        0.04f * playerSoul.getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL
-                ), playerSoul.getEffectiveLV() * 20);
-            }
         }
     }
 }

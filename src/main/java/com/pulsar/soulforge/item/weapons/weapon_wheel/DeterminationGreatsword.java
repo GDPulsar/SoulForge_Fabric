@@ -1,25 +1,16 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.client.item.DefaultedGeoItemRenderer;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BigSlashProjectile;
-import com.pulsar.soulforge.entity.SmallSlashProjectile;
-import com.pulsar.soulforge.entity.SpecialHellEntity;
-import com.pulsar.soulforge.item.weapons.BraverySpear;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.item.weapons.MagicSwordItem;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
@@ -30,7 +21,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 

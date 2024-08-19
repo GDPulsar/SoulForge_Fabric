@@ -36,7 +36,6 @@ import java.util.function.Supplier;
 
 public class MusketBlade extends MagicSwordItem implements GeoItem {
     public MusketBlade() {
-        // attack damage, attack speed
         super(3f, 1.6f, 0.2f);
     }
 
@@ -100,22 +99,23 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
     }
 
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        int i = this.getMaxUseTime(stack) - remainingUseTicks;
-        float f = getPullProgress(i, stack);
-        if (f >= 1.0F && !open) {
-            open = true;
-            SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
-            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, soundCategory, 1.0F, 1.0F);
+        if (user instanceof PlayerEntity player) {
+            int i = this.getMaxUseTime(player) - remainingUseTicks;
+            float f = getPullProgress(i, player);
+            if (f >= 1.0F && !open) {
+                open = true;
+                SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, soundCategory, 1.0F, 1.0F);
+            }
         }
-
     }
 
     public boolean isUsedOnRelease(ItemStack stack) {
         return stack.isOf(this);
     }
 
-    private static float getPullProgress(int useTicks, ItemStack stack) {
-        float f = (float)useTicks / (float)getPullTime(stack);
+    private static float getPullProgress(int useTicks, PlayerEntity player) {
+        float f = (float)useTicks / (float)getPullTime(player);
         if (f > 1.0F) {
             f = 1.0F;
         }
@@ -123,12 +123,13 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
         return f;
     }
 
-    public int getMaxUseTime(ItemStack stack) {
-        return getPullTime(stack) + 3;
+    public int getMaxUseTime(PlayerEntity player) {
+        return getPullTime(player) + 3;
     }
 
-    public static int getPullTime(ItemStack stack) {
-        return 20;
+    public static int getPullTime(PlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        return playerSoul.hasCast("Furioso") ? 10 : 20;
     }
 
     public UseAction getUseAction(ItemStack stack) {

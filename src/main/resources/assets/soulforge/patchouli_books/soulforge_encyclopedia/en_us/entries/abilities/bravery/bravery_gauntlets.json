@@ -1,0 +1,14 @@
+{
+  "name": "Bravery Gauntlets",
+  "icon": "soulforge:bravery_gauntlets",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon the Bravery Gauntlets. Right click an enemy to perform an uppercut, launching both you and the enemy upwards slightly."
+    }
+  ]
+}

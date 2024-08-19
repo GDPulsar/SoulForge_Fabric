@@ -60,6 +60,7 @@ public class SoulForgeEntities {
     public static EntityType<SlowballProjectile> SLOWBALL_ENTITY_TYPE;
     public static EntityType<IceSpikeProjectile> ICE_SPIKE_ENTITY_TYPE;
     public static EntityType<TotalFrostbiteEntity> TOTAL_FROSTBITE_ENTITY_TYPE;
+    public static EntityType<AntlerEntity> ANTLER_ENTITY_TYPE;
 
     public static void register() {
         SNOWGRAVE_PROJECTILE_TYPE = Registry.register(
@@ -489,6 +490,14 @@ public class SoulForgeEntities {
                 Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "total_frostbite_entity"),
                 FabricEntityTypeBuilder.<TotalFrostbiteEntity>create(SpawnGroup.MISC, TotalFrostbiteEntity::new)
                         .dimensions(EntityDimensions.changing(1.5f, 3f))
+                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .build()
+        );
+
+        ANTLER_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "antler_entity"),
+                FabricEntityTypeBuilder.<AntlerEntity>create(SpawnGroup.MISC, AntlerEntity::new)
+                        .dimensions(EntityDimensions.changing(1f, 1f))
                         .trackRangeBlocks(100).trackedUpdateRate(40)
                         .build()
         );

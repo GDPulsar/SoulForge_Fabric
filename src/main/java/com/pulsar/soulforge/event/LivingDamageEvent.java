@@ -3,7 +3,7 @@ package com.pulsar.soulforge.event;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
-import com.pulsar.soulforge.components.WorldBaseComponent;
+import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.util.Utils;
@@ -139,7 +139,7 @@ public class LivingDamageEvent {
 
             int expIncrease = (int)(damage * (1f + (targetDefence / 10f) + (targetDamage / 10f)));
 
-            WorldBaseComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
+            WorldComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
             expIncrease = (int)(worldComponent.getExpMultiplier() * expIncrease);
             if (living.isMobOrPlayer()) {
                 if (living.isPlayer()) {
@@ -216,6 +216,18 @@ public class LivingDamageEvent {
         if (values.hasInt("ChildOfOmelasTimer") && values.getInt("ChildOfOmelasTimer") > 0) {
             if (source.getAttacker() instanceof LivingEntity attacker) {
                 attacker.heal(damage);
+            }
+        }
+
+        if (living instanceof ServerPlayerEntity player) {
+            if (Utils.hasHate(player)) {
+                Utils.addHate(player, 0.01f * damage);
+            }
+        }
+
+        if (source.getAttacker() instanceof PlayerEntity player) {
+            if (Utils.hasHate(player)) {
+                Utils.addHate(player, 0.01f * damage);
             }
         }
     }

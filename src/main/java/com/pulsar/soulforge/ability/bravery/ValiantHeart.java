@@ -23,6 +23,7 @@ public class ValiantHeart extends AbilityBase {
 
     private final EntityAttributeModifier damageModifier = new EntityAttributeModifier("valiant_heart", 0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
     private final EntityAttributeModifier magicModifier = new EntityAttributeModifier("valiant_heart", 0.5f, EntityAttributeModifier.Operation.ADDITION);
+    private final EntityAttributeModifier costCooldownModifier = new EntityAttributeModifier("valiant_heart", -0.25f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
@@ -34,10 +35,11 @@ public class ValiantHeart extends AbilityBase {
         }
         playerSoul.setMagic(0f);
         timer = 3600;
-        player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VALIANT_HEART, 3600, 0));
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 6000, 0));
         player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(damageModifier);
         player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(magicModifier);
+        player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).addPersistentModifier(costCooldownModifier);
+        player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).addPersistentModifier(costCooldownModifier);
         return super.cast(player);
     }
 
@@ -55,6 +57,8 @@ public class ValiantHeart extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "valiant_heart");
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_POWER, "valiant_heart");
+        Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "valiant_heart");
+        Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COOLDOWN, "valiant_heart");
         return super.end(player);
     }
 

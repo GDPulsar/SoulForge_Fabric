@@ -8,10 +8,10 @@ import dev.onyxstudios.cca.api.v3.world.WorldComponentInitializer;
 import net.minecraft.util.Identifier;
 
 public final class WorldInitializer implements WorldComponentInitializer {
-    public static final ComponentKey<WorldBaseComponent> WORLD_CONFIG;
+    public static final ComponentKey<WorldComponent> WORLD_CONFIG;
 
     static {
-        WORLD_CONFIG = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "world_config"), WorldBaseComponent.class);
+        WORLD_CONFIG = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "world_config"), WorldComponent.class);
     }
 
     public static void register() {}

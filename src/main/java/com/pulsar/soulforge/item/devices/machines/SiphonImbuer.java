@@ -1,9 +1,7 @@
 package com.pulsar.soulforge.item.devices.machines;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.item.devices.DeviceBase;
-import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -12,8 +10,6 @@ import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Rarity;
@@ -28,7 +24,8 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -53,7 +50,7 @@ public class SiphonImbuer extends DeviceBase implements GeoItem {
                     Item item = slotStack.getItem();
                     if (!(item instanceof CrossbowItem || item instanceof SwordItem || item instanceof TridentItem || item instanceof ShieldItem || item instanceof AxeItem || item instanceof BowItem)) return super.use(world, user, hand);
                     slotStack.getNbt().putBoolean("imbued", true);
-                    UUID uuid = UUID.randomUUID();
+                    UUID uuid = UUID.fromString("627e254e-5e02-11ef-a36c-325096b39f47");
                     slotStack.getNbt().putUuid("imbuedId", uuid);
                     stack.getNbt().putUuid("imbuedId", uuid);
                     user.sendMessage(Text.literal("Successfully bound to ").append(slotStack.getName()));

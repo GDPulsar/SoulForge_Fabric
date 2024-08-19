@@ -134,10 +134,17 @@ public class SoulResetOverlay implements HudRenderCallback {
                         if (client.mouse.wasLeftButtonClicked() || client.mouse.wasMiddleButtonClicked() || client.mouse.wasRightButtonClicked())
                             chosen.add(Traits.perseverance);
                     }
-                    if (mousePos.distanceSquared(new Vec2f(width / 2f, height / 2f)) < 600) {
-                        context.drawCenteredTextWithShadow(client.textRenderer, "Determination", width / 2, 230, 0xFF0000);
-                        if (client.mouse.wasLeftButtonClicked() || client.mouse.wasMiddleButtonClicked() || client.mouse.wasRightButtonClicked())
-                            chosen.add(Traits.determination);
+                    if (chosen.size() <= 1) {
+                        if (mousePos.distanceSquared(new Vec2f(width / 2f, height / 2f)) < 600) {
+                            context.drawCenteredTextWithShadow(client.textRenderer, "Determination", width / 2, 230, 0xFF0000);
+                            if (client.mouse.wasLeftButtonClicked() || client.mouse.wasMiddleButtonClicked() || client.mouse.wasRightButtonClicked()) {
+                                if (chosen.isEmpty()) {
+                                    chosen.add(Traits.determination);
+                                } else {
+                                    chosen.set(0, Traits.determination);
+                                }
+                            }
+                        }
                     }
                 }
                 if (chosen.size() == 2) {

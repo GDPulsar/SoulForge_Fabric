@@ -1,0 +1,14 @@
+{
+  "name": "Bravery Spear",
+  "icon": "soulforge:bravery_spear",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a Bravery Spear. Hold right click to throw the spear, sticking into enemies on hit and dealing damage over time. Also has increased attack range."
+    }
+  ]
+}

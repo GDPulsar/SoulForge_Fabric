@@ -83,7 +83,7 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                 }
             }
 
-            if (playerSoul.getTraits().contains(Traits.kindness) && playerSoul.getTraits().contains(Traits.integrity)) {
+            if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.integrity)) {
                 List<ShieldShardEntity> circlingShards = player.getEntityWorld().getEntitiesByClass(ShieldShardEntity.class, Box.of(player.getPos(), 15, 15, 15), (entity) -> entity.owner == player && entity.isCircling && !entity.isLaunched);
                 for (ShieldShardEntity shard : player.getEntityWorld().getEntitiesByClass(ShieldShardEntity.class, Box.of(player.getPos(), 15, 15, 15), (entity) -> entity.owner == player && !entity.isLaunched)) {
                     if (circlingShards.size() >= 15) break;

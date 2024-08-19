@@ -4,21 +4,21 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
+import com.pulsar.soulforge.util.Constants;
+import com.pulsar.soulforge.util.Triplet;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 public class StatusInversion extends AbilityBase {
     @Override
@@ -27,56 +27,15 @@ public class StatusInversion extends AbilityBase {
         if (hit != null) {
             if (hit.getEntity() instanceof LivingEntity target) {
                 Collection<StatusEffectInstance> effects = target.getStatusEffects();
+                TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                playerSoul.setStyle(playerSoul.getStyle() + 4 * effects.size());
-                List<StatusEffectInstance> newEffects = new ArrayList<>();
-                if (target.getFireTicks() > 0) {
-                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, (int)(target.getFireTicks()*0.6f), 0));
-                }
-                if (target instanceof PlayerEntity targetPlayer) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                    if (targetSoul.hasValue("antiheal") && targetSoul.hasValue("antihealDuration")) {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, (int) (targetSoul.getValue("antihealDuration")), (int) (targetSoul.getValue("antiheal") * 0.06f)));
-                    }
-                }
-                for (StatusEffectInstance effect : effects) {
-                    if (effect.getEffectType() == StatusEffects.SPEED) newEffects.add(new StatusEffectInstance(StatusEffects.SLOWNESS, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.SLOWNESS) newEffects.add(new StatusEffectInstance(StatusEffects.SPEED, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.DOLPHINS_GRACE) newEffects.add(new StatusEffectInstance(StatusEffects.SLOWNESS, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.STRENGTH) newEffects.add(new StatusEffectInstance(StatusEffects.WEAKNESS, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.WEAKNESS) newEffects.add(new StatusEffectInstance(StatusEffects.STRENGTH, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.REGENERATION) newEffects.add(new StatusEffectInstance(StatusEffects.POISON, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.POISON) newEffects.add(new StatusEffectInstance(StatusEffects.REGENERATION, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.WITHER) newEffects.add(new StatusEffectInstance(StatusEffects.REGENERATION, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == SoulForgeEffects.VULNERABILITY) newEffects.add(new StatusEffectInstance(StatusEffects.RESISTANCE, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.RESISTANCE) newEffects.add(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.FIRE_RESISTANCE) player.setFireTicks((int) (effect.getDuration()*0.6f));
-                    if (effect.getEffectType() == StatusEffects.LUCK) newEffects.add(new StatusEffectInstance(StatusEffects.UNLUCK, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.UNLUCK) newEffects.add(new StatusEffectInstance(StatusEffects.LUCK, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.HUNGER) newEffects.add(new StatusEffectInstance(StatusEffects.SATURATION, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.SATURATION) newEffects.add(new StatusEffectInstance(StatusEffects.HUNGER, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.HASTE) newEffects.add(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.MINING_FATIGUE) newEffects.add(new StatusEffectInstance(StatusEffects.HASTE, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.GLOWING) newEffects.add(new StatusEffectInstance(StatusEffects.INVISIBILITY, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.INVISIBILITY) newEffects.add(new StatusEffectInstance(StatusEffects.GLOWING, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.JUMP_BOOST) newEffects.add(new StatusEffectInstance(StatusEffects.SLOW_FALLING, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.SLOW_FALLING) newEffects.add(new StatusEffectInstance(StatusEffects.LEVITATION, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.LEVITATION) newEffects.add(new StatusEffectInstance(StatusEffects.SLOW_FALLING, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.NIGHT_VISION) newEffects.add(new StatusEffectInstance(StatusEffects.DARKNESS, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.DARKNESS) newEffects.add(new StatusEffectInstance(StatusEffects.NIGHT_VISION, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == StatusEffects.BLINDNESS) newEffects.add(new StatusEffectInstance(StatusEffects.NIGHT_VISION, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == SoulForgeEffects.CRUSHED) newEffects.add(new StatusEffectInstance(StatusEffects.RESISTANCE, effect.getDuration(), 0));
-                    if (effect.getEffectType() == SoulForgeEffects.FROSTBITE) newEffects.add(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == SoulForgeEffects.FROSTBURN) newEffects.add(new StatusEffectInstance(SoulForgeEffects.FROSTBITE, effect.getDuration(), MathHelper.floor(effect.getAmplifier()*0.6f)));
-                    if (effect.getEffectType() == SoulForgeEffects.FROSTBURN) player.setFireTicks((int) (effect.getDuration()*0.6f));
-                    if (effect.getEffectType() == SoulForgeEffects.MANA_SICKNESS) newEffects.add(effect);
-                    if (effect.getEffectType() == SoulForgeEffects.SNOWED_VISION) newEffects.add(effect);
-                    if (effect.getEffectType() == SoulForgeEffects.CREATIVE_ZONE) newEffects.add(effect);
-                    if (effect.getEffectType() == SoulForgeEffects.VALIANT_HEART) newEffects.add(effect);
-                }
-                target.clearStatusEffects();
-                for (StatusEffectInstance effect : newEffects) {
-                    target.addStatusEffect(effect);
+                playerSoul.setStyle(playerSoul.getStyle() + 4 * (effects.size() + modifiers.getModifierCount()));
+                Constants.invertStatusEffects(target, 1f, 0.6f);
+                for (Triplet<EntityAttributeModifier, EntityAttribute, Float> modifier : Set.copyOf(modifiers.getModifiers())) {
+                    modifiers.removeTemporaryModifier(modifier.getSecond(), modifier.getFirst());
+                    modifiers.addTemporaryModifier(modifier.getSecond(), new EntityAttributeModifier(
+                            modifier.getFirst().getId(), modifier.getFirst().getName(), -modifier.getFirst().getValue(), modifier.getFirst().getOperation()
+                    ), modifier.getThird());
                 }
                 Vec3d centerPos = target.getPos().add(0, 1, 0);
                 for (int i = 0; i < 16; i++) {

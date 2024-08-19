@@ -59,7 +59,7 @@ public abstract class StatusEffectMixin {
     public void addAttributeModifier(EntityAttribute attribute, String uuid, double amount, EntityAttributeModifier.Operation operation, CallbackInfoReturnable<StatusEffect> cir) {
         if (Objects.equals(uuid, "91AEAA56-376B-4498-935B-2F7F68070635") || // speed
             Objects.equals(uuid, "7107DE5E-7CE8-4030-940E-514C1F160890")) { // slowness
-            EntityAttributeModifier speedModifier = new EntityAttributeModifier(UUID.fromString(uuid), this::getTranslationKey, MathHelper.sign(amount) * 0.1f, EntityAttributeModifier.Operation.MULTIPLY_BASE);
+            EntityAttributeModifier speedModifier = new EntityAttributeModifier(UUID.fromString(uuid), this::getTranslationKey, MathHelper.sign(amount) * 0.15f, EntityAttributeModifier.Operation.MULTIPLY_BASE);
             this.attributeModifiers.put(attribute, speedModifier);
             this.attributeModifiers.put(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, speedModifier);
             cir.setReturnValue((StatusEffect)(Object)this);

@@ -14,48 +14,62 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 import java.util.Objects;
 import java.util.UUID;
 
 public class BlindingSnowstorm extends ToggleableAbilityBase {
-    public BlockPos location;
+    public LivingEntity frostMark;
+    public Vec3d location;
     public float size;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        super.cast(player);
-        if (getActive()) {
-            BlockHitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.SOURCE_ONLY, player));
-            if (hit != null) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                size = playerSoul.getTraits().contains(Traits.patience) && playerSoul.getTraits().contains(Traits.perseverance) ? 140f : 35f;
-                location = hit.getBlockPos();
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (!getActive()) {
+            if (playerSoul.hasTrait(Traits.patience) && playerSoul.hasTrait(Traits.perseverance)) {
+                EntityHitResult hit = Utils.getFocussedEntity(player, 10f);
+                if (hit != null && hit.getEntity() instanceof LivingEntity living) {
+                    size = 140f;
+                    frostMark = living;
+                } else {
+                    return false;
+                }
+            } else {
+                BlockHitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.SOURCE_ONLY, player));
+                if (hit != null) {
+                    size = 60f;
+                    location = hit.getBlockPos().toCenterPos();
+                } else {
+                    return false;
+                }
             }
         }
-        return true;
+        return super.cast(player);
     }
 
     int timer = 0;
     @Override
     public boolean tick(ServerPlayerEntity player) {
-        if (location == null) {
+        if (location == null && frostMark == null) {
             setActive(false);
             return true;
         }
+        if (frostMark != null) location = frostMark.getPos();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float styleChange = 0f;
-        for (Entity entity : player.getEntityWorld().getOtherEntities(null, Box.of(location.toCenterPos(), size*2, size*2, size*2))) {
+        for (Entity entity : player.getEntityWorld().getOtherEntities(null, Box.of(location, size*2, size*2, size*2))) {
             if (entity instanceof LivingEntity target) {
-                if (target.squaredDistanceTo(location.toCenterPos()) <= size * size) {
+                if (target.squaredDistanceTo(location) <= size * size) {
                     target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.SNOWED_VISION, 5, 0));
                     TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
                     float level = 1f / Math.min(1f + 0.015f * playerSoul.getEffectiveLV(), 1.6f) - 1f;
@@ -78,9 +92,9 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
             for (int j = 2; j < 62; j++) {
                 if (Math.random() <= 0.25) {
                     float theta = j * thetaStep;
-                    float x = (float)(Math.sin(phi) * Math.cos(theta) * (size-0.5f)) + location.getX();
-                    float y = (float)(Math.cos(phi) * (size-0.5f)) + location.getY();
-                    float z = (float)(Math.sin(phi) * Math.sin(theta) * (size-0.5f)) + location.getZ();
+                    float x = (float)((Math.sin(phi) * Math.cos(theta) * (size-0.5f)) + location.getX());
+                    float y = (float)((Math.cos(phi) * (size-0.5f)) + location.getY());
+                    float z = (float)((Math.sin(phi) * Math.sin(theta) * (size-0.5f)) + location.getZ());
                     serverWorld.spawnParticles(ParticleTypes.SNOWFLAKE, x, y, z, 1, 0.5, 0.5, 0.5, 0);
                 }
             }
@@ -102,7 +116,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
 
     @Override
     public NbtCompound saveNbt(NbtCompound nbt) {
-        if (nbt.contains("location")) nbt.put("location", NbtHelper.fromBlockPos(location));
+        if (nbt.contains("location")) nbt.put("location", Utils.vectorToNbt(location));
         nbt.putFloat("size", size);
         return super.saveNbt(nbt);
     }
@@ -110,7 +124,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
     @Override
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
-        if (location != null) location = NbtHelper.toBlockPos(nbt.getCompound("location"));
+        if (location != null) location = Utils.nbtToVector(nbt.getList("location", NbtElement.DOUBLE_TYPE));
         size = nbt.getFloat("size");
         super.readNbt(nbt);
     }

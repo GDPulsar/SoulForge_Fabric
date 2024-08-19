@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.components;
 
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -8,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldComponent implements WorldBaseComponent {
+public class WorldComponent implements AutoSyncedComponent {
     public float expMultiplier = 1f;
     public List<BlockPos> activeCreativeZones = new ArrayList<>();
 
@@ -38,33 +39,27 @@ public class WorldComponent implements WorldBaseComponent {
         tag.put("creativeZones", list);
     }
 
-    @Override
     public float getExpMultiplier() {
         return expMultiplier;
     }
 
-    @Override
     public void setExpMultiplier(float multiplier) {
         expMultiplier = multiplier;
     }
 
-    @Override
     public List<BlockPos> getActiveCreativeZones() {
         return activeCreativeZones;
     }
 
-    @Override
     public boolean isInRangeOfActiveCreativeZone(BlockPos pos) {
         return activeCreativeZones.stream().anyMatch(blockPos -> blockPos.isWithinDistance(pos, 80));
     }
 
-    @Override
     public void addActiveCreativeZone(BlockPos pos) {
         if (!activeCreativeZones.contains(pos)) activeCreativeZones.add(pos);
     }
 
-    @Override
     public void removeActiveCreativeZone(BlockPos pos) {
-        if (activeCreativeZones.contains(pos)) activeCreativeZones.remove(pos);
+        activeCreativeZones.remove(pos);
     }
 }

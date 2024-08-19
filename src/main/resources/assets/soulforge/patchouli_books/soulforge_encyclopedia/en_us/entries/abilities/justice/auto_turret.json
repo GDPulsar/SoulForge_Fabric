@@ -1,0 +1,14 @@
+{
+  "name": "Auto Turret",
+  "icon": "minecraft:dispenser",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a turret in front of you that attacks anything in front of it, including you."
+    }
+  ]
+}

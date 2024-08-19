@@ -37,7 +37,7 @@ public class TraitedArniciteCoreItem extends Item implements GeoItem {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-        if ((playerSoul.getTraits().contains(trait) || playerSoul.getTraits().contains(Utils.getInvertedVariant(trait)))
+        if ((playerSoul.hasTrait(trait) || playerSoul.hasTrait(Utils.getInvertedVariant(trait)))
                 && !user.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) {
             if (Utils.isInverted(playerSoul) && playerSoul.getMagicGauge() < playerSoul.getMagicGaugeMax()) {
                 float adding = 100f - playerSoul.getMagic();

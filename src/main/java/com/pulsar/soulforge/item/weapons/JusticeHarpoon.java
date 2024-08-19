@@ -1,6 +1,8 @@
 package com.pulsar.soulforge.item.weapons;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.JusticeHarpoonProjectile;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -45,9 +47,11 @@ public class JusticeHarpoon extends MagicSwordItem/* implements GeoItem*/ {
             for (JusticeHarpoonProjectile harpoon : world.getEntitiesByClass(JusticeHarpoonProjectile.class, Box.of(user.getPos(), 200, 200, 200), (entity) -> entity.getOwner() == user)) {
                 return;
             }
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(playerEntity);
             JusticeHarpoonProjectile projectile = new JusticeHarpoonProjectile(world, playerEntity);
             projectile.setOwner(playerEntity);
-            projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0f, 2.5f, 1.0f);
+            projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0f, playerSoul.hasCast("Furioso") ? 5f : 2.5f, 1.0f);
+            if (playerSoul.hasCast("Furioso")) projectile.setNoGravity(true);
             world.spawnEntity(projectile);
             world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0f, 1.0f);
         }

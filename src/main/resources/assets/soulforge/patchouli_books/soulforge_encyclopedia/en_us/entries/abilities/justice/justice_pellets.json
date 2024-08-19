@@ -1,0 +1,14 @@
+{
+  "name": "Justice Pellets",
+  "icon": "minecraft:sunflower",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Shoot a rapidly moving pellet of Justice energy."
+    }
+  ]
+}

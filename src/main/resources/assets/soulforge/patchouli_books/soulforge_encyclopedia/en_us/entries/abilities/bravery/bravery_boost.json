@@ -1,0 +1,14 @@
+{
+  "name": "Bravery Boost",
+  "icon": "soulforge:bravery_arnicite",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Surround your body with Bravery energy, infusing all of your attacks with Fire Aspect as well as gaining extra health, strength and Fire Resistance."
+    }
+  ]
+}

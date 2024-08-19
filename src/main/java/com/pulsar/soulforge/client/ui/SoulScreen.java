@@ -3,8 +3,8 @@ package com.pulsar.soulforge.client.ui;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.trait.TraitBase;
@@ -85,7 +85,7 @@ public class SoulScreen extends Screen {
         }));
 
         modes = new ArrayList<>();
-        if (!playerSoul.getTraits().contains(Traits.spite)) {
+        if (!playerSoul.hasTrait(Traits.spite)) {
             modes.add(playerSoul.getTrait(0).getName());
             if (playerSoul.getTraitCount() == 2) modes.add(playerSoul.getTrait(1).getName());
         } else {
@@ -195,7 +195,7 @@ public class SoulScreen extends Screen {
                 context.drawCenteredTextWithShadow(textRenderer, "EXP until next LV: ", 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
                 context.drawCenteredTextWithShadow(textRenderer, String.valueOf(playerSoul.getExpRequirement()), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             }
-            context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.getAbilities().contains(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
+            context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
         }
         for (ClickableWidget widget : widgets) {
             widget.render(context, mouseX, mouseY, delta);

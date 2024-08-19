@@ -38,18 +38,18 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(entity);
-        boolean bravery = playerSoul.hasCast("Bravery Boost") || playerSoul.hasCast("Fearless Instincts") || playerSoul.hasCast("Perfected Aura Technique") || playerSoul.getTraits().contains(Traits.spite);
-        boolean justice = playerSoul.hasCast("Accelerated Pellet Aura") || playerSoul.getTraits().contains(Traits.spite);
-        boolean kindness = playerSoul.getTraits().contains(Traits.spite);
-        boolean patience = playerSoul.getTraits().contains(Traits.spite);
-        boolean integrity = playerSoul.hasCast("Repulsion Field") || playerSoul.hasCast("Fearless Instincts") || playerSoul.hasCast("Accelerated Pellet Aura") || playerSoul.getTraits().contains(Traits.spite);
-        boolean perseverance = playerSoul.hasCast("Perseverance Aura") || playerSoul.hasCast("Perfected Aura Technique") || playerSoul.getTraits().contains(Traits.spite);
-        boolean determination = playerSoul.hasCast("Determination Aura") || playerSoul.getTraits().contains(Traits.spite);
+        boolean bravery = playerSoul.hasCast("Bravery Boost") || playerSoul.hasCast("Fearless Instincts") || playerSoul.hasCast("Perfected Aura Technique") || playerSoul.hasTrait(Traits.spite);
+        boolean justice = playerSoul.hasCast("Accelerated Pellet Aura") || playerSoul.hasTrait(Traits.spite);
+        boolean kindness = playerSoul.hasTrait(Traits.spite);
+        boolean patience = playerSoul.hasTrait(Traits.spite);
+        boolean integrity = playerSoul.hasCast("Repulsion Field") || playerSoul.hasCast("Fearless Instincts") || playerSoul.hasCast("Accelerated Pellet Aura") || playerSoul.hasTrait(Traits.spite);
+        boolean perseverance = playerSoul.hasCast("Perseverance Aura") || playerSoul.hasCast("Perfected Aura Technique") || playerSoul.hasTrait(Traits.spite);
+        boolean determination = playerSoul.hasCast("Determination Aura") || playerSoul.hasTrait(Traits.spite);
         if (bravery) {
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0057f % 1.0F, f * 0.0027F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1f, 0.5f, 0f, 1f);
         }
@@ -57,7 +57,7 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0048f % 1.0F, f * 0.0029F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1f, 1f, 0f, 1f);
         }
@@ -65,7 +65,7 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0031f % 1.0F, f * 0.0064F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0f, 1f, 0f, 1f);
         }
@@ -73,7 +73,7 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0038f % 1.0F, f * 0.0049F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0f, 1f, 1f, 1f);
         }
@@ -81,7 +81,7 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0019f % 1.0F, f * 0.0067F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0f, 0f, 1f, 1f);
         }
@@ -89,7 +89,7 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0055f % 1.0F, f * 0.0024F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0.5f, 0f, 1f, 1f);
         }
@@ -97,7 +97,7 @@ public class AuraShineFeatureRenderer extends FeatureRenderer<AbstractClientPlay
             float f = (float)entity.age + tickDelta;
             this.model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             this.getContextModel().copyStateTo(this.model);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.006f % 1.0F, f * 0.003F % 1.0F));
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEnergySwirl(SKIN, f * 0.0051f % 1.0F, f * 0.0034F % 1.0F));
             this.model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             this.model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1f, 0f, 0f, 1f);
         }

@@ -40,7 +40,9 @@ public class EntityMixin {
         if (entity instanceof PlayerEntity player) {
             if (player.isUsingItem()) {
                 if (player.getActiveItem().isOf(SoulForgeItems.GUNLANCE)) {
-                    return MathHelper.clamp(value, -0.5, 0.5);
+                    SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                    float range = playerSoul.hasCast("Furioso") ? 1.0f : 0.5f;
+                    return MathHelper.clamp(value, -range, range);
                 }
             }
         }
@@ -53,7 +55,9 @@ public class EntityMixin {
         if (entity instanceof PlayerEntity player) {
             if (player.isUsingItem()) {
                 if (player.getActiveItem().isOf(SoulForgeItems.GUNLANCE)) {
-                    return MathHelper.clamp(value, -0.5, 0.5);
+                    SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                    float range = playerSoul.hasCast("Furioso") ? 1.0f : 0.5f;
+                    return MathHelper.clamp(value, -range, range);
                 }
             }
         }

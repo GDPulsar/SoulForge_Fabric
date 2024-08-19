@@ -36,9 +36,10 @@ public class FreezeRing extends MagicItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
         if (!user.isSneaking()) {
             if (iceshockCooldown == 0) {
-                EntityHitResult hit = Utils.getFocussedEntity(user, 10);
+                EntityHitResult hit = Utils.getFocussedEntity(user, playerSoul.hasCast("Furioso") ? 20 : 10);
                 if (hit != null) {
                     if (hit.getEntity() instanceof LivingEntity target) {
                         if (!world.isClient) {
@@ -49,14 +50,13 @@ public class FreezeRing extends MagicItem {
                             world.playSoundFromEntity(null, user, SoulForgeSounds.DR_ICESHOCK_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                             DamageSource damageSource = SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.ABILITY_PIERCE_DAMAGE_TYPE);
                             if (target.damage(damageSource, 5f)) {
-                                SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
                                 target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBITE, playerSoul.getEffectiveLV() * 20, 0));
                                 TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
                                 modifiers.addTemporaryModifier(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier(UUID.fromString("21f07aa7-02f6-4722-aa06-5717d140087a"),
                                         "freeze_ring", -playerSoul.getLV()/4f, EntityAttributeModifier.Operation.ADDITION), playerSoul.getEffectiveLV());
                                 playerSoul.setStyle(playerSoul.getStyle() + (int)(5f * (1f + Utils.getTotalDebuffLevel(target) / 10f)));
                             }
-                            iceshockCooldown = 100;
+                            iceshockCooldown = playerSoul.hasCast("Furioso") ? 50 : 100;
                             return TypedActionResult.success(user.getStackInHand(hand));
                         } else {
                             for (int i = 0; i < 20; i++) {
@@ -76,19 +76,18 @@ public class FreezeRing extends MagicItem {
                 if (hit != null && hit.getType() != HitResult.Type.MISS) {
                     Vec3d pos = hit.getPos();
                     if (!world.isClient) {
-                        SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
                         float styleIncrease = 0f;
                         for (Entity target : user.getEntityWorld().getOtherEntities(user, new Box(pos.subtract(3, 3, 3), pos.add(3, 3, 3)))) {
                             if (target instanceof LivingEntity living) {
                                 if (living instanceof PlayerEntity targetPlayer) {
                                     if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer)) continue;
                                 }
-                                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.EEPY, 30*playerSoul.getLV(), playerSoul.getEffectiveLV()));
+                                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.EEPY, 30*playerSoul.getLV() * (playerSoul.hasCast("Furioso") ? 2 : 1), playerSoul.getEffectiveLV()));
                                 styleIncrease += 5f * (1f + Utils.getTotalDebuffLevel(living)/10f);
                             }
                         }
                         playerSoul.setStyle(playerSoul.getStyle() + (int)styleIncrease);
-                        sleepMistCooldown = 600;
+                        sleepMistCooldown = playerSoul.hasCast("Furioso") ? 300 : 600;
                     } else {
                         for (int i = 0; i < 50; i++) {
                             world.addParticle(ParticleTypes.EFFECT,

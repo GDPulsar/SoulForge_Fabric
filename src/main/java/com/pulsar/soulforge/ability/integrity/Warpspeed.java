@@ -33,8 +33,8 @@ public class Warpspeed extends AbilityBase {
         }
         playerSoul.setSpokenText("AAAAAAAAAAAAAAAAAAAA", 10, 300);
         timer = 300;
-        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(UUID.randomUUID(), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
-        player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier(UUID.randomUUID(), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1200, 0));
         return super.cast(player);
     }

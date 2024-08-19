@@ -1,12 +1,13 @@
 package com.pulsar.soulforge.util;
 
+import com.mojang.brigadier.context.CommandContext;
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.components.EntityInitializer;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.TemporaryModifierComponent;
+import com.pulsar.soulforge.components.*;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -139,7 +141,7 @@ public class Utils {
             text.append(trait2);
         }
         if (playerSoul.isPure()) text = Text.literal("Pure ").append(text);
-        if (playerSoul.isStrong() || playerSoul.getTraits().contains(Traits.determination)) text = text.setStyle(text.getStyle().withFormatting(Formatting.BOLD));
+        if (playerSoul.isStrong() || playerSoul.hasTrait(Traits.determination)) text = text.setStyle(text.getStyle().withFormatting(Formatting.BOLD));
         return text;
     }
 
@@ -229,12 +231,12 @@ public class Utils {
     }
 
     public static boolean isInverted(SoulComponent playerSoul) {
-        if (playerSoul.getTraits().contains(Traits.fear) ||
-                playerSoul.getTraits().contains(Traits.ineptitude) ||
-                playerSoul.getTraits().contains(Traits.misery) ||
-                playerSoul.getTraits().contains(Traits.anxiety) ||
-                playerSoul.getTraits().contains(Traits.paranoia) ||
-                playerSoul.getTraits().contains(Traits.despair)) {
+        if (playerSoul.hasTrait(Traits.fear) ||
+                playerSoul.hasTrait(Traits.ineptitude) ||
+                playerSoul.hasTrait(Traits.misery) ||
+                playerSoul.hasTrait(Traits.anxiety) ||
+                playerSoul.hasTrait(Traits.paranoia) ||
+                playerSoul.hasTrait(Traits.despair)) {
             return true;
         }
         return false;
@@ -257,5 +259,32 @@ public class Utils {
 
     public static void removeTemporaryAttribute(LivingEntity entity, EntityAttribute attribute, EntityAttributeModifier modifier) {
         EntityInitializer.TEMPORARY_MODIFIERS.get(entity).removeTemporaryModifier(attribute, modifier);
+    }
+
+    public static List<String> omegagamers = List.of("GDPulsar", "lolteddii", "AmbrosialPhoenix", "KoriOfAllTrades", "KDMHX2");
+
+    public static boolean canAccessInverteds(CommandContext<ServerCommandSource> context) {
+        return context.getSource().isExecutedByPlayer() && (omegagamers.contains(context.getSource().getPlayer().getName().getString()) || FabricLoader.getInstance().isDevelopmentEnvironment());
+    }
+
+    public static float getHate(LivingEntity entity) {
+        if (entity == null) return 0f;
+        ValueComponent values = SoulForge.getValues(entity);
+        if (values == null) return 0f;
+        return values.hasFloat("HATE") ? values.getFloat("HATE") : 0f;
+    }
+
+    public static boolean hasHate(LivingEntity entity) {
+        if (entity == null) return false;
+        ValueComponent values = SoulForge.getValues(entity);
+        if (values == null) return false;
+        return values.hasFloat("HATE") && values.getFloat("HATE") > 0f;
+    }
+
+    public static void addHate(LivingEntity entity, float amount) {
+        if (entity == null) return;
+        ValueComponent values = SoulForge.getValues(entity);
+        if (values == null) return;
+        values.setFloat("HATE", MathHelper.clamp(values.getFloat("HATE") + amount, 0f, 100f));
     }
 }

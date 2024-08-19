@@ -13,11 +13,9 @@ import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Utils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.world.World;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,14 +27,13 @@ import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.pulsar.soulforge.command.SoulForgeCommand.TraitArgumentType.trait;
+import static com.pulsar.soulforge.util.Utils.canAccessInverteds;
 import static net.minecraft.command.argument.EntityArgumentType.getPlayer;
 import static net.minecraft.command.argument.EntityArgumentType.player;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class SoulForgeCommand {
-    public static List<String> omegagamers = List.of("GDPulsar", "lolteddii", "AmbrosialPhoenix", "KoriOfAllTrades", "KDMHX2");
-
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
                 literal("overwrite")
@@ -127,7 +124,7 @@ public class SoulForgeCommand {
                                                         )
                                                 )
                                                 .then(literal("lv")
-                                                        .then(argument("amount", integer())
+                                                        .then(argument("amount", integer(1, 20))
                                                                 .executes(context -> {
                                                                     SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                     data.setLV(getInteger(context, "amount"));
@@ -137,7 +134,7 @@ public class SoulForgeCommand {
                                                         )
                                                 )
                                                 .then(literal("exp")
-                                                        .then(argument("amount", integer())
+                                                        .then(argument("amount", integer(0))
                                                                 .executes(context -> {
                                                                     SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                     data.setEXP(getInteger(context, "amount"));
@@ -175,23 +172,8 @@ public class SoulForgeCommand {
                                                                 })
                                                         )
                                                 )
-                                                .then(literal("hate")
-                                                        .then(argument("amount", integer())
-                                                                .executes(context -> {
-                                                                    SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
-                                                                    data.setHate(getInteger(context, "amount"));
-                                                                    if (data.getHate() == 100) {
-                                                                        context.getSource().sendMessage(Text.literal("sachism jumpscare"));
-                                                                    }
-                                                                    if (data.getHate() == 70) {
-                                                                        context.getSource().getPlayer().teleport(context.getSource().getServer().getWorld(World.OVERWORLD), 0, -500, 0, 0f, 0f);
-                                                                    }
-                                                                    return 1;
-                                                                })
-                                                        )
-                                                )
                                                 .then(literal("styleRank")
-                                                        .then(argument("amount", integer())
+                                                        .then(argument("amount", integer(0, 5))
                                                                 .executes(context -> {
                                                                     SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                     data.setStyleRank(getInteger(context, "amount"));
@@ -238,10 +220,6 @@ public class SoulForgeCommand {
                                 )
                         )
         );
-    }
-
-    public static boolean canAccessInverteds(CommandContext<ServerCommandSource> context) {
-        return context.getSource().isExecutedByPlayer() && (omegagamers.contains(context.getSource().getPlayer().getName().getString()) || FabricLoader.getInstance().isDevelopmentEnvironment());
     }
 
     public static class TraitArgumentType implements ArgumentType<String> {

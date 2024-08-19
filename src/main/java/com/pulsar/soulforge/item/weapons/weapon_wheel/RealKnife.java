@@ -5,8 +5,6 @@ import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.SmallSlashProjectile;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.item.weapons.MagicSwordItem;
-import com.pulsar.soulforge.item.weapons.PerseveranceEdge;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

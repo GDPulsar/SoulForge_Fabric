@@ -17,7 +17,7 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.recipe.SoulForgeRecipes;
-import com.pulsar.soulforge.registries.TraitReloadListener;
+import com.pulsar.soulforge.registries.SoulForgeReloadListener;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.SoulForgeCustomTrades;
@@ -41,7 +41,6 @@ import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.4.0");
+		LOGGER.info("Loading SoulForge v2.5.0");
 
 		//registerResourceListeners();
 
@@ -87,6 +86,7 @@ public class SoulForge implements ModInitializer {
 			AntihealCommand.register(dispatcher);
 			DisguiseCommand.register(dispatcher);
 			MinionCommand.register(dispatcher, registryAccess);
+			HateCommand.register(dispatcher);
 			//TickCommand.register(dispatcher);
 		}));
 
@@ -122,29 +122,32 @@ public class SoulForge implements ModInitializer {
 	public static void registerResourceListeners() {
 		SoulForge.LOGGER.info("Registering resource listeners");
 
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new TraitReloadListener());
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SoulForgeReloadListener());
 	}
 
 	public static SoulComponent getPlayerSoul(PlayerEntity player) {
-		SoulComponent playerSoul;
-		if (player instanceof ServerPlayerEntity) playerSoul = EntityInitializer.SOUL.get(player);
-		else {
-			if (player == MinecraftClient.getInstance().player) playerSoul = SoulForgeClient.getPlayerData();
-			else playerSoul = EntityInitializer.SOUL.get(player);
-		}
-		if (playerSoul == null) playerSoul = new PlayerSoulComponent(player);
+		SoulComponent playerSoul = EntityInitializer.SOUL.maybeGet(player).orElse(new SoulComponent(player));
+		if (player == MinecraftClient.getInstance().player) playerSoul = SoulForgeClient.getPlayerData();
 		return playerSoul;
 	}
 
 	public static WorldComponent getWorldComponent(World world) {
-		return (WorldComponent)WorldInitializer.WORLD_CONFIG.get(world);
+		return WorldInitializer.WORLD_CONFIG.get(world);
 	}
 
 	public static ValueComponent getValues(LivingEntity living) {
-		return EntityInitializer.VALUES.get(living);
+		try {
+			return EntityInitializer.VALUES.get(living);
+		} catch (NullPointerException ignored) {
+			return null;
+		}
 	}
 
 	public static TemporaryModifierComponent getTemporaryModifiers(LivingEntity living) {
-		return EntityInitializer.TEMPORARY_MODIFIERS.get(living);
+		try {
+			return EntityInitializer.TEMPORARY_MODIFIERS.get(living);
+		} catch (NullPointerException ignored) {
+			return null;
+		}
 	}
 }

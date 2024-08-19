@@ -1,13 +1,10 @@
 package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.Abilities;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
-import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.StringCalculator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,12 +15,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.stat.Stats;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 
 import java.util.*;
 

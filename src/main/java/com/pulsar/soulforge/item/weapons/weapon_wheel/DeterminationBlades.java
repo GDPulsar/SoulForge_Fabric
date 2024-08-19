@@ -1,11 +1,6 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
-import com.pulsar.soulforge.util.Utils;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;

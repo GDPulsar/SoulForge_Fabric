@@ -53,9 +53,13 @@ public class UnchainedSoul extends ToggleableAbilityBase {
         for (Map.Entry<StatusEffect, Pair<StatusEffectInstance, Float>> effect : Set.copyOf(storedEffects.entrySet())) {
             if (effect.getValue().getRight() <= 0f) storedEffects.remove(effect.getKey());
         }
+        int effectLevels = 0;
+        for (Map.Entry<StatusEffect, Pair<StatusEffectInstance, Float>> effect : Set.copyOf(storedEffects.entrySet())) {
+            effectLevels += effect.getValue().getLeft().getAmplifier() + 1;
+        }
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_POWER, "unchained_soul_power");
         Objects.requireNonNull(player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER)).addPersistentModifier(
-                new EntityAttributeModifier("unchained_soul_power", 0.05f * storedEffects.size(), EntityAttributeModifier.Operation.ADDITION));
+                new EntityAttributeModifier("unchained_soul_power", 0.05f * effectLevels, EntityAttributeModifier.Operation.ADDITION));
         Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "unchained_soul_cost");
         Objects.requireNonNull(player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST)).addPersistentModifier(
                 new EntityAttributeModifier("unchained_soul_cost", 0.25f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));

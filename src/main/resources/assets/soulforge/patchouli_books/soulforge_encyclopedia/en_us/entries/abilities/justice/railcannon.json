@@ -1,0 +1,14 @@
+{
+  "name": "Railcannon",
+  "icon": "soulforge:railkiller",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Shoot a series of Justice beams that remain for a short period of time, dealing damage to enemies that touch it."
+    }
+  ]
+}

@@ -55,6 +55,11 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
                     else source = SoulForgeDamageTypes.of(getOwner(), this.getWorld(), SoulForgeDamageTypes.STUCK_SPEAR_DAMAGE_TYPE);
                     int timeUntilRegen = stuckEntity.timeUntilRegen;
                     stuckEntity.timeUntilRegen = 0;
+                    int maxHitCount = 8;
+                    if (getOwner() instanceof PlayerEntity player) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        maxHitCount = playerSoul.hasCast("Furioso") ? 16 : 8;
+                    }
                     if (stuckEntity.damage(source, 2f)) {
                         if (getOwner() instanceof PlayerEntity player) {
                             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -63,7 +68,7 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
                     }
                     stuckEntity.timeUntilRegen = timeUntilRegen;
                     hitCount++;
-                    if (hitCount == 8) {
+                    if (hitCount == maxHitCount) {
                         this.kill();
                     }
                 }

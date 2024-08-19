@@ -3,14 +3,12 @@ package com.pulsar.soulforge.item.weapons;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
@@ -34,7 +32,7 @@ public class Flamethrower extends MagicItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-        boolean frostburn = playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience);
+        boolean frostburn = playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.patience);
         if (playerSoul.getMagic() > 2f) {
             if (!world.isClient) {
                 for (LivingEntity entity : Utils.getEntitiesInFrontOf(user, 1.5f + playerSoul.getEffectiveLV()/4f, 3f + playerSoul.getEffectiveLV()/2f, 1f, 2f)) {
@@ -44,12 +42,8 @@ public class Flamethrower extends MagicItem {
                     if (entity.damage(SoulForgeDamageTypes.of(user, world, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 2f + playerSoul.getEffectiveLV() / 4f)) {
                         playerSoul.setStyle(playerSoul.getStyle() + 1);
                     }
-                    if (frostburn) {
-                        entity.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.FROSTBURN, 50, 0));
-                    } else {
-                        if (entity.getFireTicks() < 40) {
-                            entity.setFireTicks(50);
-                        }
+                    if (entity.getFireTicks() < 40) {
+                        entity.setFireTicks(50);
                     }
                 }
                 world.playSoundFromEntity(null, user, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 1f, 1f);

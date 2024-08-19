@@ -36,14 +36,14 @@ public class ColossalClaymore extends AbilityBase {
         greaterSlash = false;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (player.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
-            if (playerSoul.getMagic() < 100f) return false;
-            if (playerSoul.getStyleRank() < 2) {
+            if (playerSoul.getMagic() < 100f && !playerSoul.hasCast("Furioso")) return false;
+            if (playerSoul.getStyleRank() < 2 && !playerSoul.hasCast("Furioso")) {
                 player.sendMessageToClient(Text.translatable(Math.random() < 0.01f ? "soulforge.style.get_real" : "soulforge.style.not_enough"), true);
                 return false;
             }
             int manaOverload = playerSoul.getStyleRank() * 400;
             float damage = playerSoul.getEffectiveLV() * playerSoul.getStyleRank() * 0.5f;
-            playerSoul.setMagic(0f);
+            if (!playerSoul.hasCast("Furioso")) playerSoul.setMagic(0f);
             greaterSlash = true;
             for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 5f, 8f, 2f, 2f)) {
                 if (target instanceof PlayerEntity targetPlayer) {
@@ -55,7 +55,14 @@ public class ColossalClaymore extends AbilityBase {
             PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("greater_slash");
             buf.writeBoolean(false);
             if (player.getServer() != null) SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, manaOverload, 0));
+            if (!playerSoul.hasCast("Furioso")) player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, manaOverload, 0));
+            else {
+                if (playerSoul.getAbility("Furioso") instanceof Furioso furioso) {
+                    furioso.usedClaymore = true;
+                    furioso.weaponIndex--;
+                    furioso.doSwitch(player);
+                }
+            }
         }
         timer = greaterSlash ? 5 : 30;
         return super.cast(player);

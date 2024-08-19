@@ -42,7 +42,7 @@ public class EnchantmentHelperMixin {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             if ((playerSoul.hasCast("Bravery Boost") || playerSoul.hasCast("Perfected Aura Technique") ||
                     playerSoul.hasCast("Fearless Instincts"))
-                    && !(playerSoul.getTraits().contains(Traits.bravery) && playerSoul.getTraits().contains(Traits.patience))) {
+                    && !(playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.patience))) {
                 cir.setReturnValue(2);
             }
         }
