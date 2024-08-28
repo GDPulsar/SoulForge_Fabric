@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
+import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -25,13 +26,13 @@ import java.util.UUID;
 public class ShieldShardEntity extends Entity implements GeoEntity {
     private static final TrackedData<Vector3f> POSITION = DataTracker.registerData(ShieldShardEntity.class, TrackedDataHandlerRegistry.VECTOR3F);
     private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(ShieldShardEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
-    public PlayerEntity owner;
+    public LivingEntity owner;
     public float health = 10f;
     public boolean isCircling = false;
     public boolean isLaunched = false;
     private int launchTimer = 0;
 
-    public ShieldShardEntity(PlayerEntity owner) {
+    public ShieldShardEntity(LivingEntity owner) {
         super(SoulForgeEntities.SHIELD_SHARD_ENTITY_TYPE, owner.getWorld());
         this.owner = owner;
         this.dataTracker.set(OWNER_UUID, Optional.of(owner.getUuid()));
@@ -43,7 +44,7 @@ public class ShieldShardEntity extends Entity implements GeoEntity {
         return false;
     }
 
-    public ShieldShardEntity(PlayerEntity owner, Vec3d position, Vec3d velocity) {
+    public ShieldShardEntity(LivingEntity owner, Vec3d position, Vec3d velocity) {
         super(SoulForgeEntities.SHIELD_SHARD_ENTITY_TYPE, owner.getWorld());
         this.owner = owner;
         this.dataTracker.set(OWNER_UUID, Optional.of(owner.getUuid()));
@@ -90,34 +91,44 @@ public class ShieldShardEntity extends Entity implements GeoEntity {
 
     @Override
     public void tick() {
-        Optional<UUID> ownerUUID = this.dataTracker.get(OWNER_UUID);
-        ownerUUID.ifPresent(value -> owner = this.getEntityWorld().getPlayerByUuid(value));
-        if (this.owner != null) {
-            if (isLaunched || !isCircling) {
-                for (LivingEntity entity : this.getEntityWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox(), (entity) -> entity != owner)) {
-                    entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SHIELD_SHARD_DAMAGE_TYPE), 7f);
-                }
-            }
-            if (isLaunched && !isCircling) isLaunched = false;
-            if (isLaunched) {
-                if (launchTimer > 0) {
-                    launchTimer--;
-                } else {
-                    Vec3d offset = this.owner.getPos().subtract(this.getPos().add(0, -1, 0)).normalize();
-                    this.setVelocity(this.getVelocity().add(offset.multiply(0.1f)));
-                    if (this.distanceTo(this.owner) <= 2.5f) {
-                        this.isLaunched = false;
+        if (!this.getWorld().isClient) {
+            Optional<UUID> ownerUUID = this.dataTracker.get(OWNER_UUID);
+            ownerUUID.ifPresent(value -> owner = this.getEntityWorld().getPlayerByUuid(value));
+            if (this.owner != null) {
+                if (isLaunched || !isCircling) {
+                    for (LivingEntity entity : this.getEntityWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox(), (entity) -> entity != owner)) {
+                        entity.damage(SoulForgeDamageTypes.of(owner, getWorld(), SoulForgeDamageTypes.SHIELD_SHARD_DAMAGE_TYPE), 7f);
                     }
                 }
+                if (isLaunched && !isCircling) isLaunched = false;
+                if (isLaunched) {
+                    if (launchTimer > 0) {
+                        launchTimer--;
+                    } else {
+                        Vec3d offset = this.owner.getPos().subtract(this.getPos().add(0, -1, 0)).normalize();
+                        this.setVelocity(this.getVelocity().add(offset.multiply(0.1f)));
+                        if (this.distanceTo(this.owner) <= 2.5f) {
+                            this.isLaunched = false;
+                        }
+                        if (this.owner instanceof PlayerEntity ownerPlayer) {
+                            for (LivingEntity nearby : this.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(this.getPos(), 8, 8, 8),
+                                    (entity) -> TeamUtils.canHealEntity(this.getServer(), ownerPlayer, entity))) {
+                                if (nearby.distanceTo(this) < 4f) {
+                                    this.owner = nearby;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (this.owner.isDead() || this.owner.isRemoved()) {
+                    this.kill();
+                }
             }
-            if (this.owner.isDead() || this.owner.isRemoved()) {
-                this.kill();
-            }
+            this.setPitch(this.getPitch() + 0.9f);
+            this.setYaw(this.getYaw() + 6.9f);
+            this.setPos(this.getPos().add(this.getVelocity()));
+            this.teleport(this.getPos().x, this.getPos().y, this.getPos().z);
         }
-        this.setPitch(this.getPitch()+0.9f);
-        this.setYaw(this.getYaw()+6.9f);
-        this.setPos(this.getPos().add(this.getVelocity()));
-        this.setPosition(this.getPos());
     }
 
     @Override

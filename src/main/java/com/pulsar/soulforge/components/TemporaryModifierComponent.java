@@ -51,6 +51,38 @@ public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTi
         }
     }
 
+    public Triplet<EntityAttributeModifier, EntityAttribute, Float> getModifierEntry(EntityAttribute attribute, UUID uuid) {
+        EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
+        if (instance != null) {
+            Triplet<EntityAttributeModifier, EntityAttribute, Float> match = null;
+            for (Triplet<EntityAttributeModifier, EntityAttribute, Float> testing : Set.copyOf(modifierDurations)) {
+                if (testing.getFirst().getId().compareTo(uuid) == 0 && testing.getSecond() == attribute) {
+                    match = testing;
+                    break;
+                }
+            }
+            return match;
+        }
+        return null;
+    }
+
+    public EntityAttributeModifier getModifier(EntityAttribute attribute, UUID uuid) {
+        EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
+        if (instance != null) {
+            Triplet<EntityAttributeModifier, EntityAttribute, Float> match = null;
+            for (Triplet<EntityAttributeModifier, EntityAttribute, Float> testing : Set.copyOf(modifierDurations)) {
+                if (testing.getFirst().getId().compareTo(uuid) == 0 && testing.getSecond() == attribute) {
+                    match = testing;
+                    break;
+                }
+            }
+            if (match != null) {
+                return match.getFirst();
+            }
+        }
+        return null;
+    }
+
     public void removeTemporaryModifier(EntityAttribute attribute, EntityAttributeModifier modifier) {
         EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
         if (instance != null) {
@@ -58,6 +90,21 @@ public class TemporaryModifierComponent implements AutoSyncedComponent, CommonTi
             Triplet<EntityAttributeModifier, EntityAttribute, Float> match = null;
             for (Triplet<EntityAttributeModifier, EntityAttribute, Float> testing : Set.copyOf(modifierDurations)) {
                 if (testing.getFirst().getId().compareTo(modifier.getId()) == 0 && testing.getSecond() == attribute) {
+                    match = testing;
+                    break;
+                }
+            }
+            if (match != null) this.modifierDurations.remove(match);
+        }
+    }
+
+    public void removeTemporaryModifier(EntityAttribute attribute, UUID uuid) {
+        EntityAttributeInstance instance = this.entity.getAttributeInstance(attribute);
+        if (instance != null) {
+            instance.tryRemoveModifier(uuid);
+            Triplet<EntityAttributeModifier, EntityAttribute, Float> match = null;
+            for (Triplet<EntityAttributeModifier, EntityAttribute, Float> testing : Set.copyOf(modifierDurations)) {
+                if (testing.getFirst().getId().compareTo(uuid) == 0 && testing.getSecond() == attribute) {
                     match = testing;
                     break;
                 }

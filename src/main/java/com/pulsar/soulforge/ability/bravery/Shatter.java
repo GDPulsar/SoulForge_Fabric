@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Shatter extends AbilityBase {
-    public boolean cast(ServerPlayerEntity player) {
+    public static void performShatterLiterallyJustThat(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         ServerWorld serverWorld = player.getServerWorld();
         List<Entity> list = new ArrayList<>();
@@ -38,7 +38,7 @@ public class Shatter extends AbilityBase {
             int t = MathHelper.floor(pos.z - 7);
             int u = MathHelper.floor(pos.z + 7);
             list.addAll(player.getWorld().getOtherEntities(player, new Box(k, r, t, l, s, u)));
-            if (serverWorld != null) serverWorld.spawnParticles((ParticleEffect)ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 1, 1.0, 0.0, 0.0, 0f);
+            if (serverWorld != null) serverWorld.spawnParticles((ParticleEffect) ParticleTypes.EXPLOSION, pos.x, pos.y, pos.z, 1, 1.0, 0.0, 0.0, 0f);
         }
         if (serverWorld != null) serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_EXPLOSION_EVENT, SoundCategory.PLAYERS, 4f, 1f);
         Vec3d vec3d = new Vec3d(player.getX(), player.getY(), player.getZ());
@@ -67,6 +67,10 @@ public class Shatter extends AbilityBase {
             Vec3d vec3d2 = new Vec3d(w * ac, x * ac, y * ac);
             entity.setVelocity(entity.getVelocity().add(vec3d2));
         }
+    }
+
+    public boolean cast(ServerPlayerEntity player) {
+        performShatterLiterallyJustThat(player);
         return super.cast(player);
     }
 

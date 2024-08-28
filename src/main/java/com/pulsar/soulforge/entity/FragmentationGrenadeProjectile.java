@@ -3,7 +3,6 @@ package com.pulsar.soulforge.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -13,10 +12,19 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class FragmentationGrenadeProjectile extends ProjectileEntity {
+    int duration = 60;
+
     public FragmentationGrenadeProjectile(World world, Vec3d position, PlayerEntity owner) {
         super(SoulForgeEntities.FRAGMENTATION_GRENADE_ENTITY_TYPE, world);
         this.setOwner(owner);
         this.setPosition(position);
+    }
+
+    public FragmentationGrenadeProjectile(World world, Vec3d position, PlayerEntity owner, int duration) {
+        super(SoulForgeEntities.FRAGMENTATION_GRENADE_ENTITY_TYPE, world);
+        this.setOwner(owner);
+        this.setPosition(position);
+        this.duration = duration;
     }
 
     public FragmentationGrenadeProjectile(EntityType<? extends ProjectileEntity> entityType, World world) {
@@ -34,12 +42,14 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
 
     @Override
     public void tick() {
-        if (this.age >= 60) {
-            this.kill();
+        if (!this.getWorld().isClient) {
+            if (this.age >= 60) {
+                this.kill();
+            }
         }
         this.setVelocity(this.getVelocity().add(0.0, -0.04, 0.0));
         HitResult hitResult = ProjectileUtil.getCollision(this, this::canHit);
-        this.move(MovementType.SELF, this.getVelocity());
+        this.setPosition(this.getPos().add(this.getVelocity()));
         if (hitResult.getType() != HitResult.Type.MISS) {
             this.onCollision(hitResult);
         }

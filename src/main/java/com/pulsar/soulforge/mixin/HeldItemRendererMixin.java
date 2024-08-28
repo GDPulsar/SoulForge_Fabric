@@ -33,6 +33,14 @@ public class HeldItemRendererMixin {
                 return;
             }
         }
+        if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageStart")) {
+            if (playerSoul.getValue("rampageTimer") < 20 && playerSoul.getValue("rampageStart") == 5) {
+                if (hand == Hand.MAIN_HAND) {
+                    args.set(5, new ItemStack(SoulForgeItems.DETERMINATION_CLAYMORE_DISPLAY));
+                    return;
+                }
+            }
+        }
         /*if (hand == Hand.MAIN_HAND) {
             if (player.getMainHandStack().getItem() == SoulForgeItems.KINDNESS_SHIELD) {
                 args.set(5, ItemStack.EMPTY);

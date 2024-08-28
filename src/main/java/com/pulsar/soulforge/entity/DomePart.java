@@ -1,8 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.block.SoulForgeBlocks;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
@@ -31,7 +28,7 @@ public class DomePart extends Entity {
         super(SoulForgeEntities.DOME_PART_TYPE, owner.getWorld());
         this.owner = owner;
         this.dataTracker.set(OWNER_UUID, Optional.of(this.owner.getUuid()));
-        this.setPosition(x+0.5f, y, z+0.5f);
+        this.setPosition(x, y, z);
         this.dataTracker.set(DETERMINATION, false);
     }
     public DomePart(DomeEntity owner, int x, int y, int z, boolean determination) {
@@ -42,6 +39,10 @@ public class DomePart extends Entity {
 
     public DomePart(EntityType<DomePart> domePartEntityType, World world) {
         super(domePartEntityType, world);
+    }
+
+    public boolean isDetermination() {
+        return this.dataTracker.get(DETERMINATION);
     }
 
     @Override
@@ -60,16 +61,8 @@ public class DomePart extends Entity {
                 break;
             }
         }
-        BlockState state = this.getWorld().getBlockState(this.getBlockPos());
-        if (!state.isOf(SoulForgeBlocks.DOME_BLOCK) && !this.dataTracker.get(DETERMINATION)) {
-            this.getWorld().setBlockState(this.getBlockPos(), SoulForgeBlocks.DOME_BLOCK.getDefaultState());
-        }
-        if (!state.isOf(SoulForgeBlocks.DETERMINATION_DOME_BLOCK) && this.dataTracker.get(DETERMINATION)) {
-            this.getWorld().setBlockState(this.getBlockPos(), SoulForgeBlocks.DETERMINATION_DOME_BLOCK.getDefaultState());
-        }
         if (this.owner != null) {
             if (this.owner.isRemoved()) {
-                this.getWorld().setBlockState(this.getBlockPos(), Blocks.AIR.getDefaultState());
                 this.kill();
             }
         }
@@ -96,10 +89,18 @@ public class DomePart extends Entity {
 
     @Override
     protected Box calculateBoundingBox() {
-        return super.calculateBoundingBox().offset(0, -0.05f, 0);
+        return super.calculateBoundingBox().offset(0.5f, -0.05f, 0.5f);
     }
     @Override
     public boolean shouldSave() { return false; }
     @Override
-    public boolean shouldRender(double distance) { return distance < 64; }
+    public boolean shouldRender(double distance) { return true; }
+    @Override
+    public boolean collidesWith(Entity other) {
+        return true;
+    }
+    @Override
+    public boolean isCollidable() {
+        return true;
+    }
 }

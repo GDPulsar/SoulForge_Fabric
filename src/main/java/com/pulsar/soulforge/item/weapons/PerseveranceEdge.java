@@ -57,16 +57,10 @@ public class PerseveranceEdge extends MagicSweepingSwordItem implements GeoItem 
                 if (living.damage(attacker.getDamageSources().playerAttack((PlayerEntity)attacker), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()))) {
                     playerSoul.setStyle(playerSoul.getStyle() + (int)(this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()));
                 }
-                if (living instanceof PlayerEntity player) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-                    Utils.addAntiheal(0.2f, playerSoul.getLV()*5, targetSoul);
-                }
+                Utils.addAntiheal(0.2f, playerSoul.getLV()*5, living);
             }
         }
-        if (target instanceof PlayerEntity player) {
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-            Utils.addAntiheal(0.2f, playerSoul.getLV()*5, targetSoul);
-        }
+        Utils.addAntiheal(0.2f, playerSoul.getLV()*5, target);
         return super.postHit(stack, target, attacker);
     }
 

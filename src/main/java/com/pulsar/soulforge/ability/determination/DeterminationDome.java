@@ -8,7 +8,6 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.DomeEntity;
 import com.pulsar.soulforge.entity.DomePart;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -74,13 +73,9 @@ public class DeterminationDome extends ToggleableAbilityBase {
         World world = player.getWorld();
         if (!world.isClient) {
             if (pos.toCenterPos().distanceTo(center.toCenterPos()) <= domeRadius) {
-                if (world.getBlockState(pos).isReplaceable()) {
-                    BlockState state = SoulForgeBlocks.DETERMINATION_DOME_BLOCK.getDefaultState();
-                    world.setBlockState(pos, state);
-                    DomePart part = new DomePart(entity, x+center.getX(), y+center.getY(), z+center.getZ(), true);
-                    player.getWorld().spawnEntity(part);
-                    entity.addPart(part);
-                }
+                DomePart part = new DomePart(entity, x+center.getX(), y+center.getY(), z+center.getZ(), true);
+                player.getWorld().spawnEntity(part);
+                entity.addPart(part);
             }
         }
     }

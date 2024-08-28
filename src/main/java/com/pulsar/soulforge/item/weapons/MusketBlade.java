@@ -58,16 +58,10 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
         for (Entity entity : attacker.getEntityWorld().getOtherEntities(attacker, Box.of(attacker.getPos(), 4, 4, 4))) {
             if (entity instanceof LivingEntity living && living != target) {
                 living.damage(attacker.getDamageSources().playerAttack((PlayerEntity) attacker), this.attackDamage);
-                if (living instanceof PlayerEntity player) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-                    Utils.addAntiheal(0.2f, playerSoul.getLV() * 5, targetSoul);
-                }
+                Utils.addAntiheal(0.2f, playerSoul.getLV() * 5, target);
             }
         }
-        if (target instanceof PlayerEntity player) {
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-            Utils.addAntiheal(0.2f, playerSoul.getLV() * 5, targetSoul);
-        }
+        Utils.addAntiheal(0.2f, playerSoul.getLV() * 5, target);
         return super.postHit(stack, target, attacker);
     }
 

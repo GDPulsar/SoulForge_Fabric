@@ -9,6 +9,7 @@ import com.pulsar.soulforge.ability.kindness.PainSplit;
 import com.pulsar.soulforge.ability.pures.MartyrsTouch;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
@@ -57,7 +58,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -115,6 +119,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
         if (playerSoul.hasTag("sliding")) stepHeight = -1f;
         player.setStepHeight(stepHeight);
         if (playerSoul.hasCast("Warpspeed")) return new Vec3d(0f, 0f, 1f);
+        if (playerSoul.hasTag("forcedRunning")) return new Vec3d(0f, 0f, 1f);
         return movementInput;
     }
 
@@ -180,7 +185,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
     }
 
     @ModifyVariable(method = "attack", at = @At(value = "STORE", ordinal = 1), ordinal = 0)
-    private float soulforge$modifyDamage(float original) {
+    private float soulforge$modifyDamage(float original, @Local Entity target) {
         if (this.hasStatusEffect(StatusEffects.STRENGTH)) {
             original += (this.getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1) * 3;
         }
@@ -193,6 +198,15 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 Siphon.Type siphonType = Siphon.Type.getSiphon(tridentStack.getOrCreateNbt().getString("Siphon"));
                 if (siphonType == Type.BRAVERY) {
                     original *= 1.25f;
+                }
+            }
+        }
+        if (target instanceof LivingEntity living) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) (Object) this);
+            if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageActive")) {
+                if (playerSoul.getValue("rampageActive") == 3) {
+                    TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(living);
+                    original *= (modifiers.getModifierCount() * 0.05f) + 1f;
                 }
             }
         }

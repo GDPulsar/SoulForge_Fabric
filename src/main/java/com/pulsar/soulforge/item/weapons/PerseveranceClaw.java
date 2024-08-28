@@ -35,20 +35,17 @@ public class PerseveranceClaw extends MagicSwordItem implements GeoItem {
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         PlayerEntity player = (PlayerEntity)attacker;
-        if (target instanceof PlayerEntity playerTarget) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(playerTarget);
-            if (playerSoul.hasCast("Furioso")) {
-                boolean isCritical = player.getAttackCooldownProgress(0.5F) > 0.9f && player.fallDistance > 0.0F
-                        && !player.isOnGround() && !player.isClimbing() && !player.isTouchingWater()
-                        && !player.hasStatusEffect(StatusEffects.BLINDNESS) && !player.hasVehicle() && !player.isSprinting();
-                if (isCritical) {
-                    Utils.addAntiheal(0.9f, playerSoul.getLV()*15f, targetSoul);
-                    return super.postHit(stack, target, attacker);
-                }
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (playerSoul.hasCast("Furioso")) {
+            boolean isCritical = player.getAttackCooldownProgress(0.5F) > 0.9f && player.fallDistance > 0.0F
+                    && !player.isOnGround() && !player.isClimbing() && !player.isTouchingWater()
+                    && !player.hasStatusEffect(StatusEffects.BLINDNESS) && !player.hasVehicle() && !player.isSprinting();
+            if (isCritical) {
+                Utils.addAntiheal(0.9f, playerSoul.getLV()*15, target);
+                return super.postHit(stack, target, attacker);
             }
-            Utils.addAntiheal(0.4f, playerSoul.getLV()*20f, targetSoul);
         }
+        Utils.addAntiheal(0.4f, playerSoul.getLV()*20, target);
         return super.postHit(stack, target, attacker);
     }
 

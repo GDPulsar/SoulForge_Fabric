@@ -2,7 +2,7 @@ package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.item.SoulJarItem;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
@@ -27,8 +27,8 @@ import net.minecraft.util.math.Vec2f;
 import org.joml.Vector2i;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class SoulResetOverlay implements HudRenderCallback {
     private int startTime = 0;
@@ -58,7 +58,7 @@ public class SoulResetOverlay implements HudRenderCallback {
         if (playerSoul.hasTag("resettingSoul")) {
             client.mouse.unlockCursor();
             if (!wasResetting) {
-                startTime = client.player.age + 30;
+                startTime = (int)(client.world.getTime() + 30);
                 chosenTraits = new ArrayList<>();
                 chosenPower = 0;
                 chosen = new ArrayList<>();
@@ -66,14 +66,17 @@ public class SoulResetOverlay implements HudRenderCallback {
                 allowChosing = playerSoul.getResetData().bravery && playerSoul.getResetData().justice && playerSoul.getResetData().kindness
                         && playerSoul.getResetData().patience && playerSoul.getResetData().integrity && playerSoul.getResetData().perseverance
                         && playerSoul.getResetData().determination && playerSoul.getResetData().strongDual;
+                ValueComponent values = SoulForge.getValues(client.player);
+                if (values != null) {
+                    if (values.getExtraVals().contains("heldJar")) {
+                        soulJar = ItemStack.fromNbt(values.getExtraVals().getCompound("heldJar"));
+                    }
+                }
                 rerollType = getRerollType(playerSoul);
-                if (client.player.getMainHandStack().isOf(SoulForgeItems.SOUL_JAR)) {
+                if (!soulJar.isEmpty()) {
                     if (Objects.equals(SoulJarItem.getOwner(client.player.getMainHandStack()), client.player.getName().getString())) {
-                        soulJar = client.player.getMainHandStack();
                         allowChosing = false;
                         rerollType = RerollType.JAR;
-                    } else if (SoulJarItem.getHasSoul(client.player.getMainHandStack())) {
-                        soulJar = client.player.getMainHandStack();
                     }
                 }
                 if (rerollType == RerollType.NORMAL) {
@@ -89,9 +92,13 @@ public class SoulResetOverlay implements HudRenderCallback {
                     chosenTraits = List.of(Traits.determination);
                     chosenPower = 1;
                 }
+
+                client.mouse.onMouseButton(client.getWindow().getHandle(), 0, 0, 0);
+                client.mouse.onMouseButton(client.getWindow().getHandle(), 1, 0, 0);
+                client.mouse.onMouseButton(client.getWindow().getHandle(), 2, 0, 0);
             }
-            if (client.player.age - startTime >= 50 && allowChosing) {
-                if (client.player.age - startTime == 51) startTime++;
+            if ((int)client.world.getTime() - startTime >= 50 && allowChosing) {
+                while ((int)client.world.getTime() - startTime >= 51) startTime++;
                 Vec2f mousePos = new Vec2f((float)(client.mouse.getX()/(float)client.getWindow().getWidth())*width, (float)(client.mouse.getY()/(float)client.getWindow().getHeight())*height);
                 if (chosen.isEmpty()) {
                     context.drawTexture(new Identifier(SoulForge.MOD_ID, "textures/ui/power_mouse.png"), width / 2 - 20, 55, 0, 0, 39, 60, 39, 60);
@@ -206,7 +213,7 @@ public class SoulResetOverlay implements HudRenderCallback {
                     }
                 }
             }
-            int tickTimer = client.player.age - startTime;
+            int tickTimer = (int)client.world.getTime() - startTime;
             float timer = tickTimer + tickDelta;
             if (startTime == 0) return;
             if (timer >= 0) {
@@ -320,8 +327,6 @@ public class SoulResetOverlay implements HudRenderCallback {
                         }
                         if (tickTimer == 450) {
                             PacketByteBuf buf = PacketByteBufs.create();
-                            buf.writeBoolean(!soulJar.isEmpty());
-                            if (!soulJar.isEmpty()) buf.writeItemStack(soulJar);
                             buf.writeString(chosenTraits.get(0).getName());
                             buf.writeString("");
                             buf.writeBoolean(chosenPower >= 1);
@@ -398,8 +403,6 @@ public class SoulResetOverlay implements HudRenderCallback {
                         }
                         if (tickTimer == (rerollType != RerollType.NORMAL ? 200 : 175)) {
                             PacketByteBuf buf = PacketByteBufs.create();
-                            buf.writeBoolean(!soulJar.isEmpty());
-                            if (!soulJar.isEmpty()) buf.writeItemStack(soulJar);
                             buf.writeString(chosenTraits.get(0).getName());
                             buf.writeString(chosenTraits.size() == 2 ? chosenTraits.get(1).getName() : "");
                             buf.writeBoolean(chosenPower >= 1);
@@ -432,8 +435,6 @@ public class SoulResetOverlay implements HudRenderCallback {
                         }
                         if (tickTimer == 150) {
                             PacketByteBuf buf = PacketByteBufs.create();
-                            buf.writeBoolean(true);
-                            buf.writeItemStack(soulJar);
                             buf.writeString(SoulJarItem.getTrait1(soulJar));
                             buf.writeString(SoulJarItem.getTrait2(soulJar));
                             buf.writeBoolean(SoulJarItem.getStrong(soulJar));

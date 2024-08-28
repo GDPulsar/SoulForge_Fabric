@@ -1,0 +1,21 @@
+{
+  "name": "Eruption",
+  "icon": "soulforge:textures/ui/ability_icon/eruption.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Eruption",
+      "icon": "eruption",
+      "cost": "40 mana",
+      "cooldown": "15 seconds",
+      "lv": 7
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Infuse the ground with energy, making it erupt, dealing damage to enemies in front of you and launching them into the air."
+    }
+  ],
+  "sortnum": 3,
+  "advancement": "soulforge:hidden/bravery/unlocked_eruption"
+}

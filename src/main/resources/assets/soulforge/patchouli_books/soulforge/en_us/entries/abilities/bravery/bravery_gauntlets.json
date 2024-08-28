@@ -1,0 +1,21 @@
+{
+  "name": "Bravery Gauntlets",
+  "icon": "soulforge:textures/ui/ability_icon/bravery_gauntlets.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Bravery Gauntlets",
+      "icon": "bravery_gauntlets",
+      "cost": "20 mana",
+      "cooldown": "None",
+      "lv": 10
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon the Bravery Gauntlets. Right click an enemy to perform an uppercut, launching both you and the enemy upwards slightly."
+    }
+  ],
+  "sortnum": 6,
+  "advancement": "soulforge:hidden/bravery/unlocked_bravery_gauntlets"
+}

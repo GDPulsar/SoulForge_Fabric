@@ -27,7 +27,7 @@ public class PerseveranceAura extends ToggleableAbilityBase {
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "perseverance_aura_armor");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "perseverance_aura_strength");
         EntityAttributeModifier healthModifier = new EntityAttributeModifier("perseverance_aura_health", playerSoul.getEffectiveLV() / 2f, EntityAttributeModifier.Operation.ADDITION);
-        EntityAttributeModifier armorModifier = new EntityAttributeModifier("perseverance_aura_armor", playerSoul.getEffectiveLV() / 1.66f, EntityAttributeModifier.Operation.ADDITION);
+        EntityAttributeModifier armorModifier = new EntityAttributeModifier("perseverance_aura_armor", playerSoul.getEffectiveLV() * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
         EntityAttributeModifier strengthModifier = new EntityAttributeModifier("perseverance_aura_strength", playerSoul.getEffectiveLV() * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
         player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
         player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addPersistentModifier(armorModifier);

@@ -1,17 +1,17 @@
 package com.pulsar.soulforge.recipe;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.pulsar.soulforge.SoulForge;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.*;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
 public class SiphonRecipe implements SmithingRecipe {
@@ -43,10 +43,20 @@ public class SiphonRecipe implements SmithingRecipe {
         return null;
     }
 
+    public Ingredient getTemplate() { return template; }
+    public Ingredient getBase() { return base; }
+    public Ingredient getAddition() { return addition; }
+
+    public ItemStack getOutputFromInput(ItemStack input) {
+        ItemStack itemStack = input.copy();
+        itemStack.getOrCreateNbt().putString("Siphon", siphonStr);
+        return itemStack;
+    }
+
     @Override
     public ItemStack getOutput(DynamicRegistryManager registryManager) {
         ItemStack itemStack = new ItemStack(Items.IRON_CHESTPLATE);
-        itemStack.getNbt().putString("Siphon", siphonStr);
+        itemStack.getOrCreateNbt().putString("Siphon", siphonStr);
         return itemStack;
     }
 

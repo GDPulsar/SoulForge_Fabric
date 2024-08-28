@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
 public class AntlerEntity extends ThrownItemEntity {
@@ -14,6 +15,14 @@ public class AntlerEntity extends ThrownItemEntity {
 
     public AntlerEntity(World world, PlayerEntity user) {
         super(SoulForgeEntities.ANTLER_ENTITY_TYPE, world);
+    }
+
+    @Override
+    protected void onCollision(HitResult hitResult) {
+        if (!this.getWorld().isClient) {
+            this.getWorld().createExplosion(this, getX(), getY(), getZ(), 50f, World.ExplosionSourceType.TNT);
+            this.kill();
+        }
     }
 
     @Override

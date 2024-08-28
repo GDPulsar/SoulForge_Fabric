@@ -11,7 +11,6 @@ import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -25,18 +24,12 @@ public class RendAsunder extends AbilityBase {
         DamageSource damageSource = SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
         int affectedCount = 0;
         for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 2f, 3f, 1f, 2f)) {
-            if (target instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
-            }
+            if (!TeamUtils.canDamageEntity(player.getServer(), player, target)) continue;
             if (target.damage(damageSource, 0.5f*playerSoul.getEffectiveLV())) {
                 affectedCount++;
             }
             target.addStatusEffect(effect, player);
-            if (target instanceof PlayerEntity targetPlayer) {
-                if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
-                SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                Utils.addAntiheal(0.4f, playerSoul.getEffectiveLV()*20, targetSoul);
-            }
+            Utils.addAntiheal(0.4f, playerSoul.getEffectiveLV()*20, target);
         }
         playerSoul.setStyle(playerSoul.getStyle() + affectedCount * 5);
         for (int i = 0; i < 3; i ++) {

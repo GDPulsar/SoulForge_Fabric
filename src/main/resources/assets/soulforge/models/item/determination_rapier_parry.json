@@ -1,4 +1,5 @@
 {
+	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "soulforge:item/determination"
 	},
@@ -132,6 +133,10 @@
 	],
 	"display": {
 		"firstperson_righthand": {
+			"rotation": [-7, 6, 59],
+			"translation": [0, 0, 1.75]
+		},
+		"firstperson_lefthand": {
 			"rotation": [-7, 6, 59],
 			"translation": [0, 0, 1.75]
 		},

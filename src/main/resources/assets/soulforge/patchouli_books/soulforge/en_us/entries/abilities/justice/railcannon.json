@@ -1,0 +1,16 @@
+{
+  "name": "Railcannon",
+  "icon": "soulforge:textures/ui/ability_icon/railcannon.png",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Shoot a series of Justice beams that remain for a short period of time, dealing damage to enemies that touch it."
+    }
+  ],
+  "sortnum": 3,
+  "advancement": "soulforge:hidden/justice/unlocked_railcannon"
+}

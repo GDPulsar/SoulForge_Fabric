@@ -1,0 +1,21 @@
+{
+  "name": "Bravery Boost",
+  "icon": "soulforge:textures/ui/ability_icon/bravery_boost_on.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Bravery Boost",
+      "icon": "bravery_boost_on",
+      "cost": "All of it",
+      "cooldown": "None",
+      "lv": 15
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Surround your body with Bravery energy, infusing all of your attacks with Fire Aspect as well as gaining extra health, strength and Fire Resistance."
+    }
+  ],
+  "sortnum": 8,
+  "advancement": "soulforge:hidden/bravery/unlocked_bravery_boost"
+}

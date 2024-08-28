@@ -67,7 +67,7 @@ public class SoulJarBlockEntity extends BlockEntity {
             List<TraitBase> traits = new ArrayList<>();
             if (!Objects.equals(trait1, "")) traits.add(Traits.get(trait1));
             if (!Objects.equals(trait2, "")) traits.add(Traits.get(trait2));
-            List<AbilityBase> abilities = Traits.getAbilities(traits, lv, pure);
+            List<AbilityBase> abilities = Traits.getAbilities(traits, lv, pure, false);
             layout = AbilityLayout.fromNbt(abilities, soul.getList("layout", NbtElement.COMPOUND_TYPE));
         }
         super.readNbt(nbt);

@@ -1,7 +1,6 @@
 package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.block.SoulForgeBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -76,6 +75,10 @@ public class SoulForgeScreenHandler extends ScreenHandler {
         int scaleSize = 69;
 
         return lava != 0 ? lava * scaleSize / maxLava : 0;
+    }
+
+    public int getLava() {
+        return this.propertyDelegate.get(2);
     }
 
     private void addPlayerInventory(PlayerInventory inventory) {

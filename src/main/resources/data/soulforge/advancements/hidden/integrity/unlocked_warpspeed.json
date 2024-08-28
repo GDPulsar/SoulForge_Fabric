@@ -1,17 +1,10 @@
 {
   "criteria": {
-    "lv": {
-      "trigger": "soulforge:player_lv",
-      "conditions": {
-        "min": 20
-      }
-    },
     "traits": {
-      "trigger": "soulforge:player_trait",
+      "trigger": "soulforge:player_soul",
       "conditions": {
-        "trait": [
-          "Integrity"
-        ]
+        "trait": "Integrity",
+        "lv": 20
       }
     }
   }

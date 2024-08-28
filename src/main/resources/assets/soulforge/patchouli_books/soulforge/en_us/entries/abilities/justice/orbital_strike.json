@@ -1,0 +1,16 @@
+{
+  "name": "Orbital Strike",
+  "icon": "soulforge:textures/ui/ability_icon/orbital_strike.png",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Shoot an incredible beam of Justice energy from the heavens that pierces even the world. Will follow where you look at a slow pace. Requires style rank 4 to activate."
+    }
+  ],
+  "sortnum": 10,
+  "advancement": "soulforge:hidden/justice/unlocked_orbital_strike"
+}

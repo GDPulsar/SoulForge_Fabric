@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -73,9 +71,8 @@ public class AntihealDartProjectile extends ProjectileEntity implements GeoEntit
         Entity entity = entityHitResult.getEntity();
         DamageSource damageSource = this.getDamageSources().thrown(this, this.getOwner());
         entity.damage(damageSource, 5f);
-        if (entity instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            Utils.addAntiheal(0.1f, 300f, playerSoul);
+        if (entity instanceof LivingEntity living) {
+            Utils.addAntiheal(0.1f, 300, living);
         }
     }
 

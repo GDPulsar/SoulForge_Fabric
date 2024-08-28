@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/elytra",
+    "layer1": "soulforge:item/siphons/determination_elytra"
+  }
+}

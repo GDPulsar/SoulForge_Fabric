@@ -1,0 +1,16 @@
+{
+  "name": "Kindness Dome",
+  "icon": "soulforge:textures/ui/ability_icon/kindness_dome_on.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Coalesce Kindness magic into a solid dome of blocks"
+    }
+  ],
+  "sortnum": 0,
+  "advancement": "soulforge:hidden/kindness/unlocked_kindness_dome"
+}

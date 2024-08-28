@@ -1,0 +1,21 @@
+{
+  "name": "Valiant Heart",
+  "icon": "soulforge:textures/ui/ability_icon/valiant_heart.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Valiant Heart",
+      "icon": "valiant_heart",
+      "cost": "100 mana",
+      "cooldown": "13 minutes",
+      "lv": 20
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Charge your body with Bravery energy, infusing your entire body with a 50% strength boost and a 50% magic power boost. Requires style rank 5 to activate."
+    }
+  ],
+  "sortnum": 10,
+  "advancement": "soulforge:hidden/bravery/unlocked_valiant_heart"
+}

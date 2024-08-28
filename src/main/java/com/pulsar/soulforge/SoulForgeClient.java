@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.pulsar.soulforge.ability.perseverance.ColossalClaymore;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.client.block.CreativeZoneBlockRenderer;
+import com.pulsar.soulforge.client.block.SoulForgeBlockRenderer;
 import com.pulsar.soulforge.client.block.SoulJarEntityRenderer;
 import com.pulsar.soulforge.client.entity.*;
 import com.pulsar.soulforge.client.event.ClickEvent;
@@ -21,7 +22,6 @@ import com.pulsar.soulforge.client.ui.SoulResetOverlay;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
-import com.pulsar.soulforge.item.weapons.weapon_wheel.DeterminationCrossbow;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.shader.TestPostProcessor;
 import com.pulsar.soulforge.siphon.Siphon;
@@ -130,7 +130,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		HandledScreens.register(SoulForge.CREATIVE_ZONE_SCREEN_HANDLER, CreativeZoneScreen::new);
 
 		BlockEntityRendererFactories.register(SoulForgeBlocks.CREATIVE_ZONE_ENTITY, CreativeZoneBlockRenderer::new);
-
+		BlockEntityRendererFactories.register(SoulForgeBlocks.SOUL_FORGE_BLOCK_ENTITY, SoulForgeBlockRenderer::new);
 		BlockEntityRendererRegistry.register(SoulForgeBlocks.SOUL_JAR_BLOCK_ENTITY, SoulJarEntityRenderer::new);
 
 		BlockRenderLayerMap.INSTANCE.putBlock(SoulForgeBlocks.SOUL_FORGE_BLOCK, RenderLayer.getCutout());
@@ -232,14 +232,6 @@ public class SoulForgeClient implements ClientModInitializer {
 			if (entity == null) return 0f;
 			return entity.getActiveItem() != stack ? 0f : (stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / 10f;
 		}));
-		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_BOW, new Identifier("pulling"), ((stack, world, entity, seed) -> {
-			if (entity == null) return 0f;
-			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f;
-		}));
-		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_BOW, new Identifier("pull"), ((stack, world, entity, seed) -> {
-			if (entity == null) return 0f;
-			return entity.getActiveItem() != stack ? 0f : (stack.getMaxUseTime() - entity.getItemUseTimeLeft()) / 10f;
-		}));
 		ModelPredicateProviderRegistry.register(SoulForgeItems.JUSTICE_CROSSBOW, new Identifier("pulling"), ((stack, world, entity, seed) -> {
 			if (entity == null) return 0f;
 			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f;
@@ -262,7 +254,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		}));
 		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_CROSSBOW, new Identifier("loaded"), ((stack, world, entity, seed) -> {
 			if (entity == null) return 0f;
-			return ((DeterminationCrossbow)stack.getItem()).loaded ? 1f : 0f;
+			return stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded") ? 1f : 0f;
 		}));
 
 		ClampedModelPredicateProvider siphonProvider = (stack, world, entity, seed) -> {

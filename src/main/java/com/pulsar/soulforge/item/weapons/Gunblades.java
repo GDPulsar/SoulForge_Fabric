@@ -47,10 +47,7 @@ public class Gunblades extends MagicSwordItem implements GeoItem {
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker instanceof PlayerEntity) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) attacker);
-            if (target instanceof PlayerEntity player) {
-                SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-                Utils.addAntiheal(0.3f, playerSoul.getLV() * 20, targetSoul);
-            }
+            Utils.addAntiheal(0.3f, playerSoul.getLV() * 20, target);
             int ammo = stack.getOrCreateNbt().contains("ammo") ? stack.getOrCreateNbt().getInt("ammo") : 0;
             ammo = Math.min(ammo + (playerSoul.hasCast("Furioso") ? 4 : 2), playerSoul.getLV()+6);
             stack.getOrCreateNbt().putInt("ammo", ammo);

@@ -1,0 +1,7 @@
+{
+  "name": "Kindness",
+  "description": "Kindness is one of the three support traits, and specializes in healing and protection.",
+  "parent": "soulforge:traits",
+  "sortnum": 2,
+  "icon": "soulforge:kindness_arnicite_heart"
+}

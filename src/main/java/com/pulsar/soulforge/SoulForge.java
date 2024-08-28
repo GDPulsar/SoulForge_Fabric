@@ -55,7 +55,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.5.0");
+		LOGGER.info("Loading SoulForge v2.6.0");
 
 		//registerResourceListeners();
 
@@ -146,6 +146,14 @@ public class SoulForge implements ModInitializer {
 	public static TemporaryModifierComponent getTemporaryModifiers(LivingEntity living) {
 		try {
 			return EntityInitializer.TEMPORARY_MODIFIERS.get(living);
+		} catch (NullPointerException ignored) {
+			return null;
+		}
+	}
+
+	public static HateComponent getHate(LivingEntity living) {
+		try {
+			return EntityInitializer.HATE.get(living);
 		} catch (NullPointerException ignored) {
 			return null;
 		}

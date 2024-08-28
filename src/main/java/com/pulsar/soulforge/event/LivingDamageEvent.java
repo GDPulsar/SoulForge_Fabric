@@ -52,6 +52,8 @@ public class LivingDamageEvent {
                 if (living instanceof PlayerEntity targetPlayer) {
                     if (!player.shouldDamagePlayer(targetPlayer)) break siphon;
                 }
+                if (living.blockedByShield(source)) break siphon;
+                if (living.isInvulnerableTo(source)) break siphon;
 
                 // siphon
                 ItemStack held = player.getMainHandStack();
@@ -68,10 +70,7 @@ public class LivingDamageEvent {
                             }
                             if (type == Siphon.Type.PERSEVERANCE || type == Siphon.Type.SPITE) {
                                 if (player.getAttackCooldownProgress(0.5f) >= 0.99f) {
-                                    if (living instanceof PlayerEntity targetPlayer) {
-                                        SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                                        Utils.addAntiheal(0.6f, (int) (player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).getValue() * 20), targetSoul);
-                                    }
+                                    Utils.addAntiheal(0.6f, (int) (player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).getValue() * 20), living);
                                 }
                             }
                             if (type == Siphon.Type.KINDNESS || type == Siphon.Type.SPITE) {

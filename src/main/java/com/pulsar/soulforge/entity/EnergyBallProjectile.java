@@ -4,7 +4,6 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
-import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -125,14 +124,10 @@ public class EnergyBallProjectile extends ProjectileEntity {
         float totalDamage = 0f;
         float aoeDamage = 1f;
         int aoeSize = 3;
-        boolean frostburn = false;
         if (this.getOwner() instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             aoeDamage = 2f + playerSoul.getEffectiveLV()/4f;
             aoeSize = Math.max(7, (int)(3 + 2*playerSoul.getEffectiveLV()/6f));
-            if (playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.patience)) {
-                frostburn = true;
-            }
         }
         for (Entity aoe : Utils.visibleEntitiesInBox(this, Box.of(this.getPos(), aoeSize, aoeSize, aoeSize))) {
             if (aoe instanceof LivingEntity target && target != this.getOwner()) {
@@ -140,7 +135,6 @@ public class EnergyBallProjectile extends ProjectileEntity {
                     totalDamage += aoeDamage;
                 }
                 target.setFireTicks(100);
-                if (frostburn) target.setFrozenTicks(100);
             }
         }
         if (this.getOwner() instanceof PlayerEntity player) {

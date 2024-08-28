@@ -3,6 +3,7 @@ package com.pulsar.soulforge.client.ui;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.item.SoulForgeItems;
@@ -10,6 +11,7 @@ import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Constants;
+import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
@@ -19,13 +21,15 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 public class SoulScreen extends Screen {
     public final Screen parent;
@@ -48,6 +52,7 @@ public class SoulScreen extends Screen {
 
     private Identifier abilityTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_screen.png");
     private Identifier soulTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/soul_screen.png");
+    private Identifier killsTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/kills_screen.png");
 
     private int page = 0;
     private int modeIndex = 0;
@@ -70,7 +75,11 @@ public class SoulScreen extends Screen {
                 page = 1;
                 updateWidgets();
             }));
-        } else {
+            /*widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+                page = 2;
+                updateWidgets();
+            }));*/
+        } else if (page == 1) {
             widgets.add(new SlotWidget(8 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.BRAVERY_HAMMER), () -> {
                 page = 0;
                 updateWidgets();
@@ -79,10 +88,24 @@ public class SoulScreen extends Screen {
                 page = 1;
                 updateWidgets();
             }));
-        }
-        widgets.add(new SlotWidget(176 + this.x, 9 + this.y, new ItemStack(Items.KNOWLEDGE_BOOK), () -> {
-            this.client.setScreen(new EncyclopediaScreen());
-        }));
+            /*widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+                page = 2;
+                updateWidgets();
+            }));*/
+        }/* else if (page == 2) {
+            widgets.add(new SlotWidget(8 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.BRAVERY_HAMMER), () -> {
+                page = 0;
+                updateWidgets();
+            }));
+            widgets.add(new SlotWidget(37 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.DETERMINATION_ARNICITE_HEART), () -> {
+                page = 1;
+                updateWidgets();
+            }));
+            widgets.add(new SlotWidget(66 + this.x, 6 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+                page = 2;
+                updateWidgets();
+            }));
+        }*/
 
         modes = new ArrayList<>();
         if (!playerSoul.hasTrait(Traits.spite)) {
@@ -101,22 +124,30 @@ public class SoulScreen extends Screen {
         }
         if (!Constants.getDualTraitAbilities(playerSoul.getTraits()).isEmpty()) modes.add("Duals");
         if (hasPassives) modes.add("Passives");
+        if (Utils.hasHate(client.player)) modes.add("HATE");
         if (page == 0) {
             widgets.add(new ClickableTextureWidget(42 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_left.png"), (mouseButton) -> {
                 modeIndex = (modeIndex - 1 + modes.size()) % modes.size();
                 updateWidgets();
-            }));
+            }, Text.literal(modes.get((modeIndex - 1 + modes.size()) % modes.size()))));
             widgets.add(new ClickableTextureWidget(146 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_right.png"), (mouseButton) -> {
                 modeIndex = (modeIndex + 1) % modes.size();
                 updateWidgets();
-            }));
+            }, Text.literal(modes.get((modeIndex + 1) % modes.size()))));
             int i = 0;
             for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
-                Identifier id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
+                Identifier id;
+                if (ability instanceof ToggleableAbilityBase) id = new Identifier(ability.getID().getNamespace(), "textures/ui/ability_icon/" + ability.getID().getPath() + "_on.png");
+                else id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
                 ClickableTextureWidget button = new ClickableTextureWidget(17+(i%9)*18 + this.x, 51 + MathHelper.floor(i/9f) * 18 + this.y, 18, 18, id, (mouseButton) -> {
                     selectedAbility = ability;
                     updateWidgets();
                 }, ability.getLocalizedText());
+                if (selectedAbility != null) {
+                    if (ability.getID() == selectedAbility.getID()) {
+                        button.selected = true;
+                    }
+                }
                 widgets.add(button);
                 i++;
             }
@@ -125,7 +156,9 @@ public class SoulScreen extends Screen {
                 int slotNum = 0;
                 for (AbilityBase ability : row.abilities) {
                     if (ability != null) {
-                        Identifier id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
+                        Identifier id;
+                        if (ability instanceof ToggleableAbilityBase) id = new Identifier(ability.getID().getNamespace(), "textures/ui/ability_icon/" + ability.getID().getPath() + "_on.png");
+                        else id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
                         int finalRow = rowNum;
                         int finalSlot = slotNum;
                         ClickableTextureWidget button = new ClickableTextureWidget(17 + slotNum * 18 + this.x, 101 + rowNum * 18 + this.y, 18, 18, id, (mouseButton) -> {
@@ -184,7 +217,7 @@ public class SoulScreen extends Screen {
         if (page == 0) {
             context.drawTexture(abilityTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
             context.drawCenteredTextWithShadow(textRenderer, modes.get(modeIndex), 97 + this.x, 37 + this.y, 0xFFFFFF);
-        } else {
+        } else if (page == 1) {
             context.drawTexture(soulTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
             String traitStr = "Trait: " + (playerSoul.getTraitCount() == 2 ? playerSoul.getTrait(0).getName() + "-" + playerSoul.getTrait(1).getName() : playerSoul.getTrait(0).getName());
             context.drawCenteredTextWithShadow(textRenderer, traitStr, 100 + this.x, 50 + this.y, 0xFFFFFF);
@@ -196,20 +229,24 @@ public class SoulScreen extends Screen {
                 context.drawCenteredTextWithShadow(textRenderer, String.valueOf(playerSoul.getExpRequirement()), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             }
             context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
+        } else if (page == 2) {
+            context.drawTexture(killsTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
         }
         for (ClickableWidget widget : widgets) {
             widget.render(context, mouseX, mouseY, delta);
         }
-        /*int i = 0;
-        for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
-            if (ability == selectedAbility) {
-                int x = 17+(i%9)*18 + this.x;
-                int y = 51 + MathHelper.floor(i/9f) * 18 + this.y;
-                context.drawBorder(x, y, 18, 18, 0xFFFFFF);
-                context.drawBorder(x + 1, y + 1, 16, 16, 0xFFFFFF);
+        int i = 0;
+        if (selectedAbility != null) {
+            for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
+                if (ability.getID().equals(selectedAbility.getID())) {
+                    int x = 17 + (i % 9) * 18 + this.x;
+                    int y = 51 + MathHelper.floor(i / 9f) * 18 + this.y;
+                    context.drawBorder(x, y, 18, 18, 0xFF00FF00);
+                    context.drawBorder(x + 1, y + 1, 16, 16, 0xFF00FF00);
+                }
+                i++;
             }
-            i++;
-        }*/
+        }
     }
 
     private int getPageOfAbility(AbilityBase ability) {
@@ -226,42 +263,25 @@ public class SoulScreen extends Screen {
         return 0;
     }
 
-    /*@Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {;
-        float widthRatio = this.width / 480f;
-        float heightRatio = this.height / 260f;
-        return super.mouseClicked(mouseX/widthRatio, mouseY/heightRatio, button);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {;
-        float widthRatio = this.width / 480f;
-        float heightRatio = this.height / 260f;
-        return super.mouseReleased(mouseX/widthRatio, mouseY/heightRatio, button);
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {;
-        float widthRatio = this.width / 480f;
-        float heightRatio = this.height / 260f;
-        return super.mouseDragged(mouseX/widthRatio, mouseY/heightRatio, button, deltaX/widthRatio, deltaY/heightRatio);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {;
-        float widthRatio = this.width / 480f;
-        float heightRatio = this.height / 260f;
-        return super.mouseScrolled(mouseX/widthRatio, mouseY/heightRatio, horizontalAmount, verticalAmount);
-    }*/
-
     public static class ClickableTextureWidget extends ClickableWidget {
-        public Identifier texture;
+        public Identifier texture = null;
+        public Identifier hoveredTexture = null;
         public final PressAction pressAction;
         public boolean selected = false;
+
+        public ClickableTextureWidget(int x, int y, int width, int height, Identifier texture, Identifier hoveredTexture, PressAction pressAction, Text tooltip) {
+            this(x, y, width, height, texture, hoveredTexture, pressAction);
+            this.setTooltip(Tooltip.of(tooltip));
+        }
 
         public ClickableTextureWidget(int x, int y, int width, int height, Identifier texture, PressAction pressAction, Text tooltip) {
             this(x, y, width, height, texture, pressAction);
             this.setTooltip(Tooltip.of(tooltip));
+        }
+
+        public ClickableTextureWidget(int x, int y, int width, int height, Identifier texture, Identifier hoveredTexture, PressAction pressAction) {
+            this(x, y, width, height, texture, pressAction);
+            this.hoveredTexture = hoveredTexture;
         }
 
         public ClickableTextureWidget(int x, int y, int width, int height, Identifier texture, PressAction pressAction) {
@@ -272,12 +292,19 @@ public class SoulScreen extends Screen {
 
         @Override
         protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
-            if (this.texture != null) {
+            if (this.texture != null && !this.hovered) {
                 context.drawTexture(this.texture, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
+            } else if (this.hovered) {
+                if (this.hoveredTexture == null && this.texture != null) {
+                    context.drawTexture(this.texture, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
+                } else if (this.hoveredTexture != null) {
+                    context.drawTexture(this.hoveredTexture, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0, 0, this.getWidth(), this.getHeight(), this.getWidth(), this.getHeight());
+                }
             }
             if (selected) {
-                context.drawBorder(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0xFFFFFF);
-                context.drawBorder(this.getX()+1, this.getY()+1, this.getWidth()-2, this.getHeight()-2, 0xFFFFFF);
+                context.fill(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0);
+                context.drawBorder(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0);
+                context.drawBorder(this.getX()+1, this.getY()+1, this.getWidth()-2, this.getHeight()-2, 0);
             }
         }
 

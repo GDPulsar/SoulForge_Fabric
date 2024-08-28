@@ -16,6 +16,7 @@ public class SoulForgeAttributes {
     public static final EntityAttribute KNOCKBACK_MULTIPLIER = make("knockback_multiplier", 1.0, 0, 1024);
     public static final EntityAttribute SLIP_MODIFIER = make("slip_multiplier", 0.0, 0, 1024);
     public static final EntityAttribute EFFECT_DURATION_MULTIPLIER = make("effect_duration_multiplier", 1.0, 0, 1024);
+    public static final EntityAttribute ANTIHEAL = make("antiheal", 0.0, 0, 1);
 
     private static EntityAttribute make(final String name, final double base, final double min, final double max) {
         return new ClampedEntityAttribute("attribute.name.generic." + SoulForge.MOD_ID + '.' + name, base, min, max).setTracked(true);
@@ -30,5 +31,6 @@ public class SoulForgeAttributes {
         Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "knockback_multiplier"), KNOCKBACK_MULTIPLIER);
         Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "slip_modifier"), SLIP_MODIFIER);
         Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "effect_duration_modifier"), EFFECT_DURATION_MULTIPLIER);
+        Registry.register(Registries.ATTRIBUTE, new Identifier(SoulForge.MOD_ID, "antiheal"), ANTIHEAL);
     }
 }

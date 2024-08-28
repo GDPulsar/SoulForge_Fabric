@@ -1,0 +1,21 @@
+{
+  "name": "Polarities",
+  "icon": "soulforge:textures/ui/ability_icon/polarities.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Polarities",
+      "icon": "polarities",
+      "cost": "50 mana",
+      "cooldown": "15 seconds",
+      "lv": 12
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a ball of magentic energy and launch it forward. If you cast it while crouching, the ball will pull hit enemies towards it. It will push otherwise."
+    }
+  ],
+  "sortnum": 7,
+  "advancement": "soulforge:hidden/bravery/unlocked_polarities"
+}

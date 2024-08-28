@@ -1,8 +1,6 @@
 package com.pulsar.soulforge.item.weapons;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.PVHarpoonProjectile;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
@@ -35,10 +33,7 @@ public class PerseveranceHarpoon extends MagicSwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (target instanceof PlayerEntity playerTarget) {
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(playerTarget);
-            Utils.addAntiheal(0.2f, 200f, targetSoul);
-        }
+        Utils.addAntiheal(0.2f, 200, target);
         Vec3d direction = target.getPos().subtract(attacker.getPos());
         target.takeKnockback(0.4f, direction.x, direction.z);
         target.velocityModified = true;

@@ -7,6 +7,7 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -29,13 +30,16 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.RenderUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, GeoBlockEntity, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(1, ItemStack.EMPTY);
 
     protected final PropertyDelegate propertyDelegate;
     public int fuel;
+    List<Entity> inside = new ArrayList<>();
 
     public CreativeZoneBlockEntity(BlockPos pos, BlockState state) {
         super(SoulForgeBlocks.CREATIVE_ZONE_ENTITY, pos, state);
@@ -67,15 +71,43 @@ public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScre
         if (world.isReceivingRedstonePower(pos) != wasActivated) {
             if (world.isReceivingRedstonePower(pos)) {
                 SoulForge.getWorldComponent(world).addActiveCreativeZone(pos);
+                inside = new ArrayList<>();
+                for (Entity entity : world.getOtherEntities(null, Box.of(pos.toCenterPos(), 170, 170, 170))) {
+                    if (entity.getPos().distanceTo(pos.toCenterPos()) < 80f) {
+                        inside.add(entity);
+                    }
+                }
             } else {
                 SoulForge.getWorldComponent(world).removeActiveCreativeZone(pos);
+                inside = new ArrayList<>();
             }
         }
         wasActivated = world.isReceivingRedstonePower(pos);
         if (world.isReceivingRedstonePower(pos)) {
             if (fuel > 0) {
                 fuel--;
-                if (fuel % 20 == 0) applyEffect(world, pos);
+                if (fuel % 20 == 0) {
+                    Box box = (new Box(pos)).expand(80).stretch(0.0, world.getHeight(), 0.0);
+                    for (PlayerEntity player : world.getNonSpectatingEntities(PlayerEntity.class, box)) {
+                        if (inside.contains(player)) {
+                            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.CREATIVE_ZONE, 150, 0));
+                        }
+                    }
+                }
+            }
+            for (Entity entity : world.getOtherEntities(null, Box.of(pos.toCenterPos(), 170, 170, 170))) {
+                double distance = entity.getPos().distanceTo(pos.toCenterPos());
+                if (distance < 80f && !inside.contains(entity)) {
+                    entity.addVelocity(entity.getPos().subtract(pos.toCenterPos()).normalize().multiply(Math.max(1f, (distance - 80) / 5f)));
+                    entity.velocityModified = true;
+                }
+            }
+            for (Entity entity : inside) {
+                double distance = entity.getPos().distanceTo(pos.toCenterPos());
+                if (distance > 80f) {
+                    entity.addVelocity(entity.getPos().subtract(pos.toCenterPos()).normalize().multiply(-Math.max(1f, (distance - 80) / 5f)));
+                    entity.velocityModified = true;
+                }
             }
         }
         ItemStack stack = this.getStack(0);
@@ -88,13 +120,6 @@ public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScre
         } else if (stack.isOf(SoulForgeItems.KINDNESS_ARNICITE_CORE) || stack.isOf(SoulForgeItems.INTEGRITY_ARNICITE_CORE)) {
             fuel += 20000;
             stack.decrement(1);
-        }
-    }
-
-    private static void applyEffect(World world, BlockPos pos) {
-        Box box = (new Box(pos)).expand(80).stretch(0.0, world.getHeight(), 0.0);
-        for (PlayerEntity player : world.getNonSpectatingEntities(PlayerEntity.class, box)) {
-            player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.CREATIVE_ZONE, 150, 0));
         }
     }
 
@@ -113,11 +138,6 @@ public class CreativeZoneBlockEntity extends BlockEntity implements ExtendedScre
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
-    }
-
-    @Override
-    public double getTick(Object blockEntity) {
-        return RenderUtils.getCurrentTick();
     }
 
     @Override

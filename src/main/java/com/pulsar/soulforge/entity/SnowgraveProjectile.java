@@ -19,7 +19,6 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
@@ -108,8 +107,7 @@ public class SnowgraveProjectile extends Entity implements GeoEntity {
                                 frostbite.setPosition(entity.getPos());
                                 frostbite.setEntity(living);
                                 frostbite.setSize((float) Math.max(entity.getBoundingBox().getXLength(), entity.getBoundingBox().getZLength()), (float) entity.getBoundingBox().getYLength());
-                                ServerWorld serverWorld = this.getServer().getWorld(this.getWorld().getRegistryKey());
-                                serverWorld.spawnEntity(frostbite);
+                                this.getWorld().spawnEntity(frostbite);
                                 entity.setInvulnerable(true);
                             }
                         }

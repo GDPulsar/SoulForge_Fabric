@@ -1,7 +1,5 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.util.Utils;
@@ -48,10 +46,7 @@ public class JusticeHarpoonProjectile extends PersistentProjectileEntity impleme
         if (!this.getWorld().isClient) {
             if (!inGround) {
                 if (stuckEntity != null) {
-                    if (stuckEntity instanceof PlayerEntity target) {
-                        SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
-                        Utils.addAntiheal(0.5f, 4f, targetSoul);
-                    }
+                    Utils.addAntiheal(0.5f, 4, stuckEntity);
                     this.setPosition(stuckEntity.getPos().add(0f, stuckEntity.getHeight() / 2f, 0f).add(getRotationVector()));
                     this.setVelocity(Vec3d.ZERO);
                     if (this.stuckEntity.isDead() || this.stuckEntity.isRemoved()) {

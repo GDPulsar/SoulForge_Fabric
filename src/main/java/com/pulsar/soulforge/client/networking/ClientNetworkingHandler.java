@@ -14,5 +14,7 @@ public class ClientNetworkingHandler {
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.POSITION_VELOCITY, PositionVelocityPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SET_THIRD_PERSON, SetThirdPersonPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.UPDATE_TICK_RATE, UpdateTickRatePacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SHOW_TOAST, ShowToastPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.OPEN_SCREEN, OpenScreenPacket::receive);
     }
 }

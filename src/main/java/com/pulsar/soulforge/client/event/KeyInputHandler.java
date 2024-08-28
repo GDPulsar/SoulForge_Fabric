@@ -1,17 +1,10 @@
 package com.pulsar.soulforge.client.event;
 
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.determination.WeaponWheel;
-import com.pulsar.soulforge.ability.duals.Armory;
-import com.pulsar.soulforge.ability.duals.Reload;
-import com.pulsar.soulforge.ability.duals.Wormhole;
-import com.pulsar.soulforge.ability.perseverance.MorphingWeaponry;
-import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
-import com.pulsar.soulforge.client.ui.*;
+import com.pulsar.soulforge.client.ui.SoulScreen;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
-import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -87,23 +80,6 @@ public class KeyInputHandler {
                         buf.writeBoolean(true);
                         buf.writeString(ability.getName());
                         if (playerSoul.onCooldown(ability)) break;
-                        if (ability instanceof WeaponWheel || ability instanceof Wormhole || ability instanceof Armory || ability instanceof Reload || ability instanceof MorphingWeaponry) {
-                            float cost = ability.getCost();
-                            if (client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
-                                cost *= (float) client.player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).getValue();
-                            }
-                            if (playerSoul.isStrong() && !playerSoul.hasTrait(Traits.determination))
-                                cost /= 2f;
-                            if (playerSoul.hasCast("Valiant Heart")) cost /= 2f;
-                            if (cost <= playerSoul.getMagic()) {
-                                if (ability instanceof WeaponWheel) client.setScreen(new WeaponWheelScreen());
-                                else if (ability instanceof Wormhole) client.setScreen(new WormholeScreen());
-                                else if (ability instanceof Armory) client.setScreen(new ArmoryScreen());
-                                else if (ability instanceof Reload) client.setScreen(new ReloadScreen());
-                                else if (ability instanceof MorphingWeaponry)
-                                    client.setScreen(new MorphingWeaponryScreen());
-                            }
-                        }
                         ClientPlayNetworking.send(SoulForgeNetworking.CAST_ABILITY, buf);
                     }
                 } else {

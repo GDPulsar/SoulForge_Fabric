@@ -1,11 +1,15 @@
 package com.pulsar.soulforge.trait;
 
+import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.ability.Abilities;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.determination.DeterminationSword;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.trait.traits.*;
 import com.pulsar.soulforge.util.Constants;
+import com.pulsar.soulforge.util.Utils;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -73,7 +77,17 @@ public class Traits {
         return null;
     }
 
-    public static List<AbilityBase> getAbilities(List<TraitBase> traits, int lv, boolean isPure) {
+    public static List<AbilityBase> getAbilities(PlayerEntity player) {
+        if (player == null) return List.of();
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        return getAbilities(player, playerSoul);
+    }
+
+    public static List<AbilityBase> getAbilities(PlayerEntity player, SoulComponent playerSoul) {
+        return getAbilities(playerSoul.getTraits(), playerSoul.getLV(), playerSoul.isPure(), Utils.hasHate(player));
+    }
+
+    public static List<AbilityBase> getAbilities(List<TraitBase> traits, int lv, boolean pure, boolean hasHate) {
         List<AbilityBase> abilities = new ArrayList<>();
         for (TraitBase trait : traits) {
             for (AbilityBase ability : trait.getAbilities()) {
@@ -90,9 +104,9 @@ public class Traits {
             }
         }
 
-        if (isPure && traits.get(0) != Traits.spite) {
+        if (pure && !traits.contains(Traits.spite)) {
             for (TraitBase trait : traits) {
-                if (trait != Traits.perseverance && trait != Traits.determination) {
+                if (trait != Traits.perseverance && trait != Traits.despair && trait != Traits.determination) {
                     AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                     if (pureAbility.getLV() <= lv) {
                         abilities.add(pureAbility.getInstance());
@@ -102,7 +116,7 @@ public class Traits {
         }
         if (traits.contains(Traits.spite)) {
             for (TraitBase trait : Traits.all()) {
-                if (trait != Traits.perseverance && trait != Traits.determination) {
+                if (trait != Traits.perseverance && trait != Traits.despair && trait != Traits.determination) {
                     AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                     if (pureAbility.getLV() <= lv) {
                         abilities.add(pureAbility.getInstance());
@@ -110,6 +124,13 @@ public class Traits {
                 }
             }
         }
+
+        if (hasHate) {
+            for (AbilityBase ability : Abilities.hateAbilities) {
+                abilities.add(ability.getInstance());
+            }
+        }
+
         abilities.sort(Comparator.comparingInt(AbilityBase::getLV));
         return abilities;
     }

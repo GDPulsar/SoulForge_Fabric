@@ -40,7 +40,7 @@ public class GravityAnchor extends AbilityBase {
                         new DustParticleEffect(Vec3d.unpackRgb(0x0000FF).toVector3f(), 1f),
                         target.getX()+x, target.getY(), target.getZ()+z, 1, 0, 0.2);
             }
-            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 2));
+            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, playerSoul.getEffectiveLV() / 5));
             timer = Math.round(playerSoul.getEffectiveLV()*15f);
             lastY = (float)target.getY();
             return super.cast(player);

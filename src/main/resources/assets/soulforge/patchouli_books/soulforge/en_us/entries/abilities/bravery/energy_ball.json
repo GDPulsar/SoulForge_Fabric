@@ -1,0 +1,21 @@
+{
+  "name": "Energy Ball",
+  "icon": "soulforge:textures/ui/ability_icon/energy_ball.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Energy Ball",
+      "icon": "energy_ball",
+      "cost": "20 mana",
+      "cooldown": "5 seconds",
+      "lv": 1
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Fire off a ball of energy, engulfing hit targets in fire and affecting the nearby area."
+    }
+  ],
+  "sortnum": 0,
+  "advancement": "soulforge:hidden/bravery/unlocked_energy_ball"
+}

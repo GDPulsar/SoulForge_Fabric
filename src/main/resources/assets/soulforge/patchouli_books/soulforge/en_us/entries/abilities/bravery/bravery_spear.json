@@ -1,0 +1,21 @@
+{
+  "name": "Bravery Spear",
+  "icon": "soulforge:textures/ui/ability_icon/bravery_spear.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Bravery Spear",
+      "icon": "bravery_spear",
+      "cost": "20 mana",
+      "cooldown": "None",
+      "lv": 10
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a Bravery Spear. Hold right click to throw the spear, sticking into enemies on hit and dealing damage over time. Also has increased attack range."
+    }
+  ],
+  "sortnum": 5,
+  "advancement": "soulforge:hidden/bravery/unlocked_bravery_spear"
+}

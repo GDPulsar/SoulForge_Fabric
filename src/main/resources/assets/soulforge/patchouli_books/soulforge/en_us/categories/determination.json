@@ -1,0 +1,7 @@
+{
+  "name": "Determination",
+  "description": "Determination is a Jack of all Trades, master of none. The strongest trait.",
+  "parent": "soulforge:traits",
+  "sortnum": 6,
+  "icon": "soulforge:determination_arnicite_heart"
+}

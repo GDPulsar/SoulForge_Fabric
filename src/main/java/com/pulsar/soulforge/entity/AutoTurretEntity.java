@@ -91,6 +91,14 @@ public class AutoTurretEntity extends MobEntity implements GeoEntity, Ownable {
             if (this.owner == null && this.dataTracker.get(OWNER_UUID).isPresent()) {
                 this.owner = this.getWorld().getPlayerByUuid(this.dataTracker.get(OWNER_UUID).get());
             }
+            if (this.owner != null) {
+                if (this.owner.isDead() || this.owner.isRemoved()) {
+                    this.kill();
+                }
+            }
+            if (this.age >= 6000) {
+                this.kill();
+            }
             this.setPitch(0f);
             if (this.getTarget() != null) {
                 if (this.getTarget().isDead() || !this.getAttackBox().contains(this.getTarget().getPos()) || !this.canTarget(this.getTarget())) {

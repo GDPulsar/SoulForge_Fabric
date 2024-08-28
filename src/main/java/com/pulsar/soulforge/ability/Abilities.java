@@ -43,10 +43,44 @@ public class Abilities {
                 return ability.getInstance();
             }
         }
+        for (AbilityBase ability : hateAbilities) {
+            if (Objects.equals(ability.getName(), name)) {
+                return ability.getInstance();
+            }
+        }
         return null;
     }
 
     public static List<AbilityBase> hateAbilities = new ArrayList<>(List.<AbilityBase>of(
             new Insanity()
     ));
+
+    public static List<String> getAllAbilityNames() {
+        List<String> abilityNames = new ArrayList<>();
+        for (TraitBase trait : Traits.trueAll()) {
+            if (trait != Traits.spite) {
+                for (AbilityBase ability : List.copyOf(trait.getAbilities())) {
+                    if (!abilityNames.contains(ability.getName()))
+                        abilityNames.add(ability.getName());
+                }
+            }
+            if (Constants.pureAbilities.containsKey(trait)) {
+                if (!abilityNames.contains(Constants.pureAbilities.get(trait).getName()))
+                    abilityNames.add(Constants.pureAbilities.get(trait).getName());
+            }
+        }
+        for (AbilityBase ability : Constants.dualAbilities) {
+            if (!abilityNames.contains(ability.getName()))
+                abilityNames.add(ability.getName());
+        }
+        for (AbilityBase ability : hateAbilities) {
+            if (!abilityNames.contains(ability.getName()))
+                abilityNames.add(ability.getName());
+        }
+        return abilityNames;
+    }
+
+    public static int totalAbilityCount() {
+        return getAllAbilityNames().size();
+    }
 }

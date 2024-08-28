@@ -1,0 +1,7 @@
+{
+  "name": "Patience",
+  "description": "Patience is one of the three support traits, and specializes in boosts and ice.",
+  "parent": "soulforge:traits",
+  "sortnum": 3,
+  "icon": "soulforge:patience_arnicite_heart"
+}

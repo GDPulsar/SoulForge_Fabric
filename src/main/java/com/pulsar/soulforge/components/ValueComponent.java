@@ -10,6 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ValueComponent implements AutoSyncedComponent {
     HashMap<String, Float> floatVals;
@@ -17,6 +18,7 @@ public class ValueComponent implements AutoSyncedComponent {
     HashMap<String, Boolean> boolVals;
     HashMap<String, Vec3d> vecVals;
     HashMap<String, UUID> uuidVals;
+    NbtCompound extraVals;
 
     final LivingEntity entity;
 
@@ -27,6 +29,7 @@ public class ValueComponent implements AutoSyncedComponent {
         boolVals = new HashMap<>();
         vecVals = new HashMap<>();
         uuidVals = new HashMap<>();
+        extraVals = new NbtCompound();
     }
 
     public float getFloat(String key) {
@@ -101,6 +104,18 @@ public class ValueComponent implements AutoSyncedComponent {
         return uuidVals.containsKey(key);
     }
 
+    public NbtCompound getExtraVals() {
+        return extraVals;
+    }
+    public void setExtraVals(NbtCompound value) {
+        extraVals = value;
+        sync();
+    }
+    public void modifyExtraVals(Consumer<NbtCompound> consumer) {
+        consumer.accept(extraVals);
+        sync();
+    }
+
     void sync() {
         EntityInitializer.VALUES.sync(entity);
     }
@@ -136,6 +151,8 @@ public class ValueComponent implements AutoSyncedComponent {
         for (String key : uuidNbt.getKeys()) {
             uuidVals.put(key, uuidNbt.getUuid(key));
         }
+
+        extraVals = nbt.getCompound("extras");
     }
 
     @Override
@@ -169,5 +186,7 @@ public class ValueComponent implements AutoSyncedComponent {
             uuidNbt.putUuid(entry.getKey(), entry.getValue());
         }
         nbt.put("uuidVals", uuidNbt);
+
+        nbt.put("extras", extraVals);
     }
 }

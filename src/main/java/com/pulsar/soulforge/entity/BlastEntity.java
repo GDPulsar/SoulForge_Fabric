@@ -108,6 +108,22 @@ public class BlastEntity extends Entity {
         this.onDamageEvent = onDamageEvent;
     }
 
+    public BlastEntity(World world, Vec3d pos, LivingEntity owner, float radius, Vec3d start, Vec3d end, float damage, Color color, boolean ignoresIframes, int duration, int hitInterval) {
+        super(SoulForgeEntities.HORIZONTAL_BLAST_ENTITY_TYPE, world);
+        this.setPosition(pos);
+        this.owner = owner;
+        this.dataTracker.set(POSITION, pos.toVector3f());
+        this.dataTracker.set(START, start.toVector3f());
+        this.dataTracker.set(END, end.toVector3f());
+        this.dataTracker.set(COLOR, color.getRGB());
+        this.dataTracker.set(RADIUS, radius);
+        this.dataTracker.set(DAMAGE, damage);
+        this.dataTracker.set(IGNORES_IFRAMES, ignoresIframes);
+        this.dataTracker.set(DURATION, duration);
+        this.dataTracker.set(HIT_INTERVAL, hitInterval);
+        this.ignoreCameraFrustum = true;
+    }
+
     public BlastEntity(World world, Vec3d pos, LivingEntity owner, float radius, Vec3d start, Vec3d end, float damage, Color color, boolean ignoresIframes, int duration, int hitInterval, BiConsumer<BlastEntity, LivingEntity> onBlastDamageEvent) {
         super(SoulForgeEntities.HORIZONTAL_BLAST_ENTITY_TYPE, world);
         this.setPosition(pos);

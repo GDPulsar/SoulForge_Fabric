@@ -3,7 +3,9 @@ package com.pulsar.soulforge.util;
 import com.mojang.brigadier.context.CommandContext;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.*;
+import com.pulsar.soulforge.entity.ShieldShardEntity;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
@@ -47,7 +49,10 @@ public class Utils {
         Vec3d start = player.getEyePos();
         Vec3d direction = player.getRotationVector().multiply(10000);
         Box searchBox = player.getBoundingBox().expand(distance);
-        return ProjectileUtil.getEntityCollision(player.getWorld(), player, start, start.add(direction), searchBox, EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR);
+        return ProjectileUtil.getEntityCollision(player.getWorld(), player, start, start.add(direction), searchBox, (entity) ->
+                (EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(entity) ||
+                        (entity instanceof ShieldShardEntity shieldShard && shieldShard.owner != player)) &&
+                        (entity instanceof LivingEntity || entity instanceof ShieldShardEntity));
     }
 
     public static EntityHitResult getFocussedEntity(PlayerEntity player, float distance, Predicate<Entity> predicate) {
@@ -68,8 +73,26 @@ public class Utils {
         }
     }
 
-    public static void addAntiheal(float amount, float duration, SoulComponent targetSoul) {
-        targetSoul.setAntiheal(amount, duration);
+    public static final UUID antihealModifierID = UUID.fromString("860f5ef8-87a6-47c7-9af5-8ecd553338c9");
+    public static void addAntiheal(double amount, int duration, LivingEntity target) {
+        TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
+        if (modifiers != null) {
+            Triplet<EntityAttributeModifier, EntityAttribute, Float> modifier = modifiers.getModifierEntry(SoulForgeAttributes.ANTIHEAL, antihealModifierID);
+            if (modifier != null) {
+                if (modifier.getFirst().getValue() < amount) {
+                    modifiers.removeTemporaryModifier(SoulForgeAttributes.ANTIHEAL, modifier.getFirst());
+                    modifiers.addTemporaryModifier(SoulForgeAttributes.ANTIHEAL, new EntityAttributeModifier(antihealModifierID,
+                            "antiheal", amount, EntityAttributeModifier.Operation.ADDITION), duration);
+                } else if (modifier.getFirst().getValue() == amount && modifier.getThird() < duration) {
+                    modifiers.removeTemporaryModifier(SoulForgeAttributes.ANTIHEAL, modifier.getFirst());
+                    modifiers.addTemporaryModifier(SoulForgeAttributes.ANTIHEAL, new EntityAttributeModifier(antihealModifierID,
+                            "antiheal", amount, EntityAttributeModifier.Operation.ADDITION), duration);
+                }
+            } else {
+                modifiers.addTemporaryModifier(SoulForgeAttributes.ANTIHEAL, new EntityAttributeModifier(antihealModifierID,
+                        "antiheal", amount, EntityAttributeModifier.Operation.ADDITION), duration);
+            }
+        }
     }
 
     public static void clearModifiersByName(LivingEntity living, EntityAttribute attribute, String name) {
@@ -267,24 +290,42 @@ public class Utils {
         return context.getSource().isExecutedByPlayer() && (omegagamers.contains(context.getSource().getPlayer().getName().getString()) || FabricLoader.getInstance().isDevelopmentEnvironment());
     }
 
+    public static boolean canAccessInverteds(ServerCommandSource source) {
+        return source.isExecutedByPlayer() && (omegagamers.contains(source.getPlayer().getName().getString()) || FabricLoader.getInstance().isDevelopmentEnvironment());
+    }
+
     public static float getHate(LivingEntity entity) {
         if (entity == null) return 0f;
-        ValueComponent values = SoulForge.getValues(entity);
-        if (values == null) return 0f;
-        return values.hasFloat("HATE") ? values.getFloat("HATE") : 0f;
+        HateComponent hate = SoulForge.getHate(entity);
+        if (hate == null) return 0f;
+        return hate.getHatePercent();
     }
 
     public static boolean hasHate(LivingEntity entity) {
         if (entity == null) return false;
-        ValueComponent values = SoulForge.getValues(entity);
-        if (values == null) return false;
-        return values.hasFloat("HATE") && values.getFloat("HATE") > 0f;
+        HateComponent hate = SoulForge.getHate(entity);
+        if (hate == null) return false;
+        return hate.hasHate();
+    }
+
+    public static void setHate(LivingEntity entity, float amount) {
+        if (entity == null) return;
+        HateComponent hate = SoulForge.getHate(entity);
+        if (hate == null) return;
+        hate.setHatePercent(amount);
     }
 
     public static void addHate(LivingEntity entity, float amount) {
         if (entity == null) return;
-        ValueComponent values = SoulForge.getValues(entity);
-        if (values == null) return;
-        values.setFloat("HATE", MathHelper.clamp(values.getFloat("HATE") + amount, 0f, 100f));
+        HateComponent hate = SoulForge.getHate(entity);
+        if (hate == null) return;
+        hate.addHatePercent(amount);
+    }
+
+    public static void setHasHate(LivingEntity entity, boolean hasHate) {
+        if (entity == null) return;
+        HateComponent hate = SoulForge.getHate(entity);
+        if (hate == null) return;
+        hate.setHasHate(hasHate);
     }
 }

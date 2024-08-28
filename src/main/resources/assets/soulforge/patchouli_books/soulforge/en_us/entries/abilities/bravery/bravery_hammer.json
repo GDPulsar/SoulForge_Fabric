@@ -1,0 +1,21 @@
+{
+  "name": "Bravery Hammer",
+  "icon": "soulforge:textures/ui/ability_icon/bravery_hammer.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Bravery Hammer",
+      "icon": "bravery_hammer",
+      "cost": "20 mana",
+      "cooldown": "None",
+      "lv": 10
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a Bravery Hammer. Right-click the ground while holding the hammer to cause an explosion."
+    }
+  ],
+  "sortnum": 4,
+  "advancement": "soulforge:hidden/bravery/unlocked_bravery_hammer"
+}

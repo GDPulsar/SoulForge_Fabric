@@ -127,6 +127,7 @@ public class SoulForgeItems {
     public static Item DETERMINATION_STAFF;
     public static Item DETERMINATION_SWORD;
     public static Item REAL_KNIFE;
+    public static Item DETERMINATION_CLAYMORE_DISPLAY;
 
     public static Item BFRCMG;
     public static Item LIGHTNING_ROD;
@@ -259,6 +260,7 @@ public class SoulForgeItems {
         DETERMINATION_STAFF = RegisterItem("determination_staff", new DeterminationStaff());
         DETERMINATION_SWORD = RegisterItem("determination_sword", new DeterminationSword());
         REAL_KNIFE = RegisterItem("real_knife", new RealKnife());
+        DETERMINATION_CLAYMORE_DISPLAY = RegisterItem("determination_claymore_display", new FabricItemSettings().maxCount(1));
 
         BFRCMG = RegisterItem("bfrcmg", new BFRCMG());
         LIGHTNING_ROD = RegisterItem("lightning_rod", new LightningRod());

@@ -1,17 +1,10 @@
 {
   "criteria": {
-    "lv": {
-      "trigger": "soulforge:player_lv",
-      "conditions": {
-        "min": 5
-      }
-    },
     "traits": {
-      "trigger": "soulforge:player_trait",
+      "trigger": "soulforge:player_soul",
       "conditions": {
-        "trait": [
-          "Kindness"
-        ]
+        "trait": "Kindness",
+        "lv": 5
       }
     }
   }

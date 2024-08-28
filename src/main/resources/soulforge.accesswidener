@@ -12,3 +12,4 @@ accessible field net/minecraft/client/render/entity/EntityRenderer dispatcher Ln
 accessible method net/minecraft/client/world/ClientWorld tickTime ()V
 accessible method net/minecraft/entity/LivingEntity isSleepingInBed ()Z
 accessible method net/minecraft/entity/LivingEntity setPositionInBed (Lnet/minecraft/util/math/BlockPos;)V
+accessible method net/minecraft/client/Mouse onMouseButton (JIII)V

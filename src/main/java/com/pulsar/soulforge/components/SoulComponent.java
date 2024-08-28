@@ -2,6 +2,7 @@ package com.pulsar.soulforge.components;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.*;
+import com.pulsar.soulforge.ability.bravery.Shatter;
 import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
 import com.pulsar.soulforge.ability.duals.PerfectedAuraTechnique;
 import com.pulsar.soulforge.ability.integrity.Platforms;
@@ -12,22 +13,25 @@ import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.data.AbilityList;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.entity.BlastEntity;
-import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
-import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
+import com.pulsar.soulforge.entity.*;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
+import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.ResetData;
 import com.pulsar.soulforge.util.SpokenTextRenderer;
+import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
+import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -40,10 +44,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -95,15 +101,20 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     public SoulComponent(PlayerEntity player) {
         this.player = player;
-        resetTrait();
         lv = 1;
         exp = 0;
         style = 0;
         styleRank = 0;
         magic = 100;
-        if (Utils.isInverted(this)) magicGauge = 1000f;
-        updateAbilities();
-        updateTags();
+        if (player != null && EntityInitializer.hasRegistered) {
+            if (player instanceof ComponentProvider p && p.getComponentContainer() != null) {
+                if (EntityInitializer.SOUL.maybeGet(player).isEmpty()) {
+                    resetTrait();
+                    updateAbilities();
+                    updateTags();
+                }
+            }
+        }
     }
 
     public static void sync(PlayerEntity player) {
@@ -138,7 +149,11 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         updateAbilities();
         updateTags();
-        SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
+            SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
+            SoulForgeCriterions.PLAYER_SOUL.trigger(serverPlayer, this);
+        }
         sync();
     }
 
@@ -152,7 +167,11 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         updateAbilities();
         updateTags();
-        SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
+            SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
+            SoulForgeCriterions.PLAYER_SOUL.trigger(serverPlayer, this);
+        }
         sync();
     }
 
@@ -167,7 +186,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         this.pure = pure;
         updateAbilities();
         updateTags();
-        SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
         sync();
     }
 
@@ -358,7 +376,11 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     public void setLV(int lv) {
         this.lv = Math.min(Math.max(lv, 1), 20);
-        if (this.player != null) SoulForgeCriterions.PLAYER_LV.trigger((ServerPlayerEntity)player, this.lv);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
+            SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
+            SoulForgeCriterions.PLAYER_SOUL.trigger(serverPlayer, this);
+        }
         updateAbilities();
         updateTags();
         sync();
@@ -370,6 +392,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     public void setEXP(int exp) {
         this.exp = Math.max(exp, 0);
+        int oldAbilityCount = Traits.getAbilities(player, this).size();
         boolean leveledUp = false;
         int expRequirement = getExpRequirement();
         while (this.exp >= expRequirement && expRequirement != -1) {
@@ -378,9 +401,18 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             leveledUp = true;
             expRequirement = getExpRequirement();
         }
-        if (leveledUp && player instanceof ServerPlayerEntity) {
-            SoulForgeCriterions.PLAYER_LV.trigger((ServerPlayerEntity)player, this.lv);
+        int newAbilityCount = Traits.getAbilities(player, this).size();
+        if (leveledUp && player instanceof ServerPlayerEntity serverPlayer) {
+            SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
+            SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
+            SoulForgeCriterions.PLAYER_SOUL.trigger(serverPlayer, this);
             player.sendMessage(Text.translatable("soulforge.lv.increase").append(String.valueOf(this.lv)));
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeBoolean(false); buf.writeBoolean(true);
+            buf.writeString("Your LV has increased!");
+            if (newAbilityCount <= oldAbilityCount) buf.writeString("");
+            else buf.writeString("Unlocked " + (newAbilityCount - oldAbilityCount) + " new abilities.");
+            ServerPlayNetworking.send((ServerPlayerEntity)player, SoulForgeNetworking.SHOW_TOAST, buf);
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.UT_LEVEL_UP_EVENT, SoundCategory.PLAYERS, 1f, 1f);
         }
         updateAbilities();
@@ -982,14 +1014,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         sync();
     }
 
-    public void setAntiheal(float amount, float duration) {
-        if (hasValue("antiheal")) setValue("antiheal", Math.max(getValue("antiheal"), amount));
-        else setValue("antiheal", amount);
-        if (hasValue("antihealDuration")) setValue("antihealDuration", Math.max(getValue("antihealDuration"), duration));
-        else setValue("antihealDuration", duration);
-        sync();
-    }
-
     public void castAbility(AbilityBase ability) {
         if (ability == null) return;
         boolean contains = abilities.has(ability.getName());
@@ -1034,16 +1058,22 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         }
     }
 
-    private void decreaseTimer(String value) {
-        if (hasValue(value)) {
-            if (getValue(value) > 0) setValue(value, (int) getValue(value) - 1);
+    private void decreaseTimer(ValueComponent values, String value) {
+        if (values.hasInt(value)) {
+            if (values.getInt(value) > 0) values.setInt(value, values.getInt(value) - 1);
+            else values.removeInt(value);
         }
     }
+
+    private static final EntityAttributeModifier strongModifier = new EntityAttributeModifier(UUID.fromString("5390de41-a4a2-450c-be21-efd230c47fc9"), "strong", -0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final EntityAttributeModifier pureModifier = new EntityAttributeModifier(UUID.fromString("ac02d0d4-839f-4215-b6f0-142c45d8cd47"), "pure", 0.5f, EntityAttributeModifier.Operation.ADDITION);
 
     private boolean lastTickWasShitAss = false;
     @Override
     public void tick() {
-        if (player instanceof ServerPlayerEntity) {
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            ValueComponent values = SoulForge.getValues(serverPlayer);
+
             long startTickTimer = System.currentTimeMillis();
             for (AbilityBase ability : abilities.getActive()) {
                 if (ability.tick((ServerPlayerEntity)player)) {
@@ -1068,7 +1098,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
             for (AbilityBase ability : getAbilities()) {
                 if (ability.getType() == AbilityType.SIDE_EFFECT && ability instanceof SideEffectAbilityBase sideEffect) {
-                    if (Math.random() <= sideEffect.getOccurenceChance()) {
+                    if (Math.random() <= sideEffect.getOccurrenceChance()) {
                         boolean canCast = sideEffect.cast((ServerPlayerEntity)player);
                         if (canCast) {
                             SoulForgeCriterions.CAST_ABILITY.trigger((ServerPlayerEntity) player, ability);
@@ -1077,6 +1107,13 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                         sync();
                     }
                 }
+            }
+
+            if (isStrong() && !player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).hasModifier(strongModifier)) {
+                player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).addPersistentModifier(strongModifier);
+            }
+            if (isPure() && !player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).hasModifier(pureModifier)) {
+                player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(pureModifier);
             }
 
             if (hasWeapon()) {
@@ -1094,21 +1131,22 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                     removeWormholeRequest();
                 }
             }
-            decreaseTimer("parry");
-            decreaseTimer("parryCooldown");
-            decreaseTimer("dtWeaponCooldown");
-            decreaseTimer("shieldBashCooldown");
-            decreaseTimer("stockpileTimer");
-            decreaseTimer("slamJumpTimer");
-            if (hasValue("stockpileTimer")) {
-                if (getValue("stockpileTimer") <= 0 && hasValue("stockpiles")) {
-                    setValue("stockpiles", 0);
+            assert values != null;
+            decreaseTimer(values, "parry");
+            decreaseTimer(values, "parryCooldown");
+            decreaseTimer(values, "dtWeaponCooldown");
+            decreaseTimer(values, "shieldBashCooldown");
+            decreaseTimer(values, "stockpileTimer");
+            decreaseTimer(values, "slamJumpTimer");
+            if (values.hasInt("stockpileTimer")) {
+                if (values.getInt("stockpileTimer") <= 0 && values.hasInt("stockpiles")) {
+                    values.setInt("stockpiles", 0);
                 }
             }
-            if (hasValue("stockpiles")) {
-                if (getValue("stockpiles") == 8) {
-                    setValue("stockpiles", 0);
-                    setValue("stockpileTimer", 0);
+            if (values.hasInt("stockpiles")) {
+                if (values.getInt("stockpiles") == 8) {
+                    values.setInt("stockpiles", 0);
+                    values.setInt("stockpileTimer", 0);
                     if (abilities.has("Perfected Aura Technique")) {
                         PerfectedAuraTechnique pat = (PerfectedAuraTechnique)abilities.get("Perfected Aura Technique");
                         pat.fullPower = true;
@@ -1166,7 +1204,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                                         if (getMagic() >= 40) {
                                             setMagic(getMagic() - 40f);
                                             SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity) living);
-                                            Utils.addAntiheal(hasCast("Furioso") ? 1f : 0.8f, getLV() * 40f, targetSoul);
+                                            Utils.addAntiheal(hasCast("Furioso") ? 1f : 0.8f, getLV() * 40, living);
                                         }
                                     }
                                 }
@@ -1211,11 +1249,9 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                             }
                         }
                     }
-                    if (player instanceof ServerPlayerEntity serverPlayer) {
-                        float angle = getValue("yoyoAoETimer");
-                        Vec3d particlePos = new Vec3d(Math.sin(angle), 1f, Math.cos(angle));
-                        serverPlayer.getServerWorld().spawnParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + particlePos.x, player.getY() + particlePos.y, player.getZ() + particlePos.z, 2, 0, 0, 0, 0);
-                    }
+                    float angle = getValue("yoyoAoETimer");
+                    Vec3d particlePos = new Vec3d(Math.sin(angle), 1f, Math.cos(angle));
+                    serverPlayer.getServerWorld().spawnParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + particlePos.x, player.getY() + particlePos.y, player.getZ() + particlePos.z, 2, 0, 0, 0, 0);
                     setValue("yoyoAoETimer", getValue("yoyoAoETimer") - 1);
                     setValue("yoyoSpin", 0);
                 }
@@ -1241,6 +1277,250 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                     player.teleport(target.x, target.y, target.z);
                     player.fallDistance = -5;
                     setValue("yoyoSpin", getValue("yoyoSpin") - 1);
+                }
+            }
+
+            if (hasTag("rampaging")) {
+                int rampageStartType = (int) getValue("rampageStart");
+                int rampageActiveType = (int) getValue("rampageActive");
+                int rampageEndType = (int) getValue("rampageEnd");
+                int computedStartDuration = switch (rampageActiveType) {
+                    case 4 -> 100;
+                    case 5 -> 20;
+                    default -> 0;
+                };
+                int computedActiveDuration = switch (rampageActiveType) {
+                    case 0, 2, 3, 4 -> 400;
+                    case 1 -> 250;
+                    case 5 -> 600;
+                    default -> 0;
+                };
+                int computedEndDuration = switch (rampageEndType) {
+                    case 4 -> 20;
+                    case 5 -> 40;
+                    default -> 5;
+                };
+                if (getValue("rampageTimer") <= 0f) {
+                    SoulForge.LOGGER.info("started, rampageTimer: {}, start duration: {}, active duration: {}, end duration: {}", getValue("rampageTimer"), computedStartDuration, computedActiveDuration, computedEndDuration);
+                    switch (rampageStartType) {
+                        case 0 -> {
+                            for (LivingEntity infront : Utils.getEntitiesInFrontOf(player, 3, 15, 2, 2)) {
+                                if (!TeamUtils.canDamageEntity(player.getServer(), player, infront)) {
+                                    continue;
+                                }
+                                if (infront.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), 10f)) {
+                                    infront.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 30, 6));
+                                    infront.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 30, 3));
+                                }
+                            }
+                            float cos = MathHelper.cos(player.getYaw() * MathHelper.RADIANS_PER_DEGREE);
+                            float sin = MathHelper.sin(player.getYaw() * MathHelper.RADIANS_PER_DEGREE);
+                            float cos90 = -MathHelper.cos((player.getYaw() - 90) * MathHelper.RADIANS_PER_DEGREE);
+                            float sin90 = -MathHelper.sin((player.getYaw() - 90) * MathHelper.RADIANS_PER_DEGREE);
+                            Vec3d f = new Vec3d(-sin, 0, cos);
+                            Vec3d s = new Vec3d(sin90, 0, cos90);
+                            for (int i = 0; i < 15; i++) {
+                                for (int j = 0; j < 6; j++) {
+                                    Vec3d pos = player.getPos().add(f.multiply(i)).add(s.multiply(j-3f));
+                                    serverPlayer.getServerWorld().spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()),
+                                            pos.x, pos.y, pos.z, 3, 0f, 0f, 0f, 1);
+                                }
+                            }
+                        }
+                        case 1 -> {
+                            for (int i = 0; i < 15; i++) {
+                                JusticePelletProjectile pellet = new JusticePelletProjectile(player.getWorld(), player);
+                                pellet.setPos(new Vec3d(player.getX(), player.getEyeY(), player.getZ()));
+                                Vec3d pelletVel = player.getRotationVector().multiply(3.5f)
+                                        .add(new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f)).normalize().multiply(4f);
+                                pellet.setVelocity(pelletVel);
+                                player.getWorld().spawnEntity(pellet);
+                            }
+                        }
+                        case 2 -> {
+                            player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, computedStartDuration + computedActiveDuration, 1));
+                            setValue("shieldBash", 15);
+                        }
+                        case 3 -> {
+                            IceSpikeProjectile projectile = new IceSpikeProjectile(player.getWorld(), player);
+                            projectile.setPosition(player.getPos().add(player.getRotationVector().withAxis(Direction.Axis.Y, 0)));
+                            projectile.setYaw(player.getYaw());
+                            player.getWorld().spawnEntity(projectile);
+                            player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 1f, 1f);
+                        }
+                        case 4 -> {
+                            addTag("forcedRunning");
+                        }
+                    }
+                    setValue("rampageTimer", getValue("rampageTimer") + 1);
+                } else if (getValue("rampageTimer") <= computedStartDuration) {
+                    SoulForge.LOGGER.info("starting, rampageTimer: {}, start duration: {}, active duration: {}, end duration: {}", getValue("rampageTimer"), computedStartDuration, computedActiveDuration, computedEndDuration);
+                    switch (rampageStartType) {
+                        case 4 -> {
+                            boolean hit = false;
+                            for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
+                                if (target instanceof LivingEntity living) {
+                                    living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 5f);
+                                    living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, getEffectiveLV() / 5));
+                                    hit = true;
+                                }
+                            }
+                            if (hit) setValue("rampageTimer", computedStartDuration - 1);
+                        }
+                        case 5 -> {
+                            if (getValue("rampageTimer") == computedStartDuration) {
+                                for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 3, 3, 1, 1)) {
+                                    if (!TeamUtils.canDamageEntity(player.getServer(), player, target)) continue;
+                                    target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 25f);
+                                }
+                                player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, computedActiveDuration, 1));
+                                player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, computedActiveDuration, 2));
+                            }
+                        }
+                    }
+                    setValue("rampageTimer", getValue("rampageTimer") + 1);
+                } else if (getValue("rampageTimer") <= computedActiveDuration + computedStartDuration && getValue("rampageTimer") > computedStartDuration) {
+                    SoulForge.LOGGER.info("active, rampageTimer: {}, start duration: {}, active duration: {}, end duration: {}", getValue("rampageTimer"), computedStartDuration, computedActiveDuration, computedEndDuration);
+                    switch (rampageActiveType) {
+                        case 0 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + 1) {
+                                player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 400, 1));
+                                player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addTemporaryModifier(new EntityAttributeModifier(
+                                        UUID.fromString("ba424f6f-9ae4-4ef5-8d97-3aa09b2fbbb4"), "rampageBravery", 0.25, EntityAttributeModifier.Operation.ADDITION));
+                            }
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration) {
+                                player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).removeModifier(UUID.fromString("ba424f6f-9ae4-4ef5-8d97-3aa09b2fbbb4"));
+                            }
+                            for (LivingEntity target : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 14, 14, 14), (entity) -> TeamUtils.canDamageEntity(player.getServer(), player, entity))) {
+                                if (target.getFireTicks() < 100) target.setFireTicks(110);
+                            }
+                        }
+                        case 1 -> {
+                            if ((getValue("rampageTimer") - computedStartDuration) % 25 == 0) {
+                                Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
+                                HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+                                if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
+                                BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
+                                        player, 0.25f, Vec3d.ZERO, end, getEffectiveLV()/3f, Color.RED, true, Math.min(40, 10*getEffectiveLV()/3), 5);
+                                blast.owner = player;
+                                ServerWorld serverWorld = serverPlayer.getServerWorld();
+                                serverWorld.spawnEntity(blast);
+                                serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
+                                serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
+                            }
+                        }
+                        case 2 -> {
+                            for (LivingEntity target : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 14, 14, 14), (entity) -> TeamUtils.canHealEntity(player.getServer(), player, entity))) {
+                                target.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 2, 1));
+                                target.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 2, 0));
+                            }
+                        }
+                        case 4 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + 1) {
+                                player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).addTemporaryModifier(new EntityAttributeModifier(
+                                        UUID.fromString("31c6e2a7-4751-4d8c-9100-0f11c63e24c3"), "rampageIntegrity", 0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
+                            }
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration) {
+                                player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED).removeModifier(UUID.fromString("31c6e2a7-4751-4d8c-9100-0f11c63e24c3"));
+                            }
+                        }
+                        case 5 -> {
+                            if ((getValue("rampageTimer") - computedStartDuration) % 200 == 0) {
+                                TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(player);
+                                modifiers.addTemporaryModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(UUID.fromString("6b29ca47-5f00-45ef-aa29-62236c9cf493"),
+                                        "rampagePerseverance", 0.02f * getEffectiveLV(), EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 120);
+                            }
+                        }
+                    }
+                    setValue("rampageTimer", getValue("rampageTimer") + 1);
+                } else if (getValue("rampageTimer") > computedStartDuration + computedActiveDuration && getValue("rampageTimer") < computedStartDuration + computedActiveDuration + computedEndDuration) {
+                    SoulForge.LOGGER.info("ending, rampageTimer: {}, start duration: {}, active duration: {}, end duration: {}", getValue("rampageTimer"), computedStartDuration, computedActiveDuration, computedEndDuration);
+                    switch (rampageEndType) {
+                        case 0 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration + 1) Shatter.performShatterLiterallyJustThat(serverPlayer);
+                        }
+                        case 1 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration + 1) {
+                                FragmentationGrenadeProjectile projectile = new FragmentationGrenadeProjectile(player.getWorld(), player.getEyePos(), player);
+                                projectile.setPosition(player.getEyePos());
+                                projectile.setVelocity(new Vec3d(0f, 2f, 0f));
+                                projectile.setOwner(player);
+                                serverPlayer.getServerWorld().spawnEntity(projectile);
+                                for (int i = 0; i < 6; i++) {
+                                    JusticePelletProjectile pellet = new JusticePelletProjectile(player.getWorld(), player);
+                                    pellet.setPos(player.getPos().add(new Vec3d(5 * MathHelper.sin((float) (i * Math.PI / 3f)), 1f, 5 * MathHelper.cos((float) (i * Math.PI / 3f)))));
+                                    pellet.setVelocity(player.getPos().add(0f, player.getHeight()/2f, 0f).subtract(pellet.getPos()).normalize().multiply(2f));
+                                    player.getWorld().spawnEntity(pellet);
+                                    pellet.playSound(SoulForgeSounds.UT_A_BULLET_EVENT, 0.5f, 1f);
+                                }
+                                for (int i = 0; i < 12; i++) {
+                                    JusticePelletProjectile pellet = new JusticePelletProjectile(player.getWorld(), player);
+                                    pellet.setPos(player.getPos().add(new Vec3d(8 * MathHelper.sin((float) (i * Math.PI / 6f)), 1f, 8 * MathHelper.cos((float) (i * Math.PI / 6f)))));
+                                    pellet.setVelocity(player.getPos().add(0f, player.getHeight()/2f, 0f).subtract(pellet.getPos()).normalize().multiply(2f));
+                                    player.getWorld().spawnEntity(pellet);
+                                    pellet.playSound(SoulForgeSounds.UT_A_BULLET_EVENT, 0.5f, 1f);
+                                }
+                                for (int i = 0; i < 18; i++) {
+                                    JusticePelletProjectile pellet = new JusticePelletProjectile(player.getWorld(), player);
+                                    pellet.setPos(player.getPos().add(new Vec3d(13 * MathHelper.sin((float) (i * Math.PI / 9f)), 1f, 13 * MathHelper.cos((float) (i * Math.PI / 9f)))));
+                                    pellet.setVelocity(player.getPos().add(0f, player.getHeight()/2f, 0f).subtract(pellet.getPos()).normalize().multiply(2f));
+                                    player.getWorld().spawnEntity(pellet);
+                                    pellet.playSound(SoulForgeSounds.UT_A_BULLET_EVENT, 0.5f, 1f);
+                                }
+                            }
+                        }
+                        case 2 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration + 1) {
+                                for (LivingEntity target : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 14, 14, 14), (entity) -> TeamUtils.canHealEntity(player.getServer(), player, entity))) {
+                                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 200, 1));
+                                }
+                            }
+                        }
+                        case 3 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration + 1) {
+                                for (LivingEntity target : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 14, 14, 14), (entity) -> TeamUtils.canHealEntity(player.getServer(), player, entity))) {
+                                    TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
+                                    modifiers.addTemporaryModifier(SoulForgeAttributes.MAGIC_POWER, new EntityAttributeModifier(UUID.fromString("c8932fc0-c82a-4552-9417-9fd4bc1b6e8a"),
+                                            "rampagePatience", 0.02f * getEffectiveLV(), EntityAttributeModifier.Operation.ADDITION), 200);
+                                }
+                            }
+                        }
+                        case 4 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration + 1) {
+                                float horiz = getEffectiveLV() * 0.15f;
+                                float vert = getEffectiveLV() * 0.005f;
+                                Vec3d direction = new Vec3d(player.getRotationVector().x, 0f, player.getRotationVector().z).normalize().multiply(horiz);
+                                PacketByteBuf buf = PacketByteBufs.create();
+                                buf.writeBoolean(false).writeBoolean(false).writeBoolean(true);
+                                buf.writeVector3f(new Vec3d(direction.x, vert, direction.z).toVector3f());
+                                ServerPlayNetworking.send(serverPlayer, SoulForgeNetworking.POSITION_VELOCITY, buf);
+                                player.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 200, 2));
+                            }
+                        }
+                        case 5 -> {
+                            if (getValue("rampageTimer") == computedStartDuration + computedActiveDuration + 1) {
+                                for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 5f, 8f, 2f, 2f)) {
+                                    if (target instanceof PlayerEntity targetPlayer) {
+                                        if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer))
+                                            continue;
+                                    }
+                                    target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE), getEffectiveLV() * 5f);
+                                }
+                                player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_BOMBSPLOSION_EVENT, SoundCategory.MASTER, 1f, 1f);
+                                PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("greater_slash");
+                                buf.writeBoolean(false);
+                                if (player.getServer() != null)
+                                    SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
+                            }
+                        }
+                    }
+                    setValue("rampageTimer", getValue("rampageTimer") + 1);
+                } else {
+                    removeValue("rampageTimer");
+                    removeTag("rampaging");
+                    removeValue("rampageStart");
+                    removeValue("rampageActive");
+                    removeValue("rampageEnd");
                 }
             }
 
@@ -1309,7 +1589,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                 SoulForge.LOGGER.warn("Ability does not exist: {}", abilityName);
             }
         }
-        for (AbilityBase ability : Traits.getAbilities(traits, getLV(), pure)) {
+        for (AbilityBase ability : Traits.getAbilities(player, this)) {
             if (!abilities.has(ability)) {
                 abilities.add(ability.getInstance());
             }
@@ -1448,7 +1728,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     private void updateAbilities() {
         if (this.player == null) return;
         if (this.player.getWorld().isClient) return;
-        List<String> shouldBeAbilityNames = Traits.getAbilities(traits, getLV(), pure).stream().map(AbilityBase::getName).toList();
+        List<String> shouldBeAbilityNames = Traits.getAbilities(player, this).stream().map(AbilityBase::getName).toList();
         for (String abilityName : shouldBeAbilityNames) {
             if (!this.abilities.has(abilityName)) {
                 this.abilities.add(Abilities.get(abilityName));
@@ -1519,8 +1799,10 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         }
         resetData.resetsSinceDT++;
         resetData.resetsSinceDual++;
-        if (player instanceof ServerPlayerEntity) {
-            SoulForgeCriterions.PLAYER_TRAIT.trigger((ServerPlayerEntity) player, this);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
+            SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
+            SoulForgeCriterions.PLAYER_SOUL.trigger(serverPlayer, this);
         }
         if (traits.size() == 1) {
             if (traits.get(0) == Traits.bravery) resetData.bravery = true;

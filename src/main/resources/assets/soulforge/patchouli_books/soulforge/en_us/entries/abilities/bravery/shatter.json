@@ -1,0 +1,21 @@
+{
+  "name": "Shatter",
+  "icon": "soulforge:textures/ui/ability_icon/shatter.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Shatter",
+      "icon": "shatter",
+      "cost": "80 mana",
+      "cooldown": "45 seconds",
+      "lv": 17
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Snap your fingers, causing an eruption of explosion around you, dealing large damage to nearby enemies."
+    }
+  ],
+  "sortnum": 9,
+  "advancement": "soulforge:hidden/bravery/unlocked_shatter"
+}

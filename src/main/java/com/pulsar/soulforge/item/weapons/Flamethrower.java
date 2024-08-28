@@ -4,7 +4,6 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
-import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.item.TooltipContext;
@@ -32,7 +31,6 @@ public class Flamethrower extends MagicItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-        boolean frostburn = playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.patience);
         if (playerSoul.getMagic() > 2f) {
             if (!world.isClient) {
                 for (LivingEntity entity : Utils.getEntitiesInFrontOf(user, 1.5f + playerSoul.getEffectiveLV()/4f, 3f + playerSoul.getEffectiveLV()/2f, 1f, 2f)) {

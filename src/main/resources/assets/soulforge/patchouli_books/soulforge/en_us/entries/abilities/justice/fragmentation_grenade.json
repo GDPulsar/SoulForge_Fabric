@@ -1,0 +1,16 @@
+{
+  "name": "Fragmentation Grenade",
+  "icon": "soulforge:textures/ui/ability_icon/fragmentation_grenade.png",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Throw an unstable ball of Justice energy, exploding into a barrage of pellets on contact with anything or after a short period of time."
+    }
+  ],
+  "sortnum": 9,
+  "advancement": "soulforge:hidden/justice/unlocked_fragmentation_grenade"
+}

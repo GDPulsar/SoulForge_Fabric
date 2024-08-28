@@ -10,7 +10,6 @@ import com.pulsar.soulforge.entity.DomePart;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.Traits;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,7 +45,7 @@ public class KindnessDome extends ToggleableAbilityBase {
             BlockHitResult hitResult = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(40f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
             if (hitResult != null) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                center = hitResult.getBlockPos();
+                center = hitResult.getBlockPos().offset(hitResult.getSide());
                 domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
                 player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 10f, 1f);
                 entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
@@ -84,13 +83,9 @@ public class KindnessDome extends ToggleableAbilityBase {
         World world = player.getWorld();
         if (!world.isClient) {
             if (pos.toCenterPos().distanceTo(center.toCenterPos()) <= domeRadius) {
-                if (!world.getBlockState(pos).isSolid()) {
-                    BlockState state = SoulForgeBlocks.DOME_BLOCK.getDefaultState();
-                    world.setBlockState(pos, state);
-                    DomePart part = new DomePart(entity, x+center.getX(), y+center.getY(), z+center.getZ());
-                    player.getWorld().spawnEntity(part);
-                    entity.addPart(part);
-                }
+                DomePart part = new DomePart(entity, x+center.getX(), y+center.getY(), z+center.getZ());
+                player.getWorld().spawnEntity(part);
+                entity.addPart(part);
             }
         }
     }

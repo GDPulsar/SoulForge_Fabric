@@ -54,10 +54,7 @@ public class Gunlance extends MagicSwordItem implements GeoItem {
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker instanceof PlayerEntity) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) attacker);
-            if (target instanceof PlayerEntity player) {
-                SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-                Utils.addAntiheal(0.4f, playerSoul.getLV() * 20, targetSoul);
-            }
+            Utils.addAntiheal(0.4f, playerSoul.getLV() * 20, target);
         }
         return super.postHit(stack, target, attacker);
     }

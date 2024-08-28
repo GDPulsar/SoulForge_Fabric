@@ -3,6 +3,7 @@ package com.pulsar.soulforge.item.weapons;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
+import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,7 +44,8 @@ public class JusticeCrossbow extends MagicRangedItem {
                         serverWorld.spawnParticles(new DustParticleEffect(Vec3d.unpackRgb(0xFFFF00).toVector3f(), 0.5f), pos.x, pos.y, pos.z, 1, 0f, 0f, 0f, 0f);
                     }
                 }
-            } else if (playerSoul.getMagic() >= 5) {
+                world.playSound(null, user.getBlockPos(), SoulForgeSounds.DR_LOWER_HEAVY_EVENT, SoundCategory.PLAYERS, 1f, 1f);
+            } else {
                 user.setCurrentHand(hand);
                 return TypedActionResult.consume(itemStack);
             }

@@ -17,7 +17,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import net.minecraft.world.event.GameEvent;
 
 import java.awt.*;
 
@@ -83,7 +82,6 @@ public class EnergyWave extends ToggleableAbilityBase {
         blast.owner = player;
         ServerWorld serverWorld = (ServerWorld)player.getWorld();
         serverWorld.spawnEntity(blast);
-        serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
         serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
         lastCooldownLength = 100 + 20 * chargeLevel;
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "energy_wave");

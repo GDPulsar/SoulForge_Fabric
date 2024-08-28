@@ -1,0 +1,45 @@
+{
+  "components": [
+    {
+      "type": "patchouli:header",
+      "text": "#name#",
+      "centered": true,
+      "x": -1,
+      "y": -1
+    },
+    {
+      "type": "patchouli:image",
+      "image": "soulforge:textures/ui/ability_icon/encyclopedia/#icon#.png",
+      "x": 22,
+      "y": 15,
+      "width": 256,
+      "height": 256,
+      "u": 0,
+      "v": 0,
+      "texture_width": 256,
+      "texture_height": 256,
+      "scale": 0.3
+    },
+    {
+      "type": "patchouli:header",
+      "text": "Unlock LV: #lv#",
+      "centered": true,
+      "x": -1,
+      "y": 100
+    },
+    {
+      "type": "patchouli:header",
+      "text": "Cost: #cost#",
+      "centered": true,
+      "x": -1,
+      "y": 110
+    },
+    {
+      "type": "patchouli:header",
+      "text": "Cooldown: #cooldown#",
+      "centered": true,
+      "x": -1,
+      "y": 120
+    }
+  ]
+}

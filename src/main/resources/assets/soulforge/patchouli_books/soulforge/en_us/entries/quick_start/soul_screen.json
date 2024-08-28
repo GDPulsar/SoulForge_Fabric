@@ -1,0 +1,12 @@
+{
+  "name": "Soul Screen",
+  "icon": "soulforge:determination_arnicite_heart",
+  "category": "soulforge:quick_start",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Your Soul Screen is the place that you assign abilities to your hotbar in order to cast, as well as check some of your soul statistics, such as LV, EXP and Trait."
+    }
+  ],
+  "sortnum": 0
+}

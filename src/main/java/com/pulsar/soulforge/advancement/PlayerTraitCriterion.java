@@ -14,8 +14,6 @@ import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.List;
-
 public class PlayerTraitCriterion extends AbstractCriterion<PlayerTraitCriterion.Conditions> {
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, LootContextPredicate predicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
@@ -88,13 +86,13 @@ public class PlayerTraitCriterion extends AbstractCriterion<PlayerTraitCriterion
             this.pure = pure;
         }
         boolean requirementsMet(SoulComponent playerSoul) {
-            List<TraitBase> traits = playerSoul.getTraits();
-            boolean matches = strong && (playerSoul.isStrong() || playerSoul.isPure() || playerSoul.hasTrait(Traits.determination));
-            matches = matches && (pure && (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination)));
-            if (trait1 != null) matches = matches && traits.contains(trait1);
-            if (trait2 != null) matches = matches && traits.contains(trait2);
-            if (count != -1) matches = matches && traits.size() >= count;
-            return matches;
+            boolean allMatches = true;
+            if (strong) allMatches = playerSoul.isStrong() || playerSoul.isPure() || playerSoul.hasTrait(Traits.determination);
+            if (pure) allMatches = allMatches && (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination));
+            if (trait1 != null) allMatches = allMatches && playerSoul.hasTrait(trait1);
+            if (trait2 != null) allMatches = allMatches && playerSoul.hasTrait(trait2);
+            if (count != -1) allMatches = allMatches && playerSoul.getTraitCount() >= count;
+            return allMatches;
         }
 
         @Override

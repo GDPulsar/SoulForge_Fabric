@@ -16,7 +16,7 @@ import java.util.List;
 public class Determination implements TraitBase {
     public final String name = "Determination";
     public final Identifier identifier = new Identifier(SoulForge.MOD_ID, "determination");
-    public final List<AbilityBase> abilities = new ArrayList<>(Arrays.asList(
+    public final List<AbilityBase> abilities = new ArrayList<AbilityBase>(Arrays.asList(
             new DeBuff(),
             new DeterminationAura(),
             new DeterminationBlaster(),

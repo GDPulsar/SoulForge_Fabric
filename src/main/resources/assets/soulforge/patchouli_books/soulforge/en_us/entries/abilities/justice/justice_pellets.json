@@ -1,0 +1,16 @@
+{
+  "name": "Justice Pellets",
+  "icon": "soulforge:textures/ui/ability_icon/justice_pellets.png",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Shoot a rapidly moving pellet of Justice energy."
+    }
+  ],
+  "sortnum": 0,
+  "advancement": "soulforge:hidden/justice/unlocked_justice_pellets"
+}

@@ -13,6 +13,18 @@
       "soulforge:bonk"
     ]
   },
+  "dr_chargeshot_fire": {
+    "subtitle": "subtitles.soulforge.dr_chargeshot_fire",
+    "sounds": [
+      "soulforge:dr_chargeshot_fire"
+    ]
+  },
+  "dr_creepyjingle": {
+    "subtitle": "subtitles.soulforge.dr_creepyjingle",
+    "sounds": [
+      "soulforge:dr_creepyjingle"
+    ]
+  },
   "dr_iceshock": {
     "subtitle": "subtitles.soulforge.dr_iceshock",
     "sounds": [
@@ -23,6 +35,12 @@
     "subtitle": "subtitles.soulforge.dr_make_fountain",
     "sounds": [
       "soulforge:dr_make_fountain"
+    ]
+  },
+  "dr_lower_heavy": {
+    "subtitle": "subtitles.soulforge.dr_lower_heavy",
+    "sounds": [
+      "soulforge:dr_lower_heavy"
     ]
   },
   "dr_revival": {

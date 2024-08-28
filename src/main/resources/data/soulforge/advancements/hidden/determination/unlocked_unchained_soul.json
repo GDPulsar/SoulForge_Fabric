@@ -1,0 +1,11 @@
+{
+  "criteria": {
+    "traits": {
+      "trigger": "soulforge:player_soul",
+      "conditions": {
+        "trait": "Determination",
+        "lv": 17
+      }
+    }
+  }
+}

@@ -1,17 +1,10 @@
 {
   "criteria": {
-    "lv": {
-      "trigger": "soulforge:player_lv",
-      "conditions": {
-        "min": 15
-      }
-    },
     "traits": {
-      "trigger": "soulforge:player_trait",
+      "trigger": "soulforge:player_soul",
       "conditions": {
-        "trait": [
-          "Perseverance"
-        ]
+        "trait": "Perseverance",
+        "lv": 15
       }
     }
   }

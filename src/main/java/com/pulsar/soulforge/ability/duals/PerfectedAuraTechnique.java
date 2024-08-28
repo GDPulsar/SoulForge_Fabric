@@ -107,7 +107,7 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
             Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "pat_strength");
             EntityAttributeModifier healthModifier = new EntityAttributeModifier("pat_health", playerSoul.getEffectiveLV() / 2f, EntityAttributeModifier.Operation.ADDITION);
             EntityAttributeModifier strengthModifier = new EntityAttributeModifier("pat_strength", playerSoul.getEffectiveLV() * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            EntityAttributeModifier armorModifier = new EntityAttributeModifier("pat_armor", playerSoul.getEffectiveLV() / 10f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+            EntityAttributeModifier armorModifier = new EntityAttributeModifier("pat_armor", playerSoul.getEffectiveLV() * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
             player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
             player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addPersistentModifier(armorModifier);
             player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);

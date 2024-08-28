@@ -1,0 +1,7 @@
+{
+  "name": "Integrity",
+  "description": "Integrity is one of the three support traits, and specializes in movement and gravity.",
+  "parent": "soulforge:traits",
+  "sortnum": 4,
+  "icon": "soulforge:integrity_arnicite_heart"
+}

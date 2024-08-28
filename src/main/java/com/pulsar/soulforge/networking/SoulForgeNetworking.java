@@ -25,6 +25,7 @@ public class SoulForgeNetworking {
     public static final Identifier SPAWN_WORMHOLE = new Identifier(SoulForge.MOD_ID, "spawn_wormhole");
     public static final Identifier RELOAD_SELECT = new Identifier(SoulForge.MOD_ID, "reload_select");
     public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
+    public static final Identifier RAMPAGE_ACTIVATE = new Identifier(SoulForge.MOD_ID, "rampage_activate");
 
     // S2C
     public static final Identifier PLAYER_SOUL = new Identifier(SoulForge.MOD_ID, "player_soul");
@@ -33,6 +34,8 @@ public class SoulForgeNetworking {
     public static final Identifier POSITION_VELOCITY = new Identifier(SoulForge.MOD_ID, "position_velocity");
     public static final Identifier SET_THIRD_PERSON = new Identifier(SoulForge.MOD_ID, "set_third_person");
     public static final Identifier UPDATE_TICK_RATE = new Identifier(SoulForge.MOD_ID, "update_tick_rate");
+    public static final Identifier SHOW_TOAST = new Identifier(SoulForge.MOD_ID, "show_toast");
+    public static final Identifier OPEN_SCREEN = new Identifier(SoulForge.MOD_ID, "open_screen");
 
     public static void registerPackets() {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_ABILITY, CastAbilityPacket::receive);
@@ -49,6 +52,7 @@ public class SoulForgeNetworking {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SPAWN_WORMHOLE, SpawnWormholePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RELOAD_SELECT, ReloadSelectPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.DOMAIN_EXPANSION, DomainExpansionPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RAMPAGE_ACTIVATE, RampageActivatePacket::receive);
     }
 
     public static void broadcast(@Nullable PlayerEntity exclude, MinecraftServer server, Identifier packet, PacketByteBuf buf) {

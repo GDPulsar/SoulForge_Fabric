@@ -7,8 +7,11 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class SoulForgeSounds {
+    public static final Identifier DR_CHARGESHOT_FIRE = new Identifier(SoulForge.MOD_ID, "dr_chargeshot_fire");
+    public static final Identifier DR_CREEPYJINGLE = new Identifier(SoulForge.MOD_ID, "dr_creepyjingle");
     public static final Identifier DR_ICESHOCK = new Identifier(SoulForge.MOD_ID, "dr_iceshock");
     public static final Identifier DR_MAKE_FOUNTAIN = new Identifier(SoulForge.MOD_ID, "dr_make_fountain");
+    public static final Identifier DR_LOWER_HEAVY = new Identifier(SoulForge.MOD_ID, "dr_lower_heavy");
     public static final Identifier DR_REVIVAL = new Identifier(SoulForge.MOD_ID, "dr_revival");
     public static final Identifier DR_RUDEBUSTER_SWING = new Identifier(SoulForge.MOD_ID, "dr_rudebuster_swing");
     public static final Identifier BONK = new Identifier(SoulForge.MOD_ID, "bonk");
@@ -44,8 +47,11 @@ public class SoulForgeSounds {
     public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
     public static final Identifier TRANCE_HEARTBEAT = new Identifier(SoulForge.MOD_ID, "trance_heartbeat");
 
+    public static SoundEvent DR_CHARGESHOT_FIRE_EVENT = SoundEvent.of(DR_CHARGESHOT_FIRE);
+    public static SoundEvent DR_CREEPYJINGLE_EVENT = SoundEvent.of(DR_CREEPYJINGLE);
     public static SoundEvent DR_ICESHOCK_EVENT = SoundEvent.of(DR_ICESHOCK);
     public static SoundEvent DR_MAKE_FOUNTAIN_EVENT = SoundEvent.of(DR_MAKE_FOUNTAIN);
+    public static SoundEvent DR_LOWER_HEAVY_EVENT = SoundEvent.of(DR_LOWER_HEAVY);
     public static SoundEvent DR_REVIVAL_EVENT = SoundEvent.of(DR_REVIVAL);
     public static SoundEvent DR_RUDEBUSTER_SWING_EVENT = SoundEvent.of(DR_RUDEBUSTER_SWING);
     public static SoundEvent BONK_EVENT = SoundEvent.of(BONK);
@@ -87,8 +93,11 @@ public class SoulForgeSounds {
     public static SoundEvent UT_ALPHYS_EVENT = SoundEvent.of(UT_ALPHYS);
 
     public static void registerSounds() {
+        Registry.register(Registries.SOUND_EVENT, DR_CHARGESHOT_FIRE, DR_CHARGESHOT_FIRE_EVENT);
+        Registry.register(Registries.SOUND_EVENT, DR_CREEPYJINGLE, DR_CREEPYJINGLE_EVENT);
         Registry.register(Registries.SOUND_EVENT, DR_ICESHOCK, DR_ICESHOCK_EVENT);
         Registry.register(Registries.SOUND_EVENT, DR_MAKE_FOUNTAIN, DR_MAKE_FOUNTAIN_EVENT);
+        Registry.register(Registries.SOUND_EVENT, DR_LOWER_HEAVY, DR_LOWER_HEAVY_EVENT);
         Registry.register(Registries.SOUND_EVENT, DR_REVIVAL, DR_REVIVAL_EVENT);
         Registry.register(Registries.SOUND_EVENT, DR_RUDEBUSTER_SWING, DR_RUDEBUSTER_SWING_EVENT);
         Registry.register(Registries.SOUND_EVENT, BONK, BONK_EVENT);

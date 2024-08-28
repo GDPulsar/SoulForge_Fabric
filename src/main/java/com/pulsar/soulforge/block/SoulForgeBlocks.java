@@ -84,7 +84,7 @@ public class SoulForgeBlocks {
 
     public static void registerBlocks() {
         SOUL_FORGE_BLOCK = RegisterBlock("soul_forge_block", new SoulForgeBlock());
-        SOUL_FORGE_ITEM = RegisterBlockItem("soul_forge_item", SOUL_FORGE_BLOCK, new FabricItemSettings());
+        SOUL_FORGE_ITEM = RegisterBlockItem("soul_forge_item", new SoulForgeItem(SOUL_FORGE_BLOCK, new FabricItemSettings()));
         SOUL_FORGE_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "soul_forge_block_entity"), FabricBlockEntityTypeBuilder.create(SoulForgeBlockEntity::new, SOUL_FORGE_BLOCK).build());
         DOME_BLOCK = RegisterBlock("dome_block", new DomeBlock());
         DETERMINATION_DOME_BLOCK = RegisterBlock("determination_dome_block", new DeterminationDomeBlock());

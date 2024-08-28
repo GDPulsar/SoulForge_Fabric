@@ -1,0 +1,70 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/elytra"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "broken": 1
+      },
+      "model": "item/broken_elytra"
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_bravery_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.1
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_justice_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.2
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_kindness_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.3
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_patience_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.4
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_integrity_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.5
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_perseverance_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.6
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_determination_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.7
+      }
+    },
+    {
+      "model": "soulforge:item/siphon/elytra_spite_siphon",
+      "predicate": {
+        "broken": 0,
+        "siphon_type": 0.8
+      }
+    }
+  ]
+}

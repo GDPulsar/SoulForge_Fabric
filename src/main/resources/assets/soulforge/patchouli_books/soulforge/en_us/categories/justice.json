@@ -1,0 +1,7 @@
+{
+  "name": "Justice",
+  "description": "Justice is one of the three power traits, and specializes in long range and projectiles.",
+  "parent": "soulforge:traits",
+  "sortnum": 1,
+  "icon": "soulforge:justice_arnicite_heart"
+}

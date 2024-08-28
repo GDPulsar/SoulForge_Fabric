@@ -1,0 +1,16 @@
+{
+  "name": "Justice Crossbow",
+  "icon": "soulforge:textures/ui/ability_icon/justice_crossbow.png",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Summon a Justice Crossbow. Charge the crossbow for 5 seconds to load it. Right click while loaded to shoot a sniping tracer that deals high damage."
+    }
+  ],
+  "sortnum": 5,
+  "advancement": "soulforge:hidden/justice/unlocked_justice_crossbow"
+}

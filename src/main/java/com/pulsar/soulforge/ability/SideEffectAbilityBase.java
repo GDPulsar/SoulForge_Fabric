@@ -1,7 +1,7 @@
 package com.pulsar.soulforge.ability;
 
 public abstract class SideEffectAbilityBase extends AbilityBase {
-    public abstract float getOccurenceChance();
+    public abstract float getOccurrenceChance();
 
     @Override
     public int getLV() {

@@ -1,0 +1,79 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 3,
+				"visible_bounds_offset": [0, 0.5, 0]
+			},
+			"bones": [
+				{
+					"name": "hamdle",
+					"pivot": [0, -0.75, 0],
+					"cubes": [
+						{"origin": [-0.6, -3, -0.6], "size": [1.2, 6, 1.2], "uv": [-5, -6]}
+					]
+				},
+				{
+					"name": "TheStretchyParts",
+					"pivot": [0.225, 0.01116, -8.83933],
+					"cubes": [
+						{"origin": [-0.3375, 3, -0.3375], "size": [0.675, 3.75, 0.675], "uv": [-2, -3]},
+						{"origin": [-0.3375, 4.80994, -2.76172], "size": [0.675, 6.75, 0.675], "pivot": [0.025, 0.3125, 2.82592], "rotation": [-25, 0, 0], "uv": [-5, -6]}
+					]
+				},
+				{
+					"name": "TheStretchyParts2",
+					"pivot": [0.275, -17.01116, 8.78567],
+					"cubes": [
+						{"origin": [-0.2875, -6.125, -0.3375], "size": [0.675, 3.75, 0.675], "uv": [-2, -3]},
+						{"origin": [-0.2875, -10.93494, -2.76172], "size": [0.675, 6.75, 0.675], "pivot": [0.025, 0.3125, 2.82592], "rotation": [25, 0, 0], "uv": [-5, -6]}
+					]
+				},
+				{
+					"name": "TheDIfferentStrings",
+					"pivot": [-0.225, -0.225, 13.875]
+				},
+				{
+					"name": "Stage0",
+					"parent": "TheDIfferentStrings",
+					"pivot": [0.225, 3.21739, 13.16597],
+					"cubes": [
+						{"origin": [-0.1875, -12.075, 2.475], "size": [0.375, 24.3, 0.375], "uv": [-26, -28]}
+					]
+				},
+				{
+					"name": "Stage1",
+					"parent": "TheDIfferentStrings",
+					"pivot": [0.225, 3.21739, 13.16597],
+					"cubes": [
+						{"origin": [-0.1875, -11.96419, 4.6314], "size": [0.375, 12.45, 0.375], "pivot": [0.025, 0.3125, 2.82592], "rotation": [-10, 0, 0], "uv": [-7, -9]},
+						{"origin": [-0.1875, -0.36001, 4.54891], "size": [0.375, 12.45, 0.375], "pivot": [0.025, 0.3125, 2.82592], "rotation": [10, 0, 0], "uv": [-8, -10]}
+					]
+				},
+				{
+					"name": "Stage2",
+					"parent": "TheDIfferentStrings",
+					"pivot": [-0.225, -0.225, 13.875],
+					"cubes": [
+						{"origin": [-0.1875, -11.44797, 6.73294], "size": [0.375, 13.05, 0.375], "pivot": [0.025, 0.3125, 2.82592], "rotation": [-20, 0, 0], "uv": [-6, -8]},
+						{"origin": [-0.1875, -1.42339, 6.57048], "size": [0.375, 13.05, 0.375], "pivot": [0.025, 0.3125, 2.82592], "rotation": [20, 0, 0], "uv": [-7, -9]}
+					]
+				},
+				{
+					"name": "Stage3",
+					"parent": "TheDIfferentStrings",
+					"pivot": [-0.225, -0.225, 13.875],
+					"cubes": [
+						{"origin": [-0.1875, -10.97515, 7.94084], "size": [0.375, 13.725, 0.375], "pivot": [0.025, 0.3125, 2.82592], "rotation": [-26, 0, 0], "uv": [-9, -11]},
+						{"origin": [-0.1875, -2.47678, 7.73261], "size": [0.375, 13.65, 0.375], "pivot": [0.025, 0.3125, 2.82592], "rotation": [26, 0, 0], "uv": [-9, -11]}
+					]
+				}
+			]
+		}
+	]
+}

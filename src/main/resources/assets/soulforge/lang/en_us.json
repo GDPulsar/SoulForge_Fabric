@@ -160,6 +160,7 @@
   "block.soulforge.soul_jar": "Soul Jar",
   "blockentity.soulforge.soul_jar": "Soul Jar",
   "item.soulforge.soul_jar": "Soul Jar",
+  "soulforge.soul_forge_screen.lava_prefix": "Lava: ",
   "soulforge.creative_zone_screen.fuel_prefix": "Fuel Remaining: ",
 
   "item.soulforge.arnicite_block": "Arnicite Block",
@@ -206,6 +207,8 @@
   "key.soulforge.soul_reset": "Soul Reset",
   "key.soulforge.cast_ability": "Cast Ability",
   "key.soulforge.ability_screen": "Open Ability Screen",
+  "key.soulforge.domain_expansion": "Domain Expansion",
+  "key.soulforge.weapon_slot": "Weapon Slot",
 
   "effect.soulforge.vulnerability": "Vulnerability",
   "effect.soulforge.mana_sickness": "Mana Sickness",
@@ -229,6 +232,8 @@
   "death.attack.pain_split": "%1$s got splitted.",
   "death.attack.parry.player": "%1$s got parried by %2$s.",
   "death.attack.parry": "%1$s got parried by a filthy casual.",
+  "death.attack.sniped.player": "%1$s was sniped by %2$s's crossbow.",
+  "death.attack.sniped": "%1$s was sniped.",
   "death.attack.shield_shard.player": "%1$s got cut up by %2$s's shield shards.",
   "death.attack.shield_shard": "%1$s got cut up by some shield shards.",
   "death.attack.skewer_weakpoint.player": "%1$s had their weakpoint skewered by %2$s.",

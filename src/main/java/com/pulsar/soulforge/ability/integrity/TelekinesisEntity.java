@@ -70,8 +70,10 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
                 setActive(false);
                 return super.tick(player);
             }
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            playerSoul.setStyle(playerSoul.getStyle() + 1);
+            if (timer % 10 == 0) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                playerSoul.setStyle(playerSoul.getStyle() + 1);
+            }
             target.teleport(tpPos.x, tpPos.y, tpPos.z);
             target.setVelocity(Vec3d.ZERO);
             target.velocityModified = true;

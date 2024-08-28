@@ -1,0 +1,21 @@
+{
+  "name": "Energy Wave",
+  "icon": "soulforge:textures/ui/ability_icon/energy_wave_on.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Energy Wave",
+      "icon": "energy_wave_on",
+      "cost": "20 mana",
+      "cooldown": "5 seconds",
+      "lv": 3
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Charge energy in your main hand, consuming mana and overcharging if running out of mana at LV 10+. Cast again to fire the beam, dealing medium damage on a normal shot and large damage on an overcharged shot."
+    }
+  ],
+  "sortnum": 1,
+  "advancement": "soulforge:hidden/bravery/unlocked_energy_wave"
+}

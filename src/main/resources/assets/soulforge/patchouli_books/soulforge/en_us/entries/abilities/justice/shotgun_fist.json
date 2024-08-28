@@ -1,0 +1,16 @@
+{
+  "name": "Shotgun Fist",
+  "icon": "soulforge:textures/ui/ability_icon/shotgun_fist.png",
+  "category": "soulforge:justice",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Surround your hand with Justice energy, making your attacks deal incredible amounts of knockback every so often."
+    }
+  ],
+  "sortnum": 1,
+  "advancement": "soulforge:hidden/justice/unlocked_shotgun_fist"
+}

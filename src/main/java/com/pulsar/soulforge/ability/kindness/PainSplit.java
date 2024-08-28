@@ -7,9 +7,11 @@ import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Vec3d;
 
 public class PainSplit extends AbilityBase {
     public PlayerEntity target = null;
@@ -39,6 +41,14 @@ public class PainSplit extends AbilityBase {
             if (target.distanceTo(player) >= 300f) target = null;
         }
         return target == null;
+    }
+
+    @Override
+    public void displayTick(PlayerEntity player) {
+        if (target != null) {
+            player.getWorld().addParticle(new DustParticleEffect(Vec3d.unpackRgb(0x00FF00).toVector3f(), 1f),
+                    target.getX() + Math.random()*0.8f - 0.4f, target.getY() + Math.random()*2, target.getZ() + Math.random()*0.8f - 0.4f, 0f, 0f, 0f);
+        }
     }
 
     public int getLV() { return 15; }

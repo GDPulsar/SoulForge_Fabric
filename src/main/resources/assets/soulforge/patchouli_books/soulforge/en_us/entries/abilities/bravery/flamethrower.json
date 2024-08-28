@@ -1,0 +1,21 @@
+{
+  "name": "Flamethrower",
+  "icon": "soulforge:textures/ui/ability_icon/flamethrower.png",
+  "category": "soulforge:bravery",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Flamethrower",
+      "icon": "flamethrower",
+      "cost": "None",
+      "cooldown": "None",
+      "lv": 5
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Engulf your hand in fire and use to ignite enemies in front of you as well as dealing damage."
+    }
+  ],
+  "sortnum": 2,
+  "advancement": "soulforge:hidden/bravery/unlocked_flamethrower"
+}

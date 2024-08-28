@@ -1,0 +1,7 @@
+{
+  "name": "Perseverance",
+  "description": "Perseverance is one of the three power traits, and specializes in weapons and strength.",
+  "parent": "soulforge:traits",
+  "sortnum": 5,
+  "icon": "soulforge:perseverance_arnicite_heart"
+}

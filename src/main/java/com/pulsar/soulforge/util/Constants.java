@@ -195,19 +195,28 @@ public class Constants {
     }
 
     public static boolean isAllowedForDualTrait(AbilityBase ability, List<TraitBase> traits, int lv) {
-        if (traits.contains(Traits.bravery) && traits.contains(Traits.integrity)) {
+        boolean bravery = traits.contains(Traits.bravery) || traits.contains(Traits.fear);
+        boolean justice = traits.contains(Traits.justice) || traits.contains(Traits.ineptitude);
+        boolean kindness = traits.contains(Traits.kindness) || traits.contains(Traits.misery);
+        boolean patience = traits.contains(Traits.patience) || traits.contains(Traits.anxiety);
+        boolean integrity = traits.contains(Traits.integrity) || traits.contains(Traits.paranoia);
+        boolean perseverance = traits.contains(Traits.perseverance) || traits.contains(Traits.despair);
+        if (bravery && integrity) {
             return !(ability instanceof BraveryBoost) && !(ability instanceof RepulsionField && lv >= 15);
         }
-        if (traits.contains(Traits.bravery) && traits.contains(Traits.perseverance)) {
+        if (bravery && patience) {
+            return !(ability instanceof ValiantHeart);
+        }
+        if (bravery && perseverance) {
             return !(ability instanceof BraveryBoost) && !(ability instanceof PerseveranceAura) && !(ability instanceof ValiantHeart);
         }
-        if (traits.contains(Traits.justice) && traits.contains(Traits.integrity)) {
+        if (justice && integrity) {
             return !(ability instanceof RepulsionField && lv >= 15) && !(ability instanceof Launch);
         }
-        if (traits.contains(Traits.justice) && traits.contains(Traits.perseverance)) {
+        if (justice && perseverance) {
             return !(ability instanceof JusticeBow) && !(ability instanceof JusticeCrossbow) && !(ability instanceof JusticeRevolver) && !(ability instanceof MorphingWeaponry);
         }
-        if (traits.contains(Traits.kindness) && traits.contains(Traits.perseverance)) {
+        if (kindness && perseverance) {
             return !(ability instanceof AllyHeal) && !(ability instanceof SelfHeal);
         }
         return true;
@@ -288,6 +297,7 @@ public class Constants {
             new Nanomachines(),
             new PerfectedAuraTechnique(),
             new Reload(),
+            new ShiningSoul(),
             new StatusInversion(),
             new Stockpile(),
             new WarpPortal(),

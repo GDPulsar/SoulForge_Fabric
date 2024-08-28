@@ -2,7 +2,9 @@ package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.data.AbilityLayout;
+import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.SoulJarItem;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
@@ -24,28 +26,41 @@ public class EndSoulResetPacket {
         PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("hey_chat_im_back");
         buffer.writeBoolean(false);
         SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);
-        AbilityLayout newLayout = new AbilityLayout();
-        boolean hasJar = buf.readBoolean();
-        if (hasJar) {
-            ItemStack soulJar = player.getInventory().getStack(player.getInventory().getSlotWithStack(buf.readItemStack()));
-            if (SoulJarItem.getHasSoul(soulJar)) {
-                newLayout = SoulJarItem.getLayout(soulJar);
-            }
-            SoulJarItem.setFromPlayer(soulJar, player);
-        }
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        String trait1Str = buf.readString();
+        String trait2Str = buf.readString();
+        boolean strong = buf.readBoolean();
+        boolean pure = buf.readBoolean();
+        int lv = buf.readVarInt();
+        int exp = buf.readVarInt();
+        AbilityLayout newLayout = new AbilityLayout();
+        ValueComponent values = SoulForge.getValues(player);
+        if (values != null) {
+            if (values.getExtraVals().contains("heldJar")) {
+                ItemStack soulJar = ItemStack.fromNbt(values.getExtraVals().getCompound("heldJar"));
+                for (int slot = 0; slot < player.getInventory().size(); slot++) {
+                    if (player.getInventory().getStack(slot).isOf(SoulForgeItems.SOUL_JAR) &&
+                        player.getInventory().getStack(slot).getOrCreateNbt().contains("usedInReroll")) {
+                        soulJar = player.getInventory().getStack(slot);
+                        break;
+                    }
+                }
+                if (SoulJarItem.getHasSoul(soulJar)) {
+                    newLayout = SoulJarItem.getLayout(soulJar);
+                }
+                SoulJarItem.setFromPlayer(soulJar, player);
+            }
+        }
         playerSoul.softReset();
         List<TraitBase> traits = new ArrayList<>();
-        traits.add(Traits.get(buf.readString()));
-        String trait2Str = buf.readString();
+        traits.add(Traits.get(trait1Str));
         if (!Objects.equals(trait2Str, "")) {
             traits.add(Traits.get(trait2Str));
         }
-        boolean strong = buf.readBoolean();
-        boolean pure = buf.readBoolean();
         playerSoul.setResetValues(traits, strong, pure);
-        playerSoul.setLV(buf.readVarInt());
-        playerSoul.setEXP(buf.readVarInt());
+        playerSoul.setLV(lv);
+        playerSoul.setEXP(exp);
+        playerSoul.setAbilityLayout(newLayout);
         ResetData resetData = playerSoul.getResetData();
         if (!traits.contains(Traits.determination)) resetData.resetsSinceDT++;
         else resetData.resetsSinceDT = 0;
@@ -68,7 +83,6 @@ public class EndSoulResetPacket {
             if (strong) resetData.strongDual = true;
             resetData.addDual(traits.get(0), traits.get(1));
         }
-        playerSoul.setAbilityLayout(newLayout);
         playerSoul.removeTag("resettingSoul");
         SoulForge.getValues(player).removeBool("Immobilized");
         //SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb"));

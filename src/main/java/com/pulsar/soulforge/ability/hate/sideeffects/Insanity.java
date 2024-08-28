@@ -7,13 +7,13 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class Insanity extends SideEffectAbilityBase {
     @Override
-    public float getOccurenceChance() {
-        SoulForge.LOGGER.info("YOU ARE INSANE WOAJIDOIAJWDIOJAOWDIJAOWIDJAOWIJD");
+    public float getOccurrenceChance() {
         return 0.01f;
     }
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
+        SoulForge.LOGGER.info("YOU ARE INSANE WOAJIDOIAJWDIOJAOWDIJAOWIDJAOWIJD");
         return super.cast(player);
     }
 

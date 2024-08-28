@@ -1,0 +1,16 @@
+{
+  "name": "Ally Heal",
+  "icon": "soulforge:textures/ui/ability_icon/ally_heal.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "patchouli:empty"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Infuse an ally with Kindness energy, healing them over time. The healing will cancel if the target takes damage."
+    }
+  ],
+  "sortnum": 0,
+  "advancement": "soulforge:hidden/kindness/unlocked_ally_heal"
+}

@@ -1,9 +1,11 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.client.item.DeterminationBowItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.DeterminationArrowProjectile;
 import com.pulsar.soulforge.item.weapons.MagicRangedItem;
+import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,8 +16,19 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.renderer.GeoItemRenderer;
 
-public class DeterminationBow extends MagicRangedItem {
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+public class DeterminationBow extends MagicRangedItem implements GeoItem {
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (user instanceof PlayerEntity playerEntity) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(playerEntity);
@@ -64,5 +77,35 @@ public class DeterminationBow extends MagicRangedItem {
 
     public int getRange() {
         return 20;
+    }
+
+    public AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+
+    @Override
+    public void createRenderer(Consumer<Object> consumer) {
+        consumer.accept(new RenderProvider() {
+            private final GeoItemRenderer<DeterminationBow> renderer = new DeterminationBowItemRenderer();
+
+            @Override
+            public BuiltinModelItemRenderer getCustomRenderer() {
+                return this.renderer;
+            }
+        });
+    }
+
+    @Override
+    public Supplier<Object> getRenderProvider() {
+        return renderProvider;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
+        controllerRegistrar.add(new AnimationController<>(this, "controller", 0, (animationState) -> PlayState.STOP));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 }

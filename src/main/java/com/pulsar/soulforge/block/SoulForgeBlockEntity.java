@@ -1,41 +1,32 @@
 package com.pulsar.soulforge.block;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.ui.SoulForgeScreenHandler;
-import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.recipe.SoulForgeRecipe;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-public class SoulForgeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class SoulForgeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, GeoBlockEntity, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(8, ItemStack.EMPTY);
 
     private static final int OUTPUT_SLOT = 7;
@@ -108,6 +99,8 @@ public class SoulForgeBlockEntity extends BlockEntity implements NamedScreenHand
 
     public void addLava() { lavaMb = Math.min(lavaMb + 1000, 4000); }
     public boolean canInsertLava() { return lavaMb <= 3000; }
+    public int getLava() { return lavaMb; }
+    public int getLavaMax() { return 4000; }
 
     public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
@@ -155,5 +148,22 @@ public class SoulForgeBlockEntity extends BlockEntity implements NamedScreenHand
 
         return recipe.isPresent() && (this.getStack(OUTPUT_SLOT).getItem() == recipe.get().getOutput(null).getItem() || this.getStack(OUTPUT_SLOT).isEmpty()) &&
                 (this.getStack(OUTPUT_SLOT).getCount() + recipe.get().getOutput(null).getCount() <= this.getStack(OUTPUT_SLOT).getMaxCount());
+    }
+
+    private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
+        controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    }
+
+    private PlayState predicate(AnimationState<SoulForgeBlockEntity> animationState) {
+        animationState.getController().setAnimation(RawAnimation.begin().then("SPINNN", Animation.LoopType.LOOP));
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 }

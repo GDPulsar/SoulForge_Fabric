@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
@@ -107,6 +108,19 @@ abstract class LivingEntityMixin extends Entity {
         if (!LivingDamageEvent.onTakeDamage((LivingEntity)(Object)this, source, damage)) {
             cir.setReturnValue(false);
         }
+    }
+
+    @ModifyExpressionValue(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 3))
+    private boolean soulforge$modifyBypassesCooldown(boolean original, @Local DamageSource source) {
+        if (source.getAttacker() instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageActive")) {
+                if (playerSoul.getValue("rampageActive") == 4) {
+                    return true;
+                }
+            }
+        }
+        return original;
     }
 
     @Inject(method = "onKilledBy", at = @At("HEAD"))
@@ -310,6 +324,7 @@ abstract class LivingEntityMixin extends Entity {
                 .add(SoulForgeAttributes.KNOCKBACK_MULTIPLIER)
                 .add(SoulForgeAttributes.SLIP_MODIFIER)
                 .add(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER)
+                .add(SoulForgeAttributes.ANTIHEAL)
                 .add(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS);
     }
 

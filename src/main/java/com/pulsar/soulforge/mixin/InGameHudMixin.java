@@ -6,6 +6,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.SoulForgeClient;
 import com.pulsar.soulforge.ability.Abilities;
 import com.pulsar.soulforge.ability.AbilityBase;
+import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.data.AbilityLayout;
 import net.minecraft.client.MinecraftClient;
@@ -138,8 +139,18 @@ public abstract class InGameHudMixin {
         if (ability != null) {
             int height = MathHelper.floor(18f*playerSoul.cooldownPercent(ability));
             int textureHeight = MathHelper.floor(height*(66f/18f));
-            Identifier textureLocation = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
-            Identifier grayscaleLocation = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/grayscale/" + ability.getID().getPath() + ".png");
+            String id = ability.getID().getNamespace();
+            String path = ability.getID().getPath();
+            Identifier textureLocation;
+            Identifier grayscaleLocation;
+            if (ability instanceof ToggleableAbilityBase toggleable) {
+                String activeStr = toggleable.getActive() ? "on" : "off";
+                textureLocation = new Identifier(id, "textures/ui/ability_icon/" + path + "_" + activeStr + ".png");
+                grayscaleLocation = new Identifier(id, "textures/ui/ability_icon/grayscale/" + path + "_off.png");
+            } else {
+                textureLocation = new Identifier(id, "textures/ui/ability_icon/" + path + ".png");
+                grayscaleLocation = new Identifier(id, "textures/ui/ability_icon/grayscale/" + path + ".png");
+            }
             context.drawTexture(textureLocation, n, o+(18-height), 18, height, 0, 66f-textureHeight, 66, textureHeight, 66, 66);
             context.drawTexture(grayscaleLocation, n, o, 18, 18-height, 0, 0, 66, 66-textureHeight, 66, 66);
         }

@@ -45,11 +45,8 @@ public class PerseveranceBlades extends MagicSwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (target instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)attacker);
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(player);
-            Utils.addAntiheal(0.3f, playerSoul.getLV()*20, targetSoul);
-        }
+        SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)attacker);
+        Utils.addAntiheal(0.3f, playerSoul.getLV()*20, target);
         return super.postHit(stack, target, attacker);
     }
 

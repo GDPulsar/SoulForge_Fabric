@@ -23,9 +23,9 @@ public class SiphonDisplay extends BasicDisplay {
     private static List<EntryIngredient> getInputList(SiphonRecipe recipe) {
         if (recipe == null) return Collections.emptyList();
         List<EntryIngredient> list = new ArrayList<>();
-        for (int i = 0; i < recipe.getIngredients().size(); i++) {
-            list.add(EntryIngredients.ofIngredient(recipe.getIngredients().get(i)));
-        }
+        list.add(EntryIngredients.ofIngredient(recipe.getTemplate()));
+        list.add(EntryIngredients.ofIngredient(recipe.getBase()));
+        list.add(EntryIngredients.ofIngredient(recipe.getAddition()));
         return list;
     }
 

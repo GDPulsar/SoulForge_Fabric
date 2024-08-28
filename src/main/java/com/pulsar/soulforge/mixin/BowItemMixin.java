@@ -87,8 +87,8 @@ public abstract class BowItemMixin {
                         Vec3d end = user.getEyePos().add(user.getRotationVector().multiply(50f));
                         HitResult hit = user.getWorld().raycast(new RaycastContext(user.getEyePos(), user.getEyePos().add(user.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, user));
                         if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
-                        float damage = 15-((pullTime-6)*(pullTime-6))/2f;
-                        if (pullTime > 6) damage = 15f;
+                        float damage = (16f-((pullTime-6)*(pullTime-6))/2f) * 2f;
+                        if (pullTime > 6) damage = 32f;
                         BlastEntity blast = new BlastEntity(user.getWorld(), Utils.getArmPosition(player),
                                 user, 0.25f, Vec3d.ZERO, end, damage, Color.YELLOW, true, 20);
                         blast.owner = user;

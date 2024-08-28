@@ -54,6 +54,7 @@
 			"soulforge:trait",
 			"soulforge:temporary_modifiers",
 			"soulforge:values",
+			"soulforge:hate",
 			"soulforge:world_config"
 		],
 		"modmenu": {

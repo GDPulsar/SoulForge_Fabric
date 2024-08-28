@@ -12,21 +12,24 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(StatusEffectInstance.class)
 public class StatusEffectInstanceMixin {
-    @Shadow private int duration;
+    @Shadow
+    public int duration;
     @Unique
     private float durationDecimal = -1f;
 
     @Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;updateDuration()I"))
     private int soulforge$modifyEffectDurationDecrease(StatusEffectInstance instance, @Local LivingEntity entity) {
-        if (this.duration > (int)(durationDecimal + 1f)) {
-            durationDecimal = this.duration;
-        }
-        if (entity.getAttributeValue(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER) != 1) {
-            this.durationDecimal -= (float) entity.getAttributeValue(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER);
-            this.duration = (int)durationDecimal;
-        } else {
-            this.duration--;
-            this.durationDecimal = this.duration;
+        if (this.duration != -1) {
+            if (this.duration > (int) (durationDecimal + 1f)) {
+                durationDecimal = this.duration;
+            }
+            if (entity.getAttributeValue(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER) != 1) {
+                this.durationDecimal -= (float) entity.getAttributeValue(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER);
+                this.duration = (int) durationDecimal;
+            } else {
+                this.duration--;
+                this.durationDecimal = this.duration;
+            }
         }
         return this.duration;
     }

@@ -79,6 +79,7 @@ public class SoulJarItem extends BlockItem {
         setLv(stack, playerSoul.getLV());
         setExp(stack, playerSoul.getEXP());
         setLayout(stack, playerSoul.getAbilityLayout());
+        if (getJarNbt(stack).contains("old")) getJarNbt(stack).remove("old");
     }
 
     public static NbtCompound getJarNbt(ItemStack stack) {
@@ -204,8 +205,18 @@ public class SoulJarItem extends BlockItem {
         List<TraitBase> traits = new ArrayList<>();
         if (!Objects.equals(trait1, "")) traits.add(Traits.get(trait1));
         if (!Objects.equals(trait2, "")) traits.add(Traits.get(trait2));
-        List<AbilityBase> abilities = Traits.getAbilities(traits, lv, pure);
+        List<AbilityBase> abilities = Traits.getAbilities(traits, lv, pure, false);
         return AbilityLayout.fromNbt(abilities, getJarNbt(stack).getCompound("soul").getList("layout", NbtElement.COMPOUND_TYPE));
+    }
+
+    public static void setOldJar(ItemStack stack, ItemStack old) {
+        NbtCompound nbt = getJarNbt(stack);
+        nbt.put("old", old.writeNbt(new NbtCompound()));
+        BlockItem.setBlockEntityNbt(stack, SoulForgeBlocks.SOUL_JAR_BLOCK_ENTITY, nbt);
+    }
+    public static ItemStack getOldJar(ItemStack stack) {
+        if (!getJarNbt(stack).contains("old")) return null;
+        return ItemStack.fromNbt(getJarNbt(stack).getCompound("old"));
     }
 
     @Override
