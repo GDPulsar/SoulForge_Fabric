@@ -1,15 +1,12 @@
 package com.pulsar.soulforge.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
-import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,27 +29,25 @@ public abstract class StatusEffectMixin {
 
     @Inject(method = "applyUpdateEffect", at=@At("HEAD"), cancellable = true)
     public void modifyApplyEffect(LivingEntity entity, int amplifier, CallbackInfo ci) {
-        if (entity instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("antiheal")) {
-                if ((StatusEffect) (Object) this == StatusEffects.REGENERATION) {
-                    if (Math.random() <= playerSoul.getValue("antiheal")) {
-                        ci.cancel();
+        if ((StatusEffect)(Object) this == StatusEffects.REGENERATION) {
+            float antiheal = (float)entity.getAttributeValue(SoulForgeAttributes.ANTIHEAL);
+            if (antiheal < 0f) {
+                for (int i = 0; i < MathHelper.ceil(-antiheal); i++) {
+                    if (entity.getHealth() < entity.getMaxHealth()) {
+                        entity.heal(1.0F);
                     }
                 }
+                antiheal = -antiheal % 1f;
+            }
+            if (Math.random() <= antiheal) {
+                ci.cancel();
             }
         }
     }
 
     @ModifyArg(method = "applyInstantEffect", at=@At(value = "INVOKE", target="Lnet/minecraft/entity/LivingEntity;heal(F)V"))
     public float modifyInstantHealth(float amount, @Local LivingEntity target) {
-        if (target instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("antiheal")) {
-                return amount * (1f - playerSoul.getValue("antiheal"));
-            }
-        }
-        return amount;
+        return amount * (1f - (float)target.getAttributeValue(SoulForgeAttributes.ANTIHEAL));
     }
 
     @Inject(method = "addAttributeModifier", at=@At("HEAD"), cancellable = true)

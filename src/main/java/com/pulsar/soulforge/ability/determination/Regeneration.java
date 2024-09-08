@@ -3,6 +3,7 @@ package com.pulsar.soulforge.ability.determination;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.minecraft.particle.DustParticleEffect;
@@ -13,10 +14,7 @@ public class Regeneration extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        float healAmount = playerSoul.getEffectiveLV();
-        if (playerSoul.hasValue("antiheal")) {
-            healAmount *= 1f-playerSoul.getValue("antiheal");
-        }
+        float healAmount = playerSoul.getEffectiveLV() * (1f - (float)player.getAttributeValue(SoulForgeAttributes.ANTIHEAL));
         float healthChange = player.getHealth();
         player.setHealth(player.getHealth() + healAmount);
         healthChange = player.getHealth() - healthChange;

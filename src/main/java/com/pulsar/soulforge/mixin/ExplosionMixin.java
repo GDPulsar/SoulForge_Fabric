@@ -1,11 +1,12 @@
 package com.pulsar.soulforge.mixin;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.entity.DetonatorMine;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
@@ -30,10 +31,10 @@ public abstract class ExplosionMixin {
 
     @Redirect(method = "collectBlocksAndDamageEntities", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     public boolean overwriteExplosionDamage(Entity instance, DamageSource source, float amount) {
-        if (instance instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("parry")) {
-                if (playerSoul.getValue("parry") > 0) {
+        if (instance instanceof LivingEntity living) {
+            ValueComponent values = SoulForge.getValues(living);
+            if (values == null) {
+                if (values.getTimer("parry") > 0) {
                     instance.playSound(SoulForgeSounds.PARRY_EVENT, 1f, 1f);
                     return false;
                 }
@@ -44,10 +45,10 @@ public abstract class ExplosionMixin {
 
     @Redirect(method = "collectBlocksAndDamageEntities", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V"))
     public void overwriteEntityKnockback(Entity instance, Vec3d velocity) {
-        if (instance instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("parry")) {
-                if (playerSoul.getValue("parry") > 0) {
+        if (instance instanceof LivingEntity living) {
+            ValueComponent values = SoulForge.getValues(living);
+            if (values == null) {
+                if (values.getTimer("parry") > 0) {
                     return;
                 }
             }

@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.entity;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.components.SoulComponent;
 import net.minecraft.block.Blocks;
@@ -175,11 +176,8 @@ public class DomeEntity extends Entity implements Attackable {
     @Override
     public boolean damage(DamageSource source, float amount) {
         if (!this.getShieldBreakImmune()) {
-            if (source.getAttacker() instanceof PlayerEntity attacker) {
-                SoulComponent attackerSoul = SoulForge.getPlayerSoul(attacker);
-                if (attackerSoul.hasValue("shieldBreak")) {
-                    amount *= attackerSoul.getValue("shieldBreak");
-                }
+            if (source.getAttacker() instanceof LivingEntity attacker) {
+                amount *= (float)attacker.getAttributeValue(SoulForgeAttributes.SHIELD_BREAK);
             }
         }
         setHealth(getHealth() - amount);

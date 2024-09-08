@@ -55,7 +55,8 @@ public class SoulResetOverlay implements HudRenderCallback {
         int height = client.getWindow().getScaledHeight();
         assert client.player != null;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(client.player);
-        if (playerSoul.hasTag("resettingSoul")) {
+        ValueComponent values = SoulForge.getValues(client.player);
+        if (values.getBool("resettingSoul")) {
             client.mouse.unlockCursor();
             if (!wasResetting) {
                 startTime = (int)(client.world.getTime() + 30);
@@ -66,7 +67,6 @@ public class SoulResetOverlay implements HudRenderCallback {
                 allowChosing = playerSoul.getResetData().bravery && playerSoul.getResetData().justice && playerSoul.getResetData().kindness
                         && playerSoul.getResetData().patience && playerSoul.getResetData().integrity && playerSoul.getResetData().perseverance
                         && playerSoul.getResetData().determination && playerSoul.getResetData().strongDual;
-                ValueComponent values = SoulForge.getValues(client.player);
                 if (values != null) {
                     if (values.getExtraVals().contains("heldJar")) {
                         soulJar = ItemStack.fromNbt(values.getExtraVals().getCompound("heldJar"));
@@ -334,7 +334,7 @@ public class SoulResetOverlay implements HudRenderCallback {
                             buf.writeVarInt(1);
                             buf.writeVarInt(0);
                             ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
-                            playerSoul.removeTag("resettingSoul");
+                            values.removeBool("resettingSoul");
                         }
                     } else if (rerollType != RerollType.JAR) {
                         if (timer <= 150f) {
@@ -410,7 +410,7 @@ public class SoulResetOverlay implements HudRenderCallback {
                             buf.writeVarInt(1);
                             buf.writeVarInt(0);
                             ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
-                            playerSoul.removeTag("resettingSoul");
+                            values.removeBool("resettingSoul");
                         }
                     } else {
                         if (tickTimer < 150) {
@@ -442,7 +442,7 @@ public class SoulResetOverlay implements HudRenderCallback {
                             buf.writeVarInt(SoulJarItem.getLv(soulJar));
                             buf.writeVarInt(SoulJarItem.getExp(soulJar));
                             ClientPlayNetworking.send(SoulForgeNetworking.END_SOUL_RESET, buf);
-                            playerSoul.removeTag("resettingSoul");
+                            values.removeBool("resettingSoul");
                         }
                     }
                 }
@@ -452,7 +452,7 @@ public class SoulResetOverlay implements HudRenderCallback {
                 client.mouse.lockCursor();
             }
         }
-        wasResetting = playerSoul.hasTag("resettingSoul");
+        wasResetting = values.getBool("resettingSoul");
     }
 
     private TraitBase getTraitFromIndex(int index) {

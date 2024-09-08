@@ -39,12 +39,10 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
         super(3f, 1.6f, 0.2f);
     }
 
-    public boolean open = false;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)attacker);
-        if (open) {
+        if (stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded")) {
             HitResult hit = attacker.getWorld().raycast(new RaycastContext(attacker.getEyePos(), attacker.getRotationVector().multiply(8f).add(attacker.getPos()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, attacker));
             Vec3d end = attacker.getRotationVector().multiply(8f);
             Vec3d start = Utils.getArmPosition((PlayerEntity)attacker);
@@ -53,7 +51,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
             blast.setPosition(attacker.getEyePos());
             attacker.getWorld().spawnEntity(blast);
             attacker.getWorld().playSoundFromEntity(null, attacker, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-            open = false;
+            stack.getOrCreateNbt().putBoolean("loaded", false);
         }
         for (Entity entity : attacker.getEntityWorld().getOtherEntities(attacker, Box.of(attacker.getPos(), 4, 4, 4))) {
             if (entity instanceof LivingEntity living && living != target) {
@@ -74,8 +72,9 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+        ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient) {
-            if (open) {
+            if (stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded")) {
                 HitResult hit = world.raycast(new RaycastContext(user.getEyePos(), user.getRotationVector().multiply(50f).add(user.getPos()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, user));
                 Vec3d end = user.getRotationVector().multiply(50f);
                 if (hit != null) end = hit.getPos();
@@ -85,7 +84,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
                 world.spawnEntity(blast);
                 world.playSoundFromEntity(null, user, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 user.getItemCooldownManager().set(this, 10);
-                open = false;
+                stack.getOrCreateNbt().putBoolean("loaded", false);
             }
         }
         user.setCurrentHand(hand);
@@ -96,8 +95,9 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
         if (user instanceof PlayerEntity player) {
             int i = this.getMaxUseTime(player) - remainingUseTicks;
             float f = getPullProgress(i, player);
-            if (f >= 1.0F && !open) {
-                open = true;
+            SoulForge.LOGGER.info("use time: {}", f);
+            if (f >= 1.0F && !(stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded"))) {
+                stack.getOrCreateNbt().putBoolean("true", false);
                 SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, soundCategory, 1.0F, 1.0F);
             }

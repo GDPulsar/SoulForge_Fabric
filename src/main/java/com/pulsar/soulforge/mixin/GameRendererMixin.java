@@ -1,7 +1,7 @@
 package com.pulsar.soulforge.mixin;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
@@ -33,9 +33,9 @@ abstract class GameRendererMixin implements SynchronousResourceReloader {
     private void beforeCameraSetup(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci) {
         PlayerEntity player = this.client.player;
         if (player != null) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul != null) {
-                if (playerSoul.hasTag("forcedThirdPerson")) {
+            ValueComponent values = SoulForge.getValues(player);
+            if (values != null) {
+                if (values.getBool("forcedThirdPerson")) {
                     this.client.options.setPerspective(Perspective.THIRD_PERSON_BACK);
                     wasForcedThirdPerson = true;
                 } else if (wasForcedThirdPerson) {

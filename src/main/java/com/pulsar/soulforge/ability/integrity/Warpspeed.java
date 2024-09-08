@@ -5,6 +5,7 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.util.TeamUtils;
@@ -33,9 +34,12 @@ public class Warpspeed extends AbilityBase {
         }
         playerSoul.setSpokenText("AAAAAAAAAAAAAAAAAAAA", 10, 300);
         timer = 300;
-        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
-        player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "Warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "warpspeed", 2f, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        player.getAttributeInstance(SoulForgeAttributes.STEP_HEIGHT).addPersistentModifier(new EntityAttributeModifier(UUID.fromString("627e27ce-5e02-11ef-85ff-325096b39f47"), "warpspeed", 3f, EntityAttributeModifier.Operation.ADDITION));
         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, 1200, 0));
+        ValueComponent values = SoulForge.getValues(player);
+        values.setBool("forcedRunning", true);
         return super.cast(player);
     }
 
@@ -44,11 +48,6 @@ public class Warpspeed extends AbilityBase {
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.hasCast("Repulsion Field")) player.setStepHeight(4.6f);
-        else if (playerSoul.hasCast("Accelerated Pellet Aura")) player.setStepHeight(4.6f);
-        else if (playerSoul.hasCast("Fearless Instincts")) player.setStepHeight(4.6f);
-        else player.setStepHeight(3.6f);
         for (Entity entity : player.getEntityWorld().getOtherEntities(player, new Box(player.getPos().subtract(1, 1, 1), player.getPos().add(1, 1, 1)))) {
             if (entity instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) return false;
@@ -57,6 +56,8 @@ public class Warpspeed extends AbilityBase {
             entity.setVelocity(player.getRotationVector().x*5f, 1.5f, player.getRotationVector().z*5f);
             entity.velocityModified = true;
         }
+        ValueComponent values = SoulForge.getValues(player);
+        values.setBool("forcedRunning", true);
         timer--;
         if (lastPos.distanceTo(player.getPos()) < 0.001f) {
             stillTimer++;
@@ -74,9 +75,11 @@ public class Warpspeed extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.setSpokenText("");
-        player.setStepHeight(0.6f);
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "Warpspeed");
-        Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "Warpspeed");
+        ValueComponent values = SoulForge.getValues(player);
+        values.removeBool("forcedRunning");
+        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "warpspeed");
+        Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "warpspeed");
+        Utils.clearModifiersByName(player, SoulForgeAttributes.STEP_HEIGHT, "warpspeed");
         return super.end(player);
     }
 

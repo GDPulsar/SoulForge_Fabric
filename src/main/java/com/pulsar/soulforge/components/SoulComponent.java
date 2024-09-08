@@ -2,7 +2,6 @@ package com.pulsar.soulforge.components;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.*;
-import com.pulsar.soulforge.ability.bravery.Shatter;
 import com.pulsar.soulforge.ability.determination.DeterminationPlatform;
 import com.pulsar.soulforge.ability.duals.PerfectedAuraTechnique;
 import com.pulsar.soulforge.ability.integrity.Platforms;
@@ -13,7 +12,9 @@ import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.data.AbilityList;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.entity.*;
+import com.pulsar.soulforge.entity.BlastEntity;
+import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
+import com.pulsar.soulforge.entity.IntegrityPlatformEntity;
 import com.pulsar.soulforge.event.EventType;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
@@ -24,14 +25,12 @@ import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.ResetData;
 import com.pulsar.soulforge.util.SpokenTextRenderer;
-import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -44,12 +43,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
@@ -81,8 +78,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     private float magic = 0;
     private float magicGauge = 0;
     private AbilityList abilities = new AbilityList();
-    private List<String> tags = new ArrayList<>();
-    private HashMap<String, Float> values = new HashMap<>();
     private final PlayerEntity player;
     private ItemStack weapon = ItemStack.EMPTY;
     private int lastCastTime = 0;
@@ -111,7 +106,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                 if (EntityInitializer.SOUL.maybeGet(player).isEmpty()) {
                     resetTrait();
                     updateAbilities();
-                    updateTags();
                 }
             }
         }
@@ -148,7 +142,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         if (pure) resetData.addPure(traits.get(0));
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         updateAbilities();
-        updateTags();
         if (player instanceof ServerPlayerEntity serverPlayer) {
             SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
             SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
@@ -166,7 +159,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         if (pure) resetData.addPure(traits.get(0));
         if (traits.size() >= 2) resetData.addDual(traits.get(0), traits.get(1));
         updateAbilities();
-        updateTags();
         if (player instanceof ServerPlayerEntity serverPlayer) {
             SoulForgeCriterions.PLAYER_LV.trigger(serverPlayer, getLV());
             SoulForgeCriterions.PLAYER_TRAIT.trigger(serverPlayer, this);
@@ -185,7 +177,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         this.strong = strong;
         this.pure = pure;
         updateAbilities();
-        updateTags();
         sync();
     }
 
@@ -195,48 +186,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     public void setResetData(ResetData resetData) {
         this.resetData = resetData;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void addTag(String tag) {
-        if (!tags.contains(tag)) tags.add(tag);
-    }
-
-    public boolean hasTag(String tag) {
-        return tags.contains(tag);
-    }
-
-    public void removeTag(String tag) {
-        tags.remove(tag);
-    }
-
-    public HashMap<String, Float> getValues() {
-        return values;
-    }
-
-    public float getValue(String value) {
-        return values.get(value);
-    }
-
-    public void setValue(String key, float value) {
-        values.put(key, value);
-    }
-
-    public boolean hasValue(String value) {
-        return values.containsKey(value);
-    }
-
-    public void removeValue(String value) {
-        values.remove(value);
-    }
-
-    private void updateTags() {
-        if (this.player == null) return;
-        if (this.player.getWorld().isClient) return;
-        tags = new ArrayList<>();
     }
 
     public void handleEvent(EventType event) {
@@ -382,7 +331,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             SoulForgeCriterions.PLAYER_SOUL.trigger(serverPlayer, this);
         }
         updateAbilities();
-        updateTags();
         sync();
     }
 
@@ -416,7 +364,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.UT_LEVEL_UP_EVENT, SoundCategory.PLAYERS, 1f, 1f);
         }
         updateAbilities();
-        updateTags();
         sync();
     }
 
@@ -538,7 +485,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                 toggleable.end(serverPlayer);
             }
         }
-        updateTags();
         magic = 100f;
         if (Utils.isInverted(this)) magicGauge = 1000f;
     }
@@ -790,13 +736,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             }
 
             buf.writeItemStack(weapon);
-
-            buf.writeString(String.join(",", tags));
-            buf.writeVarInt(values.size());
-            for (Map.Entry<String, Float> value : values.entrySet()) {
-                buf.writeString(value.getKey());
-                buf.writeFloat(value.getValue());
-            }
             buf.writeVarInt(lastCastTime);
 
             int discoveredSize = 0;
@@ -866,12 +805,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         this.abilities = abilityList;
 
         this.weapon = buf.readItemStack();
-
-        this.tags = new ArrayList<>(Arrays.asList(buf.readString().split(",")));
-
-        int valueCount = buf.readVarInt();
-        this.values = new HashMap<>();
-        for (int i = 0; i < valueCount; i++) values.put(buf.readString(), buf.readFloat());
 
         this.lastCastTime = buf.readVarInt();
 
@@ -1017,7 +950,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     public void castAbility(AbilityBase ability) {
         if (ability == null) return;
         boolean contains = abilities.has(ability.getName());
-        if ((contains || ability.getType() == AbilityType.PASSIVE) && ability.getType() != AbilityType.PASSIVE_ON_HIT) {
+        if (contains || ability.getType() == AbilityType.PASSIVE) {
             float cost = ability.getCost();
             if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
                 cost *= (float)player.getAttributeValue(SoulForgeAttributes.MAGIC_COST);
@@ -1067,18 +1000,16 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     private static final EntityAttributeModifier strongModifier = new EntityAttributeModifier(UUID.fromString("5390de41-a4a2-450c-be21-efd230c47fc9"), "strong", -0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final EntityAttributeModifier pureModifier = new EntityAttributeModifier(UUID.fromString("ac02d0d4-839f-4215-b6f0-142c45d8cd47"), "pure", 0.5f, EntityAttributeModifier.Operation.ADDITION);
-
-    private boolean lastTickWasShitAss = false;
+    private static final EntityAttributeModifier shieldBreakModifier = new EntityAttributeModifier(UUID.fromString("a7fb97e3-f50c-48c0-8e32-3a7c0a4cc0f8"), "perseverance", 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
     @Override
     public void tick() {
         if (player instanceof ServerPlayerEntity serverPlayer) {
             ValueComponent values = SoulForge.getValues(serverPlayer);
 
-            long startTickTimer = System.currentTimeMillis();
             for (AbilityBase ability : abilities.getActive()) {
                 if (ability.tick((ServerPlayerEntity)player)) {
                     ability.end((ServerPlayerEntity)player);
-                    if (ability.getType() == AbilityType.TOGGLE) {
+                    if (ability.getType() == AbilityType.TOGGLE || ability.getType() == AbilityType.AURA) {
                         float cooldown = ability.getCooldown();
                         cooldown *= (float)player.getAttributeValue(SoulForgeAttributes.MAGIC_COOLDOWN);
                         setCooldown(ability, (int)cooldown);
@@ -1088,12 +1019,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             }
             for (AbilityBase ability : abilities.getOnCooldown()) {
                 ability.cooldownTick();
-            }
-            if (lastTickWasShitAss) {
-                long tickDuration = System.currentTimeMillis() - startTickTimer;
-                if (tickDuration >= 5) {
-                    SoulForge.LOGGER.warn("{} abilities took more than 5 milliseconds: {}", player.getName(), tickDuration);
-                }
             }
 
             for (AbilityBase ability : getAbilities()) {
@@ -1155,132 +1080,112 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                     }
                 }
             }
-            if (hasValue("shieldBash")) {
-                if (getValue("shieldBash") > 0) {
-                    player.setInvulnerable(true);
-                    setValue("shieldBash", (int)getValue("shieldBash") - 1);
-                    if (getValue("shieldBash") <= 0) {
-                        player.setInvulnerable(false);
-                        setValue("shieldBashCooldown", 60);
-                    }
-                    for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
-                        if (target instanceof LivingEntity living) {
-                            if (living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 5f)) {
-                                setStyle(getStyle() + 5);
-                            }
-                            living.takeKnockback(1.5f, -player.getVelocity().x, -player.getVelocity().z);
-                            if (hasCast("Furioso")) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 100, 1));
-                            if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_SHIELD)) {
-                                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 100, 0));
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1));
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, 1));
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 100, 1));
-                            }
+            if (values.hasTimer("shieldBash")) {
+                for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
+                    if (target instanceof LivingEntity living) {
+                        if (living.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE), 5f)) {
+                            setStyle(getStyle() + 5);
+                        }
+                        living.takeKnockback(1.5f, -player.getVelocity().x, -player.getVelocity().z);
+                        if (hasCast("Furioso")) living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 100, 1));
+                        if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_SHIELD)) {
+                            living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 100, 0));
+                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1));
+                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, 1));
+                            living.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 100, 1));
                         }
                     }
                 }
             }
-            if (hasValue("clawGouge")) {
-                if (getValue("clawGouge") > 0) {
-                    setValue("clawGouge", (int)getValue("clawGouge") - 1);
-                    if (getValue("clawGouge") == 15) {
-                        SoulForge.getValues(player).removeBool("Immobilized");
-                        Vec3d velAdd = player.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize().multiply(player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW) ? 3.5f : 2f);
-                        player.addVelocity(velAdd);
-                        player.velocityModified = true;
-                    }
-                    if (getValue("clawGouge") <= 15) {
-                        for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
-                            if (target instanceof LivingEntity living) {
-                                if (living.damage(player.getDamageSources().playerAttack(player), (float) (player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5f))) {
-                                    setStyle(getStyle() + (int) (player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5f));
-                                }
-                                if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW)) {
-                                    living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140, 1));
-                                } else {
-                                    player.setVelocity(Vec3d.ZERO);
-                                    player.velocityModified = true;
-                                    if (living instanceof PlayerEntity) {
-                                        if (getMagic() >= 40) {
-                                            setMagic(getMagic() - 40f);
-                                            SoulComponent targetSoul = SoulForge.getPlayerSoul((PlayerEntity) living);
-                                            Utils.addAntiheal(hasCast("Furioso") ? 1f : 0.8f, getLV() * 40, living);
-                                        }
-                                    }
-                                }
-                                if (player.getMainHandStack().isOf(SoulForgeItems.GUNLANCE)) {
-                                    Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
-                                    HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
-                                    if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
-                                    BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
-                                            player, 0.25f, Vec3d.ZERO, end, getLV() * 1.5f, Color.YELLOW, false, 10);
-                                    blast.owner = player;
-                                    ServerWorld serverWorld = (ServerWorld) player.getWorld();
-                                    serverWorld.spawnEntity(blast);
-                                    serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
-                                    serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                                }
-                                break;
-                            }
-                        }
-                    }
+            if (values.hasTimer("clawGouge")) {
+                if (values.getTimer("clawGouge") == 15) {
+                    TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(player);
+                    values.setTimer("forcedRunning", 15);
+                    modifiers.addTemporaryModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier("claw_gouge", 2, EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 15);
+                    Vec3d velAdd = player.getRotationVector().withAxis(Direction.Axis.Y, 0).normalize().multiply(player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW) ? 3.5f : 2f);
+                    player.addVelocity(velAdd);
+                    player.velocityModified = true;
                 }
-            }
-            if (hasValue("dtGauntletsRush")) {
-                if (getValue("dtGauntletsRush") > 0) {
-                    setValue("dtGauntletsRush", (int)getValue("dtGauntletsRush") - 1);
+                if (values.getTimer("clawGouge") <= 15) {
                     for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
                         if (target instanceof LivingEntity living) {
-                            living.getWorld().createExplosion(player, living.getX(), living.getY(), living.getZ(), 1f, World.ExplosionSourceType.NONE);
-                            setValue("dtGauntletsRush", 0);
-                            player.setVelocity(0f, 0f, 0f);
-                            player.velocityModified = true;
+                            if (living.damage(player.getDamageSources().playerAttack(player), (float) (player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5f))) {
+                                setStyle(getStyle() + (int) (player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * 1.5f));
+                            }
+                            if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW)) {
+                                living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, 140, 1));
+                            } else {
+                                player.setVelocity(Vec3d.ZERO);
+                                player.velocityModified = true;
+                                if (getMagic() >= 40) {
+                                    setMagic(getMagic() - 40f);
+                                    Utils.addAntiheal(hasCast("Furioso") ? 1f : 0.8f, getLV() * 40, living);
+                                }
+                            }
+                            if (player.getMainHandStack().isOf(SoulForgeItems.GUNLANCE)) {
+                                Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
+                                HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+                                if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
+                                BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
+                                        player, 0.25f, Vec3d.ZERO, end, getLV() * 1.5f, Color.YELLOW, false, 10);
+                                blast.owner = player;
+                                ServerWorld serverWorld = (ServerWorld) player.getWorld();
+                                serverWorld.spawnEntity(blast);
+                                serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
+                                serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
+                            }
                             break;
                         }
                     }
                 }
             }
-            if (hasValue("yoyoAoETimer")) {
-                if (getValue("yoyoAoETimer") > 0) {
-                    for (Entity entity : player.getWorld().getOtherEntities(player, Box.of(player.getPos(), 4, 4, 4))) {
-                        if (entity instanceof LivingEntity living) {
-                            if (living.damage(player.getDamageSources().playerAttack(player), 12f)) {
-                                setStyle(getStyle() + 12);
-                            }
+            if (values.hasTimer("dtGauntletsRush")) {
+                for (Entity target : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos().add(0f, 1f, 0f), 1, 2, 1))) {
+                    if (target instanceof LivingEntity living) {
+                        living.getWorld().createExplosion(player, living.getX(), living.getY(), living.getZ(), 1f, World.ExplosionSourceType.NONE);
+                        values.removeTimer("dtGauntletsRush");
+                        values.removeTimer("forcedRunning");
+                        player.setVelocity(0f, 0f, 0f);
+                        player.velocityModified = true;
+                        break;
+                    }
+                }
+            }
+            if (values.hasTimer("yoyoAoETimer")) {
+                for (Entity entity : player.getWorld().getOtherEntities(player, Box.of(player.getPos(), 4, 4, 4))) {
+                    if (entity instanceof LivingEntity living) {
+                        if (living.damage(player.getDamageSources().playerAttack(player), 12f)) {
+                            setStyle(getStyle() + 12);
                         }
                     }
-                    float angle = getValue("yoyoAoETimer");
-                    Vec3d particlePos = new Vec3d(Math.sin(angle), 1f, Math.cos(angle));
-                    serverPlayer.getServerWorld().spawnParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + particlePos.x, player.getY() + particlePos.y, player.getZ() + particlePos.z, 2, 0, 0, 0, 0);
-                    setValue("yoyoAoETimer", getValue("yoyoAoETimer") - 1);
-                    setValue("yoyoSpin", 0);
                 }
+                float angle = values.getTimer("yoyoAoETimer");
+                Vec3d particlePos = new Vec3d(Math.sin(angle), 1f, Math.cos(angle));
+                serverPlayer.getServerWorld().spawnParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + particlePos.x, player.getY() + particlePos.y, player.getZ() + particlePos.z, 2, 0, 0, 0, 0);
+                values.removeTimer("yoyoSpin");
             }
-            if (hasValue("yoyoSpin")) {
-                if (getValue("yoyoSpin") > 0) {
-                    float angle = (20-getValue("yoyoSpin"))/20f * MathHelper.PI;
-                    Vec3d start = new Vec3d(getValue("startX"), getValue("startY"), getValue("startZ"));
-                    Vec3d center = new Vec3d(getValue("centerX"), getValue("centerY"), getValue("centerZ"));
-                    Vec3d p = start.subtract(center);
-                    Vec3d axis = new Vec3d(getValue("axisX"), getValue("axisY"), getValue("axisZ")).normalize();
-                    float a = MathHelper.cos(angle/2f);
-                    Vec3d f = axis.negate().multiply(MathHelper.sin(angle/2f));
-                    float b = (float)f.x, c = (float)f.y, d = (float)f.z;
-                    float aa = a*a, bb = b*b, cc = c*c, dd = d*d;
-                    float bc = b*c, ad = a*d, ac = a*c, ab = a*b, bd = b*d, cd = c*d;
-                    Vec3d fx = new Vec3d(aa+bb-cc-dd,2*(bc+ad),2*(bd-ac));
-                    Vec3d fy = new Vec3d(2*(bc-ad),aa+cc-bb-dd,2*(cd+ab));
-                    Vec3d fz = new Vec3d(2*(bd+ac),2*(cd-ab),aa+dd-bb-cc);
-                    Vec3d result = new Vec3d(fx.x*p.x+fx.y*p.y+fx.z*p.z, fy.x*p.x+fy.y*p.y+fy.z*f.z, fz.x*p.x+fz.y*p.y+fz.z*p.z);
-                    HitResult hit = player.getWorld().raycast(new RaycastContext(center, center.add(result), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
-                    Vec3d target = hit != null ? hit.getPos() : center.add(result);
-                    player.teleport(target.x, target.y, target.z);
-                    player.fallDistance = -5;
-                    setValue("yoyoSpin", getValue("yoyoSpin") - 1);
-                }
+            if (values.hasTimer("yoyoSpin")) {
+                float angle = (20-values.getTimer("yoyoSpin"))/20f * MathHelper.PI;
+                Vec3d start = new Vec3d(values.getFloat("startX"), values.getFloat("startY"), values.getFloat("startZ"));
+                Vec3d center = new Vec3d(values.getFloat("centerX"), values.getFloat("centerY"), values.getFloat("centerZ"));
+                Vec3d p = start.subtract(center);
+                Vec3d axis = new Vec3d(values.getFloat("axisX"), values.getFloat("axisY"), values.getFloat("axisZ")).normalize();
+                float a = MathHelper.cos(angle/2f);
+                Vec3d f = axis.negate().multiply(MathHelper.sin(angle/2f));
+                float b = (float)f.x, c = (float)f.y, d = (float)f.z;
+                float aa = a*a, bb = b*b, cc = c*c, dd = d*d;
+                float bc = b*c, ad = a*d, ac = a*c, ab = a*b, bd = b*d, cd = c*d;
+                Vec3d fx = new Vec3d(aa+bb-cc-dd,2*(bc+ad),2*(bd-ac));
+                Vec3d fy = new Vec3d(2*(bc-ad),aa+cc-bb-dd,2*(cd+ab));
+                Vec3d fz = new Vec3d(2*(bd+ac),2*(cd-ab),aa+dd-bb-cc);
+                Vec3d result = new Vec3d(fx.x*p.x+fx.y*p.y+fx.z*p.z, fy.x*p.x+fy.y*p.y+fy.z*f.z, fz.x*p.x+fz.y*p.y+fz.z*p.z);
+                HitResult hit = player.getWorld().raycast(new RaycastContext(center, center.add(result), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+                Vec3d target = hit != null ? hit.getPos() : center.add(result);
+                player.teleport(target.x, target.y, target.z);
+                player.fallDistance = -5;
             }
 
-            if (hasTag("rampaging")) {
+            /*if (values.hasBool("rampaging")) {
                 int rampageStartType = (int) getValue("rampageStart");
                 int rampageActiveType = (int) getValue("rampageActive");
                 int rampageEndType = (int) getValue("rampageEnd");
@@ -1301,7 +1206,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                     default -> 5;
                 };
                 if (getValue("rampageTimer") <= 0f) {
-                    SoulForge.LOGGER.info("started, rampageTimer: {}, start duration: {}, active duration: {}, end duration: {}", getValue("rampageTimer"), computedStartDuration, computedActiveDuration, computedEndDuration);
                     switch (rampageStartType) {
                         case 0 -> {
                             for (LivingEntity infront : Utils.getEntitiesInFrontOf(player, 3, 15, 2, 2)) {
@@ -1349,7 +1253,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                             player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 1f, 1f);
                         }
                         case 4 -> {
-                            addTag("forcedRunning");
+                            values.setTimer("forcedRunning", 100);
                         }
                     }
                     setValue("rampageTimer", getValue("rampageTimer") + 1);
@@ -1522,36 +1426,24 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                     removeValue("rampageActive");
                     removeValue("rampageEnd");
                 }
-            }
+            }*/
 
             if (this.disguisedAsID != null) this.disguisedAs = player.getWorld().getPlayerByUuid(disguisedAsID);
 
-            //behold, my antiheal conglomeration
-            if (hasValue("antiheal")) {
-                if (hasValue("antihealDuration") && getValue("antihealDuration") > 0) {
-                    setValue("antihealDuration", getValue("antihealDuration") - 1);
-                    if (getValue("antihealDuration") <= 0) setValue("antiheal", 0);
-                } else setValue("antiheal", 0);
-            } else if (hasValue("antihealDuration")) setValue("antihealDuration", 0);
-
             if (hasTrait(Traits.perseverance)) {
-                if (player.getMainHandStack().isOf(SoulForgeItems.PERSEVERANCE_CLAW)) setValue("shieldBreak", 3f);
-                else setValue("shieldBreak", 2f);
+                if (!player.getAttributeInstance(SoulForgeAttributes.SHIELD_BREAK).hasModifier(shieldBreakModifier)) {
+                    player.getAttributeInstance(SoulForgeAttributes.SHIELD_BREAK).addPersistentModifier(shieldBreakModifier);
+                }
             } else {
-                if (player.getMainHandStack().isOf(SoulForgeItems.DETERMINATION_CLAW)) setValue("shieldBreak", 2f);
-                else setValue("shieldBreak", 1f);
+                if (player.getAttributeInstance(SoulForgeAttributes.SHIELD_BREAK).hasModifier(shieldBreakModifier)) {
+                    player.getAttributeInstance(SoulForgeAttributes.SHIELD_BREAK).tryRemoveModifier(shieldBreakModifier.getId());
+                }
             }
 
             if (hasTrait(Traits.determination)) {
                 Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "limit_break");
                 EntityAttributeModifier strengthModifier = new EntityAttributeModifier("limit_break", 0.1 * styleRank, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
                 player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
-            }
-            lastTickWasShitAss = false;
-            long tickDuration = System.currentTimeMillis() - startTickTimer;
-            if (tickDuration >= 10) {
-                SoulForge.LOGGER.warn("{} soul tick took more than 5 milliseconds: {}", player.getName(), tickDuration);
-                lastTickWasShitAss = true;
             }
             this.spokenTextRenderer.tick();
         }
@@ -1597,8 +1489,13 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
         discovered = new ArrayList<>();
         List<String> discoveredIds = List.of(tag.getString("discovered").split(","));
-        for (String id : discoveredIds) {
-            if (!id.equals("") && !discovered.contains(Abilities.get(new Identifier(SoulForge.MOD_ID, id)))) discovered.add(Abilities.get(new Identifier(SoulForge.MOD_ID, id)));
+        for (String idStr : discoveredIds) {
+            if (!idStr.isEmpty()) {
+                Identifier id = idStr.contains(":") ? Identifier.tryParse(idStr) : new Identifier(SoulForge.MOD_ID, idStr);
+                if (!discovered.contains(Abilities.get(id))) {
+                    discovered.add(Abilities.get(id));
+                }
+            }
         }
 
         monsterSouls = new HashMap<>();
@@ -1633,8 +1530,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         }
 
         spokenTextRenderer.readNbt(tag.getCompound("spokenTextRenderer"));
-
-        updateTags();
     }
 
     @Override
@@ -1701,7 +1596,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             ability.setActive(false);
         }
         updateAbilities();
-        updateTags();
         sync();
     }
 
@@ -1721,7 +1615,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             ability.setActive(false);
         }
         updateAbilities();
-        updateTags();
         sync();
     }
 

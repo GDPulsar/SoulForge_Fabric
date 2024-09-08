@@ -3,34 +3,22 @@ package com.pulsar.soulforge.ability.justice;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 public class Launch extends AbilityBase {
-    private int fallImmunityTime;
-
     @Override
     public boolean cast(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        fallImmunityTime = 0;
-        playerSoul.addTag("fallImmune");
+        TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(player);
+        if (modifiers != null) {
+            modifiers.addTemporaryModifier(SoulForgeAttributes.FALL_DAMAGE_MULTIPLIER, new EntityAttributeModifier("launch", -1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 80);
+        }
         player.addVelocity(new Vec3d(0, 2, 0));
         player.velocityModified = true;
         return super.cast(player);
-    }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        fallImmunityTime++;
-        return fallImmunityTime >= 140;
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.removeTag("fallImmune");
-        return super.end(player);
     }
 
     public int getLV() { return 15; }

@@ -4,6 +4,7 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.devices.DeviceBase;
@@ -49,18 +50,19 @@ public class DeterminationInjector extends DeviceBase implements GeoItem {
                 if (!stack.getOrCreateNbt().contains("timer")) stack.getOrCreateNbt().putInt("timer", 0);
                 int timer = stack.getOrCreateNbt().getInt("timer");
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+                ValueComponent values = SoulForge.getValues(user);
                 NbtCompound nbt = stack.getOrCreateNbt();
                 if (!nbt.contains("active")) nbt.putBoolean("active", false);
                 if (nbt.getBoolean("active")) {
-                    playerSoul.removeTag("injected");
+                    values.removeBool("injected");
                 } else {
-                    if (playerSoul.hasTag("injected")) {
+                    if (values.getBool("injected")) {
                         return super.use(world, user, hand);
                     }
-                    playerSoul.addTag("injected");
+                    values.setBool("injected", false);
                 }
                 nbt.putBoolean("active", !nbt.getBoolean("active"));
-                if (playerSoul.hasTag("injected")) {
+                if (values.getBool("injected")) {
                     Utils.clearModifiersByName(user, SoulForgeAttributes.MAGIC_POWER, "dt_injector");
                     user.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(new EntityAttributeModifier("dt_injector", 0.5, EntityAttributeModifier.Operation.ADDITION));
                     if (!playerSoul.hasTrait(Traits.determination)) {

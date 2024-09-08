@@ -1,0 +1,31 @@
+{
+  "name": "Example",
+  "id": "example:ability",
+  "unlockLv": 10,
+  "cost": 20,
+  "cooldown": 600,
+  "type": "aura",
+  "modifiers": [
+    {
+      "attribute": "soulforge:damage_reduction",
+      "uuid": "5a82eb42-652b-11ef-864f-325096b39f47",
+      "name": "example_aura_reduction",
+      "value": -0.02,
+      "operation": 2
+    },
+    {
+      "attribute": "soulforge:knockback_multiplier",
+      "uuid": "5a82ed68-652b-11ef-a259-325096b39f47",
+      "name": "example_aura_knockback",
+      "value": 0.05,
+      "operation": 2
+    },
+    {
+      "attribute": "soulforge:gravity_modifier",
+      "uuid": "5a82ede0-652b-11ef-a0b9-325096b39f47",
+      "name": "example_aura_gravity",
+      "value": 0.05,
+      "operation": 2
+    }
+  ]
+}

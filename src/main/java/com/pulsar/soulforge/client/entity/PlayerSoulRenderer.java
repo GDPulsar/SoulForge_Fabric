@@ -27,7 +27,7 @@ public class PlayerSoulRenderer extends EntityRenderer<PlayerSoulEntity> {
     public void render(PlayerSoulEntity entity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
         float n = entity.getYaw();
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(n));
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(n + g * 0.2f));
 
         try {
             ItemStack soulItem = SoulForgeItems.getSoulItem(Objects.requireNonNull(Traits.get(entity.getTrait1())),

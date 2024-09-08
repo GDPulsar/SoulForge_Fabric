@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.util;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.bravery.BraveryBoost;
 import com.pulsar.soulforge.ability.bravery.ValiantHeart;
@@ -18,7 +17,6 @@ import com.pulsar.soulforge.ability.kindness.SelfHeal;
 import com.pulsar.soulforge.ability.perseverance.MorphingWeaponry;
 import com.pulsar.soulforge.ability.perseverance.PerseveranceAura;
 import com.pulsar.soulforge.ability.pures.*;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.trait.TraitBase;
@@ -28,7 +26,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 
 import java.util.*;
@@ -168,12 +165,6 @@ public class Constants {
         List<StatusEffectInstance> newEffects = new ArrayList<>();
         if (entity.getFireTicks() > 0) {
             entity.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, (int)(entity.getFireTicks()*amplifierModifier), 0));
-        }
-        if (entity instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("antiheal") && playerSoul.hasValue("antihealDuration")) {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, (int) (playerSoul.getValue("antihealDuration")), (int) (playerSoul.getValue("antiheal") * 0.06f)));
-            }
         }
         for (StatusEffectInstance effect : effects) {
             StatusEffect effectType = effect.getEffectType();

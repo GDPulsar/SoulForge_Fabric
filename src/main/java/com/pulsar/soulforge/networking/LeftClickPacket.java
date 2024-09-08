@@ -2,6 +2,7 @@ package com.pulsar.soulforge.networking;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.entity.BouncingShieldEntity;
@@ -39,6 +40,7 @@ import java.awt.*;
 public class LeftClickPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        ValueComponent values = SoulForge.getValues(player);
         if (player.isUsingItem()) {
             ItemStack using = player.getActiveItem();
             if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.justice)) {
@@ -59,17 +61,13 @@ public class LeftClickPacket {
                 }
             } else {
                 if (using.isOf(SoulForgeItems.KINDNESS_SHIELD) || using.isOf(SoulForgeItems.DETERMINATION_SHIELD)) {
-                    if (playerSoul.hasValue("shieldBashCooldown")) {
-                        if (playerSoul.getValue("shieldBashCooldown") > 0) return;
-                    }
-                    if (playerSoul.hasValue("shieldBash")) {
-                        if (playerSoul.getValue("shieldBash") > 0) return;
-                    }
+                    if (values.getTimer("shieldBashCooldown") > 0) return;
+                    if (values.getTimer("shieldBash") > 0) return;
                     Vec3d velAdd = player.getRotationVector();
                     velAdd = new Vec3d(velAdd.x, 0f, velAdd.z).normalize();
                     player.addVelocity(velAdd);
                     player.velocityModified = true;
-                    playerSoul.setValue("shieldBash", 15);
+                    values.setTimer("shieldBash", 15);
                 }
             }
             if (using.isOf(SoulForgeItems.GUNBLADES)) {
@@ -164,7 +162,7 @@ public class LeftClickPacket {
                         }
                     } else {
                         yoyo.kill();
-                        playerSoul.setValue("yoyoAoETimer", 15);
+                        values.setTimer("yoyoAoETimer", 15);
                     }
                 }
             }

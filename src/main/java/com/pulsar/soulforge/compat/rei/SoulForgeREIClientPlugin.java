@@ -1,12 +1,12 @@
 package com.pulsar.soulforge.compat.rei;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.client.ui.SoulForgeScreen;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.recipe.SiphonRecipe;
 import com.pulsar.soulforge.recipe.SoulForgeRecipe;
 import com.pulsar.soulforge.recipe.SoulForgeRecipes;
+import com.pulsar.soulforge.tag.SoulForgeTags;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
@@ -15,10 +15,12 @@ import me.shedaniel.rei.api.client.registry.display.DynamicDisplayGenerator;
 import me.shedaniel.rei.api.client.registry.screen.ScreenRegistry;
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
+import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +43,70 @@ public class SoulForgeREIClientPlugin implements REIClientPlugin {
 
         registry.registerDisplayGenerator(SiphonCategory.SIPHONING, new DynamicDisplayGenerator<SiphonDisplay>() {
             @Override
+            public Optional<List<SiphonDisplay>> getRecipeFor(EntryStack<?> entry) {
+                if (entry != null) {
+                    if (entry.getValue() instanceof ItemStack stack) {
+                        if (!(stack.isIn(SoulForgeTags.SIPHONABLE) || stack.isIn(SoulForgeTags.ARTIFACT_SIPHONABLE))) {
+                            return Optional.empty();
+                        }
+                    }
+                }
+                return getMatchesOf(entry);
+            }
+
+            @Override
+            public Optional<List<SiphonDisplay>> getUsageFor(EntryStack<?> entry) {
+                if (entry != null) {
+                    if (entry.getValue() instanceof ItemStack stack) {
+                        if (!(stack.isIn(SoulForgeTags.SIPHONABLE) || stack.isIn(SoulForgeTags.ARTIFACT_SIPHONABLE))) {
+                            return Optional.empty();
+                        }
+                    }
+                }
+                return getMatchesOf(entry);
+            }
+
+            @Override
             public Optional<List<SiphonDisplay>> generate(ViewSearchBuilder builder) {
+                return getMatchesOf(builder.getRecipesFor());
+            }
+
+            public Optional<List<SiphonDisplay>> getMatchesOf(@Nullable EntryStack<?> entry) {
                 List<SiphonDisplay> displays = new ArrayList<>();
                 List<SiphonRecipe> siphonRecipes = registry.getRecipeManager().listAllOfType(SoulForgeRecipes.SIPHON_RECIPE);
-                SoulForge.LOGGER.info("found {} recipes", siphonRecipes.size());
                 for (SiphonRecipe recipe : siphonRecipes) {
                     for (ItemStack validBase : recipe.getBase().getMatchingStacks()) {
-                        SoulForge.LOGGER.info("creating siphon recipe for {}", validBase);
+                        if (entry != null) {
+                            if (entry.getValue() instanceof ItemStack stack) {
+                                if (!stack.isOf(validBase.getItem())) continue;
+                            }
+                        }
+                        EntryIngredient template = EntryIngredients.ofIngredient(recipe.getTemplate());
+                        EntryIngredient addition = EntryIngredients.ofIngredient(recipe.getAddition());
+                        EntryIngredient output = EntryIngredients.of(recipe.getOutputFromInput(validBase));
+                        displays.add(new SiphonDisplay(List.of(template, EntryIngredients.of(validBase), addition), List.of(output)));
+                    }
+                }
+                return Optional.of(displays);
+            }
+
+            public Optional<List<SiphonDisplay>> getMatchesOf(@Nullable List<EntryStack<?>> entries) {
+                List<SiphonDisplay> displays = new ArrayList<>();
+                List<SiphonRecipe> siphonRecipes = registry.getRecipeManager().listAllOfType(SoulForgeRecipes.SIPHON_RECIPE);
+                for (SiphonRecipe recipe : siphonRecipes) {
+                    for (ItemStack validBase : recipe.getBase().getMatchingStacks()) {
+                        if (entries != null) {
+                            boolean hasItem = false;
+                            for (EntryStack<?> entry : entries) {
+                                if (entry.getValue() instanceof ItemStack stack) {
+                                    if (stack.isOf(validBase.getItem())) {
+                                        hasItem = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!hasItem) continue;
+                        }
                         EntryIngredient template = EntryIngredients.ofIngredient(recipe.getTemplate());
                         EntryIngredient addition = EntryIngredients.ofIngredient(recipe.getAddition());
                         EntryIngredient output = EntryIngredients.of(recipe.getOutputFromInput(validBase));

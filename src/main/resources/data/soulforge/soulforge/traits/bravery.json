@@ -1,0 +1,22 @@
+{
+  "name": "Bravery",
+  "id": "example:bravery",
+  "abilities": [
+    "soulforge:energy_ball",
+    "soulforge:energy_wave",
+    "soulforge:flamethrower",
+    "soulforge:eruption",
+    "soulforge:bravery_hammer",
+    "soulforge:bravery_spear",
+    "soulforge:bravery_gauntlets",
+    "soulforge:polarities",
+    "soulforge:bravery_boost",
+    "soulforge:shatter",
+    "soulforge:valiant_heart"
+  ],
+  "color": {
+    "r": 255,
+    "g": 128,
+    "b": 0
+  }
+}

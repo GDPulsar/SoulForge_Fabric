@@ -29,6 +29,7 @@ import java.util.UUID;
 
 public class BlindingSnowstorm extends ToggleableAbilityBase {
     public LivingEntity frostMark;
+    public UUID frostMarkUUID;
     public Vec3d location;
     public float size;
 
@@ -41,6 +42,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
                 if (hit != null && hit.getEntity() instanceof LivingEntity living) {
                     size = 140f;
                     frostMark = living;
+                    location = living.getPos();
                 } else {
                     return false;
                 }
@@ -64,6 +66,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
             setActive(false);
             return true;
         }
+        if (frostMarkUUID != null) frostMark = (LivingEntity)player.getWorld().getEntityLookup().get(frostMarkUUID);
         if (frostMark != null) location = frostMark.getPos();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float styleChange = 0f;
@@ -116,7 +119,8 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
 
     @Override
     public NbtCompound saveNbt(NbtCompound nbt) {
-        if (nbt.contains("location")) nbt.put("location", Utils.vectorToNbt(location));
+        if (location != null) nbt.put("location", Utils.vectorToNbt(location));
+        if (frostMark != null) nbt.putUuid("frostMark", frostMarkUUID);
         nbt.putFloat("size", size);
         return super.saveNbt(nbt);
     }
@@ -124,7 +128,8 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
     @Override
     public void readNbt(NbtCompound nbt) {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
-        if (location != null) location = Utils.nbtToVector(nbt.getList("location", NbtElement.DOUBLE_TYPE));
+        if (nbt.contains("location")) location = Utils.nbtToVector(nbt.getList("location", NbtElement.DOUBLE_TYPE));
+        if (nbt.contains("frostMark")) frostMarkUUID = nbt.getUuid("frostMark");
         size = nbt.getFloat("size");
         super.readNbt(nbt);
     }

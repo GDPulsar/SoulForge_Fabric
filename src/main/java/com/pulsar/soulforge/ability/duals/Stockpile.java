@@ -4,11 +4,11 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.EntityHitResult;
@@ -24,12 +24,22 @@ public class Stockpile extends AbilityBase {
         EntityHitResult hit = Utils.getFocussedEntity(player, 3f);
         if (hit != null) {
             if (hit.getEntity() instanceof LivingEntity target) {
-                if (target instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) return false;
+                if (!TeamUtils.canDamageEntity(player.getServer(), player, target)) return false;
+                ValueComponent values = SoulForge.getValues(player);
+                if (values != null) {
+                    if (!values.hasInt("stockpiles")) {
+                        values.setInt("stockpiles", 1);
+                        values.setTimer("stockpileTimer", 2400);
+                    } else {
+                        if (values.getTimer("stockpileTimer") != 0) {
+                            values.setInt("stockpiles", values.getInt("stockpiles") + 1);
+                            values.setTimer("stockpileTimer", 2400);
+                        } else {
+                            values.setInt("stockpiles", 1);
+                            values.setTimer("stockpileTimer", 2400);
+                        }
+                    }
                 }
-                if (!playerSoul.hasValue("stockpiles")) playerSoul.setValue("stockpiles", 0);
-                playerSoul.setValue("stockpiles", playerSoul.getValue("stockpiles")+1);
-                playerSoul.setValue("stockpileTimer", 2400);
                 playerSoul.setStyleRank(playerSoul.getStyleRank() - 2);
                 target.damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.STOCKPILE_DAMAGE_TYPE), 3f);
                 return super.cast(player);

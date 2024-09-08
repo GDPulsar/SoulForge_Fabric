@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.config;
 
 import com.mojang.serialization.Codec;
+import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.ConfigOptionStorage;
 import com.terraformersmc.modmenu.config.option.OptionConvertable;
 import net.fabricmc.loader.api.FabricLoader;
@@ -26,6 +27,7 @@ public class SoulForgeConfig {
                 }
             }
     );
+    public static final BooleanConfigOption SHOW_VALUES = new BooleanConfigOption("show_values", true);
     //public static final BooleanConfigOption DEBUG_RESET_PERCENTAGES = new BooleanConfigOption("debug_reset_percentages", false);
 
     public static SimpleOption<?>[] asOptions() {

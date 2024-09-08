@@ -305,7 +305,7 @@
   "ability.kinetic_boost.name": "Kinetic Boost",
   "ability.platforms.name": "Platforms",
   "ability.repulsion_field.name": "Repulsion Field",
-  "ability.telekinesis_entity.name": "Telekinesis: Entity",
+  "ability.telekinesis.name": "Telekinesis: Entity",
   "ability.telekinetic_shockwave.name": "Telekinetic Shockwave",
   "ability.warpspeed.name": "Warpspeed",
 
@@ -404,7 +404,7 @@
   "ability.kinetic_boost.tooltip": "Wavedash not included.",
   "ability.platforms.tooltip": "You can't bind this to Jump-Shift anymore so you explode instantly.",
   "ability.repulsion_field.tooltip": "Nobody's faster than me!",
-  "ability.telekinesis_entity.tooltip": "Gotcha.",
+  "ability.telekinesis.tooltip": "Gotcha.",
   "ability.telekinetic_shockwave.tooltip": "",
   "ability.warpspeed.tooltip": "Can't stop the A-Train!",
 
@@ -606,7 +606,7 @@
   "encyclopedia.ability.proceed.text": "Enter a state of focus, looking at the closest enemy before charging a wave of snow over the target.",
 
   "encyclopedia.ability.platforms.text": "When cast, toggles platforms. While platforms are active, press shift while in the air to spawn a platform. While on a platform, press shift to stack platforms. You may only stack up to three platforms. Stacked platforms give a jump height multiplier, but last for less time.",
-  "encyclopedia.ability.telekinesis_entity.text": "Grab a target's soul, allowing you to move them around freely. Recast to release early. Lasts for ${elv} seconds.",
+  "encyclopedia.ability.telekinesis.text": "Grab a target's soul, allowing you to move them around freely. Recast to release early. Lasts for ${elv} seconds.",
   "encyclopedia.ability.gravity_anchor.text": "Target an enemy to increase their gravity dramatically for a period. This will slow them down, and make them unable to jump.",
   "encyclopedia.ability.repulsion_field.text": "Increase your speed, jump height and gravity while also supplying fall damage immunity and step assist.",
   "encyclopedia.ability.integrity_rapier.text": "Moderately low damage, high speed. Right-click to parry. Parrying lasts for a quarter of a second, and if timed correctly, will reflect all damage back to the attacker, while also applying Vulnerability III for 4 seconds. Parrying a projectile reflects it.",

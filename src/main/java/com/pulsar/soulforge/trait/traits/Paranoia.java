@@ -23,7 +23,7 @@ public class Paranoia implements TraitBase {
             new KineticBoost(),
             new Platforms(),
             new RepulsionField(),
-            new TelekinesisEntity(),
+            new Telekinesis(),
             new TelekineticShockwave(),
             new Warpspeed()
     ));

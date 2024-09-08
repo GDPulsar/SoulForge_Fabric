@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
@@ -37,6 +36,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -90,17 +90,18 @@ abstract class LivingEntityMixin extends Entity {
 
     @Shadow public abstract AttributeContainer getAttributes();
 
-    @Inject(method = "isBlocking", at=@At("HEAD"), cancellable = true)
-    public void parryBlocking(CallbackInfoReturnable<Boolean> cir) {
+    @Shadow public abstract double getAttributeValue(RegistryEntry<EntityAttribute> attribute);
+
+    @ModifyReturnValue(method = "isBlocking", at=@At("RETURN"))
+    public boolean parryBlocking(boolean original) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if (living instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul != null) {
-                if (playerSoul.hasValue("parry") && playerSoul.getValue("parry") > 0) {
-                    cir.setReturnValue(true);
-                }
+        ValueComponent values = SoulForge.getValues(living);
+        if (values != null) {
+            if (values.getTimer("parry") > 0) {
+                return true;
             }
         }
+        return original;
     }
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
@@ -110,7 +111,7 @@ abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @ModifyExpressionValue(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 3))
+    /*@ModifyExpressionValue(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 3))
     private boolean soulforge$modifyBypassesCooldown(boolean original, @Local DamageSource source) {
         if (source.getAttacker() instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -121,7 +122,7 @@ abstract class LivingEntityMixin extends Entity {
             }
         }
         return original;
-    }
+    }*/
 
     @Inject(method = "onKilledBy", at = @At("HEAD"))
     private void whenKilled(LivingEntity adversary, CallbackInfo ci) {
@@ -132,20 +133,11 @@ abstract class LivingEntityMixin extends Entity {
     @ModifyReturnValue(method="getJumpVelocity", at=@At("RETURN"))
     private float addJumpVelocityIncrease(float original) {
         float multiplier = 1f;
-        LivingEntity entity = (LivingEntity)(Object)this;
-        if (entity instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("jumpBoost")) {
-                multiplier *= playerSoul.getValue("jumpBoost");
-            }
-            if (playerSoul.hasValue("slamJumpTimer") && playerSoul.hasValue("slamJump")) {
-                if (playerSoul.getValue("slamJumpTimer") > 0) multiplier *= (float)Math.sqrt(playerSoul.getValue("slamJump"));
-            }
-        }
-        if (entity.isOnGround()) {
+        multiplier *= (float)this.getAttributeValue(SoulForgeAttributes.JUMP_MULTIPLIER);
+        if (this.isOnGround()) {
             Box box = this.getBoundingBox();
-            for (Entity other : entity.getEntityWorld().getOtherEntities(entity, box.expand(0.0001))) {
-                if (entity.collidesWith(other)) {
+            for (Entity other : this.getEntityWorld().getOtherEntities((LivingEntity)(Object)this, box.expand(0.0001))) {
+                if (this.collidesWith(other)) {
                     if (other instanceof DeterminationPlatformEntity platform && platform.getStack() == 1) multiplier *= 2.5f;
                     if (other instanceof DeterminationPlatformEntity platform && platform.getStack() == 2) multiplier *= 4f;
                     if (other instanceof IntegrityPlatformEntity platform && platform.getStack() == 1) multiplier *= 2.5f;
@@ -211,18 +203,11 @@ abstract class LivingEntityMixin extends Entity {
     @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08))
     private double modifyEntityGravity(double baseGravity) {
         LivingEntity living = (LivingEntity)(Object)this;
-        if (living instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            ValueComponent values = SoulForge.getValues(living);
+        ValueComponent values = SoulForge.getValues(living);
+        if (values != null) {
             if (values.getBool("Immobilized")) return 0f;
-            if (playerSoul.hasCast("Repulsion Field") || playerSoul.hasCast("Fearless Instincts") || playerSoul.hasCast("Accelerated Pellet Aura")) {
-                baseGravity += 0.04;
-            }
-            if (playerSoul.hasTag("antigravityZoneAffected")) {
-                baseGravity -= 0.065;
-            }
         }
-        return baseGravity;
+        return baseGravity * this.getAttributeValue(SoulForgeAttributes.GRAVITY_MODIFIER);
     }
 
     @Inject(method = "disablesShield", at=@At("RETURN"), cancellable=true)
@@ -325,7 +310,12 @@ abstract class LivingEntityMixin extends Entity {
                 .add(SoulForgeAttributes.SLIP_MODIFIER)
                 .add(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER)
                 .add(SoulForgeAttributes.ANTIHEAL)
-                .add(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS);
+                .add(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS)
+                .add(SoulForgeAttributes.JUMP_MULTIPLIER)
+                .add(SoulForgeAttributes.FALL_DAMAGE_MULTIPLIER)
+                .add(SoulForgeAttributes.GRAVITY_MODIFIER)
+                .add(SoulForgeAttributes.STEP_HEIGHT)
+                .add(SoulForgeAttributes.SHIELD_BREAK);
     }
 
     @ModifyReturnValue(method = "getOffGroundSpeed", at=@At("RETURN"))
@@ -336,61 +326,6 @@ abstract class LivingEntityMixin extends Entity {
         }
         return original;
     }
-
-    /*@Unique
-    private boolean wasUnchained = false;
-
-    @ModifyReturnValue(method = "getStatusEffects", at = @At("RETURN"))
-    public Collection<StatusEffectInstance> getStatusEffects(Collection<StatusEffectInstance> original) {
-        LivingEntity living = (LivingEntity)(Object)this;
-        if (living instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            boolean isUnchained = playerSoul.hasCast("Unchained Soul");
-            int totalCount = 0;
-            int duration = 10000;
-            for (StatusEffectInstance effect : original) {
-                totalCount += effect.getAmplifier();
-                if (effect.getDuration() < duration) duration = effect.getDuration();
-            }
-            if (isUnchained != wasUnchained) {
-                for (StatusEffectInstance effect : original) {
-                    if (isUnchained) effect.getEffectType().onRemoved(player, player.getAttributes(), effect.getAmplifier());
-                    else effect.getEffectType().onApplied(player, player.getAttributes(), effect.getAmplifier());
-                }
-            }
-            wasUnchained = isUnchained;
-            if (isUnchained && totalCount != 0) {
-                return Set.of(new StatusEffectInstance(SoulForgeEffects.UNCHAINED_EFFECT, duration, totalCount));
-            }
-        }
-        return original;
-    }
-
-    @ModifyReturnValue(method = "getActiveStatusEffects", at = @At("RETURN"))
-    public Map<StatusEffect, StatusEffectInstance> getActiveStatusEffects(Map<StatusEffect, StatusEffectInstance> original) {
-        LivingEntity living = (LivingEntity)(Object)this;
-        if (living instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            boolean isUnchained = playerSoul.hasCast("Unchained Soul");
-            int totalCount = 0;
-            int duration = 10000;
-            for (StatusEffectInstance effect : original.values()) {
-                totalCount += effect.getAmplifier();
-                if (effect.getDuration() < duration) duration = effect.getDuration();
-            }
-            if (isUnchained != wasUnchained) {
-                for (StatusEffectInstance effect : original.values()) {
-                    if (isUnchained) effect.getEffectType().onRemoved(player, player.getAttributes(), effect.getAmplifier());
-                    else effect.getEffectType().onApplied(player, player.getAttributes(), effect.getAmplifier());
-                }
-            }
-            wasUnchained = isUnchained;
-            if (isUnchained && totalCount != 0) {
-                return Map.of(SoulForgeEffects.UNCHAINED_EFFECT, new StatusEffectInstance(SoulForgeEffects.UNCHAINED_EFFECT, duration, totalCount));
-            }
-        }
-        return original;
-    }*/
 
     @Redirect(method = "tickRiptide", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;union(Lnet/minecraft/util/math/Box;)Lnet/minecraft/util/math/Box;"))
     private Box modifyRiptideCollisionBox(Box a, Box b) {
@@ -409,11 +344,8 @@ abstract class LivingEntityMixin extends Entity {
 
     @ModifyArg(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damageShield(F)V"))
     private float modifyShieldDamage(float original, @Local DamageSource source) {
-        if (source.getAttacker() instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("shieldBreak")) {
-                return original * playerSoul.getValue("shieldBreak");
-            }
+        if (source.getAttacker() instanceof LivingEntity living) {
+            return original * (float)living.getAttributeValue(SoulForgeAttributes.SHIELD_BREAK);
         }
         return original;
     }
@@ -504,5 +436,20 @@ abstract class LivingEntityMixin extends Entity {
     @ModifyVariable(method = "takeKnockback", at = @At("HEAD"), ordinal = 0)
     private double soulforge$modifyKnockbackStrength(double original) {
         return original * this.getAttributeValue(SoulForgeAttributes.KNOCKBACK_MULTIPLIER);
+    }
+
+    @ModifyReturnValue(method = "getStepHeight", at = @At("RETURN"))
+    private float soulforge$modifyStepHeight(float original) {
+        return original + (float)this.getAttributeValue(SoulForgeAttributes.STEP_HEIGHT);
+    }
+
+    @ModifyReturnValue(method = "handleFallDamage", at = @At("RETURN"))
+    private boolean soulforge$modifyFallDamageMultiplier(boolean original) {
+        return original && this.getAttributeValue(SoulForgeAttributes.FALL_DAMAGE_MULTIPLIER) > 0;
+    }
+
+    @ModifyArg(method = "computeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I"))
+    private float soulforge$modifyFallDamageMultiplier(float original) {
+        return original * (float)this.getAttributeValue(SoulForgeAttributes.FALL_DAMAGE_MULTIPLIER);
     }
 }

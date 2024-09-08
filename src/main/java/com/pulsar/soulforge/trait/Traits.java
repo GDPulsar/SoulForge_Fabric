@@ -142,7 +142,7 @@ public class Traits {
                 if (Objects.equals(trait.getName(), mode)) {
                     for (AbilityBase ability : trait.getAbilities()) {
                         if (ability.getLV() <= soul.getLV() || soul.hasTrait(Traits.spite)) {
-                            if (ability.getType() != AbilityType.PASSIVE && ability.getType() != AbilityType.PASSIVE_ON_HIT) {
+                            if (ability.getType() != AbilityType.PASSIVE) {
                                 if (ability instanceof DeterminationSword && soul.getLV() == 20) continue;
                                 abilityNames.add(ability.getName());
                             }
@@ -167,7 +167,7 @@ public class Traits {
             for (TraitBase trait : soul.getTraits()) {
                 for (AbilityBase ability : trait.getAbilities()) {
                     if (ability.getLV() <= soul.getLV()) {
-                        if (ability.getType() == AbilityType.PASSIVE || ability.getType() == AbilityType.PASSIVE_ON_HIT) {
+                        if (ability.getType() == AbilityType.PASSIVE) {
                             abilityNames.add(ability.getName());
                         }
                     }

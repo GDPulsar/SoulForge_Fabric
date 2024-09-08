@@ -1,54 +1,32 @@
 package com.pulsar.soulforge.ability.integrity;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
+import com.pulsar.soulforge.ability.AuraAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.util.Utils;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-public class RepulsionField extends ToggleableAbilityBase {
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Map.entry;
+
+public class RepulsionField extends AuraAbilityBase {
     @Override
-    public boolean cast(ServerPlayerEntity player) {
-        super.cast(player);
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.removeTag("fallImmune");
-        playerSoul.removeValue("jumpBoost");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "repulsion_field");
-        Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "repulsion_field");
-        if (getActive()) {
-            playerSoul.addTag("fallImmune");
-            playerSoul.setValue("jumpBoost", 2f);
-            player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("repulsion_field", playerSoul.getEffectiveLV() * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-            player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier("repulsion_field", playerSoul.getEffectiveLV() * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        }
+    public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
+        return new HashMap<>(Map.ofEntries(
+                entry(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier("repulsion_field", elv * 0.02f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, new EntityAttributeModifier("repulsion_field", elv * 0.02f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(SoulForgeAttributes.GRAVITY_MODIFIER, new EntityAttributeModifier("repulsion_field", 0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(SoulForgeAttributes.STEP_HEIGHT, new EntityAttributeModifier("repulsion_field", 1f, EntityAttributeModifier.Operation.ADDITION)),
+                entry(SoulForgeAttributes.JUMP_MULTIPLIER, new EntityAttributeModifier("repulsion_field", 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+        ));
+    }
+
+    @Override
+    public boolean hasFallImmunity() {
         return true;
-    }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "repulsion_field");
-        Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "repulsion_field");
-        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("repulsion_field", playerSoul.getEffectiveLV() * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        player.getAttributeInstance(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS).addPersistentModifier(new EntityAttributeModifier("repulsion_field", playerSoul.getEffectiveLV() * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (!playerSoul.hasCast("Warpspeed")) player.setStepHeight(1.6f);
-        playerSoul.addTag("fallImmune");
-        playerSoul.setValue("jumpBoost", 2f);
-        return super.tick(player);
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.removeTag("fallImmune");
-        playerSoul.removeValue("jumpBoost");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "repulsion_field");
-        Utils.clearModifiersByName(player, SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, "repulsion_field");
-        return super.end(player);
     }
 
     public int getLV() { return 7; }

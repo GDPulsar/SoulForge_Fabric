@@ -3,7 +3,7 @@ package com.pulsar.soulforge.item.weapons.weapon_wheel;
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -34,9 +34,11 @@ public class DeterminationClaw extends MagicSwordItem implements GeoItem {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (!world.isClient) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-            SoulForge.getValues(user).setBool("Immobilized", true);
-            playerSoul.setValue("clawGouge", 23);
+            ValueComponent values = SoulForge.getValues(user);
+            if (values != null) {
+                values.setTimer("disableMovement", 7);
+                values.setTimer("clawGouge", 23);
+            }
             user.getItemCooldownManager().set(this, 440);
         }
         return TypedActionResult.pass(stack);

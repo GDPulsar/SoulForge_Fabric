@@ -5,6 +5,7 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.patience.BlindingSnowstorm;
 import com.pulsar.soulforge.client.ui.ANOTHERHIM;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.client.RunArgs;
@@ -52,8 +53,8 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
     private void soulforge$cancelSetScreen(Screen screen, CallbackInfo ci) {
         if (this.player != null) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(this.player);
-            if (playerSoul.hasTag("resettingSoul")) {
+            ValueComponent values = SoulForge.getValues(this.player);
+            if (values.getBool("resettingSoul")) {
                 ci.cancel();
             }
         }

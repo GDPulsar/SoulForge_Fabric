@@ -3,6 +3,7 @@ package com.pulsar.soulforge.item.weapons;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.entity.YoyoProjectile;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,22 +51,23 @@ public class TrickAnchor extends MagicSwordItem implements GeoItem {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
         for (YoyoProjectile yoyo : world.getEntitiesByClass(YoyoProjectile.class, Box.of(user.getPos(), 200, 200, 200), (entity) -> entity.getOwner() == user)) {
             if (yoyo.projectiles.isEmpty()) {
+                ValueComponent values = SoulForge.getValues(user);
                 Vec3d a = yoyo.getPos();
                 Vec3d b = user.getPos();
                 Vec3d c = user.getPos().add(user.getRotationVector());
                 Vec3d ab = b.subtract(a);
                 Vec3d ac = c.subtract(a);
                 Vec3d cross = ab.crossProduct(ac);
-                playerSoul.setValue("axisX", (float) cross.x);
-                playerSoul.setValue("axisY", (float) cross.y);
-                playerSoul.setValue("axisZ", (float) cross.z);
-                playerSoul.setValue("centerX", (float) yoyo.getX());
-                playerSoul.setValue("centerY", (float) yoyo.getY());
-                playerSoul.setValue("centerZ", (float) yoyo.getZ());
-                playerSoul.setValue("startX", (float) user.getX());
-                playerSoul.setValue("startY", (float) user.getY());
-                playerSoul.setValue("startZ", (float) user.getZ());
-                playerSoul.setValue("yoyoSpin", 20);
+                values.setFloat("axisX", (float) cross.x);
+                values.setFloat("axisY", (float) cross.y);
+                values.setFloat("axisZ", (float) cross.z);
+                values.setFloat("centerX", (float) yoyo.getX());
+                values.setFloat("centerY", (float) yoyo.getY());
+                values.setFloat("centerZ", (float) yoyo.getZ());
+                values.setFloat("startX", (float) user.getX());
+                values.setFloat("startY", (float) user.getY());
+                values.setFloat("startZ", (float) user.getZ());
+                values.setTimer("yoyoSpin", 20);
             } else {
                 Vec3d highestVelocity = Vec3d.ZERO;
                 for (ProjectileEntity projectile : yoyo.projectiles) {

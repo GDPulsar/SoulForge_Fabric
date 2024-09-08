@@ -124,8 +124,6 @@ public class ShieldShardEntity extends Entity implements GeoEntity {
                     this.kill();
                 }
             }
-            this.setPitch(this.getPitch() + 0.9f);
-            this.setYaw(this.getYaw() + 6.9f);
             this.setPos(this.getPos().add(this.getVelocity()));
             this.teleport(this.getPos().x, this.getPos().y, this.getPos().z);
         }

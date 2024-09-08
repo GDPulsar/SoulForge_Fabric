@@ -1,50 +1,24 @@
 package com.pulsar.soulforge.ability.bravery;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.util.Utils;
+import com.pulsar.soulforge.ability.AuraAbilityBase;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-public class BraveryBoost extends ToggleableAbilityBase {
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Map.entry;
+
+public class BraveryBoost extends AuraAbilityBase {
     @Override
-    public boolean cast(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (!getActive()) {
-            if (playerSoul.getMagic() < 100f) {
-                setActive(false);
-                return false;
-            }
-            playerSoul.setMagic(0f);
-            return super.cast(player);
-        } else {
-            setActive(false);
-        }
-        return true;
+    public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
+        return new HashMap<>(Map.ofEntries(
+                entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("bravery_boost", elv / 2f, EntityAttributeModifier.Operation.ADDITION)),
+                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("bravery_boost", elv * 0.175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+        ));
     }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "bravery_boost_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "bravery_boost_strength");
-        EntityAttributeModifier healthModifier = new EntityAttributeModifier("bravery_boost_health", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-        EntityAttributeModifier strengthModifier = new EntityAttributeModifier("bravery_boost_strength", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-        player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
-        player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
-        return super.tick(player);
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "bravery_boost_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "bravery_boost_strength");
-        return super.end(player);
-    }
-
 
     public int getLV() { return 15; }
 

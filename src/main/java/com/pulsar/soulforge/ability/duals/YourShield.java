@@ -4,18 +4,20 @@ import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.kindness.PainSplit;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
 
 public class YourShield extends AbilityBase {
     public boolean pullTarget = false;
-    public PlayerEntity target;
-    private int fallImmunityTime = 0;
+    public LivingEntity target;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
@@ -38,9 +40,10 @@ public class YourShield extends AbilityBase {
                     pullTarget = true;
                     target.setVelocity(player.getPos().subtract(target.getPos()).normalize().multiply(2.5f));
                     target.velocityModified = true;
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
-                    targetSoul.addTag("fallImmune");
-                    fallImmunityTime = 0;
+                    TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
+                    if (modifiers != null) {
+                        modifiers.addTemporaryModifier(SoulForgeAttributes.FALL_DAMAGE_MULTIPLIER, new EntityAttributeModifier("your_shield", -1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 80);
+                    }
                 } else {
                     player.setVelocity(target.getPos().subtract(player.getPos()).normalize().multiply(2.5f));
                     player.velocityModified = true;
@@ -49,24 +52,6 @@ public class YourShield extends AbilityBase {
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        if (pullTarget)  {
-            fallImmunityTime++;
-            return fallImmunityTime >= 80;
-        }
-        return super.tick(player);
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        if (pullTarget) {
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(target);
-            targetSoul.removeTag("fallImmune");
-        }
-        return super.end(player);
     }
 
     public int getLV() { return 15; }

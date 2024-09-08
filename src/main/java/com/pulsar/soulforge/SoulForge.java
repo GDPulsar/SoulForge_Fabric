@@ -17,7 +17,8 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.recipe.SoulForgeRecipes;
-import com.pulsar.soulforge.registries.SoulForgeReloadListener;
+import com.pulsar.soulforge.registries.AbilityReloadListener;
+import com.pulsar.soulforge.registries.TraitReloadListener;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Constants;
 import com.pulsar.soulforge.util.SoulForgeCustomTrades;
@@ -55,7 +56,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.6.0");
+		LOGGER.info("Loading SoulForge v2.6.1");
 
 		//registerResourceListeners();
 
@@ -122,7 +123,8 @@ public class SoulForge implements ModInitializer {
 	public static void registerResourceListeners() {
 		SoulForge.LOGGER.info("Registering resource listeners");
 
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SoulForgeReloadListener());
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(AbilityReloadListener.INSTANCE);
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(TraitReloadListener.INSTANCE);
 	}
 
 	public static SoulComponent getPlayerSoul(PlayerEntity player) {

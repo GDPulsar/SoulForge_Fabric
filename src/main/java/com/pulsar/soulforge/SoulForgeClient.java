@@ -15,11 +15,9 @@ import com.pulsar.soulforge.client.event.ClientStartTick;
 import com.pulsar.soulforge.client.event.KeyInputHandler;
 import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
 import com.pulsar.soulforge.client.render.SoulForgeRendering;
-import com.pulsar.soulforge.client.ui.CreativeZoneScreen;
-import com.pulsar.soulforge.client.ui.MagicHudOverlay;
-import com.pulsar.soulforge.client.ui.SoulForgeScreen;
-import com.pulsar.soulforge.client.ui.SoulResetOverlay;
+import com.pulsar.soulforge.client.ui.*;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
@@ -87,7 +85,7 @@ public class SoulForgeClient implements ClientModInitializer {
 				.texture(new RenderPhase.Texture(texture, false, false)).transparency(NO_TRANSPARENCY)
 				.lightmap(ENABLE_LIGHTMAP).overlay(ENABLE_OVERLAY_COLOR).build(false);
 		RenderLayer layer = RenderLayer.of("energy_beam", POSITION_COLOR_TEXTURE_LIGHT, VertexFormat.DrawMode.QUADS,
-						2048, false, false, mpp);
+						2048, false, true, mpp);
 		return layer;
 		//return energyBeamBuffer.getRenderLayer(layer);
 	}
@@ -196,25 +194,22 @@ public class SoulForgeClient implements ClientModInitializer {
 		WormholeEntityRenderer.initialiseCrackRenderTypes();
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
+		HudRenderCallback.EVENT.register(new ValueHudOverlay());
 		HudRenderCallback.EVENT.register(new SoulResetOverlay());
 
 		SoulForgeParticles.clientRegister();
 
 		ModelPredicateProviderRegistry.register(SoulForgeItems.INTEGRITY_RAPIER, new Identifier("parrying"), (stack, world, entity, i) -> {
-			if (entity instanceof PlayerEntity player) {
-				SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-				if (playerSoul.hasValue("parry")) {
-					if (playerSoul.getValue("parry") > 0) return 1f;
-				}
+			ValueComponent values = SoulForge.getValues(entity);
+			if (values != null) {
+				if (values.hasTimer("parry")) return 1f;
 			}
 			return 0f;
 		});
 		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_RAPIER, new Identifier("parrying"), (stack, world, entity, i) -> {
-			if (entity instanceof PlayerEntity player) {
-				SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-				if (playerSoul.hasValue("parry")) {
-					if (playerSoul.getValue("parry") > 0) return 1f;
-				}
+			ValueComponent values = SoulForge.getValues(entity);
+			if (values != null) {
+				if (values.hasTimer("parry")) return 1f;
 			}
 			return 0f;
 		});

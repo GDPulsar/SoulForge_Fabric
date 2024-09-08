@@ -1,7 +1,7 @@
 package com.pulsar.soulforge.mixin;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.DrawContext;
@@ -19,8 +19,8 @@ public class MouseMixin {
     @Redirect(method = "onMouseButton", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getOverlay()Lnet/minecraft/client/gui/screen/Overlay;", ordinal = 0))
     private Overlay modifyGetOverlay(MinecraftClient instance) {
         if (instance.player != null) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(instance.player);
-            if (playerSoul.hasTag("resettingSoul") && this.client.currentScreen == null) {
+            ValueComponent values = SoulForge.getValues(instance.player);
+            if (values.getBool("resettingSoul") && this.client.currentScreen == null) {
                 return new Overlay() {
                     @Override
                     public void render(DrawContext context, int mouseX, int mouseY, float delta) {

@@ -83,8 +83,8 @@ public class EndSoulResetPacket {
             if (strong) resetData.strongDual = true;
             resetData.addDual(traits.get(0), traits.get(1));
         }
-        playerSoul.removeTag("resettingSoul");
-        SoulForge.getValues(player).removeBool("Immobilized");
+        values.removeBool("resettingSoul");
+        values.removeBool("Immobilized");
         //SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb"));
     }
 }

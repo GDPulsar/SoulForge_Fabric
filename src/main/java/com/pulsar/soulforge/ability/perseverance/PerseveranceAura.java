@@ -1,48 +1,25 @@
 package com.pulsar.soulforge.ability.perseverance;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.util.Utils;
+import com.pulsar.soulforge.ability.AuraAbilityBase;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-public class PerseveranceAura extends ToggleableAbilityBase {
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Map.entry;
+
+public class PerseveranceAura extends AuraAbilityBase {
     @Override
-    public boolean cast(ServerPlayerEntity player) {
-        super.cast(player);
-        if (getActive()) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            playerSoul.setMagic(0f);
-        }
-        return getActive();
+    public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
+        return new HashMap<>(Map.ofEntries(
+                entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("perseverance_aura", elv / 2f, EntityAttributeModifier.Operation.ADDITION)),
+                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("perseverance_aura", elv * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier("perseverance_aura", elv * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+        ));
     }
-
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "perseverance_aura_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "perseverance_aura_armor");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "perseverance_aura_strength");
-        EntityAttributeModifier healthModifier = new EntityAttributeModifier("perseverance_aura_health", playerSoul.getEffectiveLV() / 2f, EntityAttributeModifier.Operation.ADDITION);
-        EntityAttributeModifier armorModifier = new EntityAttributeModifier("perseverance_aura_armor", playerSoul.getEffectiveLV() * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-        EntityAttributeModifier strengthModifier = new EntityAttributeModifier("perseverance_aura_strength", playerSoul.getEffectiveLV() * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-        player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
-        player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addPersistentModifier(armorModifier);
-        player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
-        return super.tick(player);
-    }
-
-    @Override
-    public boolean end(ServerPlayerEntity player) {
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "perseverance_aura_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "perseverance_aura_armor");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "perseverance_aura_strength");
-        return super.end(player);
-    }
-
 
     public int getLV() { return 15; }
 

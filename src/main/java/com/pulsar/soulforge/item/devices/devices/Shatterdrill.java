@@ -2,7 +2,7 @@ package com.pulsar.soulforge.item.devices.devices;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
-import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.item.devices.PickaxeDeviceBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -41,8 +41,8 @@ public class Shatterdrill extends PickaxeDeviceBase implements GeoItem {
         if (!world.isClient) {
             if (getCharge(stack) >= 25) {
                 if (user.getSteppingBlockState().isAir()) {
-                    SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-                    playerSoul.addTag("shatterdrill");
+                    ValueComponent values = SoulForge.getValues(user);
+                    values.setBool("shatterdrill", true);
                     user.setVelocity(0, -2f, 0);
                     user.velocityModified = true;
                     decreaseCharge(stack, 25);

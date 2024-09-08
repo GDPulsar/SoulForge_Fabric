@@ -2,7 +2,7 @@ package com.pulsar.soulforge.ability.duals;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
+import com.pulsar.soulforge.ability.AuraAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
@@ -10,34 +10,46 @@ import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-public class PerfectedAuraTechnique extends ToggleableAbilityBase {
+import static java.util.Map.entry;
+
+public class PerfectedAuraTechnique extends AuraAbilityBase {
+    @Override
+    public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
+        if (fullPower) {
+            return new HashMap<>(Map.ofEntries(
+                    entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("perfected_aura_technique", Math.max(40, elv / 2f), EntityAttributeModifier.Operation.ADDITION)),
+                    entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("perfected_aura_technique", Math.max(1, elv * 0.0175f), EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                    entry(SoulForgeAttributes.MAGIC_POWER, new EntityAttributeModifier("perfected_aura_technique", 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                    entry(SoulForgeAttributes.MAGIC_COST, new EntityAttributeModifier("perfected_aura_technique", -0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                    entry(SoulForgeAttributes.MAGIC_COOLDOWN, new EntityAttributeModifier("perfected_aura_technique", -0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                    entry(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier("perfected_aura_technique", 0.15f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                    entry(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier("perfected_aura_technique", elv * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+            ));
+        }
+        return new HashMap<>(Map.ofEntries(
+                entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("perfected_aura_technique", elv / 2f, EntityAttributeModifier.Operation.ADDITION)),
+                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("perfected_aura_technique", elv * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier("perfected_aura_technique", elv * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+        ));
+    }
+
     public boolean fullPower = false;
     public int timer = 0;
-
-    @Override
-    public boolean cast(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (!getActive()) {
-            if (playerSoul.getMagic() < 100f) {
-                return false;
-            }
-            playerSoul.setMagic(0f);
-        }
-        return super.cast(player);
-    }
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
@@ -47,30 +59,9 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
                 player.setHealth(60f);
                 playerSoul.setMagic(100f);
             }
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "pat_health");
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "pat_armor");
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "pat_strength");
-            Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_POWER, "pat_magic");
-            Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COOLDOWN, "pat_cooldown");
-            Utils.clearModifiersByName(player, SoulForgeAttributes.MAGIC_COST, "pat_cost");
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "pat_speed");
-            EntityAttributeModifier healthModifier = new EntityAttributeModifier("pat_health", Math.max(40, playerSoul.getEffectiveLV() / 2f), EntityAttributeModifier.Operation.ADDITION);
-            EntityAttributeModifier strengthModifier = new EntityAttributeModifier("pat_strength", 1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            EntityAttributeModifier magicModifier = new EntityAttributeModifier("pat_magic", 1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            EntityAttributeModifier cooldownModifier = new EntityAttributeModifier("pat_cooldown", -0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            EntityAttributeModifier costModifier = new EntityAttributeModifier("pat_cost", -0.5, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            EntityAttributeModifier speedModifier = new EntityAttributeModifier("pat_speed", 0.15, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
-            player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
-            player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(magicModifier);
-            player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).addPersistentModifier(cooldownModifier);
-            player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).addPersistentModifier(costModifier);
-            player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(speedModifier);
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 20, 20, 20))) {
                 if (entity instanceof LivingEntity target) {
-                    if (entity instanceof PlayerEntity) {
-                        if (!TeamUtils.canDamageEntity(player.getServer(), player, (PlayerEntity)target)) continue;
-                    }
+                    if (!TeamUtils.canDamageEntity(player.getServer(), player, target)) continue;
                     if (target.distanceTo(player) < 10f) {
                         if (entity.getFireTicks() < 40) { entity.setFireTicks(50); }
                     }
@@ -101,16 +92,6 @@ public class PerfectedAuraTechnique extends ToggleableAbilityBase {
                     player.getServerWorld().spawnParticles(target, ParticleTypes.DRAGON_BREATH, false, player.getX(), player.getY(), player.getZ(), 25, 0.5, 1, 0.5, 0.25f);
                 }
             }
-        } else {
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "pat_health");
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "pat_armor");
-            Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "pat_strength");
-            EntityAttributeModifier healthModifier = new EntityAttributeModifier("pat_health", playerSoul.getEffectiveLV() / 2f, EntityAttributeModifier.Operation.ADDITION);
-            EntityAttributeModifier strengthModifier = new EntityAttributeModifier("pat_strength", playerSoul.getEffectiveLV() * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            EntityAttributeModifier armorModifier = new EntityAttributeModifier("pat_armor", playerSoul.getEffectiveLV() * 0.01f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-            player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(healthModifier);
-            player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addPersistentModifier(armorModifier);
-            player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(strengthModifier);
         }
         return super.tick(player);
     }

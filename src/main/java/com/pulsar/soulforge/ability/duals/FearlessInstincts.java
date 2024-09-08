@@ -1,61 +1,29 @@
 package com.pulsar.soulforge.ability.duals;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
-import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.util.Utils;
+import com.pulsar.soulforge.ability.AuraAbilityBase;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.server.network.ServerPlayerEntity;
 
-public class FearlessInstincts extends ToggleableAbilityBase {
-    @Override
-    public boolean cast(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.removeTag("fallImmune");
-        playerSoul.removeValue("jumpBoost");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "fearless_instincts_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "fearless_instincts_strength");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "fearless_instincts_speed");
-        if (!getActive()) {
-            if (playerSoul.getMagic() < 100f) {
-                return false;
-            }
-            playerSoul.addTag("fallImmune");
-            playerSoul.setValue("jumpBoost", 2f);
-            player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_speed", playerSoul.getEffectiveLV() * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-            player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_health", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-            player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_strength", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-            playerSoul.setMagic(0f);
-        }
-        return super.cast(player);
-    }
+import java.util.HashMap;
+import java.util.Map;
 
-    @Override
-    public boolean tick(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "fearless_instincts_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "fearless_instincts_strength");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "fearless_instincts_speed");
-        player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_speed", playerSoul.getEffectiveLV() * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_health", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier("fearless_instincts_strength", playerSoul.getEffectiveLV() / 40f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL));
-        if (!playerSoul.hasCast("Warpspeed")) player.setStepHeight(1.6f);
-        playerSoul.addTag("fallImmune");
-        playerSoul.setValue("jumpBoost", 2f);
-        return !getActive();
-    }
+import static java.util.Map.entry;
 
+public class FearlessInstincts extends AuraAbilityBase {
     @Override
-    public boolean end(ServerPlayerEntity player) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        playerSoul.removeTag("fallImmune");
-        playerSoul.removeValue("jumpBoost");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "fearless_instincts_health");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "fearless_instincts_strength");
-        Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MOVEMENT_SPEED, "fearless_instincts_speed");
-        return true;
+    public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
+        return new HashMap<>(Map.ofEntries(
+                entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("fearless_instincts", elv / 2f, EntityAttributeModifier.Operation.ADDITION)),
+                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("fearless_instincts", elv * 0.175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier("fearless_instincts", elv * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, new EntityAttributeModifier("fearless_instincts", elv * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(SoulForgeAttributes.GRAVITY_MODIFIER, new EntityAttributeModifier("fearless_instincts", 0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(SoulForgeAttributes.STEP_HEIGHT, new EntityAttributeModifier("fearless_instincts", 1f, EntityAttributeModifier.Operation.ADDITION)),
+                entry(SoulForgeAttributes.JUMP_MULTIPLIER, new EntityAttributeModifier("fearless_instincts", 1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+        ));
     }
 
     public int getLV() { return 15; }

@@ -6,6 +6,7 @@ import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,7 +15,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
 public class PainSplit extends AbilityBase {
-    public PlayerEntity target = null;
+    public LivingEntity target = null;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
@@ -22,9 +23,9 @@ public class PainSplit extends AbilityBase {
             EntityHitResult hit = Utils.getFocussedEntity(player, 5);
             if (hit != null) {
                 Entity entity = hit.getEntity();
-                if (entity instanceof PlayerEntity targetPlayer) {
-                    if (!TeamUtils.canHealEntity(player.getServer(), player, targetPlayer)) return false;
-                    target = targetPlayer;
+                if (entity instanceof LivingEntity living) {
+                    if (!TeamUtils.canHealEntity(player.getServer(), player, living)) return false;
+                    target = living;
                     player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_HEAL_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                     return super.cast(player);
                 }

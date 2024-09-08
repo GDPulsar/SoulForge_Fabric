@@ -40,8 +40,9 @@ public class SpecialHellEntityRenderer extends EntityRenderer<SpecialHellEntity>
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
         float top = 100f;
-        if (specialHellEntity.timer >= 100) top = MathHelper.lerp((specialHellEntity.timer-100)/40f, 100f, 0f);
+        if (specialHellEntity.timer >= 100) top = MathHelper.lerp(((specialHellEntity.timer + g)-100)/40f, 100f, 0f);
         if (specialHellEntity.timer < 60) top = 0.1f;
-        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, new Color(1f, 0.6f, 0.6f, 1f), 0, 0, true);
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, new Color(1f, 0.6f, 0.6f, 1f), 0, 0, false);
+        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, new Color(1f, 0.6f, 0.6f, 0.3f), 0, 0);
     }
 }

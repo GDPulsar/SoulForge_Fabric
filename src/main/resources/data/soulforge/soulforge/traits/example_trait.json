@@ -1,6 +1,6 @@
 {
   "name": "Example",
-  "translationKey": "trait.example.name",
+  "id": "example:trait",
   "abilities": [
     "soulforge:energy_ball",
     "soulforge:justice_pellets",
@@ -8,7 +8,8 @@
     "soulforge:slowball",
     "soulforge:platforms",
     "soulforge:morphing_weaponry",
-    "soulforge:determination_sword"
+    "soulforge:determination_sword",
+    "example:example_ability"
   ],
   "color": {
     "r": 255,

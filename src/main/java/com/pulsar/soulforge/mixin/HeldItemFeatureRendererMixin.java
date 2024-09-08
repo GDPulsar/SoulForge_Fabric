@@ -30,14 +30,14 @@ public class HeldItemFeatureRendererMixin<T extends LivingEntity, M extends Enti
                     return;
                 }
             }
-            if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageStart")) {
+            /*if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageStart")) {
                 if (playerSoul.getValue("rampageTimer") < 20 && playerSoul.getValue("rampageStart") == 5) {
                     if (arm == player.getMainArm()) {
                         args.set(5, new ItemStack(SoulForgeItems.DETERMINATION_CLAYMORE_DISPLAY));
                         return;
                     }
                 }
-            }
+            }*/
             /*if (arm == player.getMainArm()) {
                 if (player.getMainHandStack().getItem() == SoulForgeItems.KINDNESS_SHIELD) {
                     args.set(5, ItemStack.EMPTY);

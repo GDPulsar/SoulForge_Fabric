@@ -2,6 +2,7 @@ package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -25,11 +26,9 @@ public class DeterminationGauntlets extends MagicSwordItem {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+            ValueComponent values = SoulForge.getValues(user);
             if (user.isSneaking()) {
-                if (playerSoul.hasValue("dtGauntletsRush")) {
-                    if (playerSoul.getValue("dtGauntletsRush") > 0) return TypedActionResult.pass(user.getStackInHand(hand));
-                }
-                playerSoul.setValue("dtGauntletsRush", 15);
+                values.setTimer("dtGauntletsRush", 15);
                 Vec3d flattened = new Vec3d(user.getRotationVector().x, 0f, user.getRotationVector().z).normalize();
                 user.addVelocity(flattened.multiply(2.5f));
                 user.velocityModified = true;

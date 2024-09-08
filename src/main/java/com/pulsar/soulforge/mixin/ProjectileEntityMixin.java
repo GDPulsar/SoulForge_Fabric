@@ -5,6 +5,7 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -37,22 +38,19 @@ public abstract class ProjectileEntityMixin {
     public void canHit(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (!entity.getWorld().isClient) {
             ProjectileEntity projectile = (ProjectileEntity) (Object) this;
-            if (entity instanceof PlayerEntity player) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                if (playerSoul.hasValue("parry")) {
-                    if (playerSoul.getValue("parry") > 0f) {
-                        float speed = (float) projectile.getVelocity().distanceTo(Vec3d.ZERO);
-                        projectile.velocityDirty = true;
-                        projectile.setVelocity(player.getRotationVector().multiply(speed));
-                        if (projectile instanceof ExplosiveProjectileEntity eProjectile) {
-                            eProjectile.powerX = projectile.getVelocity().x * 0.1;
-                            eProjectile.powerY = projectile.getVelocity().y * 0.1;
-                            eProjectile.powerZ = projectile.getVelocity().z * 0.1;
-                        }
-                        projectile.setOwner(player);
-                        player.playSound(SoulForgeSounds.PARRY_EVENT, 1f, 1f);
-                        cir.setReturnValue(false);
+            if (entity instanceof LivingEntity living) {
+                if (Utils.isParrying(living)) {
+                    float speed = (float) projectile.getVelocity().distanceTo(Vec3d.ZERO);
+                    projectile.velocityDirty = true;
+                    projectile.setVelocity(living.getRotationVector().multiply(speed));
+                    if (projectile instanceof ExplosiveProjectileEntity eProjectile) {
+                        eProjectile.powerX = projectile.getVelocity().x * 0.1;
+                        eProjectile.powerY = projectile.getVelocity().y * 0.1;
+                        eProjectile.powerZ = projectile.getVelocity().z * 0.1;
                     }
+                    projectile.setOwner(living);
+                    living.playSound(SoulForgeSounds.PARRY_EVENT, 1f, 1f);
+                    cir.setReturnValue(false);
                 }
             }
         }

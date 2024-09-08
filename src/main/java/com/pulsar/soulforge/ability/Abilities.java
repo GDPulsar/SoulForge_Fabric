@@ -12,18 +12,35 @@ import java.util.Objects;
 
 public class Abilities {
     public static AbilityBase get(Identifier id) {
-        for (TraitBase trait : Traits.all()) {
-            for (AbilityBase ability : List.copyOf(trait.getAbilities())) {
-                if (ability.getID().equals(id)) {
-                    return ability;
+        for (TraitBase trait : Traits.trueAll()) {
+            if (trait != Traits.spite) {
+                for (AbilityBase ability : List.copyOf(trait.getAbilities())) {
+                    if (ability.getID().equals(id)) {
+                        return ability.getInstance();
+                    }
                 }
+            }
+            if (Constants.pureAbilities.containsKey(trait)) {
+                if (Constants.pureAbilities.get(trait).getID().equals(id)) {
+                    return Constants.pureAbilities.get(trait).getInstance();
+                }
+            }
+        }
+        for (AbilityBase ability : Constants.dualAbilities) {
+            if (ability.getID().equals(id)) {
+                return ability.getInstance();
+            }
+        }
+        for (AbilityBase ability : hateAbilities) {
+            if (ability.getID().equals(id)) {
+                return ability.getInstance();
             }
         }
         return null;
     }
 
     public static AbilityBase get(String name) {
-        // work
+        if (name.contains(":")) return Abilities.get(Identifier.tryParse(name));
         for (TraitBase trait : Traits.trueAll()) {
             if (trait != Traits.spite) {
                 for (AbilityBase ability : List.copyOf(trait.getAbilities())) {

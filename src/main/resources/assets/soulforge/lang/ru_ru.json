@@ -174,7 +174,7 @@
   "ability.kinetic_boost.name": "Кинетический Буст",
   "ability.platforms.name": "Платформы",
   "ability.repulsion_field.name": "Поле Репульсии",
-  "ability.telekinesis_entity.name": "Телекинез: Сущность",
+  "ability.telekinesis.name": "Телекинез: Сущность",
   "ability.telekinetic_shockwave.name": "Телекинетическая Волна",
   "ability.warpspeed.name": "Сверхзвук",
 
@@ -254,7 +254,7 @@
   "ability.kinetic_boost.tooltip": "Вейвдеш не включён.",
   "ability.platforms.tooltip": "Больше никакого ПРОБЕЛ+ШИФТ.",
   "ability.repulsion_field.tooltip": "Никто не может быть быстрее меня!",
-  "ability.telekinesis_entity.tooltip": "Попался.",
+  "ability.telekinesis.tooltip": "Попался.",
   "ability.telekinetic_shockwave.tooltip": "",
   "ability.warpspeed.tooltip": "Can't stop the A-Train!",
 

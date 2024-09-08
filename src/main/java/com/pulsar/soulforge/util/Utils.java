@@ -7,6 +7,7 @@ import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.*;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import com.pulsar.soulforge.item.SoulForgeItems;
+import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.loader.api.FabricLoader;
@@ -327,5 +328,31 @@ public class Utils {
         HateComponent hate = SoulForge.getHate(entity);
         if (hate == null) return;
         hate.setHasHate(hasHate);
+    }
+
+    public static <T, V> T getKeyByValue(HashMap<T, V> oldValues, V value) {
+        for (Map.Entry<T, V> entry : oldValues.entrySet()) {
+            if (entry.getValue() == value) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public static boolean isParrying(LivingEntity entity) {
+        if (entity.isUsingItem()) {
+            if (entity.getActiveItem().isIn(SoulForgeTags.PARRY_ITEMS)) return true;
+        }
+        if (entity instanceof PlayerEntity player) {
+            if (!player.getWorld().isClient) {
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                if (playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.integrity)) {
+                    if (playerSoul.hasCast("Valiant Heart")) {
+                        // do the funny bravteg parry somehow
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

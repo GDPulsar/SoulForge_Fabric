@@ -23,8 +23,8 @@ public class StartSoulResetPacket {
             if (!holdingJar || !SoulJarItem.getHasSoul(player.getMainHandStack())) {
                 player.getInventory().removeStack(player.getInventory().indexOf(new ItemStack(SoulForgeItems.DETERMINATION_ARNICITE_HEART)), 1);
             }
+            ValueComponent values = SoulForge.getValues(player);
             if (holdingJar) {
-                ValueComponent values = SoulForge.getValues(player);
                 if (values != null) {
                     values.modifyExtraVals((nbt) -> {
                         nbt.put("heldJar", player.getMainHandStack().writeNbt(new NbtCompound()));
@@ -32,9 +32,8 @@ public class StartSoulResetPacket {
                 }
                 player.getMainHandStack().getOrCreateNbt().putBoolean("usedInReroll", true);
             }
-            playerSoul.addTag("resettingSoul");
-            SoulForge.getValues(player).setBool("Immobilized", true);
-            playerSoul.sync();
+            values.setBool("resettingSoul", true);
+            values.setBool("Immobilized", true);
             PacketByteBuf buffer = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("im_going_to_see_mettaton_brb");
             buffer.writeBoolean(false);
             SoulForgeNetworking.broadcast(null, server, SoulForgeNetworking.PERFORM_ANIMATION, buffer);

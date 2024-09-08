@@ -35,7 +35,7 @@ public class IceSpikeRenderer
         matrixStack.translate(0f, 5.5f, 0f);
         matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f));
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(iceSpike.getYaw() + 180f));
-        float moveDist = -MathHelper.clampedLerp(-1.5f, 1.5f, iceSpike.age / 5f);
+        float moveDist = -MathHelper.clampedLerp(-1.5f, 1.5f, (iceSpike.age + g) / 5f);
         matrixStack.translate(0f, MathHelper.sin(22.5f * MathHelper.RADIANS_PER_DEGREE) * moveDist, MathHelper.cos(22.5f * MathHelper.RADIANS_PER_DEGREE) * moveDist);
         if (iceSpike.getOwner() instanceof PlayerEntity player) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
@@ -44,7 +44,7 @@ public class IceSpikeRenderer
             }
         }
         VertexConsumer vertexConsumer = ItemRenderer.getItemGlintConsumer(vertexConsumerProvider, this.model.getLayer(this.getTexture(iceSpike)), true, false);
-        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0f, 1.0f, 1.0f, MathHelper.clampedLerp(1f, 0f, (iceSpike.age - 40) / 20f));
+        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0f, 1.0f, 1.0f, MathHelper.clampedLerp(1f, 0f, ((iceSpike.age + g) - 40) / 20f));
         super.render(iceSpike, f, g, matrixStack, vertexConsumerProvider, i);
         matrixStack.pop();
     }

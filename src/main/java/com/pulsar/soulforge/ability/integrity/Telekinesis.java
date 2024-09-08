@@ -10,7 +10,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -18,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
-public class TelekinesisEntity extends ToggleableAbilityBase {
+public class Telekinesis extends ToggleableAbilityBase {
     private LivingEntity target = null;
     private int timer = 0;
 
@@ -90,12 +89,6 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
         return super.end(player);
     }
 
-    @Override
-    public String getName() { return "Telekinesis: Entity"; }
-
-    @Override
-    public Identifier getID() { return new Identifier(SoulForge.MOD_ID, "telekinesis_entity"); }
-
     public int getLV() { return 3; }
 
     public int getCost() { return 25; }
@@ -104,6 +97,6 @@ public class TelekinesisEntity extends ToggleableAbilityBase {
 
     @Override
     public AbilityBase getInstance() {
-        return new TelekinesisEntity();
+        return new Telekinesis();
     }
 }

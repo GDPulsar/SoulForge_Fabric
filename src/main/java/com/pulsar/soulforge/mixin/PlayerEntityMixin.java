@@ -9,20 +9,18 @@ import com.pulsar.soulforge.ability.kindness.PainSplit;
 import com.pulsar.soulforge.ability.pures.MartyrsTouch;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.TemporaryModifierComponent;
+import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.shield.ShieldDisabledCallback;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.tag.SoulForgeTags;
-import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.TeamUtils;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -37,7 +35,6 @@ import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -47,10 +44,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Arm;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -96,30 +90,25 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method="jump", at=@At("HEAD"), cancellable = true)
     protected void modifyJump(CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity)(Object)this;
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.hasTag("disableJump")) ci.cancel();
+        ValueComponent values = SoulForge.getValues(player);
+        if (values.getBool("disableJump")) ci.cancel();
     }
 
-    @Inject(method="travel", at=@At("HEAD"), cancellable = true)
-    protected void modifyTravel(Vec3d movementInput, CallbackInfo ci) {
-        PlayerEntity player = (PlayerEntity)(Object)this;
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.hasTag("disableMovement")) ci.cancel();
-    }
-
+    @Unique
+    boolean wasSprinting = false;
     @ModifyVariable(method = "travel", at=@At("HEAD"), argsOnly = true)
     private Vec3d modifyMovement(Vec3d movementInput) {
-        PlayerEntity player = ((PlayerEntity)(Object)this);
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        float stepHeight = 0.6f;
-        if (playerSoul.hasCast("Repulsion Field")) stepHeight += 1f;
-        if (playerSoul.hasCast("Fearless Instincts")) stepHeight += 1f;
-        if (playerSoul.hasCast("Accelerated Pellet Aura")) stepHeight += 1f;
-        if (playerSoul.hasCast("Warpspeed")) stepHeight += 3f;
-        if (playerSoul.hasTag("sliding")) stepHeight = -1f;
-        player.setStepHeight(stepHeight);
-        if (playerSoul.hasCast("Warpspeed")) return new Vec3d(0f, 0f, 1f);
-        if (playerSoul.hasTag("forcedRunning")) return new Vec3d(0f, 0f, 1f);
+        ValueComponent values = SoulForge.getValues((PlayerEntity)(Object)this);
+        if (values != null) {
+            if (values.getBool("disableMovement") || values.hasTimer("disableMovement")) {
+                if (!wasSprinting) setSprinting(true);
+                return new Vec3d(0f, 0f, 0f);
+            } else {
+                if (wasSprinting) setSprinting(false);
+            }
+            if (values.getBool("forcedRunning")) return new Vec3d(0f, 0f, 1f);
+            if (values.hasTimer("forcedRunning")) return new Vec3d(0f, 0f, 1f);
+        }
         return movementInput;
     }
 
@@ -127,8 +116,9 @@ abstract class PlayerEntityMixin extends LivingEntity {
     public float modifyFallDamage(float damageMultiplier) {
         PlayerEntity player = ((PlayerEntity)(Object)this);
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.hasTag("shatterdrill")) {
-            playerSoul.removeTag("shatterdrill");
+        ValueComponent values = SoulForge.getValues(player);
+        if (values.getBool("shatterdrill")) {
+            values.removeBool("shatterdrill");
             for (Entity entity : player.getEntityWorld().getOtherEntities(player, Box.of(player.getPos(), 8, 4, 8))) {
                 if (entity instanceof LivingEntity target) {
                     float dist = (float) target.getPos().distanceTo(player.getPos());
@@ -156,13 +146,13 @@ abstract class PlayerEntityMixin extends LivingEntity {
             }
             return 0;
         }
-        if (playerSoul.hasTag("fallImmune")) {
+        if (values.getBool("fallImmune")) {
             return 0;
         }
-        if (playerSoul.hasTag("groundSlam")) {
-            playerSoul.removeTag("groundSlam");
-            playerSoul.setValue("slamJump", player.fallDistance);
-            playerSoul.setValue("slamJumpTimer", 10);
+        if (values.getBool("groundSlam")) {
+            values.removeBool("groundSlam");
+            values.setFloat("slamJump", player.fallDistance);
+            values.setTimer("slamJumpTimer", 10);
             return 0;
         }
         return damageMultiplier;
@@ -201,7 +191,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 }
             }
         }
-        if (target instanceof LivingEntity living) {
+        /*if (target instanceof LivingEntity living) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) (Object) this);
             if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageActive")) {
                 if (playerSoul.getValue("rampageActive") == 3) {
@@ -209,7 +199,7 @@ abstract class PlayerEntityMixin extends LivingEntity {
                     original *= (modifiers.getModifierCount() * 0.05f) + 1f;
                 }
             }
-        }
+        }*/
         return original;
     }
 
@@ -342,34 +332,33 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 return;
             }
         }
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.hasValue("parry")) {
-            if (playerSoul.getValue("parry") > 0) {
-                if (source.getAttacker() != null) {
-                    this.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.PARRY_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                    if (source.getAttacker() instanceof LivingEntity living)
-                        living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, playerSoul.hasCast("Furioso") ? 160 : 80, 2));
-                    if (amount < 30f) {
-                        source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), amount);
-                    } else {
-                        source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), 30);
-                        if (!(this.isInvulnerableTo(source) || (this.abilities.invulnerable && !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)))) {
-                            this.despawnCounter = 0;
-                            if (!this.isDead()) {
-                                if (!this.getWorld().isClient) this.dropShoulderEntities();
-                                if (source.isScaledWithDifficulty()) {
-                                    if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) amount = 0.0F;
-                                    if (this.getWorld().getDifficulty() == Difficulty.EASY)
-                                        amount = Math.min(amount / 2.0F + 1.0F, amount);
-                                    if (this.getWorld().getDifficulty() == Difficulty.HARD)
-                                        amount = amount * 3.0F / 2.0F;
-                                }
-                                if (amount != 0.0F) super.damage(source, amount);
+        if (Utils.isParrying(player)) {
+            if (source.getAttacker() != null) {
+                this.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.PARRY_EVENT, SoundCategory.PLAYERS, 1f, 1f);
+                if (source.getAttacker() instanceof LivingEntity living) {
+                    SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                    living.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, playerSoul.hasCast("Furioso") ? 160 : 80, 2));
+                }
+                if (amount < 30f) {
+                    source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), amount);
+                } else {
+                    source.getAttacker().damage(SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.PARRY_DAMAGE_TYPE), 30);
+                    if (!(this.isInvulnerableTo(source) || (this.abilities.invulnerable && !source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)))) {
+                        this.despawnCounter = 0;
+                        if (!this.isDead()) {
+                            if (!this.getWorld().isClient) this.dropShoulderEntities();
+                            if (source.isScaledWithDifficulty()) {
+                                if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL) amount = 0.0F;
+                                if (this.getWorld().getDifficulty() == Difficulty.EASY)
+                                    amount = Math.min(amount / 2.0F + 1.0F, amount);
+                                if (this.getWorld().getDifficulty() == Difficulty.HARD)
+                                    amount = amount * 3.0F / 2.0F;
                             }
+                            if (amount != 0.0F) super.damage(source, amount);
                         }
                     }
-                    cir.setReturnValue(false);
                 }
+                cir.setReturnValue(false);
             }
         }
     }
@@ -426,30 +415,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 ci.cancel();
             }
         }
-    }
-
-    @ModifyExpressionValue(method = "interact", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;interact(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
-    public ActionResult interact(ActionResult original, @Local Entity entity, @Local Hand hand) {
-        PlayerEntity player = (PlayerEntity)(Object)this;
-        if (!original.isAccepted()) {
-            if (!player.getWorld().isClient) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                if (!(playerSoul.hasTrait(Traits.bravery) && playerSoul.hasTrait(Traits.integrity)))
-                    return original;
-                if (!playerSoul.hasCast("Valiant Heart")) return original;
-                if (!playerSoul.hasValue("parryCooldown")) playerSoul.setValue("parryCooldown", 0f);
-                if (playerSoul.getValue("parryCooldown") <= 0f) {
-                    player.getItemCooldownManager().set(player.getMainHandStack().getItem(), 25);
-                    playerSoul.setValue("parryCooldown", 25f);
-                    playerSoul.setValue("parry", 5f);
-                    PacketByteBuf buf = PacketByteBufs.create().writeUuid(player.getUuid()).writeString("parry");
-                    buf.writeBoolean(false);
-                    SoulForgeNetworking.broadcast(null, player.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-                    return TypedActionResult.consume(player.getStackInHand(hand)).getResult();
-                }
-            }
-        }
-        return original;
     }
 
     @ModifyReturnValue(method = "getEntityName", at=@At("RETURN"))

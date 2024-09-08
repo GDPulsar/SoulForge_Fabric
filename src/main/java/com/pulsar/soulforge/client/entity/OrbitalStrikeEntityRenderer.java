@@ -38,7 +38,10 @@ public class OrbitalStrikeEntityRenderer extends EntityRenderer<OrbitalStrikeEnt
     public void render(OrbitalStrikeEntity orbitalStrikeEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
+        Color transparentColor = new Color(1f, 1f, 1f, 0.3f);
         CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, (float)(-63f - orbitalStrikeEntity.getY()), 0f), new Vector3f(0f, 0f, 0f), 2f, new Color(1f, 1f, 1f, 1f), 0, 255, true);
         CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, (float)(319f - orbitalStrikeEntity.getY()), 0f), 2f, new Color(1f, 1f, 1f, 1f), 0, 255, true);
+        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, (float)(-63f - orbitalStrikeEntity.getY()), 0f), new Vector3f(0f, 0f, 0f), 2f, transparentColor, 0, 255);
+        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, (float)(319f - orbitalStrikeEntity.getY()), 0f), 2f, transparentColor, 0, 255);
     }
 }
