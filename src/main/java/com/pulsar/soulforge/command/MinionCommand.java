@@ -18,6 +18,7 @@ import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.ServerCommandSource;
@@ -46,8 +47,9 @@ public class MinionCommand {
                                                 .executes(context -> {
                                                     SoulComponent playerSoul = SoulForge.getPlayerSoul(context.getSource().getPlayer());
                                                     RegistryEntry.Reference<EntityType<?>> entityType = getRegistryEntry(context, "entity", RegistryKeys.ENTITY_TYPE);
-                                                    if (playerSoul.getMonsterSouls().containsKey(entityType.value().getUntranslatedName())) {
-                                                        if (playerSoul.getMonsterSouls().get(entityType.value().getUntranslatedName()) > 0) {
+                                                    String mobId = Registries.ENTITY_TYPE.getId(entityType.value()).toString();
+                                                    if (playerSoul.getMonsterSouls().containsKey(mobId)) {
+                                                        if (playerSoul.getMonsterSouls().get(mobId) > 0) {
                                                             Vec3d pos = Vec3ArgumentType.getVec3(context, "position");
                                                             BlockPos blockPos = BlockPos.ofFloored(pos);
                                                             if (!World.isValid(blockPos)) {
@@ -87,8 +89,7 @@ public class MinionCommand {
                                                                     ((OwnableMinion)mobEntity).setOwnerUUID(context.getSource().getPlayer().getUuid());
                                                                 }
                                                             }
-                                                            playerSoul.getMonsterSouls().put(entityType.value().getUntranslatedName(),
-                                                                    playerSoul.getMonsterSouls().get(entityType.value().getUntranslatedName()) - 1);
+                                                            playerSoul.getMonsterSouls().put(mobId, playerSoul.getMonsterSouls().get(mobId) - 1);
                                                             return 1;
                                                         }
                                                     }

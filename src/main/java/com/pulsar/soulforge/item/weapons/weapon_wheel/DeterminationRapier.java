@@ -1,10 +1,9 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -21,17 +20,28 @@ public class DeterminationRapier extends MagicSwordItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
-            ValueComponent values = SoulForge.getValues(user);
-            if (values != null && !values.hasTimer("parryCooldown")) {
-                values.setTimer("parry", 5);
-                values.setTimer("parryCooldown", 5);
+            if (user.getServer() != null) {
                 PacketByteBuf buf = PacketByteBufs.create().writeUuid(user.getUuid()).writeString("parry");
                 buf.writeBoolean(false);
                 SoulForgeNetworking.broadcast(null, user.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
-                return TypedActionResult.consume(user.getStackInHand(hand));
             }
         }
-        return TypedActionResult.pass(user.getStackInHand(hand));
+        user.setCurrentHand(hand);
+        return TypedActionResult.consume(user.getStackInHand(hand));
+    }
+
+    @Override
+    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+        if (!world.isClient && user instanceof PlayerEntity player) {
+            player.getItemCooldownManager().set(this, 20);
+            return stack;
+        }
+        return stack;
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack) {
+        return 5;
     }
 
     @Override

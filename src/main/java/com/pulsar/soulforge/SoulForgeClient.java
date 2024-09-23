@@ -17,7 +17,6 @@ import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
 import com.pulsar.soulforge.client.render.SoulForgeRendering;
 import com.pulsar.soulforge.client.ui.*;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
@@ -199,20 +198,10 @@ public class SoulForgeClient implements ClientModInitializer {
 
 		SoulForgeParticles.clientRegister();
 
-		ModelPredicateProviderRegistry.register(SoulForgeItems.INTEGRITY_RAPIER, new Identifier("parrying"), (stack, world, entity, i) -> {
-			ValueComponent values = SoulForge.getValues(entity);
-			if (values != null) {
-				if (values.hasTimer("parry")) return 1f;
-			}
-			return 0f;
-		});
-		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_RAPIER, new Identifier("parrying"), (stack, world, entity, i) -> {
-			ValueComponent values = SoulForge.getValues(entity);
-			if (values != null) {
-				if (values.hasTimer("parry")) return 1f;
-			}
-			return 0f;
-		});
+		ModelPredicateProviderRegistry.register(SoulForgeItems.INTEGRITY_RAPIER, new Identifier("parrying"), (stack, world, entity, i) ->
+				entity != null && entity.isUsingItem() ? 1f : 0f);
+		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_RAPIER, new Identifier("parrying"), (stack, world, entity, i) ->
+				entity != null && entity.isUsingItem() ? 1f : 0f);
 		ModelPredicateProviderRegistry.register(SoulForgeItems.DETERMINATION_SWORD, new Identifier("blocking"), (stack, world, entity, i) ->
 				entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1f : 0f);
 		ModelPredicateProviderRegistry.register(SoulForgeItems.KINDNESS_SHIELD, new Identifier("blocking"), (stack, world, entity, i) ->

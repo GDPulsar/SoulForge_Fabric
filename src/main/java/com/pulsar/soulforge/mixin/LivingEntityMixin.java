@@ -95,11 +95,8 @@ abstract class LivingEntityMixin extends Entity {
     @ModifyReturnValue(method = "isBlocking", at=@At("RETURN"))
     public boolean parryBlocking(boolean original) {
         LivingEntity living = (LivingEntity)(Object)this;
-        ValueComponent values = SoulForge.getValues(living);
-        if (values != null) {
-            if (values.getTimer("parry") > 0) {
-                return true;
-            }
+        if (living.isUsingItem() && living.getActiveItem().isIn(SoulForgeTags.PARRY_ITEMS)) {
+            return true;
         }
         return original;
     }

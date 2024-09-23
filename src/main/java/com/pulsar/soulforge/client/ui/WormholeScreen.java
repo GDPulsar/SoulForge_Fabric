@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.client.ui;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.MinecraftClientHttpException;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
+import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -76,19 +78,16 @@ public class WormholeScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        assert this.client != null;
         context.drawTexture(TEXTURE, this.x, this.y, 176, 98, 0, 0, 176, 98, 176, 98);
         for (Drawable widget : widgets) {
             widget.render(context, mouseX, mouseY, delta);
         }
-        if (selectedUUID != null) {
-            PlayerEntity selected = this.client.player.getEntityWorld().getPlayerByUuid(selectedUUID);
-            if (selected != null) {
-                float i = x + 31.5f;
-                float j = y + 43;
-                drawEntity(context, x + 7, y + 8, 30, i, j, selected);
-            } else {
-                updateWidgets();
-            }
+        if (selectedUUID != null && this.client.world != null) {
+            PlayerEntity selected = new OtherClientPlayerEntity(this.client.world, new GameProfile(selectedUUID, "player"));
+            float i = x + 31.5f;
+            float j = y + 43;
+            drawEntity(context, x + 7, y + 8, 30, i, j, selected);
         }
     }
 

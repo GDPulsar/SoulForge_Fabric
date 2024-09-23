@@ -16,8 +16,6 @@ public final class EntityInitializer implements EntityComponentInitializer {
     public static final ComponentKey<ValueComponent> VALUES;
     public static final ComponentKey<HateComponent> HATE;
 
-    public static boolean hasRegistered = false;
-
     static {
         SOUL = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "trait"), SoulComponent.class);
         TEMPORARY_MODIFIERS = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "temporary_modifiers"), TemporaryModifierComponent.class);
@@ -38,6 +36,5 @@ public final class EntityInitializer implements EntityComponentInitializer {
         registry.beginRegistration(PlayerEntity.class, SOUL)
                 .respawnStrategy(RespawnCopyStrategy.ALWAYS_COPY)
                 .end(SoulComponent::new);
-        hasRegistered = true;
     }
 }

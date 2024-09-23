@@ -1,9 +1,8 @@
 package com.pulsar.soulforge.mixin;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.ValueComponent;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.pulsar.soulforge.entity.DetonatorMine;
-import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -32,28 +31,21 @@ public abstract class ExplosionMixin {
     @Redirect(method = "collectBlocksAndDamageEntities", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     public boolean overwriteExplosionDamage(Entity instance, DamageSource source, float amount) {
         if (instance instanceof LivingEntity living) {
-            ValueComponent values = SoulForge.getValues(living);
-            if (values == null) {
-                if (values.getTimer("parry") > 0) {
-                    instance.playSound(SoulForgeSounds.PARRY_EVENT, 1f, 1f);
-                    return false;
-                }
+            if (living.isUsingItem() && living.getActiveItem().isIn(SoulForgeTags.PARRY_ITEMS)) {
+                return false;
             }
         }
         return instance.damage(source, amount);
     }
 
-    @Redirect(method = "collectBlocksAndDamageEntities", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V"))
-    public void overwriteEntityKnockback(Entity instance, Vec3d velocity) {
+    @WrapWithCondition(method = "collectBlocksAndDamageEntities", at=@At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V"))
+    public boolean soulforge$doEntityKnockback(Entity instance, Vec3d velocity) {
         if (instance instanceof LivingEntity living) {
-            ValueComponent values = SoulForge.getValues(living);
-            if (values == null) {
-                if (values.getTimer("parry") > 0) {
-                    return;
-                }
+            if (living.isUsingItem() && living.getActiveItem().isIn(SoulForgeTags.PARRY_ITEMS)) {
+                return false;
             }
         }
-        instance.setVelocity(instance.getVelocity().add(velocity));
+        return true;
     }
 
     @Redirect(method = "collectBlocksAndDamageEntities", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/World;getOtherEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;)Ljava/util/List;"))

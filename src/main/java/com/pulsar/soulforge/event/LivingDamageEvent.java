@@ -3,7 +3,6 @@ package com.pulsar.soulforge.event;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
-import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.util.Utils;
@@ -128,30 +127,7 @@ public class LivingDamageEvent {
                 }
             }
 
-            float targetDefence;
-            if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float)living.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
-            else targetDefence = 0f;
-
-            float targetDamage;
-            if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDamage = (float)living.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-            else targetDamage = 0f;
-
-            int expIncrease = (int)(damage * (1f + (targetDefence / 10f) + (targetDamage / 10f)));
-
-            WorldComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
-            expIncrease = (int)(worldComponent.getExpMultiplier() * expIncrease);
-            if (living.isMobOrPlayer()) {
-                if (living.isPlayer()) {
-                    if (playerSoul.getPlayerSouls().containsKey(living.getUuidAsString())) {
-                        expIncrease = (int)(MathHelper.clamp(1f-playerSoul.getPlayerSouls().get(living.getUuidAsString())/3f, 0f, 1f) * expIncrease);
-                    }
-                } else {
-                    if (playerSoul.getMonsterSouls().containsKey(living.getType().getUntranslatedName())) {
-                        expIncrease = (int)(MathHelper.clamp(1f-playerSoul.getMonsterSouls().get(living.getType().getUntranslatedName())/50f, 0.2f, 1f) * expIncrease);
-                    }
-                }
-            }
-            playerSoul.setEXP(playerSoul.getEXP() + expIncrease);
+            playerSoul.setEXP(playerSoul.getEXP() + Utils.getDamageExp(living, player, damage));
 
             if (source.isOf(DamageTypes.ARROW)) {
                 if (source.getSource() instanceof PersistentProjectileEntity projectile) {

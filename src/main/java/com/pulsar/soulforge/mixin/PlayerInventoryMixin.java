@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -62,10 +63,8 @@ public abstract class PlayerInventoryMixin {
         playerSoul.getWeapon().inventoryTick(this.player.getWorld(), this.player, 0, this.selectedSlot == 9);
     }
 
-    @Redirect(method = "damageArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"))
-    private <T extends LivingEntity> void modifyDamageArmor(ItemStack instance, int amount, T entity, Consumer<T> breakCallback, @Local DamageSource damageSource) {
-        if (!damageSource.isIn(SoulForgeTags.NO_ARMOR_BREAK)) {
-            instance.damage(amount, entity, breakCallback);
-        }
+    @WrapWithCondition(method = "damageArmor", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V"))
+    private <T extends LivingEntity> boolean modifyDamageArmor(ItemStack instance, int amount, T entity, Consumer<T> breakCallback, @Local DamageSource damageSource) {
+        return !damageSource.isIn(SoulForgeTags.NO_ARMOR_BREAK);
     }
 }

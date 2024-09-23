@@ -64,7 +64,6 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import java.util.ArrayList;
 import java.util.List;
 
-@Debug(export = true)
 @Mixin(PlayerEntity.class)
 abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow public abstract boolean damage(DamageSource source, float amount);

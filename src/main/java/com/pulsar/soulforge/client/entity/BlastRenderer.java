@@ -58,5 +58,10 @@ public class BlastRenderer extends EntityRenderer<BlastEntity> {
         builder.setColor(blast.getColor()).setAlpha(1f).renderBeam(matrixStack.peek().getPositionMatrix(), blast.getPos(), toPos, 2f * blast.getRadius());
         builder.setRenderType(ENERGY_RENDER_TYPE);
         builder.setColor(blast.getColor()).setAlpha(0.3f).renderBeam(matrixStack.peek().getPositionMatrix(), blast.getPos(), toPos, 2f * blast.getRadius() + 0.01f);
+        matrixStack.translate(x, y, z);
+        builder.setRenderType(MAIN_RENDER_TYPE);
+        builder.setColor(blast.getColor()).setAlpha(1f).renderSphere(matrixStack, blast.getRadius(), 16, 16);
+        builder.setRenderType(ENERGY_RENDER_TYPE);
+        builder.setColor(blast.getColor()).setAlpha(0.3f).renderSphere(matrixStack, blast.getRadius(), 16, 16);
     }
 }

@@ -2,6 +2,7 @@ package com.pulsar.soulforge.item.weapons;
 
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -23,9 +24,23 @@ public class IntegrityRapier extends MagicSwordItem {
                 buf.writeBoolean(false);
                 SoulForgeNetworking.broadcast(null, user.getServer(), SoulForgeNetworking.PERFORM_ANIMATION, buf);
             }
-            return TypedActionResult.consume(user.getStackInHand(hand));
         }
-        return TypedActionResult.pass(user.getStackInHand(hand));
+        user.setCurrentHand(hand);
+        return TypedActionResult.consume(user.getStackInHand(hand));
+    }
+
+    @Override
+    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+        if (!world.isClient && user instanceof PlayerEntity player) {
+            player.getItemCooldownManager().set(this, 20);
+            return stack;
+        }
+        return stack;
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack) {
+        return 5;
     }
 
     @Override

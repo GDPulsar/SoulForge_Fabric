@@ -26,7 +26,6 @@ import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.ResetData;
 import com.pulsar.soulforge.util.SpokenTextRenderer;
 import com.pulsar.soulforge.util.Utils;
-import dev.onyxstudios.cca.api.v3.component.ComponentProvider;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -44,6 +43,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -94,6 +94,8 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     private UUID disguisedAsID = null;
     private final SpokenTextRenderer spokenTextRenderer = new SpokenTextRenderer();
 
+    private boolean initialized = false;
+
     public SoulComponent(PlayerEntity player) {
         this.player = player;
         lv = 1;
@@ -101,14 +103,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         style = 0;
         styleRank = 0;
         magic = 100;
-        if (player != null && EntityInitializer.hasRegistered) {
-            if (player instanceof ComponentProvider p && p.getComponentContainer() != null) {
-                if (EntityInitializer.SOUL.maybeGet(player).isEmpty()) {
-                    resetTrait();
-                    updateAbilities();
-                }
-            }
-        }
+        initialized = false;
     }
 
     public static void sync(PlayerEntity player) {
@@ -642,7 +637,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     }
 
     public void addMonsterSoul(Entity entity, int amount) {
-        addMonsterSoul(entity.getType().getUntranslatedName(), amount);
+        addMonsterSoul(Registries.ENTITY_TYPE.getId(entity.getType()).toString(), amount);
     }
 
     public void addPlayerSoul(String playerName, int amount) {
@@ -1004,6 +999,12 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     @Override
     public void tick() {
         if (player instanceof ServerPlayerEntity serverPlayer) {
+            if (!initialized) {
+                resetTrait();
+                updateAbilities();
+                initialized = true;
+            }
+
             ValueComponent values = SoulForge.getValues(serverPlayer);
 
             for (AbilityBase ability : abilities.getActive()) {
@@ -1057,8 +1058,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                 }
             }
             assert values != null;
-            decreaseTimer(values, "parry");
-            decreaseTimer(values, "parryCooldown");
             decreaseTimer(values, "dtWeaponCooldown");
             decreaseTimer(values, "shieldBashCooldown");
             decreaseTimer(values, "stockpileTimer");
@@ -1530,6 +1529,8 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         }
 
         spokenTextRenderer.readNbt(tag.getCompound("spokenTextRenderer"));
+
+        initialized = true;
     }
 
     @Override

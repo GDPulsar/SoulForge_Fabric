@@ -12,9 +12,11 @@ import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -24,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
@@ -354,5 +357,74 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static float getPlayerKillCountExpMultiplier(LivingEntity living, PlayerEntity player) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+        if (living.isMobOrPlayer()) {
+            if (living.isPlayer()) {
+                if (playerSoul.getPlayerSouls().containsKey(living.getUuidAsString())) {
+                    return MathHelper.clamp(1f-playerSoul.getPlayerSouls().get(living.getUuidAsString())/3f, 0f, 1f);
+                }
+            } else {
+                String mobId = Registries.ENTITY_TYPE.getId(living.getType()).toString();
+                if (playerSoul.getMonsterSouls().containsKey(mobId)) {
+                    return MathHelper.clamp(1f-playerSoul.getMonsterSouls().get(mobId)/50f, 0.2f, 1f);
+                }
+            }
+        }
+        return 1f;
+    }
+
+    public static float getEntityExpMultiplier(LivingEntity living) {
+        float targetDefence = 0f;
+        if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float)living.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
+
+        float targetDamage = 0f;
+        if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) targetDamage = (float)living.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+
+        return 1f + (targetDefence / 10f) + (targetDamage / 10f);
+    }
+
+    public static float getKillExpOverride(LivingEntity living) {
+        if (living.isPlayer()) {
+            float targetDefence = 0f;
+            if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float)living.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
+            PlayerEntity targetPlayer = (PlayerEntity)living;
+            SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+            return 250f*(1+(targetDefence/10f)*(targetSoul.getLV()/4f));
+        } else if (living.getType() == EntityType.ENDER_DRAGON) {
+            return 3000;
+        } else if (living.getType() == EntityType.WITHER) {
+            return 1500;
+        } else if (living.getType() == EntityType.ELDER_GUARDIAN) {
+            return 500;
+        } else if (living.getType() == EntityType.EVOKER) {
+            return 250;
+        } else if (living.getType() == EntityType.WARDEN) {
+            return 1000;
+        } else if (living.getType() == EntityType.PIGLIN_BRUTE) {
+            return 250;
+        }
+        return 0;
+    }
+
+    public static int getKillExp(LivingEntity living, PlayerEntity player) {
+        float exp = Utils.getKillExpOverride(living);
+        if (exp == 0f) exp = living.getMaxHealth()*getEntityExpMultiplier(living);
+
+        WorldComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
+        exp *= worldComponent.getExpMultiplier();
+        exp *= Utils.getPlayerKillCountExpMultiplier(living, player);
+        return (int)exp;
+    }
+
+    public static int getDamageExp(LivingEntity living, PlayerEntity player, float damage) {
+        float exp = damage * getEntityExpMultiplier(living);
+
+        WorldComponent worldComponent = SoulForge.getWorldComponent(player.getWorld());
+        exp *= worldComponent.getExpMultiplier();
+        exp *= Utils.getPlayerKillCountExpMultiplier(living, player);
+        return (int)exp;
     }
 }

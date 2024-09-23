@@ -6,6 +6,7 @@ import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,12 @@ import java.util.Map;
 import static java.util.Map.entry;
 
 public class RepulsionField extends AuraAbilityBase {
+    @Override
+    public boolean cast(ServerPlayerEntity player) {
+        setActive(!getActive());
+        return true;
+    }
+
     @Override
     public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
         return new HashMap<>(Map.ofEntries(

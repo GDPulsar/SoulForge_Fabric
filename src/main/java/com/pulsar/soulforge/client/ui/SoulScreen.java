@@ -5,6 +5,7 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.WorldComponent;
 import com.pulsar.soulforge.data.AbilityLayout;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
@@ -19,17 +20,23 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import static net.minecraft.client.gui.screen.ingame.InventoryScreen.drawEntity;
 
 public class SoulScreen extends Screen {
     public final Screen parent;
@@ -49,10 +56,11 @@ public class SoulScreen extends Screen {
     }
 
     private AbilityBase selectedAbility = null;
+    private EntityType<?> selectedEntity = null;
 
-    private Identifier abilityTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_screen.png");
-    private Identifier soulTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/soul_screen.png");
-    private Identifier killsTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/kills_screen.png");
+    private final Identifier abilityTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_screen.png");
+    private final Identifier soulTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/soul_screen.png");
+    private final Identifier killsTexture = new Identifier(SoulForge.MOD_ID, "textures/ui/kills_screen.png");
 
     private int page = 0;
     private int modeIndex = 0;
@@ -75,10 +83,10 @@ public class SoulScreen extends Screen {
                 page = 1;
                 updateWidgets();
             }));
-            /*widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+            widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
                 page = 2;
                 updateWidgets();
-            }));*/
+            }));
         } else if (page == 1) {
             widgets.add(new SlotWidget(8 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.BRAVERY_HAMMER), () -> {
                 page = 0;
@@ -88,11 +96,11 @@ public class SoulScreen extends Screen {
                 page = 1;
                 updateWidgets();
             }));
-            /*widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+            widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
                 page = 2;
                 updateWidgets();
-            }));*/
-        }/* else if (page == 2) {
+            }));
+        } else if (page == 2) {
             widgets.add(new SlotWidget(8 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.BRAVERY_HAMMER), () -> {
                 page = 0;
                 updateWidgets();
@@ -105,7 +113,7 @@ public class SoulScreen extends Screen {
                 page = 2;
                 updateWidgets();
             }));
-        }*/
+        }
 
         modes = new ArrayList<>();
         if (!playerSoul.hasTrait(Traits.spite)) {
@@ -201,6 +209,25 @@ public class SoulScreen extends Screen {
                 }
                 rowNum++;
             }
+        } else if (page == 2) {
+            ButtonListWidget buttonList = new ButtonListWidget(MinecraftClient.getInstance(), x + 9, y + 43, 40, 130, 14);
+            int i = 0;
+            for (Map.Entry<String, Integer> entry : playerSoul.getMonsterSouls().entrySet()) {
+                Identifier typeId = Identifier.tryParse(entry.getKey());
+                SoulForge.LOGGER.info("does entity type '{}' exist?: {}", typeId, Registries.ENTITY_TYPE.containsId(typeId));
+                if (Registries.ENTITY_TYPE.containsId(typeId)) {
+                    EntityType<?> entityType = Registries.ENTITY_TYPE.get(typeId);
+                    ButtonWidget buttonWidget = ButtonWidget.builder(
+                            Text.translatable(entityType.getTranslationKey()),
+                            button -> {
+                                selectedEntity = entityType;
+                                updateWidgets();
+                            }
+                    ).dimensions(x + 9, y + 43 + 14 * i, 40, 14).build();
+                    buttonList.addButton(buttonWidget);
+                    i++;
+                }
+            }
         }
 
         for (ClickableWidget widget : widgets) {
@@ -214,6 +241,7 @@ public class SoulScreen extends Screen {
         this.renderBackground(context);
         assert this.client != null;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(this.client.player);
+
         if (page == 0) {
             context.drawTexture(abilityTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
             context.drawCenteredTextWithShadow(textRenderer, modes.get(modeIndex), 97 + this.x, 37 + this.y, 0xFFFFFF);
@@ -231,7 +259,21 @@ public class SoulScreen extends Screen {
             context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
         } else if (page == 2) {
             context.drawTexture(killsTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
+            if (selectedEntity != null) {
+                Entity drawnEntity = selectedEntity.create(this.client.world);
+                if (drawnEntity instanceof LivingEntity living) {
+                    float i = x + 140;
+                    float j = y + 60;
+                    drawEntity(context, x + 140, y + 45, 30, i, j, living);
+                    context.drawCenteredTextWithShadow(textRenderer, selectedAbility.getLocalizedText(), x + 97, y + 44, 0xFFFFFF);
+                    WorldComponent worldComponent = SoulForge.getWorldComponent(client.world);
+                    float damageExpMultiplier = Utils.getEntityExpMultiplier(living) * worldComponent.getExpMultiplier() * Utils.getPlayerKillCountExpMultiplier(living, client.player);
+                    context.drawCenteredTextWithShadow(textRenderer, "EXP Multiplier: " + String.format("%.02f ", damageExpMultiplier), x + 97, y + 56, 0xFFFFFF);
+                    context.drawCenteredTextWithShadow(textRenderer, "Kill EXP: " + Utils.getKillExp(living, client.player), x + 97, y + 68, 0xFFFFFF);
+                }
+            }
         }
+
         for (ClickableWidget widget : widgets) {
             widget.render(context, mouseX, mouseY, delta);
         }
@@ -360,6 +402,42 @@ public class SoulScreen extends Screen {
 
         public interface PressAction {
             void onClick();
+        }
+    }
+
+    public static class ButtonListWidget extends EntryListWidget<ButtonListWidget.ButtonEntry> {
+        public ButtonListWidget(MinecraftClient client, int left, int top, int width, int height, int itemHeight) {
+            super(client, width, height, top, top + height, itemHeight);
+            //this.left = left;
+            //this.right = left + width;
+            SoulForge.LOGGER.info("top: {}, bottom: {}, left: {}, right: {}", this.top, this.bottom, this.left, this.right);
+        }
+
+        public void addButton(ButtonWidget button) {
+            this.addEntry(new ButtonEntry(button));
+        }
+
+        @Override
+        public void appendNarrations(NarrationMessageBuilder builder) {}
+
+        public static class ButtonEntry extends EntryListWidget.Entry<ButtonEntry> {
+            private final ButtonWidget buttonWidget;
+
+            public ButtonEntry(ButtonWidget buttonWidget) {
+                this.buttonWidget = buttonWidget;
+            }
+
+            @Override
+            public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+                //this.buttonWidget.setPosition(x, y);
+                this.buttonWidget.render(context, mouseX, mouseY, tickDelta);
+                SoulForge.LOGGER.info("button x: {}, button y: {}", this.buttonWidget.getX(), this.buttonWidget.getY());
+            }
+
+            @Override
+            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                return this.buttonWidget.mouseClicked(mouseX, mouseY, button);
+            }
         }
     }
 }

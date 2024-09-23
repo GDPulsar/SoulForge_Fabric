@@ -10,6 +10,7 @@
     "CrossbowItemMixin",
     "EnchantmentHelperMixin",
     "EntityMixin",
+    "EntitySpawnS2CPacketMixin",
     "ExplosionMixin",
     "HungerManagerMixin",
     "ItemFrameEntityMixin",

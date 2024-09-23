@@ -14,12 +14,15 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.realms.RealmsClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.resource.ResourceReload;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -56,6 +59,18 @@ public abstract class MinecraftClientMixin {
             ValueComponent values = SoulForge.getValues(this.player);
             if (values.getBool("resettingSoul")) {
                 ci.cancel();
+            }
+        }
+    }
+
+    @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I", opcode = Opcodes.PUTFIELD))
+    private void soulforge$onHotbarKeyPress(PlayerInventory instance, int value) {
+        if (this.player != null) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(this.player);
+            if (playerSoul.magicModeActive()) {
+                playerSoul.setAbilitySlot(value);
+            } else {
+                instance.selectedSlot = value;
             }
         }
     }
