@@ -46,11 +46,7 @@ public class Shatter extends AbilityBase {
             if (entity instanceof PlayerEntity targetPlayer) {
                 if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
             }
-            double ac;
-            double y;
-            double x;
-            double w;
-            double z;
+            double ac,x,y,w,z;
             float v;
             if (entity.isImmuneToExplosion() || !((v = MathHelper.sqrt((float)entity.squaredDistanceTo(vec3d)) / 6f) <= 1.0) || (z = Math.sqrt((w = entity.getX() - player.getX()) * w + (x = (entity instanceof TntEntity ? entity.getY() : entity.getEyeY()) - player.getY()) * x + (y = entity.getZ() - player.getZ()) * y)) == 0.0) continue;
             w /= z;
