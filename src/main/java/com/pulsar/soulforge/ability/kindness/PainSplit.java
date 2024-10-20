@@ -2,6 +2,7 @@ package com.pulsar.soulforge.ability.kindness;
 
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
@@ -14,7 +15,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
-public class PainSplit extends AbilityBase {
+public class PainSplit extends ToggleableAbilityBase {
     public LivingEntity target = null;
 
     @Override

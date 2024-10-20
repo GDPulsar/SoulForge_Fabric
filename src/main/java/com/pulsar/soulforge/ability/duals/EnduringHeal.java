@@ -5,15 +5,22 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
+
+import java.awt.*;
+import java.util.Objects;
+import java.util.Optional;
 
 public class EnduringHeal extends AbilityBase {
     int timer = 0;
@@ -69,5 +76,26 @@ public class EnduringHeal extends AbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new EnduringHeal();
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        nbt.putInt("timer", timer);
+        return super.saveNbt(nbt);
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
+        timer = nbt.getInt("timer");
+        super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "enduring_heal"), "Enduring Heal",
+                0, timer / 20f, 50f, new Color(0.5f, 0f, 1f)
+        ));
     }
 }

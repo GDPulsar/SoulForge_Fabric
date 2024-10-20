@@ -1,0 +1,21 @@
+{
+  "name": "Immobilization",
+  "icon": "soulforge:textures/ui/ability_icon/immobilization_on.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Immobilization",
+      "icon": "immobilization_on",
+      "cost": "30 mana",
+      "cooldown": "1 minute",
+      "lv": 7
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Surround a target with Kindness magic, preventing them from taking damage, but also making them unable to move. Breaking the surrounding magic will free them."
+    }
+  ],
+  "sortnum": 3,
+  "advancement": "soulforge:hidden/kindness/unlocked_immobilization"
+}

@@ -6,6 +6,7 @@ import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -15,8 +16,11 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
+import java.awt.*;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ValiantHeart extends AbilityBase {
     private int timer = 0;
@@ -86,5 +90,13 @@ public class ValiantHeart extends AbilityBase {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         timer = nbt.getInt("timer");
         super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "valiant_heart"), "Valiant Heart",
+                0, timer / 20f, 1200f, new Color(1f, 0.5f, 0f)
+        ));
     }
 }

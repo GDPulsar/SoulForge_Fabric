@@ -110,6 +110,8 @@
   "item.soulforge.flame_slime": "Flame Slime",
   "item.soulforge.cat_ears": "Cat Ears",
   "item.soulforge.encyclopedia": "Encyclopedia",
+  "item.soulforge.antler": "Antler",
+  "item.soulforge.timey_wimey_hat": "Timey Wimey Hat",
   "item.soulforge.bravery_gummy": "Bravery Gummy",
   "item.soulforge.justice_gummy": "Justice Gummy",
   "item.soulforge.kindness_gummy": "Kindness Gummy",
@@ -195,6 +197,15 @@
   "block.soulforge.perseverance_arnicite_block": "Tenacious Arnicite Block",
   "item.soulforge.cut_perseverance_arnicite_block": "Cut Tenacious Arnicite Block",
   "block.soulforge.cut_perseverance_arnicite_block": "Cut Tenacious Arnicite Block",
+
+  "block.soulforge.bravery_jack_o_lantern": "Bravery Jack 'o' Lantern",
+  "block.soulforge.justice_jack_o_lantern": "Justice Jack 'o' Lantern",
+  "block.soulforge.kindness_jack_o_lantern": "Kindness Jack 'o' Lantern",
+  "block.soulforge.patience_jack_o_lantern": "Patience Jack 'o' Lantern",
+  "block.soulforge.integrity_jack_o_lantern": "Integrity Jack 'o' Lantern",
+  "block.soulforge.perseverance_jack_o_lantern": "Perseverance Jack 'o' Lantern",
+  "block.soulforge.determination_jack_o_lantern": "Determination Jack 'o' Lantern",
+  "block.soulforge.kaso": "kaso",
 
   "entity.soulforge.auto_turret": "Auto Turret",
 
@@ -305,7 +316,7 @@
   "ability.kinetic_boost.name": "Kinetic Boost",
   "ability.platforms.name": "Platforms",
   "ability.repulsion_field.name": "Repulsion Field",
-  "ability.telekinesis.name": "Telekinesis: Entity",
+  "ability.telekinesis.name": "Telekinesis",
   "ability.telekinetic_shockwave.name": "Telekinetic Shockwave",
   "ability.warpspeed.name": "Warpspeed",
 
@@ -372,6 +383,8 @@
   "ability.determine.reset": "Reset selected ability.",
   "ability.martyrs_touch.name": "Martyr's Touch",
   "ability.resplendent_phoenix.name": "Resplendent Phoenix",
+
+  "ability.bad_to_the_bone.name": "Bad to the Bone",
 
   "ability.bravery_boost.tooltip": "This isn't even my final form!",
   "ability.bravery_gauntlets.tooltip": "FALCON P-",
@@ -469,6 +482,8 @@
   "ability.angels_tempest.tooltip": "Woe, debuffs be upon ye.",
   "ability.boogie_woogie.tooltip": "The act of applause is an acclamation of the SOUL!",
   "ability.determine.tooltip": "I will determine your fate.",
+
+  "ability.bad_to_the_bone.tooltip": "This is our BadAss 3000",
 
   "advancements.soulforge.root.title": "SoulForge",
   "advancements.soulforge.root.description": "Unleash your true powers.",

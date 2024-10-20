@@ -1,5 +1,20 @@
 {
   "variants": {
-    "": { "model": "soulforge:block/soul_forge_block" }
+    "facing=north": {
+      "model": "soulforge:block/soul_forge_block",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "soulforge:block/soul_forge_block",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "soulforge:block/soul_forge_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "soulforge:block/soul_forge_block",
+      "y": 270
+    }
   }
 }

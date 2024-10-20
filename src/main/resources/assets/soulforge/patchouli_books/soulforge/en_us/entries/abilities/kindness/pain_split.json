@@ -1,0 +1,21 @@
+{
+  "name": "Pain Split",
+  "icon": "soulforge:textures/ui/ability_icon/pain_split_on.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Pain Split",
+      "icon": "pain_split_on",
+      "cost": "40 mana",
+      "cooldown": "10 seconds",
+      "lv": 12
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Link your lifeforce to an ally, taking half of the damage they take for yourself."
+    }
+  ],
+  "sortnum": 5,
+  "advancement": "soulforge:hidden/kindness/unlocked_pain_split"
+}

@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "soulforge:block/justice_jack_o_lantern",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "soulforge:block/justice_jack_o_lantern",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "soulforge:block/justice_jack_o_lantern",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "soulforge:block/justice_jack_o_lantern",
+      "y": 270
+    }
+  }
+}

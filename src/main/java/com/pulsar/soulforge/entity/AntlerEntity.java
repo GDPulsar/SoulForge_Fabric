@@ -19,8 +19,9 @@ public class AntlerEntity extends ThrownItemEntity {
 
     @Override
     protected void onCollision(HitResult hitResult) {
+        super.onCollision(hitResult);
         if (!this.getWorld().isClient) {
-            this.getWorld().createExplosion(this, getX(), getY(), getZ(), 50f, World.ExplosionSourceType.TNT);
+            this.getWorld().createExplosion(null, getX(), getY(), getZ(), 50f, World.ExplosionSourceType.TNT);
             this.kill();
         }
     }

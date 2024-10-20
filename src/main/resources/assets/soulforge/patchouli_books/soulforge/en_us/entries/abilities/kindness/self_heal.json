@@ -1,0 +1,21 @@
+{
+  "name": "Self Heal",
+  "icon": "soulforge:textures/ui/ability_icon/self_heal.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Self Heal",
+      "icon": "self_heal",
+      "cost": "50 mana",
+      "cooldown": "10 seconds",
+      "lv": 10
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Infuse yourself with Kindness energy, healing you over time. The healing will cancel if you take damage."
+    }
+  ],
+  "sortnum": 4,
+  "advancement": "soulforge:hidden/kindness/unlocked_self_heal"
+}

@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Fragmentation Grenade",
+      "icon": "fragmentation_grenade",
+      "cost": "20 mana",
+      "cooldown": "7 seconds",
+      "lv": 17
     },
     {
       "type": "patchouli:text",

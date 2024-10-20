@@ -23,7 +23,6 @@ import java.awt.*;
 public class EnergyWave extends ToggleableAbilityBase {
     private int chargeTimer = 0;
     private int chargeLevel = 0;
-    private boolean overcharged = false;
     private int lastCooldownLength = 0;
 
     private final EntityAttributeModifier modifier = new EntityAttributeModifier("energy_wave", -0.7, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -53,7 +52,6 @@ public class EnergyWave extends ToggleableAbilityBase {
             } else {
                 if (playerSoul.getLV() >= 10 && playerSoul.getStyleRank() >= 3) {
                     playerSoul.setMagic(0f);
-                    overcharged = true;
                 } else {
                     setActive(false);
                     return true;
@@ -72,7 +70,7 @@ public class EnergyWave extends ToggleableAbilityBase {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float damage = 0.4f * playerSoul.getEffectiveLV();
         float size = 0.25f;
-        if (overcharged) {
+        if (playerSoul.getMagic() == 0f) {
             damage = 1.6f * playerSoul.getEffectiveLV();
             size = 0.5f;
             playerSoul.setStyleRank(Math.max(0, playerSoul.getStyleRank()-3));

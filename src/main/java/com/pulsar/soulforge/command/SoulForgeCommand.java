@@ -44,8 +44,7 @@ public class SoulForgeCommand {
                                                 .then(literal("trait")
                                                         .executes(context -> {
                                                             SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
-                                                            String str = Utils.getTraitText(data).getString();
-                                                            context.getSource().sendMessage(Text.literal("Your trait is: " + str));
+                                                            context.getSource().sendMessage(Text.literal("Your trait is: ").append(Utils.getTraitText(data)));
                                                             return 1;
                                                         })
                                                 )
@@ -94,7 +93,7 @@ public class SoulForgeCommand {
                                                                             if (trait1 != null && trait2 != null) {
                                                                                 SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                                 data.setTraits(List.of(trait1, trait2));
-                                                                                context.getSource().sendMessage(Text.literal("Your trait has been changed to: " + Utils.getTraitText(data).getString()));
+                                                                                context.getSource().sendMessage(Text.literal("Your trait has been changed to: ").append(Utils.getTraitText(data)));
                                                                             } else if (trait1 != null) {
                                                                                 context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
                                                                             } else if (trait2 != null) {
@@ -115,7 +114,7 @@ public class SoulForgeCommand {
                                                                     if (trait1 != null) {
                                                                         SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
                                                                         data.setTraits(List.of(trait1));
-                                                                        context.getSource().sendMessage(Text.literal("Your trait has been changed to: " + Utils.getTraitText(data).getString()));
+                                                                        context.getSource().sendMessage(Text.literal("Your trait has been changed to: ").append(Utils.getTraitText(data)));
                                                                     } else {
                                                                         context.getSource().sendMessage(Text.literal("No trait of name " + getString(context, "trait1") + " exists!"));
                                                                     }

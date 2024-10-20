@@ -5,13 +5,19 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
+
+import java.awt.*;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SAVELOAD extends ToggleableAbilityBase {
     public int timer = 0;
@@ -78,5 +84,27 @@ public class SAVELOAD extends ToggleableAbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new SAVELOAD();
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        if (timer != 0) nbt.putInt("timer", timer);
+        super.saveNbt(nbt);
+        return nbt;
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
+        super.readNbt(nbt);
+        timer = nbt.contains("timer") ? nbt.getInt("timer") : 0;
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "save_load"), "SAVE/LOAD",
+                0, timer / 20f, 30f, new Color(1f, 0f, 0f)
+        ));
     }
 }

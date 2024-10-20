@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "E",
+    "J"
+  ],
+  "key": {
+    "E": {
+      "item": "soulforge:kindness_essence"
+    },
+    "J": {
+      "item": "minecraft:jack_o_lantern"
+    }
+  },
+  "result": {
+    "item": "soulforge:kindness_jack_o_lantern",
+    "count": 1
+  }
+}

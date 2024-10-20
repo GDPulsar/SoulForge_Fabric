@@ -95,7 +95,6 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
         if (user instanceof PlayerEntity player) {
             int i = this.getMaxUseTime(player) - remainingUseTicks;
             float f = getPullProgress(i, player);
-            SoulForge.LOGGER.info("use time: {}", f);
             if (f >= 1.0F && !(stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded"))) {
                 stack.getOrCreateNbt().putBoolean("true", false);
                 SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;

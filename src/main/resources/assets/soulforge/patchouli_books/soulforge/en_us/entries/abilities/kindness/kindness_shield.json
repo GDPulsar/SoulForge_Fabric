@@ -1,0 +1,21 @@
+{
+  "name": "Kindness Shield",
+  "icon": "soulforge:textures/ui/ability_icon/kindness_shield.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Kindness Shield",
+      "icon": "kindness_shield",
+      "cost": "20 mana",
+      "cooldown": "None",
+      "lv": 3
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Create an unbreakable shield out of Kindness magic. Left-clicking while blocking will perform a shield bash, knocking back enemies you hit."
+    }
+  ],
+  "sortnum": 1,
+  "advancement": "soulforge:hidden/kindness/unlocked_kindness_shield"
+}

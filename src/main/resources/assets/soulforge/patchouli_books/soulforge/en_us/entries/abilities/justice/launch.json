@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Launch",
+      "icon": "launch",
+      "cost": "15 mana",
+      "cooldown": "10 seconds",
+      "lv": 15
     },
     {
       "type": "patchouli:text",

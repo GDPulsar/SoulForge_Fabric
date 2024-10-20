@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Railcannon",
+      "icon": "railcannon",
+      "cost": "40 mana",
+      "cooldown": "20 seconds",
+      "lv": 7
     },
     {
       "type": "patchouli:text",

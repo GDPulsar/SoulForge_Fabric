@@ -1,8 +1,11 @@
 package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.ability.AbilityBase;
+import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.components.ValueComponent;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.Triplet;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -14,6 +17,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.*;
@@ -24,8 +28,12 @@ public class ValueHudOverlay implements HudRenderCallback {
     public static HashMap<String, String> valueMappings = new HashMap<>(Map.ofEntries(
             entry("stockpiles", "Stockpiles")
     ));
+    public static HashMap<String, Integer> valueDefaults = new HashMap<>(Map.ofEntries(
+            entry("stockpiles", 0)
+    ));
 
     public HashMap<UUID, ValueOverlayEntry> entries = new HashMap<>();
+    public HashMap<Identifier, CooldownDisplayEntry> cooldowns = new HashMap<>();
     public HashMap<UUID, String> oldValues = new HashMap<>();
     public HashMap<UUID, EntityAttribute> oldModifiers = new HashMap<>();
 
@@ -35,22 +43,26 @@ public class ValueHudOverlay implements HudRenderCallback {
         float delta = tickDelta - lastDelta;
         if (delta < 0) delta = (tickDelta + 1f) - lastDelta;
         lastDelta = delta;
+        int screenWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
+        int screenHeight = MinecraftClient.getInstance().getWindow().getScaledHeight();
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player != null) {
             ValueComponent values = SoulForge.getValues(player);
             if (values != null) {
                 for (String value : valueMappings.keySet()) {
-                    if (values.hasInt(value) && !oldValues.containsValue(value)) {
-                        UUID id = UUID.randomUUID();
-                        addEntry(id, Text.literal(valueMappings.get(value)).append(": ").append(String.valueOf(values.getInt(value))));
-                        oldValues.put(id, value);
-                    } else if (values.hasInt(value)) {
-                        UUID id = Utils.getKeyByValue(oldValues, value);
-                        entries.get(id).text = Text.literal(valueMappings.get(value)).append(": ").append(String.valueOf(values.getInt(value)));
+                    if (values.hasInt(value) && values.getInt(value) != valueDefaults.get(value)) {
+                        if (!oldValues.containsValue(value)) {
+                            UUID id = UUID.randomUUID();
+                            addEntry(id, Text.literal(valueMappings.get(value)).append(": ").append(String.valueOf(values.getInt(value))));
+                            oldValues.put(id, value);
+                        } else {
+                            UUID id = Utils.getKeyByValue(oldValues, value);
+                            entries.get(id).text = Text.literal(valueMappings.get(value)).append(": ").append(String.valueOf(values.getInt(value)));
+                        }
                     }
                 }
                 for (Map.Entry<UUID, String> entry : Set.copyOf(oldValues.entrySet())) {
-                    if (!valueMappings.containsKey(entry.getValue())) {
+                    if (!values.hasInt(entry.getValue())) {
                         oldValues.remove(entry.getKey());
                         removeEntry(entry.getKey());
                     }
@@ -79,10 +91,44 @@ public class ValueHudOverlay implements HudRenderCallback {
                     }
                 }
             }
+
+            if (!MinecraftClient.getInstance().options.debugEnabled) {
+                cooldowns = new HashMap<>();
+                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                for (AbilityBase ability : playerSoul.getActiveAbilities()) {
+                    if (ability.getCooldownEntry().isPresent()) {
+                        CooldownDisplayEntry entry = ability.getCooldownEntry().get();
+                        if (entry.getPercent() > 0f) {
+                            cooldowns.put(entry.id, entry);
+                        }
+                    }
+                }
+                if (!cooldowns.isEmpty()) {
+                    List<CooldownDisplayEntry> cooldownList = List.copyOf(cooldowns.values());
+                    int cooldownCount = cooldowns.size();
+                    int rowCount = Math.max((int) Math.floor(Math.sqrt(1.5f * cooldownCount) - 1), 1);
+                    int colCount = (int) Math.ceil((float) cooldownCount / rowCount);
+                    for (int y = 0; y < rowCount; y++) {
+                        for (int x = 0; x < colCount; x++) {
+                            int index = y * colCount + x;
+                            if (index < cooldowns.size()) {
+                                CooldownDisplayEntry cooldownDisplay = cooldownList.get(index);
+                                cooldownDisplay.render(context, 60 * x + 35, 35 * (y + 1), 12);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         for (ValueOverlayEntry entry : entries.values()) {
-            entry.moveTimer += delta;
+            if (entry.lastPos != entry.pos) {
+                entry.moveTimer += delta;
+                if (entry.moveTimer >= 1.5f) {
+                    entry.lastPos = entry.pos;
+                    entry.moveTimer = 0f;
+                }
+            }
             drawValueEntry(context, entry);
         }
     }
@@ -110,8 +156,8 @@ public class ValueHudOverlay implements HudRenderCallback {
         float moveDelta = MathHelper.sin((float)(Math.PI * (2f*entry.moveTimer/3f - 0.5f)) + 0.1f)/2f;
         if (entry.moveTimer < 0f) moveDelta = 0f;
         if (entry.moveTimer > 1.5f) moveDelta = 1f;
-        float pos = MathHelper.lerp(entry.moveTimer, entry.lastPos * 15f, entry.pos * 15f);
-        context.drawTextWithShadow(renderer, entry.text, windowWidth - width - 10, windowHeight - (int)pos, 0xFFFFFF);
+        float pos = MathHelper.clampedLerp(moveDelta, (entry.lastPos + 1) * 15f, (entry.pos + 1) * 15f);
+        context.drawTextWithShadow(renderer, entry.text, windowWidth - width - 10, (int)pos, 0xFFFFFF);
     }
 
     public static class ValueOverlayEntry {
@@ -124,7 +170,7 @@ public class ValueHudOverlay implements HudRenderCallback {
         public ValueOverlayEntry(UUID id, Text text, int pos) {
             this.id = id;
             this.text = text;
-            this.lastPos = 0;
+            this.lastPos = pos;
             this.pos = pos;
         }
     }

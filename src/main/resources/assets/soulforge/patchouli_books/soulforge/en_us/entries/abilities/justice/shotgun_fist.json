@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Shotgun Fist",
+      "icon": "shotgun_fist",
+      "cost": "30 mana",
+      "cooldown": "20 seconds",
+      "lv": 3
     },
     {
       "type": "patchouli:text",

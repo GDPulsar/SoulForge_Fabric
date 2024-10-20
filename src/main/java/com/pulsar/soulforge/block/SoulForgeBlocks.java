@@ -5,9 +5,9 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -29,10 +29,20 @@ public class SoulForgeBlocks {
         SoulForgeItems.addToItemGroup(registered);
         return registered;
     }
-
     public static Item RegisterBlockItem(String id, Item item) {
         Item registered = Registry.register(Registries.ITEM, new Identifier(SoulForge.MOD_ID, id), item);
         SoulForgeItems.addToItemGroup(registered);
+        return registered;
+    }
+
+    public static Block registerBlockWithItem(String id, FabricBlockSettings settings) {
+        Block registered = RegisterBlock(id, new Block(settings));
+        RegisterBlockItem(id, registered, new FabricItemSettings());
+        return registered;
+    }
+    public static Block registerBlockWithItem(String id, Block block) {
+        Block registered = RegisterBlock(id, block);
+        RegisterBlockItem(id, registered, new FabricItemSettings());
         return registered;
     }
     
@@ -82,6 +92,8 @@ public class SoulForgeBlocks {
     public static Item PERSEVERANCE_ARNICITE_BLOCK_ITEM;
     public static Item CUT_PERSEVERANCE_ARNICITE_BLOCK_ITEM;
 
+    public static Block KASO;
+
     public static void registerBlocks() {
         SOUL_FORGE_BLOCK = RegisterBlock("soul_forge_block", new SoulForgeBlock());
         SOUL_FORGE_ITEM = RegisterBlockItem("soul_forge_item", new SoulForgeItem(SOUL_FORGE_BLOCK, new FabricItemSettings()));
@@ -94,37 +106,37 @@ public class SoulForgeBlocks {
         SOUL_JAR = RegisterBlock("soul_jar", new SoulJarBlock());
         SOUL_JAR_BLOCK_ENTITY = Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "soul_jar_block_entity"), FabricBlockEntityTypeBuilder.create(SoulJarBlockEntity::new, SOUL_JAR).build());
 
-        ARNICITE_BLOCK = RegisterBlock("arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_ARNICITE_BLOCK = RegisterBlock("cut_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).sounds(ARNICITE_BLOCK_SOUNDS));
-        ARNICITE_BLOCK_ITEM = RegisterBlockItem("arnicite_block", ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_arnicite_block", CUT_ARNICITE_BLOCK, new FabricItemSettings());
-        DETERMINATION_ARNICITE_BLOCK = RegisterBlock("determination_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_DETERMINATION_ARNICITE_BLOCK = RegisterBlock("cut_determination_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        DETERMINATION_ARNICITE_BLOCK_ITEM = RegisterBlockItem("determination_arnicite_block", DETERMINATION_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_DETERMINATION_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_determination_arnicite_block", CUT_DETERMINATION_ARNICITE_BLOCK, new FabricItemSettings());
-        BRAVERY_ARNICITE_BLOCK = RegisterBlock("bravery_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_BRAVERY_ARNICITE_BLOCK = RegisterBlock("cut_bravery_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        BRAVERY_ARNICITE_BLOCK_ITEM = RegisterBlockItem("bravery_arnicite_block", BRAVERY_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_BRAVERY_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_bravery_arnicite_block", CUT_BRAVERY_ARNICITE_BLOCK, new FabricItemSettings());
-        JUSTICE_ARNICITE_BLOCK = RegisterBlock("justice_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_JUSTICE_ARNICITE_BLOCK = RegisterBlock("cut_justice_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        JUSTICE_ARNICITE_BLOCK_ITEM = RegisterBlockItem("justice_arnicite_block", JUSTICE_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_JUSTICE_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_justice_arnicite_block", CUT_JUSTICE_ARNICITE_BLOCK, new FabricItemSettings());
-        KINDNESS_ARNICITE_BLOCK = RegisterBlock("kindness_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_KINDNESS_ARNICITE_BLOCK = RegisterBlock("cut_kindness_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        KINDNESS_ARNICITE_BLOCK_ITEM = RegisterBlockItem("kindness_arnicite_block", KINDNESS_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_KINDNESS_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_kindness_arnicite_block", CUT_KINDNESS_ARNICITE_BLOCK, new FabricItemSettings());
-        PATIENCE_ARNICITE_BLOCK = RegisterBlock("patience_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_PATIENCE_ARNICITE_BLOCK = RegisterBlock("cut_patience_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        PATIENCE_ARNICITE_BLOCK_ITEM = RegisterBlockItem("patience_arnicite_block", PATIENCE_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_PATIENCE_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_patience_arnicite_block", CUT_PATIENCE_ARNICITE_BLOCK, new FabricItemSettings());
-        INTEGRITY_ARNICITE_BLOCK = RegisterBlock("integrity_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_INTEGRITY_ARNICITE_BLOCK = RegisterBlock("cut_integrity_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        INTEGRITY_ARNICITE_BLOCK_ITEM = RegisterBlockItem("integrity_arnicite_block", INTEGRITY_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_INTEGRITY_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_integrity_arnicite_block", CUT_INTEGRITY_ARNICITE_BLOCK, new FabricItemSettings());
-        PERSEVERANCE_ARNICITE_BLOCK = RegisterBlock("perseverance_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        CUT_PERSEVERANCE_ARNICITE_BLOCK = RegisterBlock("cut_perseverance_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
-        PERSEVERANCE_ARNICITE_BLOCK_ITEM = RegisterBlockItem("perseverance_arnicite_block", PERSEVERANCE_ARNICITE_BLOCK, new FabricItemSettings());
-        CUT_PERSEVERANCE_ARNICITE_BLOCK_ITEM = RegisterBlockItem("cut_perseverance_arnicite_block", CUT_PERSEVERANCE_ARNICITE_BLOCK, new FabricItemSettings());
+        ARNICITE_BLOCK = registerBlockWithItem("arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_ARNICITE_BLOCK = registerBlockWithItem("cut_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).sounds(ARNICITE_BLOCK_SOUNDS));
+        DETERMINATION_ARNICITE_BLOCK = registerBlockWithItem("determination_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_DETERMINATION_ARNICITE_BLOCK = registerBlockWithItem("cut_determination_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        BRAVERY_ARNICITE_BLOCK = registerBlockWithItem("bravery_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_BRAVERY_ARNICITE_BLOCK = registerBlockWithItem("cut_bravery_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        JUSTICE_ARNICITE_BLOCK = registerBlockWithItem("justice_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_JUSTICE_ARNICITE_BLOCK = registerBlockWithItem("cut_justice_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        KINDNESS_ARNICITE_BLOCK = registerBlockWithItem("kindness_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_KINDNESS_ARNICITE_BLOCK = registerBlockWithItem("cut_kindness_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        PATIENCE_ARNICITE_BLOCK = registerBlockWithItem("patience_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_PATIENCE_ARNICITE_BLOCK = registerBlockWithItem("cut_patience_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        INTEGRITY_ARNICITE_BLOCK = registerBlockWithItem("integrity_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_INTEGRITY_ARNICITE_BLOCK = registerBlockWithItem("cut_integrity_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        PERSEVERANCE_ARNICITE_BLOCK = registerBlockWithItem("perseverance_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+        CUT_PERSEVERANCE_ARNICITE_BLOCK = registerBlockWithItem("cut_perseverance_arnicite_block", FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).luminance(10).sounds(ARNICITE_BLOCK_SOUNDS));
+
+        KASO = registerBlockWithItem("kaso", new KasoBlock());
+        registerBlockWithItem("bravery_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
+        registerBlockWithItem("justice_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
+        registerBlockWithItem("kindness_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
+        registerBlockWithItem("patience_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
+        registerBlockWithItem("integrity_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
+        registerBlockWithItem("perseverance_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
+        registerBlockWithItem("determination_jack_o_lantern", new CarvedPumpkinBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                .strength(1f).sounds(BlockSoundGroup.WOOD).luminance((state) -> 15).allowsSpawning(Blocks::always).pistonBehavior(PistonBehavior.DESTROY)));
     }
 }

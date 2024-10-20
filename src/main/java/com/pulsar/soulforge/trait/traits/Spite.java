@@ -7,6 +7,7 @@ import com.pulsar.soulforge.ability.determination.*;
 import com.pulsar.soulforge.ability.integrity.*;
 import com.pulsar.soulforge.ability.justice.*;
 import com.pulsar.soulforge.ability.kindness.*;
+import com.pulsar.soulforge.ability.other.BadToTheBone;
 import com.pulsar.soulforge.ability.patience.*;
 import com.pulsar.soulforge.ability.perseverance.*;
 import com.pulsar.soulforge.trait.TraitBase;
@@ -22,7 +23,7 @@ import java.util.List;
 public class Spite implements TraitBase {
     public final String name = "Spite";
     public final Identifier identifier = new Identifier(SoulForge.MOD_ID, "spite");
-    public final List<AbilityBase> abilities = new ArrayList<>(Arrays.asList(
+    public final List<AbilityBase> abilities = new ArrayList<AbilityBase>(Arrays.asList(
             new BraveryBoost(),
             new BraveryGauntlets(),
             new BraveryHammer(),
@@ -90,7 +91,8 @@ public class Spite implements TraitBase {
             new Furioso(),
             new Onrush(),
             new PerseveranceAura(),
-            new RendAsunder()
+            new RendAsunder(),
+            new BadToTheBone()
     ));
 
     @Override

@@ -1,0 +1,21 @@
+{
+  "name": "Expanding Force",
+  "icon": "soulforge:textures/ui/ability_icon/expanding_force.png",
+  "category": "soulforge:kindness",
+  "pages": [
+    {
+      "type": "soulforge:ability_info",
+      "name": "Expanding Force",
+      "icon": "expanding_force",
+      "cost": "25 mana",
+      "cooldown": "10 seconds",
+      "lv": 12
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Surround yourself with a Kindness dome before expanding it, propelling nearby enemies away from you."
+    }
+  ],
+  "sortnum": 5,
+  "advancement": "soulforge:hidden/kindness/unlocked_expanding_force"
+}

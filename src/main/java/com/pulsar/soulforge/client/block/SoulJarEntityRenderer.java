@@ -21,6 +21,8 @@ import java.util.Objects;
 public class SoulJarEntityRenderer implements BlockEntityRenderer<SoulJarBlockEntity> {
     public SoulJarEntityRenderer(BlockEntityRendererFactory.Context ctx) {}
 
+    float lastRotation = 0f;
+
     @Override
     public void render(SoulJarBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (entity.hasSoul) {
@@ -30,8 +32,10 @@ public class SoulJarEntityRenderer implements BlockEntityRenderer<SoulJarBlockEn
             matrices.scale(0.75f, 0.75f, 0.75f);
 
             Vec3d blockPos = entity.getPos().toCenterPos();
-            Vec3d faceDir = blockPos.subtract(MinecraftClient.getInstance().player.getPos()).withAxis(Direction.Axis.Y, 0).normalize();
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)Math.atan2(faceDir.x, faceDir.z)));
+            Vec3d faceDir = blockPos.subtract(MinecraftClient.getInstance().player.getEyePos()).withAxis(Direction.Axis.Y, 0).normalize();
+            float angle = (float)Math.atan2(faceDir.x, faceDir.z);
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotation(angle + 0.3f * (angle - lastRotation)));
+            lastRotation = (float)Math.atan2(faceDir.x, faceDir.z);
 
             int lightAbove = WorldRenderer.getLightmapCoordinates(entity.getWorld(), entity.getPos().up());
             ItemStack soulItem = SoulForgeItems.getSoulItem(Objects.requireNonNull(Traits.get(entity.trait1)),

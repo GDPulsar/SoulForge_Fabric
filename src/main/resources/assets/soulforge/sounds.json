@@ -254,5 +254,21 @@
     "sounds": [
       "soulforge:domain_expansion"
     ]
+  },
+  "skull": {
+    "subtitle": "subtitles.soulforge.skull",
+    "sounds": [
+      "soulforge:skull"
+    ]
+  },
+  "kaso": {
+    "subtitle": "subtitles.soulforge.kaso",
+    "sounds": [
+      "soulforge:erm_what_the_sigma",
+      "soulforge:kaso",
+      "soulforge:sorting",
+      "soulforge:twelve_years_old",
+      "soulforge:weezer"
+    ]
   }
 }

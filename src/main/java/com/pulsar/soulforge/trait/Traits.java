@@ -116,13 +116,14 @@ public class Traits {
         }
         if (traits.contains(Traits.spite)) {
             for (TraitBase trait : Traits.all()) {
-                if (trait != Traits.perseverance && trait != Traits.despair && trait != Traits.determination) {
+                if (trait != Traits.perseverance && trait != Traits.despair && trait != Traits.determination && trait != Traits.spite) {
                     AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                     if (pureAbility.getLV() <= lv) {
                         abilities.add(pureAbility.getInstance());
                     }
                 }
             }
+            abilities.addAll(Abilities.specialAbilities);
         }
 
         if (hasHate) {
@@ -135,11 +136,11 @@ public class Traits {
         return abilities;
     }
 
-    public static List<AbilityBase> getModeAbilities(String mode, SoulComponent soul) {
+    public static List<AbilityBase> getModeAbilities(Mode mode, String traitName, SoulComponent soul) {
         List<String> abilityNames = new ArrayList<>();
-        if (!Objects.equals(mode, "Passives") && !Objects.equals(mode, "Duals")) {
+        if (mode == Mode.TRAIT) {
             for (TraitBase trait : Traits.trueAll()) {
-                if (Objects.equals(trait.getName(), mode)) {
+                if (Objects.equals(trait.getName(), traitName)) {
                     for (AbilityBase ability : trait.getAbilities()) {
                         if (ability.getLV() <= soul.getLV() || soul.hasTrait(Traits.spite)) {
                             if (ability.getType() != AbilityType.PASSIVE) {
@@ -148,7 +149,7 @@ public class Traits {
                             }
                         }
                     }
-                    if (soul.isPure() || soul.hasTrait(Traits.spite) || Objects.equals(mode, "Determination")) {
+                    if (soul.isPure() || soul.hasTrait(Traits.spite) || Objects.equals(traitName, "Determination")) {
                         if (trait == Traits.perseverance || trait == Traits.despair || trait == Traits.determination) continue;
                         AbilityBase pureAbility = Constants.pureAbilities.get(trait);
                         if (pureAbility.getLV() <= soul.getLV()) {
@@ -157,11 +158,15 @@ public class Traits {
                     }
                 }
             }
-        } else if (Objects.equals(mode, "Duals")) {
+        } else if (mode == Mode.DUALS) {
             for (AbilityBase ability : Constants.getDualTraitAbilities(soul.getTraits())) {
                 if (ability.getLV() <= soul.getLV()) {
                     abilityNames.add(ability.getName());
                 }
+            }
+        } else if (mode == Mode.SPECIAL) {
+            for (AbilityBase special : Abilities.specialAbilities) {
+                abilityNames.add(special.getName());
             }
         } else {
             for (TraitBase trait : soul.getTraits()) {
@@ -183,5 +188,18 @@ public class Traits {
         }
         abilities.sort(Comparator.comparingInt(AbilityBase::getLV));
         return abilities;
+    }
+
+    public enum Mode {
+        TRAIT(""),
+        DUALS("Duals"),
+        HATE("HATE"),
+        PASSIVES("Passives"),
+        SPECIAL("Special");
+
+        final String name;
+        Mode(String name) {
+            this.name = name;
+        }
     }
 }

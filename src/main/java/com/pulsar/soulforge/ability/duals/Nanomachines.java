@@ -5,8 +5,15 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
+
+import java.awt.*;
+import java.util.Objects;
+import java.util.Optional;
 
 public class Nanomachines extends AbilityBase {
     public int timer = 0;
@@ -41,5 +48,26 @@ public class Nanomachines extends AbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new Nanomachines();
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        nbt.putInt("timer", timer);
+        return super.saveNbt(nbt);
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
+        timer = nbt.getInt("timer");
+        super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "nanomachines"), "Nanomachines",
+                0, timer / 20f, 50f, new Color(0.5f, 0f, 1f)
+        ));
     }
 }

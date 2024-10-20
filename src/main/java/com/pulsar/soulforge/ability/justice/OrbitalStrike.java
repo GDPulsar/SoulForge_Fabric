@@ -7,18 +7,22 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.OrbitalStrikeEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
+import java.awt.*;
 import java.util.Objects;
+import java.util.Optional;
 
 public class OrbitalStrike extends AbilityBase {
     public OrbitalStrikeEntity entity;
@@ -90,5 +94,13 @@ public class OrbitalStrike extends AbilityBase {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         timer = nbt.getInt("timer");
         super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "orbital_strike"), "Orbital Strike",
+                0, timer / 20f, 15f, new Color(1f, 1f, 0f)
+        ));
     }
 }

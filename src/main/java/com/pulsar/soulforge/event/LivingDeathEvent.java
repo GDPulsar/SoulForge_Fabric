@@ -17,6 +17,11 @@ public class LivingDeathEvent {
                 }
             }
         }
+
+        if (living instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            playerSoul.onDeath();
+        }
     }
 
     public static void onKilledBy(LivingEntity living, LivingEntity killer) {

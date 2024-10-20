@@ -4,13 +4,18 @@
   "category": "soulforge:kindness",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Kindness Dome",
+      "icon": "kindness_dome_on",
+      "cost": "40 mana",
+      "cooldown": "15 seconds",
+      "lv": 5
     },
     {
       "type": "patchouli:text",
-      "text": "Coalesce Kindness magic into a solid dome of blocks"
+      "text": "Coalesce Kindness magic into a solid dome, preventing intruders as long as it isn't destroyed..."
     }
   ],
-  "sortnum": 0,
+  "sortnum": 2,
   "advancement": "soulforge:hidden/kindness/unlocked_kindness_dome"
 }

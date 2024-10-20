@@ -1,6 +1,7 @@
 package com.pulsar.soulforge.ability;
 
 import com.pulsar.soulforge.ability.hate.sideeffects.Insanity;
+import com.pulsar.soulforge.ability.other.BadToTheBone;
 import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Constants;
@@ -11,6 +12,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class Abilities {
+    public static List<AbilityBase> specialAbilities = List.of(
+            new BadToTheBone()
+    );
+
     public static AbilityBase get(Identifier id) {
         for (TraitBase trait : Traits.trueAll()) {
             if (trait != Traits.spite) {
@@ -61,6 +66,11 @@ public class Abilities {
             }
         }
         for (AbilityBase ability : hateAbilities) {
+            if (Objects.equals(ability.getName(), name)) {
+                return ability.getInstance();
+            }
+        }
+        for (AbilityBase ability : specialAbilities) {
             if (Objects.equals(ability.getName(), name)) {
                 return ability.getInstance();
             }

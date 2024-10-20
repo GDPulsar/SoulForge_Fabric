@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Orbital Strike",
+      "icon": "orbital_strike",
+      "cost": "50 mana",
+      "cooldown": "5 minutes",
+      "lv": 20
     },
     {
       "type": "patchouli:text",

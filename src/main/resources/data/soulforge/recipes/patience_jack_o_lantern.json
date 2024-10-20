@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "E",
+    "J"
+  ],
+  "key": {
+    "E": {
+      "item": "soulforge:patience_essence"
+    },
+    "J": {
+      "item": "minecraft:jack_o_lantern"
+    }
+  },
+  "result": {
+    "item": "soulforge:patience_jack_o_lantern",
+    "count": 1
+  }
+}

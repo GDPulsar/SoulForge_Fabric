@@ -35,7 +35,7 @@ public class LivingDamageEvent {
      * @param damage The amount of damage being taken. This is unmodified by things like armor, resistance and protection.
      * @return Whether the entity should take damage. Cancels all other methods if false.
      */
-    public static boolean onTakeDamage(LivingEntity living, DamageSource source, float damage) {
+    public static boolean onTakeDamage(LivingEntity living, DamageSource source, float damage, boolean actuallyDamaged) {
         ValueComponent values = SoulForge.getValues(living);
         if (values.hasInt("HangToAThreadTimer") && values.getInt("HangToAThreadTimer") > 0
                 && (!values.hasBool("HangToAThreadDamaging") || !values.getBool("HangToAThreadDamaging"))) {
@@ -127,59 +127,61 @@ public class LivingDamageEvent {
                 }
             }
 
-            playerSoul.setEXP(playerSoul.getEXP() + Utils.getDamageExp(living, player, damage));
+            if (actuallyDamaged) {
+                playerSoul.setEXP(playerSoul.getEXP() + Utils.getDamageExp(living, player, damage));
 
-            if (source.isOf(DamageTypes.ARROW)) {
-                if (source.getSource() instanceof PersistentProjectileEntity projectile) {
-                    if (projectile.inBlockState == null) {
-                        float distance = living.distanceTo(source.getAttacker());
-                        boolean lineOfSight = player.canSee(projectile);
-                        int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
-                        playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
+                if (source.isOf(DamageTypes.ARROW)) {
+                    if (source.getSource() instanceof PersistentProjectileEntity projectile) {
+                        if (projectile.inBlockState == null) {
+                            float distance = living.distanceTo(source.getAttacker());
+                            boolean lineOfSight = player.canSee(projectile);
+                            int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
+                            playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
+                        }
                     }
                 }
-            }
-            if (source.isOf(DamageTypes.TRIDENT)) {
-                if (source.getSource() instanceof TridentEntity projectile) {
-                    if (projectile.inBlockState == null) {
-                        float distance = living.distanceTo(source.getAttacker());
-                        boolean lineOfSight = player.canSee(projectile);
-                        int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
-                        playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
+                if (source.isOf(DamageTypes.TRIDENT)) {
+                    if (source.getSource() instanceof TridentEntity projectile) {
+                        if (projectile.inBlockState == null) {
+                            float distance = living.distanceTo(source.getAttacker());
+                            boolean lineOfSight = player.canSee(projectile);
+                            int addedStyle = (int)(damage * (distance / 20f) * (lineOfSight ? 1f : 2f));
+                            playerSoul.setStyle(playerSoul.getStyle() + addedStyle);
+                        }
                     }
                 }
-            }
-            if (source.isOf(DamageTypes.EXPLOSION)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
-            }
-            if (source.isOf(DamageTypes.FALLING_ANVIL)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 10));
-            }
-            if (source.isOf(DamageTypes.FALLING_STALACTITE)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 5));
-            }
-            if (source.isOf(DamageTypes.FIREWORKS)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(DamageTypes.LIGHTNING_BOLT)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(DamageTypes.PLAYER_ATTACK)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage / 2f));
-            }
-            if (source.isOf(DamageTypes.PLAYER_EXPLOSION)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(DamageTypes.THROWN)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
-            }
-            if (source.isOf(SoulForgeDamageTypes.PARRY_DAMAGE_TYPE)) {
-                playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 3f));
-            }
-            if (living instanceof PlayerEntity targetPlayer) {
-                if (source.isOf(SoulForgeDamageTypes.PAIN_SPLIT_DAMAGE_TYPE)) {
-                    SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-                    targetSoul.setStyle(targetSoul.getStyle() + (int)damage);
+                if (source.isOf(DamageTypes.EXPLOSION)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+                }
+                if (source.isOf(DamageTypes.FALLING_ANVIL)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 10));
+                }
+                if (source.isOf(DamageTypes.FALLING_STALACTITE)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 5));
+                }
+                if (source.isOf(DamageTypes.FIREWORKS)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+                }
+                if (source.isOf(DamageTypes.LIGHTNING_BOLT)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+                }
+                if (source.isOf(DamageTypes.PLAYER_ATTACK)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage / 2f));
+                }
+                if (source.isOf(DamageTypes.PLAYER_EXPLOSION)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+                }
+                if (source.isOf(DamageTypes.THROWN)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage));
+                }
+                if (source.isOf(SoulForgeDamageTypes.PARRY_DAMAGE_TYPE)) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(damage * 3f));
+                }
+                if (living instanceof PlayerEntity targetPlayer) {
+                    if (source.isOf(SoulForgeDamageTypes.PAIN_SPLIT_DAMAGE_TYPE)) {
+                        SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+                        targetSoul.setStyle(targetSoul.getStyle() + (int)damage);
+                    }
                 }
             }
         }

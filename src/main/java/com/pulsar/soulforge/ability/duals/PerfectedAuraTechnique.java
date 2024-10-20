@@ -6,6 +6,7 @@ import com.pulsar.soulforge.ability.AuraAbilityBase;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -19,11 +20,14 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Map.entry;
 
@@ -98,6 +102,8 @@ public class PerfectedAuraTechnique extends AuraAbilityBase {
 
     @Override
     public boolean end(ServerPlayerEntity player) {
+        timer = 0;
+        fullPower = false;
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_MAX_HEALTH, "pat_health");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ARMOR, "pat_armor");
         Utils.clearModifiersByName(player, EntityAttributes.GENERIC_ATTACK_DAMAGE, "pat_strength");
@@ -132,5 +138,16 @@ public class PerfectedAuraTechnique extends AuraAbilityBase {
         fullPower = nbt.getBoolean("fullPower");
         timer = nbt.getInt("timer");
         super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        if (fullPower) {
+            return Optional.of(new CooldownDisplayEntry(
+                    new Identifier(SoulForge.MOD_ID, "jackpot"), "Jackpot",
+                    0, timer / 20f, 251f, new Color(1f, 0f, 1f)
+            ));
+        }
+        return Optional.empty();
     }
 }

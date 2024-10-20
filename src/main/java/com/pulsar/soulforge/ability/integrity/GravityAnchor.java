@@ -34,13 +34,13 @@ public class GravityAnchor extends AbilityBase {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             target = living;
             for (int i = 0; i < 10; i++) {
-                float x = MathHelper.sin((float)(i/5*Math.PI));
-                float z = MathHelper.cos((float)(i/5*Math.PI));
+                float x = MathHelper.sin((float)(i/5f*Math.PI));
+                float z = MathHelper.cos((float)(i/5f*Math.PI));
                 player.getWorld().addParticle(
                         new DustParticleEffect(Vec3d.unpackRgb(0x0000FF).toVector3f(), 1f),
                         target.getX()+x, target.getY(), target.getZ()+z, 1, 0, 0.2);
             }
-            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, playerSoul.getEffectiveLV() / 5));
+            living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, playerSoul.getEffectiveLV() / 8));
             timer = Math.round(playerSoul.getEffectiveLV()*15f);
             lastY = (float)target.getY();
             return super.cast(player);
@@ -52,7 +52,7 @@ public class GravityAnchor extends AbilityBase {
     public boolean tick(ServerPlayerEntity player) {
         timer--;
         if (target != null) {
-            target.addVelocity(0, -5, 0);
+            target.addVelocity(0, -1, 0);
             target.velocityModified = true;
         }
         if (timer % 10 == 0) {

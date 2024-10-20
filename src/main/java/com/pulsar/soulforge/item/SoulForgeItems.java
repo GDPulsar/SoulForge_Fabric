@@ -150,6 +150,7 @@ public class SoulForgeItems {
     public static Item FLAME_SLIME;
     public static Item CAT_EARS;
     public static Item ENCYCLOPEDIA;
+    public static Item TIMEY_WIMEY_HAT;
 
     public static Item ARNICITE_GEODE;
     public static Item SIPHON_TEMPLATE;
@@ -283,6 +284,7 @@ public class SoulForgeItems {
         FLAME_SLIME = RegisterItem("flame_slime", new FlameSlime());
         CAT_EARS = RegisterItem("cat_ears", new CatEarsItem(), false);
         ENCYCLOPEDIA = RegisterItem("encyclopedia", new EncyclopediaItem());
+        TIMEY_WIMEY_HAT = RegisterItem("timey_wimey_hat", new TimeyWimeyHat());
 
         ARNICITE_GEODE = RegisterItem("arnicite_geode", new ArniciteGeode());
         SIPHON_TEMPLATE = RegisterItem("siphon_template", new FabricItemSettings());

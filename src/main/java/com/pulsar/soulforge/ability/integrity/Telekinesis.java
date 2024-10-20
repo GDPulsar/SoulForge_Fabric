@@ -5,11 +5,14 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -17,9 +20,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
+import java.awt.*;
+import java.util.Objects;
+import java.util.Optional;
+
 public class Telekinesis extends ToggleableAbilityBase {
     private LivingEntity target = null;
     private int timer = 0;
+    private int timerMax = 0;
 
     @Override
     public boolean cast(ServerPlayerEntity player) {
@@ -31,6 +39,7 @@ public class Telekinesis extends ToggleableAbilityBase {
                 if (hit2.getPos().distanceTo(living.getPos()) > 0.2f) return false;
                 target = living;
                 timer = playerSoul.getEffectiveLV()*20;
+                timerMax = playerSoul.getEffectiveLV()*20;
                 player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.SOUL_GRAB_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 for (int i = 0; i < 10; i++) {
                     float x = MathHelper.sin((float)(i/5*Math.PI));
@@ -98,5 +107,28 @@ public class Telekinesis extends ToggleableAbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new Telekinesis();
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        nbt.putInt("timer", timer);
+        nbt.putInt("timerMax", timerMax);
+        return super.saveNbt(nbt);
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
+        timer = nbt.getInt("timer");
+        timerMax = nbt.getInt("timerMax");
+        super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "telekinesis"), "Telekinesis",
+                0, timer / 20f, timerMax / 20f, new Color(0f, 0f, 1f)
+        ));
     }
 }

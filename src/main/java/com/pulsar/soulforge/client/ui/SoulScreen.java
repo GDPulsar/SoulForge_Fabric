@@ -32,6 +32,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.*;
@@ -65,7 +66,7 @@ public class SoulScreen extends Screen {
     private int page = 0;
     private int modeIndex = 0;
     private List<ClickableWidget> widgets = new ArrayList<>();
-    private List<String> modes = new ArrayList<>();
+    private List<Pair<Traits.Mode, String>> modes = new ArrayList<>();
 
     public void updateWidgets() {
         assert this.client != null;
@@ -117,11 +118,11 @@ public class SoulScreen extends Screen {
 
         modes = new ArrayList<>();
         if (!playerSoul.hasTrait(Traits.spite)) {
-            modes.add(playerSoul.getTrait(0).getName());
-            if (playerSoul.getTraitCount() == 2) modes.add(playerSoul.getTrait(1).getName());
+            modes.add(new Pair<>(Traits.Mode.TRAIT, playerSoul.getTrait(0).getName()));
+            if (playerSoul.getTraitCount() == 2) modes.add(new Pair<>(Traits.Mode.TRAIT, playerSoul.getTrait(1).getName()));
         } else {
             for (TraitBase trait : Traits.all()) {
-                modes.add(trait.getName());
+                modes.add(new Pair<>(Traits.Mode.TRAIT, trait.getName()));
             }
         }
         boolean hasPassives = false;
@@ -130,20 +131,21 @@ public class SoulScreen extends Screen {
                 hasPassives = true;
             }
         }
-        if (!Constants.getDualTraitAbilities(playerSoul.getTraits()).isEmpty()) modes.add("Duals");
-        if (hasPassives) modes.add("Passives");
-        if (Utils.hasHate(client.player)) modes.add("HATE");
+        if (!Constants.getDualTraitAbilities(playerSoul.getTraits()).isEmpty()) modes.add(new Pair<>(Traits.Mode.DUALS, ""));
+        if (hasPassives) modes.add(new Pair<>(Traits.Mode.PASSIVES, ""));
+        if (Utils.hasHate(client.player)) modes.add(new Pair<>(Traits.Mode.HATE, ""));
+        if (playerSoul.hasTrait(Traits.spite)) modes.add(new Pair<>(Traits.Mode.SPECIAL, ""));
         if (page == 0) {
             widgets.add(new ClickableTextureWidget(42 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_left.png"), (mouseButton) -> {
                 modeIndex = (modeIndex - 1 + modes.size()) % modes.size();
                 updateWidgets();
-            }, Text.literal(modes.get((modeIndex - 1 + modes.size()) % modes.size()))));
+            }, Text.literal(modes.get((modeIndex - 1 + modes.size()) % modes.size()).getRight())));
             widgets.add(new ClickableTextureWidget(146 + this.x, 35 + this.y, 7, 11, new Identifier(SoulForge.MOD_ID, "textures/ui/button_right.png"), (mouseButton) -> {
                 modeIndex = (modeIndex + 1) % modes.size();
                 updateWidgets();
-            }, Text.literal(modes.get((modeIndex + 1) % modes.size()))));
+            }, Text.literal(modes.get((modeIndex + 1) % modes.size()).getRight())));
             int i = 0;
-            for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
+            for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex).getLeft(), modes.get(modeIndex).getRight(), playerSoul)) {
                 Identifier id;
                 if (ability instanceof ToggleableAbilityBase) id = new Identifier(ability.getID().getNamespace(), "textures/ui/ability_icon/" + ability.getID().getPath() + "_on.png");
                 else id = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
@@ -214,7 +216,6 @@ public class SoulScreen extends Screen {
             int i = 0;
             for (Map.Entry<String, Integer> entry : playerSoul.getMonsterSouls().entrySet()) {
                 Identifier typeId = Identifier.tryParse(entry.getKey());
-                SoulForge.LOGGER.info("does entity type '{}' exist?: {}", typeId, Registries.ENTITY_TYPE.containsId(typeId));
                 if (Registries.ENTITY_TYPE.containsId(typeId)) {
                     EntityType<?> entityType = Registries.ENTITY_TYPE.get(typeId);
                     ButtonWidget buttonWidget = ButtonWidget.builder(
@@ -244,11 +245,10 @@ public class SoulScreen extends Screen {
 
         if (page == 0) {
             context.drawTexture(abilityTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
-            context.drawCenteredTextWithShadow(textRenderer, modes.get(modeIndex), 97 + this.x, 37 + this.y, 0xFFFFFF);
+            context.drawCenteredTextWithShadow(textRenderer, modes.get(modeIndex).getLeft() == Traits.Mode.TRAIT ? modes.get(modeIndex).getRight() : modes.get(modeIndex).getLeft().name(), 97 + this.x, 37 + this.y, 0xFFFFFF);
         } else if (page == 1) {
             context.drawTexture(soulTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
-            String traitStr = "Trait: " + (playerSoul.getTraitCount() == 2 ? playerSoul.getTrait(0).getName() + "-" + playerSoul.getTrait(1).getName() : playerSoul.getTrait(0).getName());
-            context.drawCenteredTextWithShadow(textRenderer, traitStr, 100 + this.x, 50 + this.y, 0xFFFFFF);
+            context.drawCenteredTextWithShadow(textRenderer, Text.literal("Trait: ").append(Utils.getTraitText(playerSoul)), 100 + this.x, 50 + this.y, 0xFFFFFF);
             int offset = 60;
             context.drawCenteredTextWithShadow(textRenderer, "LV: " + playerSoul.getLV(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             context.drawCenteredTextWithShadow(textRenderer, "EXP: " + playerSoul.getEXP(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
@@ -256,7 +256,16 @@ public class SoulScreen extends Screen {
                 context.drawCenteredTextWithShadow(textRenderer, "EXP until next LV: ", 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
                 context.drawCenteredTextWithShadow(textRenderer, String.valueOf(playerSoul.getExpRequirement()), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             }
-            context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF);
+            context.drawCenteredTextWithShadow(textRenderer, "Power: " + (playerSoul.isPure() || playerSoul.hasTrait(Traits.determination) ? "Pure" : (playerSoul.isStrong() ? "Strong" : "Normal")), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
+            context.drawCenteredTextWithShadow(textRenderer, playerSoul.getAbilities().size() + " Total Abilities", 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
+            context.drawCenteredTextWithShadow(textRenderer, "Magic Maximum: " + playerSoul.getMagicMax(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
+            if (Utils.isInverted(playerSoul)) {
+                context.drawCenteredTextWithShadow(textRenderer, "Reserves: " + playerSoul.getMagicGauge() + " / " + playerSoul.getMagicGaugeMax(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
+            }
+            int totalMonsterSouls = playerSoul.getMonsterSouls().values().stream().mapToInt(a -> a).sum();
+            int totalPlayerSouls = playerSoul.getPlayerSouls().values().stream().mapToInt(a -> a).sum();
+            context.drawCenteredTextWithShadow(textRenderer, "Monster Souls: " + totalMonsterSouls, 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
+            context.drawCenteredTextWithShadow(textRenderer, "Player Souls: " + totalPlayerSouls, 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
         } else if (page == 2) {
             context.drawTexture(killsTexture, this.x, this.y, 201, 184, 0, 0, 201, 184, 201, 184);
             if (selectedEntity != null) {
@@ -278,8 +287,8 @@ public class SoulScreen extends Screen {
             widget.render(context, mouseX, mouseY, delta);
         }
         int i = 0;
-        if (selectedAbility != null) {
-            for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex), playerSoul)) {
+        if (selectedAbility != null && page == 0) {
+            for (AbilityBase ability : Traits.getModeAbilities(modes.get(modeIndex).getLeft(), modes.get(modeIndex).getRight(), playerSoul)) {
                 if (ability.getID().equals(selectedAbility.getID())) {
                     int x = 17 + (i % 9) * 18 + this.x;
                     int y = 51 + MathHelper.floor(i / 9f) * 18 + this.y;

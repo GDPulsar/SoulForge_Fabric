@@ -46,6 +46,8 @@ public class SoulForgeSounds {
     public static final Identifier MINE_SUMMON = new Identifier(SoulForge.MOD_ID, "mine_summon");
     public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
     public static final Identifier TRANCE_HEARTBEAT = new Identifier(SoulForge.MOD_ID, "trance_heartbeat");
+    public static final Identifier SKULL = new Identifier(SoulForge.MOD_ID, "skull");
+    public static final Identifier KASO = new Identifier(SoulForge.MOD_ID, "kaso");
 
     public static SoundEvent DR_CHARGESHOT_FIRE_EVENT = SoundEvent.of(DR_CHARGESHOT_FIRE);
     public static SoundEvent DR_CREEPYJINGLE_EVENT = SoundEvent.of(DR_CREEPYJINGLE);
@@ -86,6 +88,8 @@ public class SoulForgeSounds {
     public static SoundEvent MINE_SUMMON_EVENT = SoundEvent.of(MINE_SUMMON);
     public static SoundEvent DOMAIN_EXPANSION_EVENT = SoundEvent.of(DOMAIN_EXPANSION);
     public static SoundEvent TRANCE_HEARTBEAT_EVENT = SoundEvent.of(TRANCE_HEARTBEAT);
+    public static SoundEvent SKULL_EVENT = SoundEvent.of(SKULL);
+    public static SoundEvent KASO_EVENT = SoundEvent.of(KASO);
 
     public static final Identifier ANOTHERHIM = new Identifier(SoulForge.MOD_ID, "anotherhim");
     public static final Identifier UT_ALPHYS = new Identifier(SoulForge.MOD_ID, "ut_alphys");
@@ -131,6 +135,8 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, MINE_BEEP, MINE_BEEP_EVENT);
         Registry.register(Registries.SOUND_EVENT, DOMAIN_EXPANSION, DOMAIN_EXPANSION_EVENT);
         Registry.register(Registries.SOUND_EVENT, TRANCE_HEARTBEAT, TRANCE_HEARTBEAT_EVENT);
+        Registry.register(Registries.SOUND_EVENT, SKULL, SKULL_EVENT);
+        Registry.register(Registries.SOUND_EVENT, KASO, KASO_EVENT);
 
         Registry.register(Registries.SOUND_EVENT, UT_ALPHYS, UT_ALPHYS_EVENT);
     }

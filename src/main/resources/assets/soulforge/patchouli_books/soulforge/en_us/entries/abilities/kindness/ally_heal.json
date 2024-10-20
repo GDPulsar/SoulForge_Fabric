@@ -4,7 +4,12 @@
   "category": "soulforge:kindness",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Ally Heal",
+      "icon": "ally_heal",
+      "cost": "20 mana",
+      "cooldown": "10 seconds",
+      "lv": 1
     },
     {
       "type": "patchouli:text",

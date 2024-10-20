@@ -5,11 +5,15 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Identifier;
 
+import java.awt.*;
 import java.util.Objects;
+import java.util.Optional;
 
 public class SelfHeal extends AbilityBase {
     public int timer = 0;
@@ -58,5 +62,13 @@ public class SelfHeal extends AbilityBase {
         if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
         timer = nbt.getInt("timer");
         super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "self_heal"), "Self Heal",
+                0, timer / 20f, 10f, new Color(0f, 1f, 0f)
+        ));
     }
 }

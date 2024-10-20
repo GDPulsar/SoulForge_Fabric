@@ -1,11 +1,14 @@
 package com.pulsar.soulforge.ability;
 
 import com.pulsar.soulforge.SoulForge;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
+import java.util.Optional;
 
 public abstract class AbilityBase {
     private boolean isActive = false;
@@ -64,5 +67,8 @@ public abstract class AbilityBase {
     }
     public void displayTick(PlayerEntity player) {
 
+    }
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.empty();
     }
 }

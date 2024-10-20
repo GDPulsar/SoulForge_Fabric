@@ -72,19 +72,15 @@ public class VeinminePacket {
             Block block = blockState.getBlock();
             if (!blockState.isAir() && blockState.isOf(source)) {
                 BlockEntity blockEntity = world.getBlockEntity(mine);
-                SoulForge.LOGGER.info("block entity: {}", blockEntity);
                 if (blockEntity instanceof Inventory inventory) {
-                    SoulForge.LOGGER.info("scattering: {}", inventory.size());
                     ItemScatterer.spawn(world, mine, inventory);
                 }
                 block.onBreak(world, mine, blockState, playerEntity);
                 world.removeBlock(mine, false);
                 block.onBroken(world, mine, blockState);
-                SoulForge.LOGGER.info("block: {}, block state: {}, block entity: {}", block, blockState, blockEntity);
                 playerSoul.setMagic(playerSoul.getMagic() - 5);
                 if (playerEntity.canHarvest(blockState) && playerEntity.canModifyBlocks()) {
                     Block.getDroppedStacks(blockState, world, pos, blockEntity, playerEntity, stack).forEach((toDrop) -> {
-                        SoulForge.LOGGER.info("dropping: {}", toDrop);
                         drops.addStack(toDrop);
                     });
                     blockState.onStacksDropped(world, pos, stack, true);

@@ -185,6 +185,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.ICE_SPIKE_ENTITY_TYPE, IceSpikeRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.TOTAL_FROSTBITE_ENTITY_TYPE, TotalFrostbiteEntityRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.ANTLER_ENTITY_TYPE, FlyingItemEntityRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.SKULL_ENTITY_TYPE, SkullProjectileRenderer::new);
 
 		EntityModelLayerRegistry.registerModelLayer(MODEL_FROZEN_ENERGY_LAYER, FrozenEnergyModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_ICE_SPIKE_LAYER, IceSpikeModel::getTexturedModelData);

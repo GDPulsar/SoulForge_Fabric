@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Justice Revolver",
+      "icon": "justice_revolver",
+      "cost": "20 mana",
+      "cooldown": "None",
+      "lv": 10
     },
     {
       "type": "patchouli:text",

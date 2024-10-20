@@ -8,6 +8,7 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.util.CooldownDisplayEntry;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
@@ -15,11 +16,16 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Warpspeed extends AbilityBase {
@@ -94,5 +100,26 @@ public class Warpspeed extends AbilityBase {
     @Override
     public AbilityBase getInstance() {
         return new Warpspeed();
+    }
+
+    @Override
+    public NbtCompound saveNbt(NbtCompound nbt) {
+        nbt.putInt("timer", timer);
+        return super.saveNbt(nbt);
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        if (!Objects.equals(nbt.getString("id"), getID().getPath())) return;
+        timer = nbt.getInt("timer");
+        super.readNbt(nbt);
+    }
+
+    @Override
+    public Optional<CooldownDisplayEntry> getCooldownEntry() {
+        return Optional.of(new CooldownDisplayEntry(
+                new Identifier(SoulForge.MOD_ID, "warpspeed"), "Warpspeed",
+                0, timer / 20f, 15f, new Color(0f, 0f, 1f)
+        ));
     }
 }

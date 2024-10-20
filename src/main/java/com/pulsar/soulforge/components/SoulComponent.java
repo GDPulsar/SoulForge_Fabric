@@ -414,8 +414,12 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         return magic;
     }
 
+    public float getMagicMax() {
+        return 100f;
+    }
+
     public void setMagic(float magic) {
-        this.magic = Math.min(Math.max(magic, 0), 100);
+        this.magic = Math.min(Math.max(magic, 0), getMagicMax());
     }
 
     public float getMagicGauge() {

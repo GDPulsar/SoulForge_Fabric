@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Justice Pellets",
+      "icon": "justice_pellets",
+      "cost": "4 mana",
+      "cooldown": "2 ticks",
+      "lv": 1
     },
     {
       "type": "patchouli:text",

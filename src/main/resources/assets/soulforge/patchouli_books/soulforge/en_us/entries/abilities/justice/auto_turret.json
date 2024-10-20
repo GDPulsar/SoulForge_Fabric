@@ -4,7 +4,12 @@
   "category": "soulforge:justice",
   "pages": [
     {
-      "type": "patchouli:empty"
+      "type": "soulforge:ability_info",
+      "name": "Auto Turret",
+      "icon": "auto_turret",
+      "cost": "30 mana",
+      "cooldown": "2 minutes",
+      "lv": 12
     },
     {
       "type": "patchouli:text",

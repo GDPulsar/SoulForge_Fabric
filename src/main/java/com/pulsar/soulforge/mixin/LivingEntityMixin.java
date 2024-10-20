@@ -92,6 +92,10 @@ abstract class LivingEntityMixin extends Entity {
 
     @Shadow public abstract double getAttributeValue(RegistryEntry<EntityAttribute> attribute);
 
+    @Shadow public abstract boolean isDead();
+
+    @Shadow public abstract boolean blockedByShield(DamageSource source);
+
     @ModifyReturnValue(method = "isBlocking", at=@At("RETURN"))
     public boolean parryBlocking(boolean original) {
         LivingEntity living = (LivingEntity)(Object)this;
@@ -102,8 +106,13 @@ abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "damage", at = @At("HEAD"), cancellable = true)
-    private void whenDamaged(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
-        if (!LivingDamageEvent.onTakeDamage((LivingEntity)(Object)this, source, damage)) {
+    private void soulforge$onDamage(DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
+        boolean actuallyDamaged = !this.isInvulnerableTo(source)
+                && !this.getWorld().isClient
+                && !this.isDead()
+                && !(source.isIn(DamageTypeTags.IS_FIRE) && this.hasStatusEffect(StatusEffects.FIRE_RESISTANCE))
+                && !(damage > 0.0F && this.blockedByShield(source));
+        if (!LivingDamageEvent.onTakeDamage((LivingEntity)(Object)this, source, damage, actuallyDamaged)) {
             cir.setReturnValue(false);
         }
     }
@@ -121,9 +130,13 @@ abstract class LivingEntityMixin extends Entity {
         return original;
     }*/
 
-    @Inject(method = "onKilledBy", at = @At("HEAD"))
-    private void whenKilled(LivingEntity adversary, CallbackInfo ci) {
+    @Inject(method = "onDeath", at = @At("HEAD"))
+    private void soulforge$onDeath(DamageSource damageSource, CallbackInfo ci) {
         LivingDeathEvent.onDeath((LivingEntity)(Object)this);
+    }
+
+    @Inject(method = "onKilledBy", at = @At("HEAD"))
+    private void soulforge$onKilledBy(LivingEntity adversary, CallbackInfo ci) {
         LivingDeathEvent.onKilledBy((LivingEntity)(Object)this, adversary);
     }
 

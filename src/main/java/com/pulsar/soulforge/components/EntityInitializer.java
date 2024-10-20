@@ -23,8 +23,6 @@ public final class EntityInitializer implements EntityComponentInitializer {
         HATE = ComponentRegistry.getOrCreate(new Identifier(SoulForge.MOD_ID, "hate"), HateComponent.class);
     }
 
-    public static void register() {}
-
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         registry.beginRegistration(LivingEntity.class, VALUES)
