@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 public class DeterminationRapier extends MagicSwordItem {
     public DeterminationRapier() {
-        super(3, 3f, 0.1428f);
+        super(3, 3f, 1f/7f);
     }
 
     @Override

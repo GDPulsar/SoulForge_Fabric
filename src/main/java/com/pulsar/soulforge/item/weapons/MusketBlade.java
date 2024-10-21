@@ -51,7 +51,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
             blast.setPosition(attacker.getEyePos());
             attacker.getWorld().spawnEntity(blast);
             attacker.getWorld().playSoundFromEntity(null, attacker, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-            stack.getOrCreateNbt().putBoolean("loaded", false);
+            stack.getOrCreateNbt().remove("loaded");
         }
         for (Entity entity : attacker.getEntityWorld().getOtherEntities(attacker, Box.of(attacker.getPos(), 4, 4, 4))) {
             if (entity instanceof LivingEntity living && living != target) {
@@ -84,7 +84,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
                 world.spawnEntity(blast);
                 world.playSoundFromEntity(null, user, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 user.getItemCooldownManager().set(this, 10);
-                stack.getOrCreateNbt().putBoolean("loaded", false);
+                stack.getOrCreateNbt().remove("loaded");
             }
         }
         user.setCurrentHand(hand);

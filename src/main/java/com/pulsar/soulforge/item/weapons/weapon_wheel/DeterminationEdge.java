@@ -47,8 +47,8 @@ public class DeterminationEdge extends MagicSweepingSwordItem implements GeoItem
                 if (entity instanceof PlayerEntity targetPlayer && attacker instanceof PlayerEntity player) {
                     if (!TeamUtils.canDamageEntity(player.getServer(), player, targetPlayer)) continue;
                 }
-                if (living.damage(attacker.getDamageSources().playerAttack((PlayerEntity)attacker), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()))) {
-                    playerSoul.setStyle(playerSoul.getStyle() + (int)(this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()));
+                if (living.damage(attacker.getDamageSources().playerAttack((PlayerEntity)attacker), (this.baseAttackDamage + this.lvIncrease * playerSoul.getEffectiveLV()))) {
+                    playerSoul.setStyle(playerSoul.getStyle() + (int)(this.baseAttackDamage + this.lvIncrease * playerSoul.getEffectiveLV()));
                 }
             }
         }

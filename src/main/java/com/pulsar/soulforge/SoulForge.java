@@ -33,7 +33,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -57,7 +56,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.6.3");
+		LOGGER.info("Loading SoulForge v2.6.4");
 
 		//registerResourceListeners();
 
@@ -130,7 +129,7 @@ public class SoulForge implements ModInitializer {
 
 	public static SoulComponent getPlayerSoul(PlayerEntity player) {
 		SoulComponent playerSoul = EntityInitializer.SOUL.maybeGet(player).orElse(new SoulComponent(player));
-		if (player instanceof ClientPlayerEntity) {
+		if (player.getWorld().isClient) {
 			if (player == MinecraftClient.getInstance().player) playerSoul = SoulForgeClient.getPlayerData();
 		}
 		return playerSoul;

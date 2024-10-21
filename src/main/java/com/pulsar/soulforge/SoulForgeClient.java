@@ -73,6 +73,7 @@ public class SoulForgeClient implements ClientModInitializer {
 	public static EntityModelLayer MODEL_FROZEN_ENERGY_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "frozen_energy"), "Frozen Energy");
 	public static EntityModelLayer MODEL_ICE_SPIKE_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "ice_spike"), "Ice Spike");
 	public static EntityModelLayer MODEL_TOTAL_FROSTBITE_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "total_frostbite"), "Total Frostbite");
+	public static EntityModelLayer MODEL_STAFF_STAR_LAYER = new EntityModelLayer(new Identifier(SoulForge.MOD_ID, "staff_star"), "Determination Staff Star");
 
 	public static SoundInstance snowstormSound = null;
 	public static SoundInstance heartbeatSound = null;
@@ -186,10 +187,12 @@ public class SoulForgeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(SoulForgeEntities.TOTAL_FROSTBITE_ENTITY_TYPE, TotalFrostbiteEntityRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.ANTLER_ENTITY_TYPE, FlyingItemEntityRenderer::new);
 		EntityRendererRegistry.register(SoulForgeEntities.SKULL_ENTITY_TYPE, SkullProjectileRenderer::new);
+		EntityRendererRegistry.register(SoulForgeEntities.STAFF_STAR_ENTITY_TYPE, StaffStarRenderer::new);
 
 		EntityModelLayerRegistry.registerModelLayer(MODEL_FROZEN_ENERGY_LAYER, FrozenEnergyModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_ICE_SPIKE_LAYER, IceSpikeModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_TOTAL_FROSTBITE_LAYER, TotalFrostbiteModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(MODEL_STAFF_STAR_LAYER, StaffStarModel::getTexturedModelData);
 
 		WormholeEntityRenderer.initialiseCrackRenderTypes();
 

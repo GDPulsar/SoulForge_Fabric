@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 public class DeterminationSword extends MagicSweepingSwordItem implements GeoItem {
     public DeterminationSword() {
-        super(7, 1.5f, 0f);
+        super(7, 1.5f, 1f/3f);
     }
 
     @Override

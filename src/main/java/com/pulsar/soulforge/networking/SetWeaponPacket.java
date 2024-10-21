@@ -15,8 +15,11 @@ public class SetWeaponPacket {
         ItemStack stack = buf.readItemStack();
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         playerSoul.setWeapon(stack);
-        if (stack.isOf(SoulForgeItems.JUSTICE_REVOLVER) || stack.isOf(SoulForgeItems.DETERMINATION_GUN) || stack.isOf(SoulForgeItems.GUNBLADES)) {
+        if (stack.isOf(SoulForgeItems.JUSTICE_REVOLVER) || stack.isOf(SoulForgeItems.GUNBLADES)) {
             stack.getOrCreateNbt().putInt("ammo", playerSoul.getLV() + 6);
+        }
+        if (stack.isOf(SoulForgeItems.DETERMINATION_GUN)) {
+            stack.getOrCreateNbt().putInt("ammo", playerSoul.getEffectiveLV() + 6);
         }
     }
 }

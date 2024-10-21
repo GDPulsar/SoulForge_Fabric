@@ -29,6 +29,7 @@
   "item.soulforge.determination_blades": "Determination Blades",
   "item.soulforge.determination_bow": "Determination Bow",
   "item.soulforge.determination_crossbow": "Determination Crossbow",
+  "item.soulforge.determination_claw": "Determination Claw",
   "item.soulforge.determination_gauntlets": "Determination Gauntlets",
   "item.soulforge.determination_greatsword": "Determination Greatsword",
   "item.soulforge.determination_gun": "Determination Gun",
@@ -37,6 +38,7 @@
   "item.soulforge.determination_shield": "Determination Shield",
   "item.soulforge.determination_rapier": "Determination Rapier",
   "item.soulforge.determination_spear": "Determination Spear",
+  "item.soulforge.determination_staff": "Determination Staff",
   "item.soulforge.determination_harpoon": "Determination Harpoon",
   "item.soulforge.real_knife": "Real Knife",
 
@@ -236,6 +238,7 @@
   "death.attack.auto_turret.player": "%1$s was barraged by %2$s's Auto Turret.",
   "death.attack.auto_turret": "%1$s was barraged by a wild Auto Turret.",
   "death.attack.injector": "%1$s wasn't paying attention.",
+  "death.attack.injector.player": "%1$s wasn't paying attention while fighting %1$s.",
   "death.attack.frostburn": "%1$s... uhh? Froze to death? Burned to death? Both.",
   "death.attack.gun_shot.player": "%1$s was shot by %2$s.",
   "death.attack.gun_shot": "%1$s was shot.",

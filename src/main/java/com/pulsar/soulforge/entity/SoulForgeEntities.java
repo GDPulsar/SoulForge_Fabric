@@ -62,6 +62,7 @@ public class SoulForgeEntities {
     public static EntityType<TotalFrostbiteEntity> TOTAL_FROSTBITE_ENTITY_TYPE;
     public static EntityType<AntlerEntity> ANTLER_ENTITY_TYPE;
     public static EntityType<SkullProjectile> SKULL_ENTITY_TYPE;
+    public static EntityType<DeterminationStaffStarProjectile> STAFF_STAR_ENTITY_TYPE;
 
     public static void register() {
         SNOWGRAVE_PROJECTILE_TYPE = Registry.register(
@@ -506,6 +507,14 @@ public class SoulForgeEntities {
         SKULL_ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "skull"),
                 FabricEntityTypeBuilder.<SkullProjectile>create(SpawnGroup.MISC, SkullProjectile::new)
+                        .dimensions(EntityDimensions.changing(1f, 1f))
+                        .trackRangeBlocks(100).trackedUpdateRate(40)
+                        .build()
+        );
+
+        STAFF_STAR_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "determination_staff_star"),
+                FabricEntityTypeBuilder.<DeterminationStaffStarProjectile>create(SpawnGroup.MISC, DeterminationStaffStarProjectile::new)
                         .dimensions(EntityDimensions.changing(1f, 1f))
                         .trackRangeBlocks(100).trackedUpdateRate(40)
                         .build()

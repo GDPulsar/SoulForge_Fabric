@@ -46,7 +46,7 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
             }
 
             // other
-            if (values.getBool("preventMove") || values.getBool("Immobilized")) {
+            if (values.getBool("preventMove") || values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) {
                 player.setVelocity(0, 0, 0);
                 player.velocityModified = true;
             }

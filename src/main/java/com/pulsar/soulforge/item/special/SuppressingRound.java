@@ -28,19 +28,12 @@ public class SuppressingRound extends TippedArrowItem {
         return arrowEntity;
     }
 
-    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter) {
-        JusticePelletProjectile pellet = new JusticePelletProjectile(world, shooter, 2, living -> {
-            Utils.addEffectDuration(living, StatusEffects.SLOWNESS, 80, 4);
-            Utils.addEffectDuration(living, StatusEffects.WEAKNESS, 80, 3);
-            Utils.addEffectDuration(living, StatusEffects.MINING_FATIGUE, 80, 4);
-            Utils.addEffectDuration(living, SoulForgeEffects.MANA_SICKNESS, 80, 4);
-        });
-        pellet.addCommandTag("Suppressing Round");
-        return pellet;
+    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter, float damage) {
+        return createPellet(world, shooter, damage, 1f);
     }
 
-    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter, float durationReduction) {
-        JusticePelletProjectile pellet = new JusticePelletProjectile(world, shooter, 2, living -> {
+    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter, float damage, float durationReduction) {
+        JusticePelletProjectile pellet = new JusticePelletProjectile(world, shooter, damage, living -> {
             Utils.addEffectDuration(living, StatusEffects.SLOWNESS, (int)(80*durationReduction), 4);
             Utils.addEffectDuration(living, StatusEffects.WEAKNESS, (int)(80*durationReduction), 3);
             Utils.addEffectDuration(living, StatusEffects.MINING_FATIGUE, (int)(80*durationReduction), 4);

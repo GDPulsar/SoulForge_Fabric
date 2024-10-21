@@ -40,8 +40,9 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
             if (playerSoul.hasTrait(Traits.patience) && playerSoul.hasTrait(Traits.perseverance)) {
                 EntityHitResult hit = Utils.getFocussedEntity(player, 10f);
                 if (hit != null && hit.getEntity() instanceof LivingEntity living) {
-                    size = 140f;
+                    size = 60f;
                     frostMark = living;
+                    frostMarkUUID = living.getUuid();
                     location = living.getPos();
                 } else {
                     return false;
@@ -67,13 +68,24 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
             return true;
         }
         if (frostMarkUUID != null) frostMark = (LivingEntity)player.getWorld().getEntityLookup().get(frostMarkUUID);
-        if (frostMark != null) location = frostMark.getPos();
+        if (frostMark != null) {
+            if (frostMark.isDead()) {
+                setActive(false);
+                frostMark = null;
+                frostMarkUUID = null;
+                location = null;
+                return false;
+            }
+            location = frostMark.getPos();
+            SoulForge.getValues(frostMark).setTimer("FrostMarked", 3);
+        }
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float styleChange = 0f;
         for (Entity entity : player.getEntityWorld().getOtherEntities(null, Box.of(location, size*2, size*2, size*2))) {
             if (entity instanceof LivingEntity target) {
                 if (target.squaredDistanceTo(location) <= size * size) {
                     target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.SNOWED_VISION, 5, 0));
+                    SoulForge.getValues(target).setUUID("SnowedBy", player.getUuid());
                     TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(target);
                     float level = 1f / Math.min(1f + 0.015f * playerSoul.getEffectiveLV(), 1.6f) - 1f;
                     modifiers.addTemporaryModifier(SoulForgeAttributes.EFFECT_DURATION_MULTIPLIER, new EntityAttributeModifier(
@@ -120,7 +132,7 @@ public class BlindingSnowstorm extends ToggleableAbilityBase {
     @Override
     public NbtCompound saveNbt(NbtCompound nbt) {
         if (location != null) nbt.put("location", Utils.vectorToNbt(location));
-        if (frostMark != null) nbt.putUuid("frostMark", frostMarkUUID);
+        if (frostMark != null && frostMarkUUID != null) nbt.putUuid("frostMark", frostMarkUUID);
         nbt.putFloat("size", size);
         return super.saveNbt(nbt);
     }

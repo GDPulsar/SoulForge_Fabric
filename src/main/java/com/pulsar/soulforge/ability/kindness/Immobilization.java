@@ -17,7 +17,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.event.GameEvent;
 
 public class Immobilization extends ToggleableAbilityBase {
-    private ImmobilizationEntity entity;
+    private ImmobilizationEntity entity = null;
     private LivingEntity target = null;
 
     @Override
@@ -33,13 +33,13 @@ public class Immobilization extends ToggleableAbilityBase {
                 entity.remove(Entity.RemovalReason.DISCARDED);
                 return true;
             }
-            EntityHitResult result = Utils.getFocussedEntity(player, 10);
+            EntityHitResult result = Utils.getFocussedEntity(player, 16);
             if (result != null) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 if (result.getEntity() instanceof LivingEntity living) {
                     if (living.getType().isIn(SoulForgeTags.BOSS_ENTITY)) return false;
                     target = living;
-                    SoulForge.getValues(target).setBool("Immobilized", true);
+                    SoulForge.getValues(target).setTimer("Immobilized", 2);
                     if (target != null) {
                         player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                         entity = new ImmobilizationEntity(player.getWorld(), target.getPos(), playerSoul.getEffectiveLV() * 5, target, player);
@@ -67,6 +67,9 @@ public class Immobilization extends ToggleableAbilityBase {
 
     @Override
     public boolean tick(ServerPlayerEntity player) {
+        if (target != null) {
+            SoulForge.getValues(target).setTimer("Immobilized", 2);
+        }
         if (entity == null) return true;
         return entity.isRemoved() || !getActive();
     }
@@ -76,6 +79,7 @@ public class Immobilization extends ToggleableAbilityBase {
         setActive(false);
         if (target != null) {
             SoulForge.getValues(target).removeBool("Immobilized");
+            SoulForge.getValues(target).removeTimer("Immobilized");
             target.setInvulnerable(false);
         }
         return super.end(player);

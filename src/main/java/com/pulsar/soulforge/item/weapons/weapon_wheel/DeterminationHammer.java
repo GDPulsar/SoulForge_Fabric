@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 
 public class DeterminationHammer extends MagicSwordItem implements GeoItem {
     public DeterminationHammer() {
-        super(9, 0.9f, 0.33f);
+        super(9, 0.9f, 0.4f);
     }
 
     @Override

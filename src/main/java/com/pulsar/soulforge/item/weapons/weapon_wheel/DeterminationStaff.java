@@ -3,29 +3,25 @@ package com.pulsar.soulforge.item.weapons.weapon_wheel;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
+import com.pulsar.soulforge.effects.SoulForgeEffects;
+import com.pulsar.soulforge.entity.BlastEntity;
+import com.pulsar.soulforge.entity.DeterminationStaffStarProjectile;
 import com.pulsar.soulforge.item.weapons.MagicItem;
-import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
@@ -36,95 +32,80 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
+import java.awt.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DeterminationStaff extends MagicItem implements GeoItem {
-    private int iceshockCooldown = 0;
-    private int sleepMistCooldown = 0;
-
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        if (!user.isSneaking()) {
-            if (iceshockCooldown == 0) {
-                EntityHitResult hit = Utils.getFocussedEntity(user, 10);
-                if (hit != null) {
-                    if (hit.getEntity() instanceof LivingEntity target) {
-                        if (!world.isClient) {
-                            if (target instanceof PlayerEntity targetPlayer) {
-                                if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer))
-                                    return TypedActionResult.pass(user.getStackInHand(hand));
-                            }
-                            world.playSoundFromEntity(null, user, SoulForgeSounds.DR_ICESHOCK_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                            DamageSource damageSource = SoulForgeDamageTypes.of(user, SoulForgeDamageTypes.ABILITY_PIERCE_DAMAGE_TYPE);
-                            if (target.damage(damageSource, 5f)) {
-                                SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-                                playerSoul.setStyle(playerSoul.getStyle() + (int)(5f * (1f + Utils.getTotalDebuffLevel(target) / 10f)));
-                            }
-                            iceshockCooldown = 100;
-                            return TypedActionResult.success(user.getStackInHand(hand));
-                        } else {
-                            for (int i = 0; i < 20; i++) {
-                                world.addParticle(ParticleTypes.SNOWFLAKE,
-                                        target.getX() + Math.random() - 0.5f, target.getY() + Math.random() * 2f - 1f, target.getZ() + Math.random() - 0.5f,
-                                        0, 0, 0);
-                            }
-                        }
-                    }
+        if (!world.isClient) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
+            if (user.isSneaking() && user.getItemUseTimeLeft() <= 0 && playerSoul.getStyleRank() != 0) {
+                user.setCurrentHand(hand);
+                return TypedActionResult.consume(user.getStackInHand(hand));
+            } else {
+                Vec3d forward = user.getRotationVector();
+                float pitchAngle = (user.getPitch() + 90) * MathHelper.RADIANS_PER_DEGREE;
+                float yawAngle = -user.getYaw() * MathHelper.RADIANS_PER_DEGREE;
+                Vec3d up = new Vec3d(
+                        MathHelper.sin(yawAngle) * MathHelper.cos(pitchAngle),
+                        -MathHelper.sin(pitchAngle),
+                        MathHelper.cos(yawAngle) * MathHelper.cos(pitchAngle)
+                );
+                Vec3d right = forward.crossProduct(up);
+                for (int i = -3; i <= 3; i++) {
+                    Vec3d direction = forward.add(right.multiply(i * 0.1f));
+                    DeterminationStaffStarProjectile star = new DeterminationStaffStarProjectile(world, user);
+                    star.setPosition(user.getEyePos());
+                    star.setVelocity(direction.normalize().multiply(2f));
+                    world.spawnEntity(star);
                 }
-            }
-        } else {
-            if (sleepMistCooldown == 0) {
-                Box searchBox = user.getBoundingBox().expand(10f);
-                HitResult hit = ProjectileUtil.raycast(user, user.getEyePos(), user.getEyePos().add(user.getRotationVector().multiply(10f)), searchBox, entity -> true, 0);
-                if (hit == null || hit.getType() == HitResult.Type.MISS) hit = user.raycast(10f, 0f, false);
-                if (hit != null && hit.getType() != HitResult.Type.MISS) {
-                    Vec3d pos = hit.getPos();
-                    if (!world.isClient) {
-                        SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-                        float styleIncrease = 0f;
-                        for (Entity target : user.getEntityWorld().getOtherEntities(user, new Box(pos.subtract(3, 3, 3), pos.add(3, 3, 3)))) {
-                            if (target instanceof LivingEntity living) {
-                                if (living instanceof PlayerEntity targetPlayer) {
-                                    if (!TeamUtils.canDamageEntity(user.getServer(), user, targetPlayer)) continue;
-                                }
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 30*playerSoul.getLV(), (int)(playerSoul.getLV()/5f) - 1));
-                                living.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 30*playerSoul.getLV(), Math.max((int)(playerSoul.getLV()/5f) - 1, 1)));
-                                styleIncrease += 5f * (1f + Utils.getTotalDebuffLevel(living)/10f);
-                            }
-                        }
-                        playerSoul.setStyle(playerSoul.getStyle() + (int)styleIncrease);
-                        sleepMistCooldown = 600;
-                    } else {
-                        for (int i = 0; i < 50; i++) {
-                            world.addParticle(ParticleTypes.EFFECT,
-                                    pos.getX() + Math.random() * 6f - 3f, pos.getY() + Math.random() * 6f - 3f, pos.getZ() + Math.random() * 6f - 3f,
-                                    0, 0, 0);
-                        }
-                    }
-                    return TypedActionResult.success(user.getStackInHand(hand));
-                }
+                user.getItemCooldownManager().set(this, 30);
+                world.playSound(null, user.getBlockPos(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.MASTER, 1f, 2f);
             }
         }
         return TypedActionResult.pass(user.getStackInHand(hand));
     }
 
     @Override
-    public int getItemBarStep(ItemStack stack) {
-        return Math.round(13.0f - (200f-iceshockCooldown) * 13.0f / 200f);
-    }
-
-    @Override
-    public int getItemBarColor(ItemStack stack) {
-        return MathHelper.packRgb(0.4f, 0.4f, 1.0f);
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (!world.isClient) {
-            if (iceshockCooldown > 0) iceshockCooldown--;
-            if (sleepMistCooldown > 0) sleepMistCooldown--;
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        if (remainingUseTicks % 10 == 0) {
+            world.playSound(null, user.getBlockPos(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.MASTER, 1f, 1f);
         }
+    }
+
+    @Override
+    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
+        if (user instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            if (user.getItemUseTimeLeft() <= 0 && playerSoul.getStyleRank() != 0) {
+                float damage = playerSoul.getEffectiveLV() * 1.5f * (playerSoul.getStyleRank() * 0.2f);
+                int duration = 20 * (int)playerSoul.getMagic();
+                playerSoul.setMagic(0f);
+                playerSoul.setStyleRank(0);
+                playerSoul.setStyle(0);
+                Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
+                HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
+                if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
+                BlastEntity blast = new BlastEntity(world, Utils.getArmPosition(player), player, 5f, Vec3d.ZERO, end, damage, Color.RED, true, 100, 5);
+                blast.owner = player;
+                world.spawnEntity(blast);
+                user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, duration, 0));
+                ((PlayerEntity) user).getItemCooldownManager().set(this, 100);
+            }
+        }
+        return stack;
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.CROSSBOW;
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack) {
+        return 100;
     }
 
     public AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);

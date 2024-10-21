@@ -15,6 +15,7 @@ public class SoulForgeDamageTypes {
     public static RegistryKey<DamageType> ABILITY_PIERCE_DAMAGE_TYPE;
     public static RegistryKey<DamageType> ABILITY_PROJECTILE_DAMAGE_TYPE;
     public static RegistryKey<DamageType> AUTO_TURRET_DAMAGE_TYPE;
+    public static RegistryKey<DamageType> DETERMINATION_STAR_DAMAGE_TYPE;
     public static RegistryKey<DamageType> INJECTOR_DAMAGE_TYPE;
     public static RegistryKey<DamageType> FROSTBURN_DAMAGE_TYPE;
     public static RegistryKey<DamageType> GUN_SHOT_DAMAGE_TYPE;
@@ -55,6 +56,7 @@ public class SoulForgeDamageTypes {
         ABILITY_PIERCE_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "ability_pierce"));
         ABILITY_PROJECTILE_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "ability_projectile"));
         AUTO_TURRET_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "auto_turret"));
+        DETERMINATION_STAR_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "determination_star"));
         INJECTOR_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "injector"));
         FROSTBURN_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "frostburn"));
         GUN_SHOT_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "gun_shot"));

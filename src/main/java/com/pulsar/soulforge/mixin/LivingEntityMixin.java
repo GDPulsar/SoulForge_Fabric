@@ -20,6 +20,8 @@ import com.pulsar.soulforge.shield.ShieldBlockCallback;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.tag.SoulForgeTags;
+import com.pulsar.soulforge.trait.Traits;
+import com.pulsar.soulforge.util.Constants;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -192,7 +194,7 @@ abstract class LivingEntityMixin extends Entity {
     protected void soulforge$modifyImmobility(CallbackInfo ci) {
         if (!this.canMoveVoluntarily()) {
             ValueComponent values = SoulForge.getValues((LivingEntity) (Object) this);
-            if (values.getBool("Immobilized")) {
+            if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) {
                 this.jumping = false;
                 this.sidewaysSpeed = 0.0F;
                 this.forwardSpeed = 0.0F;
@@ -203,7 +205,7 @@ abstract class LivingEntityMixin extends Entity {
     @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tickNewAi()V", shift = At.Shift.AFTER))
     protected void soulforge$resetImmobilityMovement(CallbackInfo ci) {
         ValueComponent values = SoulForge.getValues((LivingEntity)(Object)this);
-        if (values.getBool("Immobilized")) {
+        if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) {
             this.jumping = false;
             this.sidewaysSpeed = 0.0F;
             this.forwardSpeed = 0.0F;
@@ -215,7 +217,7 @@ abstract class LivingEntityMixin extends Entity {
         LivingEntity living = (LivingEntity)(Object)this;
         ValueComponent values = SoulForge.getValues(living);
         if (values != null) {
-            if (values.getBool("Immobilized")) return 0f;
+            if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) return 0f;
         }
         return baseGravity * this.getAttributeValue(SoulForgeAttributes.GRAVITY_MODIFIER);
     }
@@ -306,8 +308,22 @@ abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "addStatusEffect(Lnet/minecraft/entity/effect/StatusEffectInstance;)Z", at=@At("HEAD"), argsOnly = true)
     private StatusEffectInstance modifyStatusEffect(StatusEffectInstance effect) {
-        if (this.hasStatusEffect(SoulForgeEffects.SNOWED_VISION) && !effect.getEffectType().isBeneficial()) {
-            return new StatusEffectInstance(effect.getEffectType(), effect.getDuration(), effect.getAmplifier()+1);
+        if (this.hasStatusEffect(SoulForgeEffects.SNOWED_VISION)) {
+            ValueComponent values = SoulForge.getValues((LivingEntity)(Object)this);
+            if (values != null && values.hasUUID("SnowedBy")) {
+                PlayerEntity snower = this.getWorld().getPlayerByUuid(values.getUUID("SnowedBy"));
+                if (snower != null) {
+                    SoulComponent snowerSoul = SoulForge.getPlayerSoul(snower);
+                    if (snowerSoul.hasTrait(Traits.patience) && snowerSoul.hasTrait(Traits.perseverance)) {
+                        if (Constants.effectInversion.containsKey(effect.getEffectType())) {
+                            snower.addStatusEffect(new StatusEffectInstance(Constants.effectInversion.get(effect.getEffectType()), (int)(effect.getDuration() * 0.6f), (int)(effect.getAmplifier() * 0.6f)));
+                        }
+                    }
+                }
+            }
+            if (!effect.getEffectType().isBeneficial()) {
+                return new StatusEffectInstance(effect.getEffectType(), effect.getDuration(), effect.getAmplifier()+1);
+            }
         }
         return effect;
     }

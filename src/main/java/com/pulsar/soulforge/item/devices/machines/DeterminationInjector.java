@@ -13,6 +13,7 @@ import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -59,7 +60,7 @@ public class DeterminationInjector extends DeviceBase implements GeoItem {
                     if (values.getBool("injected")) {
                         return super.use(world, user, hand);
                     }
-                    values.setBool("injected", false);
+                    values.setBool("injected", true);
                 }
                 nbt.putBoolean("active", !nbt.getBoolean("active"));
                 if (values.getBool("injected")) {
@@ -103,7 +104,10 @@ public class DeterminationInjector extends DeviceBase implements GeoItem {
                         if (getCharge(stack) <= 0) {
                             stack.decrement(1);
                             world.createExplosion(entity, entity.getX(), entity.getY(), entity.getZ(), 5f, World.ExplosionSourceType.NONE);
-                            entity.kill();
+                            if (entity instanceof LivingEntity living) {
+                                living.getDamageTracker().onDamage(SoulForgeDamageTypes.of(world, SoulForgeDamageTypes.DETERMINATION_STAR_DAMAGE_TYPE), 0f);
+                                living.kill();
+                            }
                         }
                     }
                     stack.getOrCreateNbt().putInt("timer", timer + 1);

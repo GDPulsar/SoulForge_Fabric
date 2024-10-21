@@ -19,7 +19,6 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
@@ -219,9 +218,9 @@ public class Utils {
     }
 
     public static void addEffectDuration(LivingEntity target, StatusEffect effect, int duration, int amplifier) {
-        if (target.hasStatusEffect(StatusEffects.SLOWNESS)) {
-            if (target.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() >= amplifier) {
-                duration += target.getStatusEffect(StatusEffects.SLOWNESS).getDuration();
+        if (target.hasStatusEffect(effect)) {
+            if (target.getStatusEffect(effect).getAmplifier() >= amplifier) {
+                duration += target.getStatusEffect(effect).getDuration();
             }
         }
         target.addStatusEffect(new StatusEffectInstance(effect, duration, amplifier));

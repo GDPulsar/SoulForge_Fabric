@@ -4,18 +4,13 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TippedArrowItem;
-import net.minecraft.potion.PotionUtil;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FrostbiteRound extends TippedArrowItem {
     public FrostbiteRound(Settings settings) {
@@ -32,18 +27,12 @@ public class FrostbiteRound extends TippedArrowItem {
         return arrowEntity;
     }
 
-    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter) {
-        JusticePelletProjectile pellet = new JusticePelletProjectile(world, shooter, 2, living -> {
-            Utils.addEffectDuration(living, StatusEffects.SLOWNESS, 900, 2);
-            Utils.addEffectDuration(living, StatusEffects.WEAKNESS, 900, 1);
-            Utils.addEffectDuration(living, SoulForgeEffects.FROSTBITE, 900, 1);
-        });
-        pellet.addCommandTag("Frostbite Round");
-        return pellet;
+    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter, float damage) {
+        return createPellet(world, shooter, damage, 1f);
     }
 
-    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter, float durationReduction) {
-        JusticePelletProjectile pellet = new JusticePelletProjectile(world, shooter, 2, living -> {
+    public static JusticePelletProjectile createPellet(World world, LivingEntity shooter, float damage, float durationReduction) {
+        JusticePelletProjectile pellet = new JusticePelletProjectile(world, shooter, damage, living -> {
             Utils.addEffectDuration(living, StatusEffects.SLOWNESS, (int)(900*durationReduction), 2);
             Utils.addEffectDuration(living, StatusEffects.WEAKNESS, (int)(900*durationReduction), 1);
             Utils.addEffectDuration(living, SoulForgeEffects.FROSTBITE, (int)(900*durationReduction), 1);

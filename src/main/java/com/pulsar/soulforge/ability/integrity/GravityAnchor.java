@@ -3,10 +3,13 @@ package com.pulsar.soulforge.ability.integrity;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.AbilityType;
+import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.TemporaryModifierComponent;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +21,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class GravityAnchor extends AbilityBase {
     private int timer = 0;
@@ -41,6 +45,9 @@ public class GravityAnchor extends AbilityBase {
                         target.getX()+x, target.getY(), target.getZ()+z, 1, 0, 0.2);
             }
             living.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, playerSoul.getEffectiveLV() / 8));
+            TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(living);
+            modifiers.addTemporaryModifier(SoulForgeAttributes.JUMP_MULTIPLIER, new EntityAttributeModifier(
+                    UUID.fromString("93caf707-f05b-4d7f-9aa2-729b48eb7a1d"), "gravity-anchor", -1f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL), 100);
             timer = Math.round(playerSoul.getEffectiveLV()*15f);
             lastY = (float)target.getY();
             return super.cast(player);

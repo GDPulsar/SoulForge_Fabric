@@ -7,6 +7,9 @@ import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -20,9 +23,21 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
 public class DeterminationShotProjectile extends ProjectileEntity {
+    private static final TrackedData<Float> DAMAGE = DataTracker.registerData(JusticePelletProjectile.class, TrackedDataHandlerRegistry.FLOAT);
+
     public DeterminationShotProjectile(World world, LivingEntity owner) {
         this(SoulForgeEntities.DETERMINATION_SHOT_ENTITY_TYPE, world);
         this.setOwner(owner);
+        if (owner instanceof PlayerEntity player) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+            this.dataTracker.set(DAMAGE, 2f + playerSoul.getEffectiveLV() / 4f);
+        }
+    }
+
+    public DeterminationShotProjectile(World world, LivingEntity owner, float damage) {
+        this(SoulForgeEntities.DETERMINATION_SHOT_ENTITY_TYPE, world);
+        this.setOwner(owner);
+        this.dataTracker.set(DAMAGE, damage);
     }
 
     public DeterminationShotProjectile(EntityType<DeterminationShotProjectile> entityType, World world) {
@@ -38,8 +53,14 @@ public class DeterminationShotProjectile extends ProjectileEntity {
         return SoundCategory.PLAYERS;
     }
 
+    public void setPos(Vec3d pos) {
+        this.setPosition(pos);
+    }
+
     @Override
-    protected void initDataTracker() {}
+    protected void initDataTracker() {
+        this.dataTracker.startTracking(DAMAGE, 2f);
+    }
 
     @Override
     public void tick() {
@@ -55,6 +76,14 @@ public class DeterminationShotProjectile extends ProjectileEntity {
         this.checkBlockCollision();
         vec3d = this.getVelocity();
         this.setPosition(this.getX() + vec3d.x, this.getY() + vec3d.y, this.getZ() + vec3d.z);
+    }
+
+    public float getDamage() {
+        return this.dataTracker.get(DAMAGE);
+    }
+
+    public void setDamage(float damage) {
+        this.dataTracker.set(DAMAGE, damage);
     }
 
     @Override
@@ -73,16 +102,11 @@ public class DeterminationShotProjectile extends ProjectileEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        float damage = 5f;
-        if (this.getOwner() instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            damage = playerSoul.getEffectiveLV();
-        }
         Entity entity = entityHitResult.getEntity();
-        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), damage)) {
+        if (entity.damage(SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), getDamage())) {
             if (getOwner() instanceof PlayerEntity player) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
+                playerSoul.setStyle(playerSoul.getStyle() + (int)getDamage());
             }
         }
     }

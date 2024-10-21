@@ -41,9 +41,7 @@ public class SlowballProjectile extends ProjectileEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-
-    }
+    protected void initDataTracker() {}
 
     @Override
     protected boolean canHit(Entity entity) {

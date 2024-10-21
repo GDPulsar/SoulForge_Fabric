@@ -40,7 +40,7 @@ public class DeterminationBow extends MagicRangedItem implements GeoItem {
                     DeterminationArrowProjectile arrow = new DeterminationArrowProjectile(world, playerEntity);
                     arrow.setPosition(playerEntity.getEyePos());
                     arrow.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, f * 6.0F, 1.0F);
-                    arrow.setDamage(playerSoul.getLV()/4f * f);
+                    arrow.setDamage(playerSoul.getEffectiveLV()/3f * f);
                     world.spawnEntity(arrow);
                 }
 
