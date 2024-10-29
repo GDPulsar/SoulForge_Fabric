@@ -16,7 +16,7 @@ public class BraveryBoost extends AuraAbilityBase {
     public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
         return new HashMap<>(Map.ofEntries(
                 entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("bravery_boost", elv / 2f, EntityAttributeModifier.Operation.ADDITION)),
-                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("bravery_boost", elv * 0.175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
+                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("bravery_boost", elv * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL))
         ));
     }
 

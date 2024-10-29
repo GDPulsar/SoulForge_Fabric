@@ -55,8 +55,8 @@ public class EnduringHeal extends AbilityBase {
         if (target != null) {
             if (timer > 0) timer--;
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            int rate = Math.round(120f / (Math.min(36, playerSoul.getEffectiveLV() + 6))) * 2;
-            if (timer % rate == 0) {
+            int rate = Math.round(80f/(playerSoul.getEffectiveLV() + 4));
+            if (timer % rate * 2 == 0) {
                 if (target.getHealth() < target.getMaxHealth()) playerSoul.setStyle(playerSoul.getStyle() + 1);
                 target.heal(1f);
             }

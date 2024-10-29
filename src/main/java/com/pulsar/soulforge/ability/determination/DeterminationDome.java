@@ -40,7 +40,7 @@ public class DeterminationDome extends ToggleableAbilityBase {
             domeHealth = playerSoul.getEffectiveLV() * 10f;
             center = player.getBlockPos();
             player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 150f, 1f);
-            entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos(), domeRadius, domeHealth);
+            entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos(), domeRadius, domeHealth, false, player);
             entity.setPosition(player.getBlockPos().toCenterPos().subtract(0, 0.5f, 0));
             double radius = domeRadius + 0.5;
             double radSq = radius * radius;

@@ -553,11 +553,10 @@
   "siphon.soulforge.perseverance": "Siphon: Perseverance",
   "siphon.soulforge.determination": "Siphon: Determination",
 
-  "text.config.soulforge.option.uiStyle": "UI Style",
-  "soulforge.enum.uIStyle.side_by_side": "Side by Side",
-  "soulforge.enum.uIStyle.vertical_stack": "Vertical Stack",
-  "soulforge.enum.magicStyle.bar": "Bar",
-  "soulforge.enum.magicStyle.balls": "Balls",
+  "text.autoconfig.soulforge.option.magicBarLocation": "Magic Bar Location",
+  "text.autoconfig.soulforge.option.showValues": "Show Values",
+  "text.autoconfig.soulforge.option.debugResetPercentages": "Debug Reset Percentages",
+  "text.autoconfig.soulforge.option.magicBarHotkeying": "Magic Bar Hotkeying",
 
   "encyclopedia.prefixes.lv": "LV: ",
   "encyclopedia.prefixes.cost": "Cost: ",

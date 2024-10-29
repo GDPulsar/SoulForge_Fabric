@@ -2,7 +2,7 @@ package com.pulsar.soulforge.client.ui;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.config.SoulForgeConfig;
+import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -28,7 +28,7 @@ public class MagicHudOverlay implements HudRenderCallback {
         MinecraftClient client = MinecraftClient.getInstance();
         int top;
         int left;
-        switch (SoulForgeConfig.MAGIC_BAR_LOCATION.getValue()) {
+        switch (ConfigHelper.getMagicBarLocation()) {
             case BOTTOM_RIGHT -> {
                 top = client.getWindow().getScaledHeight() - 136;
                 left = client.getWindow().getScaledWidth() - 27;
@@ -96,7 +96,7 @@ public class MagicHudOverlay implements HudRenderCallback {
         MinecraftClient client = MinecraftClient.getInstance();
         int top;
         int left;
-        switch (SoulForgeConfig.MAGIC_BAR_LOCATION.getValue()) {
+        switch (ConfigHelper.getMagicBarLocation()) {
             case BOTTOM_RIGHT -> {
                 top = client.getWindow().getScaledHeight() - 136;
                 left = client.getWindow().getScaledWidth() - 67;

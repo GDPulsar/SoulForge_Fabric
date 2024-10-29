@@ -17,6 +17,7 @@ import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
 import com.pulsar.soulforge.client.render.SoulForgeRendering;
 import com.pulsar.soulforge.client.ui.*;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
@@ -105,7 +106,7 @@ public class SoulForgeClient implements ClientModInitializer {
 	public static boolean appleSkinApplied = false;
 
 	public static void appleSkinLoad() {
-		if (HUDOverlayHandler.INSTANCE != null) {
+		if (HUDOverlayHandler.INSTANCE != null && ConfigHelper.getSplitHotbars()) {
 			HUDOverlayHandler.INSTANCE.FOOD_BAR_HEIGHT += 22;
 			SoulForgeClient.appleSkinApplied = true;
 		}
@@ -246,7 +247,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		}));
 
 		ClampedModelPredicateProvider siphonProvider = (stack, world, entity, seed) -> {
-			if (stack.isIn(ItemTags.TRIMMABLE_ARMOR) || stack.isOf(Items.BOW) || stack.isOf(Items.CROSSBOW) || stack.isIn(ItemTags.TOOLS) || stack.isOf(Items.TRIDENT)) {
+			if (stack.isIn(ItemTags.TRIMMABLE_ARMOR) || stack.isOf(Items.BOW) || stack.isOf(Items.CROSSBOW) || stack.isIn(ItemTags.TOOLS) || stack.isOf(Items.TRIDENT) || stack.isOf(Items.ELYTRA)) {
 				if (stack.getNbt() != null) {
 					if (world == null || !stack.getNbt().contains("Siphon")) return 0.0F;
 					String siphonStr = stack.getNbt().getString("Siphon");

@@ -8,6 +8,7 @@ import com.pulsar.soulforge.client.ui.CreativeZoneScreenHandler;
 import com.pulsar.soulforge.client.ui.SoulForgeScreenHandler;
 import com.pulsar.soulforge.command.*;
 import com.pulsar.soulforge.components.*;
+import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
@@ -56,7 +57,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.6.4");
+		LOGGER.info("Loading SoulForge v2.6.5");
 
 		//registerResourceListeners();
 
@@ -118,6 +119,8 @@ public class SoulForge implements ModInitializer {
 				}
 			}
 		}));
+
+		ConfigHelper.register();
 	}
 
 	public static void registerResourceListeners() {

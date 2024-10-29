@@ -60,6 +60,6 @@ public class DeterminationArrowProjectile extends PersistentProjectileEntity {
 
     @Override
     protected ItemStack asItemStack() {
-        return null;
+        return ItemStack.EMPTY;
     }
 }

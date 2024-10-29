@@ -22,9 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class DomeEntity extends Entity implements Attackable {
     private static final TrackedData<Float> MAX_HEALTH = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -32,7 +30,8 @@ public class DomeEntity extends Entity implements Attackable {
     private static final TrackedData<Integer> SIZE = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<Boolean> EMITTER = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> SHIELD_BREAK_IMMUNE = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    private final PlayerEntity owner;
+    private static final TrackedData<Optional<UUID>> OWNER_UUID = DataTracker.registerData(DomeEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+    private PlayerEntity owner;
 
     public boolean canUsePortals() {
         return false;
@@ -40,7 +39,7 @@ public class DomeEntity extends Entity implements Attackable {
 
     public DomePart[] parts = new DomePart[]{};
 
-    public DomeEntity(World world, Vec3d position, int size, float health) {
+    public DomeEntity(World world, Vec3d position, int size, float health, PlayerEntity owner) {
         super(SoulForgeEntities.DOME_ENTITY_TYPE, world);
         this.setPosition(position);
         setMaxHealth(health);
@@ -48,7 +47,7 @@ public class DomeEntity extends Entity implements Attackable {
         setSize(size);
         setEmitter(false);
         setShieldBreakImmune(false);
-        this.owner = null;
+        setOwner(owner);
     }
 
     public DomeEntity(World world, Vec3d position, int size, float health, boolean domeEmitter, PlayerEntity owner) {
@@ -59,7 +58,7 @@ public class DomeEntity extends Entity implements Attackable {
         setSize(size);
         setEmitter(domeEmitter);
         setShieldBreakImmune(false);
-        this.owner = owner;
+        setOwner(owner);
     }
 
     public DomeEntity(World world, Vec3d position, int size, float health, boolean domeEmitter, PlayerEntity owner, boolean shieldBreakImmune) {
@@ -70,7 +69,7 @@ public class DomeEntity extends Entity implements Attackable {
         setSize(size);
         setEmitter(domeEmitter);
         setShieldBreakImmune(shieldBreakImmune);
-        this.owner = owner;
+        setOwner(owner);
     }
 
     public DomeEntity(EntityType<? extends Entity> type, World world) {
@@ -80,7 +79,7 @@ public class DomeEntity extends Entity implements Attackable {
         setSize(4);
         setEmitter(false);
         setShieldBreakImmune(false);
-        this.owner = null;
+        setOwner((PlayerEntity)null);
     }
 
     @Override
@@ -90,6 +89,7 @@ public class DomeEntity extends Entity implements Attackable {
         this.dataTracker.startTracking(SIZE, 4);
         this.dataTracker.startTracking(EMITTER, false);
         this.dataTracker.startTracking(SHIELD_BREAK_IMMUNE, false);
+        this.dataTracker.startTracking(OWNER_UUID, Optional.empty());
     }
 
     public void addPart(DomePart part) {
@@ -99,42 +99,52 @@ public class DomeEntity extends Entity implements Attackable {
         this.parts = newParts.toArray(new DomePart[0]);
     }
 
+    private void setOwner(@Nullable PlayerEntity owner) {
+        if (owner == null) {
+            this.owner = null;
+            return;
+        }
+        this.dataTracker.set(OWNER_UUID, Optional.of(owner.getUuid()));
+        this.owner = owner;
+    }
+    private void setOwner(@Nullable UUID ownerUUID) {
+        if (ownerUUID != null) setOwner(getWorld().getPlayerByUuid(ownerUUID));
+        else this.owner = null;
+    }
     private void setMaxHealth(float health) {
         this.dataTracker.set(MAX_HEALTH, health);
     }
-
     private void setHealth(float health) {
         this.dataTracker.set(HEALTH, health);
     }
-
     private void setSize(int size) {
         this.dataTracker.set(SIZE, size);
     }
-
     private void setEmitter(boolean emitter) {
         this.dataTracker.set(EMITTER, emitter);
     }
-
     private void setShieldBreakImmune(boolean shieldBreakImmune) {
         this.dataTracker.set(SHIELD_BREAK_IMMUNE, shieldBreakImmune);
     }
-
+    public PlayerEntity getOwner() {
+        UUID uuid = this.dataTracker.get(OWNER_UUID).orElse(null);
+        return uuid != null ? getWorld().getPlayerByUuid(uuid) : null;
+    }
+    public UUID getOwnerUUID() {
+        return this.dataTracker.get(OWNER_UUID).orElse(null);
+    }
     public float getMaxHealth() {
         return this.dataTracker.get(MAX_HEALTH);
     }
-
     public float getHealth() {
         return this.dataTracker.get(HEALTH);
     }
-
     public int getSize() {
         return this.dataTracker.get(SIZE);
     }
-
     public boolean getEmitter() {
         return this.dataTracker.get(EMITTER);
     }
-
     public boolean getShieldBreakImmune() {
         return this.dataTracker.get(SHIELD_BREAK_IMMUNE);
     }
@@ -144,6 +154,7 @@ public class DomeEntity extends Entity implements Attackable {
         setSize(nbt.getInt("size"));
         setMaxHealth(nbt.getFloat("maxHealth"));
         setHealth(nbt.getFloat("health"));
+        if (nbt.contains("owner")) setOwner(nbt.getUuid("owner"));
     }
 
     @Override
@@ -151,6 +162,7 @@ public class DomeEntity extends Entity implements Attackable {
         nbt.putInt("size", getSize());
         nbt.putFloat("maxHealth", getMaxHealth());
         nbt.putFloat("health", getHealth());
+        if (owner != null && getOwnerUUID() != null) nbt.putUuid("owner", getOwnerUUID());
     }
 
     @Nullable
@@ -163,6 +175,11 @@ public class DomeEntity extends Entity implements Attackable {
     public void tick() {
         for (DomePart part : this.parts) {
             part.tick();
+        }
+        if (getOwnerUUID() != null && this.owner == null) {
+            setOwner(getOwnerUUID());
+        } else if (this.owner.getUuid() != getOwnerUUID()) {
+            setOwner(getOwnerUUID());
         }
         if (this.owner != null) {
             if (this.owner.isDead() || this.owner.isRemoved()) {

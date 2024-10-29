@@ -14,3 +14,5 @@ accessible method net/minecraft/entity/LivingEntity isSleepingInBed ()Z
 accessible method net/minecraft/entity/LivingEntity setPositionInBed (Lnet/minecraft/util/math/BlockPos;)V
 accessible method net/minecraft/client/Mouse onMouseButton (JIII)V
 accessible method net/minecraft/world/World getEntityLookup ()Lnet/minecraft/world/entity/EntityLookup;
+accessible method net/minecraft/client/gui/hud/InGameHud renderHotbarItem (Lnet/minecraft/client/gui/DrawContext;IIFLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;I)V
+accessible method net/minecraft/entity/Entity isBeingRainedOn ()Z

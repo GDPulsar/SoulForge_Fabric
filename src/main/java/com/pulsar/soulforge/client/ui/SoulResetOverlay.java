@@ -3,6 +3,7 @@ package com.pulsar.soulforge.client.ui;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
+import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.item.SoulJarItem;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
@@ -217,6 +218,12 @@ public class SoulResetOverlay implements HudRenderCallback {
             float timer = tickTimer + tickDelta;
             if (startTime == 0) return;
             if (timer >= 0) {
+                if (ConfigHelper.getDebugResetPercentages() && allowChosing) {
+                    context.drawText(client.textRenderer, "Determination Chance: " + playerSoul.getResetData().resetsSinceDT + "%", 0, 0, 0xFFFFFF, true);
+                    context.drawText(client.textRenderer, "Dual Chance: " + (playerSoul.getResetData().resetsSinceDual * 5) + "%", 0, 15, 0xFFFFFF, true);
+                    context.drawText(client.textRenderer, "Pure Chance: " + (playerSoul.getResetData().resetsSincePure * 2) + "%", 0, 30, 0xFFFFFF, true);
+                    context.drawText(client.textRenderer, "Strong Chance: " + (playerSoul.getResetData().resetsSinceStrong * 20) + "%", 0, 45, 0xFFFFFF, true);
+                }
                 if (timer < 15) {
                     int color = (int)timer * 167772160;
                     context.fill(0, 0, width, height, color);

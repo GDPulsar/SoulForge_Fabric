@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
@@ -22,9 +23,11 @@ import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.trait.Traits;
 import com.pulsar.soulforge.util.Constants;
+import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.*;
 import net.minecraft.entity.damage.DamageSource;
@@ -477,5 +480,55 @@ abstract class LivingEntityMixin extends Entity {
     @ModifyArg(method = "computeFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I"))
     private float soulforge$modifyFallDamageMultiplier(float original) {
         return original * (float)this.getAttributeValue(SoulForgeAttributes.FALL_DAMAGE_MULTIPLIER);
+    }
+
+    @ModifyArg(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), index = 1)
+    private float soulforge$doKindnessElytraBlock(float amount) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if (living instanceof ServerPlayerEntity player) {
+            if (player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA)) {
+                ItemStack elytra = player.getEquippedStack(EquipmentSlot.CHEST);
+                if (elytra.getNbt() != null && elytra.getNbt().contains("Siphon")) {
+                    Siphon.Type siphonType = Siphon.Type.getSiphon(elytra.getNbt().getString("Siphon"));
+                    if (siphonType == Type.KINDNESS || siphonType == Siphon.Type.SPITE) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        if (playerSoul.getMagic() >= 40f) {
+                            playerSoul.setMagic(playerSoul.getMagic() - 40f);
+                            playerSoul.resetLastCastTime();
+                            float push = (float)Math.sqrt(amount) / 2f;
+                            amount *= 0.05f;
+                            for (LivingEntity nearby : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 10, 10, 10),
+                                    (target) -> TeamUtils.canDamageEntity(player.getServer(), player, target))) {
+                                if (nearby.distanceTo(player) < 10f) {
+                                    Vec3d offset = player.getPos().subtract(nearby.getPos()).normalize();
+                                    nearby.addVelocity(offset.multiply(push));
+                                    nearby.velocityModified = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return amount;
+    }
+
+    @ModifyExpressionValue(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getRotationVector()Lnet/minecraft/util/math/Vec3d;"))
+    private Vec3d soulforge$doPatienceElytraBoost(Vec3d original) {
+        LivingEntity living = (LivingEntity)(Object)this;
+        if (living instanceof ServerPlayerEntity player) {
+            if (player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA)) {
+                ItemStack elytra = player.getEquippedStack(EquipmentSlot.CHEST);
+                if (elytra.getNbt() != null && elytra.getNbt().contains("Siphon")) {
+                    Siphon.Type siphonType = Siphon.Type.getSiphon(elytra.getNbt().getString("Siphon"));
+                    if (siphonType == Type.PATIENCE || siphonType == Siphon.Type.SPITE) {
+                        if (player.isBeingRainedOn()) {
+                            return original.multiply(1.2f);
+                        }
+                    }
+                }
+            }
+        }
+        return original;
     }
 }

@@ -7,16 +7,20 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.networking.SoulForgeNetworking;
+import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.trait.Traits;
+import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -63,10 +67,34 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                 if (!wasSneaking.get(player)) {
                     if (playerSoul.hasCast("Determination Platform") || playerSoul.hasCast("Platforms")) {
                         playerSoul.handleEvent(EventType.SPAWN_PLATFORM);
-                    } else {
-                        ItemStack boots = player.getEquippedStack(EquipmentSlot.FEET);
-                        if (boots.isOf(SoulForgeItems.PLATFORM_BOOTS)) {
-                            playerSoul.handleEvent(EventType.SPAWN_PLATFORM);
+                    } else if (player.getEquippedStack(EquipmentSlot.FEET).isOf(SoulForgeItems.PLATFORM_BOOTS)) {
+                        playerSoul.handleEvent(EventType.SPAWN_PLATFORM);
+                    } else if (player.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA)) {
+                        ItemStack elytra = player.getEquippedStack(EquipmentSlot.CHEST);
+                        if (elytra.getNbt() != null) {
+                            if (elytra.getNbt().contains("Siphon")) {
+                                Siphon.Type siphonType = Siphon.Type.getSiphon(elytra.getNbt().getString("Siphon"));
+                                if ((siphonType == Siphon.Type.BRAVERY || siphonType == Siphon.Type.SPITE) && values.getTimer("BraveryElytra") <= 0) {
+                                    player.addVelocity(player.getRotationVector().multiply(0.5f));
+                                    player.velocityModified = true;
+                                    for (LivingEntity nearby : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 10, 10, 10),
+                                            (target) -> TeamUtils.canDamageEntity(server, player, target))) {
+                                        if (nearby.distanceTo(player) < 10f) {
+                                            nearby.addVelocity(player.getRotationVector().multiply(1.5f));
+                                            nearby.velocityModified = true;
+                                        }
+                                    }
+                                    values.setTimer("BraveryElytra", 200);
+                                }
+                                if ((siphonType == Siphon.Type.JUSTICE || siphonType == Siphon.Type.SPITE) && values.getTimer("JusticeElytra") <= 0 && playerSoul.getMagic() >= 10f) {
+                                    playerSoul.setMagic(playerSoul.getMagic() - 10f);
+                                    playerSoul.resetLastCastTime();
+                                    player.setVelocity(Vec3d.ZERO);
+                                    player.velocityModified = true;
+                                    values.setTimer("JusticeElytra", 100);
+                                    values.setTimer("Immobilized", 80);
+                                }
+                            }
                         }
                     }
                 }

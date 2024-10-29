@@ -8,6 +8,7 @@ import com.pulsar.soulforge.ability.patience.BlindingSnowstorm;
 import com.pulsar.soulforge.client.ui.ANOTHERHIM;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
+import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
 import net.minecraft.client.RunArgs;
@@ -68,7 +69,7 @@ public abstract class MinecraftClientMixin {
     private void soulforge$onHotbarKeyPress(PlayerInventory instance, int value, Operation<Void> original) {
         if (this.player != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(this.player);
-            if (playerSoul.magicModeActive()) {
+            if (playerSoul.magicModeActive() && ConfigHelper.getMagicBarHotkeying()) {
                 playerSoul.setAbilitySlot(value);
                 return;
             }

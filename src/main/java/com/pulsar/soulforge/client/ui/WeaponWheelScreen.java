@@ -58,7 +58,8 @@ public class WeaponWheelScreen extends Screen {
                     SoulForgeItems.DETERMINATION_GUN,
                     SoulForgeItems.DETERMINATION_GAUNTLETS,
                     SoulForgeItems.DETERMINATION_CLAW,
-                    SoulForgeItems.DETERMINATION_SHIELD
+                    SoulForgeItems.DETERMINATION_SHIELD,
+                    SoulForgeItems.DETERMINATION_STAFF
             ));
             double anglePer = (2*Math.PI)/weapons.size();
             hovering = null;
