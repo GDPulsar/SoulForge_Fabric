@@ -29,9 +29,9 @@ public class TraitedArniciteHeartItem extends Item {
                 && !user.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) {
             if (playerSoul.getMagic() < 100f || (Utils.isInverted(playerSoul) && playerSoul.getMagicGauge() < playerSoul.getMagicGaugeMax())) {
                 float adding = Math.min(100f - playerSoul.getMagic(), 100f);
-                playerSoul.setMagic(playerSoul.getMagic() + 100f);
+                playerSoul.addMagic(100f);
                 if (Utils.isInverted(playerSoul) && playerSoul.getMagicGauge() < playerSoul.getMagicGaugeMax()) {
-                    playerSoul.setMagicGauge(playerSoul.getMagicGauge() + (100f - adding));
+                    playerSoul.addMagicGauge(100f - adding);
                 }
                 user.giveItemStack(new ItemStack(SoulForgeItems.ARNICITE_HEART));
                 user.setCurrentHand(hand);

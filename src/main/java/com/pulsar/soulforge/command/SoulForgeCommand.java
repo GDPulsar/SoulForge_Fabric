@@ -189,13 +189,6 @@ public class SoulForgeCommand {
                                                     context.getSource().sendMessage(Text.literal("You have been reset!"));
                                                     return 1;
                                                 })
-                                                .then(literal("discoveredAbilities")
-                                                        .executes(context -> {
-                                                            SoulComponent data = SoulForge.getPlayerSoul(getPlayer(context, "playerName"));
-                                                            data.clearDiscovered();
-                                                            return 1;
-                                                        })
-                                                )
                                         )
                                 )
                         )

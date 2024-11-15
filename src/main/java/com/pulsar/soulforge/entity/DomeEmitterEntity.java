@@ -1,11 +1,9 @@
 package com.pulsar.soulforge.entity;
 
-import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -110,13 +108,9 @@ public class DomeEmitterEntity extends ThrownItemEntity implements GeoEntity {
         World world = this.getWorld();
         if (!world.isClient) {
             if (pos.toCenterPos().distanceTo(center.toCenterPos()) <= domeRadius) {
-                if (!world.getBlockState(pos).isSolid()) {
-                    BlockState state = SoulForgeBlocks.DOME_BLOCK.getDefaultState();
-                    world.setBlockState(pos, state);
-                    DomePart part = new DomePart(entity, x+center.getX(), y+center.getY(), z+center.getZ());
-                    this.getWorld().spawnEntity(part);
-                    entity.addPart(part);
-                }
+                DomePart part = new DomePart(entity, x+center.getX(), y+center.getY(), z+center.getZ());
+                this.getWorld().spawnEntity(part);
+                entity.addPart(part);
             }
         }
     }

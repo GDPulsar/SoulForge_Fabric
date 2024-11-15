@@ -72,9 +72,9 @@ public class ItemMixin {
                     Siphon.Type siphonType = Siphon.Type.getSiphon(stack.getNbt().getString("Siphon"));
                     if ((siphonType == Siphon.Type.JUSTICE || siphonType == Siphon.Type.SPITE) && stack.getItem() instanceof MiningToolItem) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-                        if (playerSoul.getMagic() >= 10f) {
-                            BlockHitResult hit = world.raycast(new RaycastContext(user.getEyePos(), user.getEyePos().add(user.getRotationVector().multiply(50)), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, user));
-                            if (hit != null) {
+                        BlockHitResult hit = world.raycast(new RaycastContext(user.getEyePos(), user.getEyePos().add(user.getRotationVector().multiply(50)), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, user));
+                        if (hit != null) {
+                            if (playerSoul.tryConsumeMagic(10f)) {
                                 BlockState block = world.getBlockState(hit.getBlockPos());
                                 if (user.canHarvest(block) && user.canModifyBlocks() && stack.getItem().isSuitableFor(block)) {
                                     LootContextParameterSet.Builder builder = (new LootContextParameterSet.Builder((ServerWorld) world)).add(LootContextParameters.ORIGIN, Vec3d.ofCenter(hit.getBlockPos())).add(LootContextParameters.TOOL, stack).addOptional(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(hit.getBlockPos()));
@@ -85,8 +85,6 @@ public class ItemMixin {
                                     }
                                 }
                                 world.setBlockState(hit.getBlockPos(), Blocks.AIR.getDefaultState());
-                                playerSoul.setMagic(playerSoul.getMagic() - 10f);
-                                playerSoul.resetLastCastTime();
                                 return TypedActionResult.success(stack);
                             }
                         }

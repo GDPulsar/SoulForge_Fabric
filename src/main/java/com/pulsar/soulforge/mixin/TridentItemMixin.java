@@ -32,6 +32,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -69,10 +71,15 @@ public abstract class TridentItemMixin {
                         if (siphonType == Siphon.Type.JUSTICE || siphonType == Siphon.Type.SPITE) {
                             TridentEntity tridentEntity = new TridentEntity(world, playerEntity, stack);
                             Vec3d start = playerEntity.getEyePos();
-                            Vec3d end = playerEntity.getEyePos().add(playerEntity.getRotationVector().multiply(200f));
+                            Vec3d end;
                             HitResult hitResult = ProjectileUtil.getCollision(start, playerEntity, tridentEntity::canHit, playerEntity.getRotationVector().multiply(200f), world);
-                            if (hitResult.getType() != HitResult.Type.MISS) {
+                            if (hitResult instanceof EntityHitResult entityHitResult) {
+                                end = entityHitResult.getPos().subtract(playerEntity.getEyePos());
+                                end = playerEntity.getRotationVector().multiply(end.length()).add(playerEntity.getEyePos());
+                            } else if (hitResult instanceof BlockHitResult) {
                                 end = hitResult.getPos();
+                            } else {
+                                return;
                             }
                             tridentEntity.setPosition(end.subtract(playerEntity.getRotationVector()));
                             tridentEntity.setVelocity(playerEntity.getRotationVector().multiply(2f));
@@ -101,7 +108,7 @@ public abstract class TridentItemMixin {
                         }
                         if (siphonType == Siphon.Type.DETERMINATION || siphonType == Siphon.Type.SPITE) {
                             SoulComponent playerSoul = SoulForge.getPlayerSoul(playerEntity);
-                            if (user.isSneaking() && playerSoul.getMagic() >= 10f) {
+                            if (user.isSneaking() && playerSoul.tryConsumeMagic(10f)) {
                                 ItemStack stackCopy = stack.copy();
                                 Map<Enchantment, Integer> enchants = EnchantmentHelper.fromNbt(stackCopy.getEnchantments());
                                 enchants.remove(Enchantments.LOYALTY);
@@ -112,8 +119,6 @@ public abstract class TridentItemMixin {
 
                                 world.spawnEntity(tridentEntity);
                                 world.playSoundFromEntity(null, playerEntity, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 0.8F);
-                                playerSoul.setMagic(playerSoul.getMagic() - 10f);
-                                playerSoul.resetLastCastTime();
                                 ci.cancel();
                             }
                         }
@@ -184,9 +189,7 @@ public abstract class TridentItemMixin {
                 Siphon.Type siphonType = Siphon.Type.getSiphon(stack.getOrCreateNbt().getString("Siphon"));
                 if (siphonType == Siphon.Type.DETERMINATION || siphonType == Siphon.Type.SPITE) {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                    if (playerSoul.getMagic() >= 25f) {
-                        playerSoul.setMagic(playerSoul.getMagic() - 25f);
-                        playerSoul.resetLastCastTime();
+                    if (playerSoul.tryConsumeMagic(25f)) {
                         return true;
                     }
                 }

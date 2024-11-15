@@ -67,7 +67,7 @@ public class VeinminePacket {
         }
         SimpleInventory drops = new SimpleInventory(100);
         for (BlockPos mine : toMine) {
-            if (playerSoul.getMagic() < 5f) break;
+            if (!playerSoul.tryConsumeMagic(5f)) break;
             BlockState blockState = world.getBlockState(mine);
             Block block = blockState.getBlock();
             if (!blockState.isAir() && blockState.isOf(source)) {
@@ -78,7 +78,6 @@ public class VeinminePacket {
                 block.onBreak(world, mine, blockState, playerEntity);
                 world.removeBlock(mine, false);
                 block.onBroken(world, mine, blockState);
-                playerSoul.setMagic(playerSoul.getMagic() - 5);
                 if (playerEntity.canHarvest(blockState) && playerEntity.canModifyBlocks()) {
                     Block.getDroppedStacks(blockState, world, pos, blockEntity, playerEntity, stack).forEach((toDrop) -> {
                         drops.addStack(toDrop);

@@ -31,7 +31,7 @@ public class IntegrityRapier extends MagicSwordItem {
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-        if (!world.isClient && user instanceof PlayerEntity player) {
+        if (user instanceof PlayerEntity player) {
             player.getItemCooldownManager().set(this, 20);
             return stack;
         }

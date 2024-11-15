@@ -33,18 +33,16 @@ public class PersistentProjectileEntityMixin {
                 if (siphonType == Type.BRAVERY) {
                     if (trident.getOwner() instanceof PlayerEntity player) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                        if (playerSoul.getMagic() >= 20f) {
-                            if (trident.getWorld() instanceof ServerWorld && trident.getWorld().isThundering() && trident.hasChanneling()) {
-                                BlockPos blockPos = trident.getBlockPos();
-                                if (trident.getWorld().isSkyVisible(blockPos)) {
+                        if (trident.getWorld() instanceof ServerWorld && trident.getWorld().isThundering() && trident.hasChanneling()) {
+                            BlockPos blockPos = trident.getBlockPos();
+                            if (trident.getWorld().isSkyVisible(blockPos)) {
+                                if (playerSoul.tryConsumeMagic(20f)) {
                                     LightningEntity lightningEntity = EntityType.LIGHTNING_BOLT.create(trident.getWorld());
                                     if (lightningEntity != null) {
                                         lightningEntity.refreshPositionAfterTeleport(Vec3d.ofBottomCenter(blockPos));
                                         lightningEntity.setChanneler(player instanceof ServerPlayerEntity ? (ServerPlayerEntity)player : null);
                                         trident.getWorld().spawnEntity(lightningEntity);
                                         trident.playSound(SoundEvents.ITEM_TRIDENT_THUNDER, 5f, 1f);
-                                        playerSoul.setMagic(playerSoul.getMagic() - 20f);
-                                        playerSoul.resetLastCastTime();
                                     }
                                 }
                             }

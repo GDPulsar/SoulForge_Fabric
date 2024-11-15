@@ -14,9 +14,10 @@ import java.awt.*;
 public class MagicHudOverlay implements HudRenderCallback {
     @Override
     public void onHudRender(DrawContext context, float tickDelta) {
+        SoulComponent playerSoul = SoulForge.getPlayerSoul(MinecraftClient.getInstance().player);
+        if (playerSoul.getTraits().isEmpty()) return;
         //renderMagicBALLS(context);
         renderMagicBar(context);
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(MinecraftClient.getInstance().player);
         if (Utils.isInverted(playerSoul)) {
             renderMagicGauge(context);
         }

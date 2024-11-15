@@ -15,7 +15,7 @@ public class JusticePellets extends AbilityBase {
         ServerWorld world = player.getServerWorld();
         JusticePelletProjectile projectile = new JusticePelletProjectile(world, player);
         projectile.setPos(player.getEyePos());
-        projectile.setVelocity(player.getRotationVector().multiply(8));
+        projectile.setVel(player.getRotationVector().multiply(8));
         projectile.velocityModified = true;
         world.spawnEntity(projectile);
         world.playSoundFromEntity(null, player, SoulForgeSounds.PELLET_SUMMON_EVENT, SoundCategory.PLAYERS, 1f, 1f);

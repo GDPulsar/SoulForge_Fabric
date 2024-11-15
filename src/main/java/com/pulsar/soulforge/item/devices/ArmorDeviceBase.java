@@ -88,15 +88,10 @@ public class ArmorDeviceBase extends ArmorItem implements Equipment {
         if (getCharge(stack) < maxCharge) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             if (playerSoul.hasTrait(trait)) {
-                if (maxCharge - 10 <= getCharge(stack)) {
-                    playerSoul.setMagic(playerSoul.getMagic() - (maxCharge - getCharge(stack)));
-                    setCharge(stack, maxCharge);
-                } else {
-                    int magic = MathHelper.floor(Math.min(playerSoul.getMagic(), 10f));
-                    playerSoul.setMagic(playerSoul.getMagic() - magic);
+                int magic = MathHelper.floor(Math.min(playerSoul.getMagic(), Math.min(10f, maxCharge - getCharge(stack))));
+                if (playerSoul.tryConsumeMagic(magic)) {
                     increaseCharge(stack, magic);
                 }
-                playerSoul.resetLastCastTime();
             }
         }
     }

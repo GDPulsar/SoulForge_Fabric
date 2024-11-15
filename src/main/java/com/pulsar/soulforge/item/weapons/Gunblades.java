@@ -68,7 +68,7 @@ public class Gunblades extends MagicSwordItem implements GeoItem {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
             JusticePelletProjectile projectile = new JusticePelletProjectile(world, user, 5 + playerSoul.getLV()/5f);
             projectile.setPos(user.getEyePos());
-            projectile.setVelocity(user.getRotationVector().multiply(8));
+            projectile.setVel(user.getRotationVector().multiply(8));
             world.spawnEntity(projectile);
             ammo--;
             user.getMainHandStack().getOrCreateNbt().putInt("ammo", ammo);

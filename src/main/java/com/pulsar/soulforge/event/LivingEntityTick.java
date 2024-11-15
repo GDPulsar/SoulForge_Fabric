@@ -1,33 +1,11 @@
 package com.pulsar.soulforge.event;
 
-import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.ability.despair.DrainingField;
-import com.pulsar.soulforge.components.SoulComponent;
-import com.pulsar.soulforge.components.ValueComponent;
-import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
-import com.pulsar.soulforge.effects.SoulForgeEffects;
-import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DoubleBlockProperties;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-
-import java.util.List;
 
 public class LivingEntityTick {
     public static void tick(LivingEntity living) {
-        ValueComponent values = SoulForge.getValues(living);
-        if (values.hasInt("HangToAThreadTimer")) {
+        //ValueComponent values = SoulForge.getValues(living);
+        /*if (values.hasInt("HangToAThreadTimer")) {
             values.setInt("HangToAThreadTimer", values.getInt("HangToAThreadTimer") - 1);
             if (!values.hasBool("HangToAThreadDamaging") || !values.getBool("HangToAThreadDamaging")) {
                 if (values.getInt("HangToAThreadTimer") % 5 == 0) {
@@ -61,7 +39,7 @@ public class LivingEntityTick {
         }
 
         PlayerEntity nearestReaper = null;
-        for (PlayerEntity player : living.getWorld().getPlayers()) {
+        for (PlayerEntity player : living.getWorld().getPlayers(TargetPredicate.DEFAULT, living, Box.of(living.getPos(), 40, 40, 40))) {
             if (player.distanceTo(living) < 20f) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 if (!playerSoul.hasAbility("Draining Field")) continue;
@@ -96,9 +74,9 @@ public class LivingEntityTick {
             values.removeUUID("DrainingField");
             values.removeUUID("ReapingField");
             values.removeFloat("ReapingFieldAmount");
-        }
+        }*/
 
-        if (living.hasStatusEffect(SoulForgeEffects.EEPY)) {
+        /*if (living.hasStatusEffect(SoulForgeEffects.EEPY)) {
             if (living.getSleepingPosition().isEmpty()) {
                  if (values.getBool("WasEepy")) {
                     living.setInvulnerable(false);
@@ -125,9 +103,9 @@ public class LivingEntityTick {
             }
         } else if (values.getBool("WasEepy")) {
             living.setInvulnerable(false);
-        }
+        }*/
 
-        if (living.hasStatusEffect(SoulForgeEffects.MANA_TUMOR)) {
+        /*if (living.hasStatusEffect(SoulForgeEffects.MANA_TUMOR)) {
             StatusEffectInstance tumor = living.getStatusEffect(SoulForgeEffects.MANA_TUMOR);
             if (tumor.getDuration() <= 1 && tumor.getAmplifier() < 2) {
                 int duration = (int)Math.floor((Math.random() + 1) * 72000) * tumor.getAmplifier() == 0 ? 3 : 1;
@@ -161,23 +139,6 @@ public class LivingEntityTick {
                     near.get((int)Math.floor(Math.random()*near.size())).addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_TUMOR, (int)Math.floor((Math.random() + 0.5f) * 36000)));
                 }
             }
-        }
-
-        if (living instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasCast("Proceed")) {
-                LivingEntity nearest = null;
-                for (LivingEntity nearby : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 50, 50, 50), entity -> player.canHit())) {
-                    if (nearby == player) continue;
-                    if (nearest == null) nearest = nearby;
-                    else if (nearby.distanceTo(player) < nearest.distanceTo(player)) {
-                        nearest = nearby;
-                    }
-                }
-                if (nearest != null) {
-                    player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, nearest.getEyePos());
-                }
-            }
-        }
+        }*/
     }
 }

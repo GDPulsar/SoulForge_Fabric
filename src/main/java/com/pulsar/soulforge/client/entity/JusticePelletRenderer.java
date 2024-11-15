@@ -1,19 +1,19 @@
 package com.pulsar.soulforge.client.entity;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.client.render.SphereRenderer;
 import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.util.Identifier;
-
-import java.awt.*;
+import net.minecraft.util.math.Vec3d;
+import org.joml.Vector3f;
 
 @Environment(EnvType.CLIENT)
 public class JusticePelletRenderer extends EntityRenderer<JusticePelletProjectile> {
@@ -23,14 +23,21 @@ public class JusticePelletRenderer extends EntityRenderer<JusticePelletProjectil
         super(context);
     }
 
+    float lastDelta = 0f;
     public void render(JusticePelletProjectile pelletEntity, float yaw, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
+        ParticleManager manager = MinecraftClient.getInstance().particleManager;
+        for (int j = 0; j < 6; j++) {
+            Vec3d pos = pelletEntity.getLerpedPos(tickDelta);
+            manager.addParticle(new DustParticleEffect(new Vector3f(1f, 1f, 0f), 0.25f), pos.x, pos.y, pos.z, 0, 0, 0);
+        }
+        lastDelta = tickDelta;
+        /*VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
         matrixStack.push();
-        //matrixStack.peek().getPositionMatrix().setTranslation(0f, 0f, 0f);
-        //Vec3d position = pelletEntity.getPos().add(pelletEntity.getVelocity().multiply(tickDelta));
-        //matrixStack.translate(position.x/2f, position.y/2f, position.z/2f);
+        matrixStack.peek().getPositionMatrix().setTranslation(0f, 0f, 0f);
+        Vec3d position = pelletEntity.getPos().add(pelletEntity.getVelocity().multiply(tickDelta));
+        matrixStack.translate(position.x/2f, position.y/2f, position.z/2f);
         SphereRenderer.renderSphere(matrixStack.peek().getPositionMatrix(), vertexConsumer, 0.125f, pelletEntity.getDamage() > 0 ? new Color(255, 255, 0) : new Color(0, 255, 0));
-        matrixStack.pop();
+        matrixStack.pop();*/
     }
 
     public Identifier getTexture(JusticePelletProjectile pelletEntity) {

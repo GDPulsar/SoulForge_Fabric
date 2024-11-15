@@ -113,7 +113,7 @@ public class EncyclopediaScreen extends Screen {
                     ContentButton abilityButton = new ContentButton(left + 159, top + 17 + j * 10, 105, 9, () -> {
                         currentPage = pageNum + 1;
                         updateWidgets();
-                    }, playerSoul.hasDiscovered(ability) ? ability.getLocalizedText() : Text.literal("???"));
+                    }, ability.getLocalizedText());
                     j++;
                     widgets.add(abilityButton);
                     addSelectableChild(abilityButton);
@@ -224,24 +224,18 @@ public class EncyclopediaScreen extends Screen {
                         Identifier texture;
                         List<Text> data = new ArrayList<>();
                         MutableText description = Text.translatable("encyclopedia.ability." + ability.getID().getPath() + ".text");
-                        if (playerSoul.hasDiscovered(ability)) {
-                            texture = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
-                            data.add(ability.getLocalizedText());
-                            data.add(Text.literal("\"").append(ability.getTooltip()).append("\""));
-                            data.add(Text.translatable("encyclopedia.prefixes.lv").append("" + ability.getLV()));
-                            data.add(Text.translatable("encyclopedia.prefixes.cost").append("" + ability.getCost()));
-                            int cooldown = ability.getCooldown();
-                            MutableText cooldownText;
-                            if (cooldown == 0) cooldownText = Text.translatable("encyclopedia.cooldown.none");
-                            else if (cooldown < 20) cooldownText = Text.literal(cooldown + " ").append(Text.translatable("encyclopedia.cooldown.ticks"));
-                            else if (cooldown < 1200) cooldownText = Text.literal(String.format("%.02f ", (float)cooldown/20f)).append(Text.translatable("encyclopedia.cooldown.seconds"));
-                            else cooldownText = Text.literal(String.format("%.02f ", (float)cooldown/1200f)).append(Text.translatable("encyclopedia.cooldown.minutes"));
-                            data.add(Text.translatable("encyclopedia.prefixes.cooldown").append(cooldownText));
-                        } else {
-                            texture = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/grayscale/" + ability.getID().getPath() + ".png");
-                            data.add(Text.translatable("encyclopedia.unlock_text").append("" + ability.getLV()));
-                            description = Text.translatable("encyclopedia.missing_ability.text");
-                        }
+                        texture = new Identifier(SoulForge.MOD_ID, "textures/ui/ability_icon/" + ability.getID().getPath() + ".png");
+                        data.add(ability.getLocalizedText());
+                        data.add(Text.literal("\"").append(ability.getTooltip()).append("\""));
+                        data.add(Text.translatable("encyclopedia.prefixes.lv").append("" + ability.getLV()));
+                        data.add(Text.translatable("encyclopedia.prefixes.cost").append("" + ability.getCost()));
+                        int cooldown = ability.getCooldown();
+                        MutableText cooldownText;
+                        if (cooldown == 0) cooldownText = Text.translatable("encyclopedia.cooldown.none");
+                        else if (cooldown < 20) cooldownText = Text.literal(cooldown + " ").append(Text.translatable("encyclopedia.cooldown.ticks"));
+                        else if (cooldown < 1200) cooldownText = Text.literal(String.format("%.02f ", (float)cooldown/20f)).append(Text.translatable("encyclopedia.cooldown.seconds"));
+                        else cooldownText = Text.literal(String.format("%.02f ", (float)cooldown/1200f)).append(Text.translatable("encyclopedia.cooldown.minutes"));
+                        data.add(Text.translatable("encyclopedia.prefixes.cooldown").append(cooldownText));
 
                         String desc = description.getString();
                         while (desc.contains("${")) {

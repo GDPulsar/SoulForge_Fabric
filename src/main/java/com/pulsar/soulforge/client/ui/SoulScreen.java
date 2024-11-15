@@ -118,6 +118,7 @@ public class SoulScreen extends Screen {
 
         modes = new ArrayList<>();
         if (!playerSoul.hasTrait(Traits.spite)) {
+            if (playerSoul.getTraits().isEmpty()) return;
             modes.add(new Pair<>(Traits.Mode.TRAIT, playerSoul.getTrait(0).getName()));
             if (playerSoul.getTraitCount() == 2) modes.add(new Pair<>(Traits.Mode.TRAIT, playerSoul.getTrait(1).getName()));
         } else {

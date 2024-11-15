@@ -3,12 +3,10 @@ package com.pulsar.soulforge.ability.determination;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.DomeEntity;
 import com.pulsar.soulforge.entity.DomePart;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -39,7 +37,7 @@ public class DeterminationDome extends ToggleableAbilityBase {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             domeHealth = playerSoul.getEffectiveLV() * 10f;
             center = player.getBlockPos();
-            player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 150f, 1f);
+            player.getServerWorld().playSound(null, center, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 2f, 1f);
             entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos(), domeRadius, domeHealth, false, player);
             entity.setPosition(player.getBlockPos().toCenterPos().subtract(0, 0.5f, 0));
             double radius = domeRadius + 0.5;
@@ -96,19 +94,8 @@ public class DeterminationDome extends ToggleableAbilityBase {
             }
             if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
         }
-        for (int x = -domeRadius; x <= domeRadius; x++) {
-            for (int y = -domeRadius; y <= domeRadius; y++) {
-                for (int z = -domeRadius; z <= domeRadius; z++) {
-                    BlockPos pos = new BlockPos(x, y, z).add(center);
-                    if (player.getWorld().getBlockState(pos).isOf(SoulForgeBlocks.DETERMINATION_DOME_BLOCK)) {
-                        player.getWorld().addBlockBreakParticles(pos, player.getWorld().getBlockState(pos));
-                        player.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-                    }
-                }
-            }
-        }
         entity = null;
-        player.getWorld().playSoundFromEntity(null, player, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 150f, 1f);
+        player.getWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 1f, 1f, true);
         return super.end(player);
     }
 

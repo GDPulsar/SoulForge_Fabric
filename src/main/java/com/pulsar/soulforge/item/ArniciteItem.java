@@ -25,7 +25,8 @@ public class ArniciteItem extends Item {
         SoulComponent playerSoul;
         if (user instanceof ServerPlayerEntity) playerSoul = SoulForge.getPlayerSoul(user);
         else playerSoul = SoulForgeClient.getPlayerData();
-        if (playerSoul.getMagic() < 50) return TypedActionResult.fail(user.getStackInHand(hand));
+        if (playerSoul.tryConsumeMagic(50f)) return TypedActionResult.fail(user.getStackInHand(hand));
+        if (playerSoul.getTraits().isEmpty()) return TypedActionResult.fail(user.getStackInHand(hand));
         TraitBase trait;
         if (playerSoul.getTraitCount() >= 2) trait = playerSoul.getTrait(MathHelper.floor(Math.random()*2));
         else trait = playerSoul.getTrait(0);
@@ -38,8 +39,6 @@ public class ArniciteItem extends Item {
         if (trait instanceof Perseverance) result = new ItemStack(SoulForgeItems.PERSEVERANCE_ARNICITE);
         if (trait instanceof Integrity) result = new ItemStack(SoulForgeItems.INTEGRITY_ARNICITE);
         user.giveItemStack(result);
-        playerSoul.setMagic(playerSoul.getMagic() - 50f);
-        playerSoul.resetLastCastTime();
         user.getStackInHand(hand).decrement(1);
         return TypedActionResult.consume(user.getStackInHand(hand));
     }

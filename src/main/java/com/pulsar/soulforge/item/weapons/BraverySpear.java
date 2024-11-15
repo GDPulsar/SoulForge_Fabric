@@ -56,7 +56,6 @@ public class BraverySpear extends MagicSweepingSwordItem implements GeoItem {
             return;
         }
         if (!world.isClient) {
-            stack.damage(1, playerEntity, p -> p.sendToolBreakStatus(user.getActiveHand()));
             BraverySpearProjectile projectile = new BraverySpearProjectile(world, playerEntity);
             projectile.setOwner(playerEntity);
             projectile.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0f, 2.5f, 1.0f);
@@ -64,9 +63,7 @@ public class BraverySpear extends MagicSweepingSwordItem implements GeoItem {
             world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0f, 1.0f);
             SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity)user);
             playerSoul.removeWeapon();
-            if (playerSoul.getMagic() >= 5f) {
-                playerSoul.setMagic(playerSoul.getMagic() - 5f);
-                playerSoul.resetLastCastTime();
+            if (playerSoul.tryConsumeMagic(5f)) {
                 playerSoul.setWeapon(new ItemStack(SoulForgeItems.BRAVERY_SPEAR));
             }
         }

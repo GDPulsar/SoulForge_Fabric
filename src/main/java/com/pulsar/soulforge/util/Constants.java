@@ -10,10 +10,8 @@ import com.pulsar.soulforge.ability.justice.JusticeBow;
 import com.pulsar.soulforge.ability.justice.JusticeCrossbow;
 import com.pulsar.soulforge.ability.justice.JusticeRevolver;
 import com.pulsar.soulforge.ability.justice.Launch;
-import com.pulsar.soulforge.ability.kindness.AllyHeal;
 import com.pulsar.soulforge.ability.kindness.Immobilization;
 import com.pulsar.soulforge.ability.kindness.KindnessDome;
-import com.pulsar.soulforge.ability.kindness.SelfHeal;
 import com.pulsar.soulforge.ability.perseverance.MorphingWeaponry;
 import com.pulsar.soulforge.ability.perseverance.PerseveranceAura;
 import com.pulsar.soulforge.ability.pures.*;
@@ -207,9 +205,6 @@ public class Constants {
         if (justice && perseverance) {
             return !(ability instanceof JusticeBow) && !(ability instanceof JusticeCrossbow) && !(ability instanceof JusticeRevolver) && !(ability instanceof MorphingWeaponry);
         }
-        if (kindness && perseverance) {
-            return !(ability instanceof AllyHeal) && !(ability instanceof SelfHeal);
-        }
         return true;
     }
 
@@ -253,8 +248,7 @@ public class Constants {
             extras.add(new StatusInversion());
         }
         if (kindness && perseverance) {
-            extras.add(new EnduringHeal());
-            extras.add(new Nanomachines());
+            extras.add(new Ward());
             extras.add(new YourShield());
         }
         if (patience && integrity) {
@@ -280,12 +274,11 @@ public class Constants {
     public static List<AbilityBase> dualAbilities = new ArrayList<>(List.of(
             new AcceleratedPelletAura(),
             new Armory(),
-            new EnduringHeal(),
             new FearlessInstincts(),
             new FriendlinessPellets(),
             new HestiasHearth(),
             new LightningRod(),
-            new Nanomachines(),
+            new Ward(),
             new PerfectedAuraTechnique(),
             new Reload(),
             new ShiningSoul(),

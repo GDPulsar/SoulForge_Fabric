@@ -50,12 +50,13 @@ public abstract class InGameHudMixin {
 
     @Shadow protected abstract void renderHotbarItem(DrawContext context, int x, int y, float f, PlayerEntity player, ItemStack stack, int seed);
 
+    @Shadow protected abstract PlayerEntity getCameraPlayer();
+
     @Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 0))
     private void soulforge$renderSecondHotbar(float tickDelta, DrawContext context, CallbackInfo ci) {
         if (ConfigHelper.getSplitHotbars()) {
             context.drawTexture(WIDGETS_TEXTURE, this.scaledWidth / 2 - 91, this.scaledHeight - 44, 0, 0, 182, 22);
             PlayerEntity player = !(MinecraftClient.getInstance().getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)MinecraftClient.getInstance().getCameraEntity();
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             for (int i = 0; i < 9; i++) {
                 int x = this.scaledWidth / 2 - 90 + i * 20 + 2;
                 this.renderAbilityHotbarIcon(context, x - 1, this.scaledHeight - 42, player, i);
@@ -72,21 +73,19 @@ public abstract class InGameHudMixin {
                 y = ConfigHelper.getSplitHotbars() ? y - 22 : y;
                 context.drawTexture(texture, this.scaledWidth / 2 - 92 + playerSoul.getAbilitySlot() * 20, y, u, v, width, height);
             } else {
-                context.drawTexture(texture, this.scaledWidth / 2 - 92 + player.getInventory().selectedSlot * 20, y, u, v, width, height);
+                if (player.getInventory().selectedSlot != 9) context.drawTexture(texture, x, y, u, v, width, height);
             }
-        } else {
-            context.drawTexture(texture, x, y, u, v, width, height);
         }
     }
 
     @Inject(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 1, shift = At.Shift.AFTER))
     private void soulforge$renderWeaponSlot(float tickDelta, DrawContext context, CallbackInfo ci) {
-        PlayerEntity player = !(MinecraftClient.getInstance().getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)MinecraftClient.getInstance().getCameraEntity();
+        PlayerEntity player = this.getCameraPlayer();
         if (player != null) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
             if (playerSoul.hasWeapon()) {
                 ItemStack weapon = playerSoul.getWeapon();
-                if (!weapon.isEmpty() && (ConfigHelper.getSplitHotbars() && !playerSoul.magicModeActive())) {
+                if (!weapon.isEmpty() && (ConfigHelper.getSplitHotbars() || !playerSoul.magicModeActive())) {
                     int rx = this.scaledWidth / 2 + 109;
                     context.drawTexture(WIDGETS_TEXTURE, rx, this.scaledHeight - 23, 58, 22, 24, 24);
                     if (player.getInventory().selectedSlot == 9 && !playerSoul.magicModeActive())

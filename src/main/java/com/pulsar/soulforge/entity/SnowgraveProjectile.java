@@ -115,6 +115,7 @@ public class SnowgraveProjectile extends Entity implements GeoEntity {
                 }
             }
         }
+        if (this.age >= 59) this.kill();
     }
 
     public boolean canUsePortals() {

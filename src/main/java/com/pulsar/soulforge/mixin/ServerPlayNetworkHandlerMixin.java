@@ -3,6 +3,9 @@ package com.pulsar.soulforge.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.SoulComponent;
+import com.pulsar.soulforge.components.ValueComponent;
+import com.pulsar.soulforge.item.SoulForgeItems;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -22,6 +25,48 @@ abstract class ServerPlayNetworkHandlerMixin implements ServerPlayPacketListener
         PlayerActionC2SPacket.Action action = packet.getAction();
         if (action == PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND) {
             if (this.player.getInventory().selectedSlot == 9) {
+                ItemStack held = player.getMainHandStack();
+                if (held.isOf(SoulForgeItems.PERSEVERANCE_BLADES) || held.isOf(SoulForgeItems.PERSEVERANCE_EDGE) ||
+                    held.isOf(SoulForgeItems.PERSEVERANCE_CLAW) || held.isOf(SoulForgeItems.PERSEVERANCE_HARPOON)) {
+                    ValueComponent values = SoulForge.getValues(player);
+                    SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                    if (values != null && (values.getTimer("FreeWeaponMorph") > 0 || playerSoul.getMagic() > 20f)) {
+                        if (!player.isSneaking()) {
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_BLADES) && playerSoul.getLV() >= 5) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_EDGE.getDefaultStack());
+                            }
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_EDGE) && playerSoul.getLV() >= 10) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_CLAW.getDefaultStack());
+                            }
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_CLAW) && playerSoul.getLV() >= 17) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_HARPOON.getDefaultStack());
+                            }
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_HARPOON)) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_BLADES.getDefaultStack());
+                            }
+                        } else {
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_BLADES)) {
+                                if (playerSoul.getLV() >= 17) playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_HARPOON.getDefaultStack());
+                                else if (playerSoul.getLV() >= 10) playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_CLAW.getDefaultStack());
+                                else if (playerSoul.getLV() >= 5) playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_EDGE.getDefaultStack());
+                            }
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_EDGE)) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_BLADES.getDefaultStack());
+                            }
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_CLAW)) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_EDGE.getDefaultStack());
+                            }
+                            if (held.isOf(SoulForgeItems.PERSEVERANCE_HARPOON)) {
+                                playerSoul.setWeapon(SoulForgeItems.PERSEVERANCE_CLAW.getDefaultStack());
+                            }
+                        }
+                        if (values.getTimer("FreeWeaponMorph") <= 0) {
+                            playerSoul.tryConsumeMagic(20f);
+                        }
+                        playerSoul.resetLastCastTime();
+                        values.setTimer("FreeWeaponMorph", 20);
+                    }
+                }
                 ci.cancel();
             }
         }

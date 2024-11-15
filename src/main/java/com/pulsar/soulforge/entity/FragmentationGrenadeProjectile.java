@@ -77,7 +77,7 @@ public class FragmentationGrenadeProjectile extends ProjectileEntity {
             JusticePelletProjectile pellet = new JusticePelletProjectile(this.getWorld(), (LivingEntity)this.getOwner());
             Vec3d direction = new Vec3d(Math.random()-0.5f, Math.random()*1.5f-0.75f, Math.random()-0.5f).normalize();
             pellet.setPos(this.getPos().add(direction.multiply(2f)));
-            pellet.setVelocity(direction.multiply(4f));
+            pellet.setVel(direction.multiply(4f));
             this.getWorld().spawnEntity(pellet);
         }
         super.kill();

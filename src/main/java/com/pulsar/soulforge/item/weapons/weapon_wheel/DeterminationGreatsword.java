@@ -43,7 +43,7 @@ public class DeterminationGreatsword extends MagicSweepingSwordItem implements G
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
             SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-            if (user.isSneaking() && playerSoul.getMagic() >= 10f) {
+            if (user.isSneaking() && playerSoul.tryConsumeMagic(10f)) {
                 BigSlashProjectile slash = new BigSlashProjectile(world, user);
                 slash.setOwner(user);
                 slash.setPosition(user.getEyePos());
@@ -51,8 +51,6 @@ public class DeterminationGreatsword extends MagicSweepingSwordItem implements G
                 slash.setYaw(user.getYaw());
                 slash.setVelocity(user.getRotationVector().multiply(1.5f));
                 world.spawnEntity(slash);
-                playerSoul.setMagic(playerSoul.getMagic() - 10f);
-                playerSoul.resetLastCastTime();
             }
         }
         ItemStack stack = user.getStackInHand(hand);

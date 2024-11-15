@@ -48,8 +48,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.Pair;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
@@ -67,7 +65,7 @@ import java.util.List;
 import java.util.*;
 
 public class SoulComponent implements AutoSyncedComponent, CommonTickingComponent {
-    private List<TraitBase> traits = List.of(Traits.bravery, Traits.justice);
+    private ArrayList<TraitBase> traits = new ArrayList<>(List.of(Traits.bravery, Traits.justice));
     private boolean strong = false;
     private boolean pure = false;
     private int lv = 1;
@@ -81,7 +79,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     private final PlayerEntity player;
     private ItemStack weapon = ItemStack.EMPTY;
     private int lastCastTime = 0;
-    private List<AbilityBase> discovered = new ArrayList<>();
     private HashMap<String, Integer> monsterSouls = new HashMap<>();
     private HashMap<String, Integer> playerSouls = new HashMap<>();
     private AbilityLayout abilityLayout = new AbilityLayout();
@@ -146,7 +143,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     }
 
     public void setTraits(List<TraitBase> traits) {
-        this.traits = traits;
+        this.traits = new ArrayList<>(traits);
         abilityLayout = new AbilityLayout();
         for (AbilityBase ability : abilities.getActive()) {
             ability.end((ServerPlayerEntity)player);
@@ -163,7 +160,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     }
 
     public void setResetValues(List<TraitBase> traits, boolean strong, boolean pure) {
-        this.traits = traits;
+        this.traits = new ArrayList<>(traits);
         abilityLayout = new AbilityLayout();
         for (AbilityBase ability : abilities.getActive()) {
             ability.end((ServerPlayerEntity)player);
@@ -236,8 +233,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                             }
                         }
                         if (stacked) {
-                            setMagic(getMagic() - cost);
-                            resetLastCastTime();
+                            tryConsumeMagic(cost);
                         }
                         if (onTriple) break;
                         if (!stacked && !player.isOnGround()) {
@@ -256,8 +252,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                                     }
                                 }
                             }
-                            setMagic(getMagic() - cost);
-                            resetLastCastTime();
+                            tryConsumeMagic(cost);
                         }
                     } else if (!(hasDT || hasIG)) {
                         ItemStack boots = player.getEquippedStack(EquipmentSlot.FEET);
@@ -419,7 +414,26 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     }
 
     public void setMagic(float magic) {
+        float lastMagic = this.magic;
         this.magic = Math.min(Math.max(magic, 0), getMagicMax());
+    }
+
+    public void addMagic(float magic) {
+        float lastMagic = this.magic;
+        this.magic = Math.min(Math.max(this.magic + magic, 0), getMagicMax());
+    }
+
+    public boolean tryConsumeMagic(float magic) {
+        if (this.magic < magic) return false;
+        float lastMagic = this.magic;
+        this.magic = Math.min(Math.max(this.magic - magic, 0), getMagicMax());
+        this.resetLastCastTime();
+        return true;
+    }
+
+    public boolean tryConsumeMagic(float magic, boolean serverOnly) {
+        if (serverOnly && player.getWorld().isClient) return false;
+        else return tryConsumeMagic(magic);
     }
 
     public float getMagicGauge() {
@@ -432,6 +446,24 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     public void setMagicGauge(float magicGauge) {
         this.magicGauge = Math.min(Math.max(magicGauge, 0), getMagicGaugeMax());
+    }
+
+    public void addMagicGauge(float magic) {
+        float lastMagic = this.magicGauge;
+        this.magicGauge = Math.min(Math.max(this.magicGauge + magic, 0), getMagicGaugeMax());
+    }
+
+    public boolean tryConsumeMagicGauge(float magic) {
+        if (this.magicGauge < magic) return false;
+        float lastMagic = this.magicGauge;
+        this.magicGauge = Math.min(Math.max(this.magicGauge - magic, 0), getMagicGaugeMax());
+        this.resetLastCastTime();
+        return true;
+    }
+
+    public boolean tryConsumeMagicGauge(float magic, boolean serverOnly) {
+        if (serverOnly && player.getWorld().isClient) return false;
+        else return tryConsumeMagicGauge(magic);
     }
 
     public List<AbilityBase> getAbilities() { return List.copyOf(this.abilities.getAll()); }
@@ -534,7 +566,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                 PlayerEntity tumorOwner = player.getWorld().getPlayerByUuid(values.getUUID("TumorOwner"));
                 if (tumorOwner != null) {
                     SoulComponent playerSoul = SoulForge.getPlayerSoul(tumorOwner);
-                    playerSoul.setMagic(playerSoul.getMagic() + manaRegenRate * (1f - tumorMultiplier));
+                    playerSoul.addMagic(manaRegenRate * (1f - tumorMultiplier));
                 }
             }
         }
@@ -544,8 +576,8 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             if (drainedBy != null) {
                 drainingMultiplier = 2f/3f;
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(drainedBy);
-                if (playerSoul.getMagic() >= 100f) playerSoul.setMagicGauge(playerSoul.getMagicGauge() + manaRegenRate * (1f - drainingMultiplier));
-                else playerSoul.setMagic(playerSoul.getMagic() + manaRegenRate * (1f - drainingMultiplier));
+                if (playerSoul.getMagic() >= 100f) playerSoul.addMagicGauge(manaRegenRate * (1f - drainingMultiplier));
+                else playerSoul.addMagic(manaRegenRate * (1f - drainingMultiplier));
             }
         }
         if (values.hasUUID("ReapingField") && values.hasFloat("ReapingFieldAmount")) {
@@ -553,8 +585,8 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             if (reapedBy != null) {
                 drainingMultiplier = 1f - values.getFloat("ReapingFieldAmount");
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(reapedBy);
-                if (playerSoul.getMagic() >= 100f) playerSoul.setMagicGauge(playerSoul.getMagicGauge() + manaRegenRate * (1f - drainingMultiplier));
-                else playerSoul.setMagic(playerSoul.getMagic() + manaRegenRate * (1f - drainingMultiplier));
+                if (playerSoul.getMagic() >= 100f) playerSoul.addMagicGauge(manaRegenRate * (1f - drainingMultiplier));
+                else playerSoul.addMagic(manaRegenRate * (1f - drainingMultiplier));
             }
         }
         float magicIncrease = manaRegenRate * tumorMultiplier * drainingMultiplier;
@@ -562,7 +594,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             magicIncrease = Math.min(magicIncrease, magicGauge);
             magicGauge -= magicIncrease;
         }
-        setMagic(magic + magicIncrease);
+        addMagic(magicIncrease);
         lastCastTime++;
         lastPos = player.getPos();
 
@@ -737,15 +769,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             buf.writeItemStack(weapon);
             buf.writeVarInt(lastCastTime);
 
-            int discoveredSize = 0;
-            for (AbilityBase ability : discovered) {
-                if (ability != null) discoveredSize++;
-            }
-            buf.writeVarInt(discoveredSize);
-            for (AbilityBase ability : discovered) {
-                if (ability != null) buf.writeString(ability.getID().getPath());
-            }
-
             buf.writeVarInt(monsterSouls.size());
             for (String type : monsterSouls.keySet()) {
                 buf.writeString(type);
@@ -775,7 +798,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
     public void fromBuffer(PacketByteBuf buf) {
         int traitCount = buf.readVarInt();
-        List<TraitBase> traits = new ArrayList<>(List.of(Objects.requireNonNull(Traits.get(buf.readString()))));
+        ArrayList<TraitBase> traits = new ArrayList<>(List.of(Objects.requireNonNull(Traits.get(buf.readString()))));
         if (traitCount == 2) traits.add(Traits.get(buf.readString()));
         this.traits = traits;
         this.strong = buf.readBoolean();
@@ -807,17 +830,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
         this.lastCastTime = buf.readVarInt();
 
-        int discoveredCount = buf.readVarInt();
-        this.discovered = new ArrayList<>();
-        for (int i = 0; i < discoveredCount; i++) {
-            String id = buf.readString();
-            try {
-                discovered.add(Abilities.get(new Identifier(SoulForge.MOD_ID, id)));
-            } catch (InvalidIdentifierException e) {
-                SoulForge.LOGGER.warn("Received invalid ability identifier: " + id + ". Continuing...");
-            }
-        }
-
         int soulCount = buf.readVarInt();
         this.monsterSouls = new HashMap<>();
         for (int i = 0; i < soulCount; i++) monsterSouls.put(buf.readString(), buf.readVarInt());
@@ -847,26 +859,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
         } else {
             SoulForge.LOGGER.info("Attempted to cast an ability that the player doesn't have!");
         }
-    }
-
-    public boolean hasDiscovered(AbilityBase ability) {
-        return discovered.contains(ability);
-    }
-
-    public void discover(AbilityBase ability) {
-        if (!discovered.contains(ability)) discovered.add(ability);
-    }
-
-    public void undiscover(AbilityBase ability) {
-        discovered.remove(ability);
-    }
-
-    public List<AbilityBase> getDiscovered() {
-        return discovered;
-    }
-
-    public void clearDiscovered() {
-        discovered.clear();
     }
 
     public boolean isStrong() { return strong; }
@@ -1120,8 +1112,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                             } else {
                                 player.setVelocity(Vec3d.ZERO);
                                 player.velocityModified = true;
-                                if (getMagic() >= 40) {
-                                    setMagic(getMagic() - 40f);
+                                if (tryConsumeMagic(40f)) {
                                     Utils.addAntiheal(hasCast("Furioso") ? 1f : 0.8f, getLV() * 40, living);
                                 }
                             }
@@ -1490,17 +1481,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             }
         }
 
-        discovered = new ArrayList<>();
-        List<String> discoveredIds = List.of(tag.getString("discovered").split(","));
-        for (String idStr : discoveredIds) {
-            if (!idStr.isEmpty()) {
-                Identifier id = idStr.contains(":") ? Identifier.tryParse(idStr) : new Identifier(SoulForge.MOD_ID, idStr);
-                if (!discovered.contains(Abilities.get(id))) {
-                    discovered.add(Abilities.get(id));
-                }
-            }
-        }
-
         monsterSouls = new HashMap<>();
         NbtCompound souls = (NbtCompound)tag.get("monsterSouls");
         if (souls != null) {
@@ -1552,13 +1532,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             abilityNbt.put(ability.getName(), ability.saveNbt(new NbtCompound()));
         }
         tag.put("abilities", abilityNbt);
-        List<String> discoveredIds = new ArrayList<>();
-        for (AbilityBase ability : discovered) {
-            if (ability != null) {
-                if (!discoveredIds.contains(ability.getID().getPath())) discoveredIds.add(ability.getID().getPath());
-            }
-        }
-        tag.putString("discovered", String.join(",", discoveredIds));
         NbtCompound souls = new NbtCompound();
         for (String key : monsterSouls.keySet()) souls.putInt(key, monsterSouls.get(key));
         tag.put("monsterSouls", souls);
@@ -1643,9 +1616,6 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
             if (!shouldBeAbilityNames.contains(ability.getName())) {
                 this.abilities.remove(ability);
             }
-        }
-        for (AbilityBase ability : this.abilities.getAll()) {
-            discover(ability);
         }
     }
 

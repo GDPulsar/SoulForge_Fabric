@@ -70,9 +70,7 @@ public class DeterminationSpear extends MagicSweepingSwordItem {
                 world.playSoundFromEntity(null, projectile, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0f, 1.0f);
             }
             playerSoul.removeWeapon();
-            if (playerSoul.getMagic() >= 5f) {
-                playerSoul.setMagic(playerSoul.getMagic() - 5f);
-                playerSoul.resetLastCastTime();
+            if (playerSoul.tryConsumeMagic(5f)) {
                 playerSoul.setWeapon(new ItemStack(SoulForgeItems.DETERMINATION_SPEAR));
             }
         }

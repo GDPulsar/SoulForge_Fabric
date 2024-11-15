@@ -77,9 +77,7 @@ public class LeftClickPacket {
         ItemStack heldItem = player.getMainHandStack();
         if (heldItem != null) {
             if (heldItem.isOf(SoulForgeItems.BFRCMG)) {
-                if (playerSoul.getMagic() >= 80f) {
-                    playerSoul.setMagic(playerSoul.getMagic() - 80f);
-                    playerSoul.resetLastCastTime();
+                if (playerSoul.tryConsumeMagic(80f)) {
                     HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getRotationVector().multiply(75f).add(player.getPos()), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
                     Vec3d end = player.getRotationVector().multiply(75f);
                     if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
@@ -98,7 +96,7 @@ public class LeftClickPacket {
             }
             if (heldItem.isOf(SoulForgeItems.DETERMINATION_RAPIER)) {
                 if (player.isSneaking()) {
-                    if (playerSoul.getMagic() >= 5f) {
+                    if (playerSoul.tryConsumeMagic(5f)) {
                         Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(30f));
                         HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(30f)), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
                         if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
@@ -108,14 +106,12 @@ public class LeftClickPacket {
                         serverWorld.spawnEntity(blast);
                         serverWorld.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                         serverWorld.emitGameEvent(GameEvent.ENTITY_PLACE, player.getPos(), GameEvent.Emitter.of(player));
-                        playerSoul.setMagic(playerSoul.getMagic() - 5f);
-                        playerSoul.resetLastCastTime();
                     }
                 }
             }
             if (heldItem.isOf(SoulForgeItems.DETERMINATION_BOW)) {
                 if (player.isSneaking()) {
-                    if (playerSoul.getMagic() >= 50f) {
+                    if (playerSoul.tryConsumeMagic(50f)) {
                         Vec3d direction = new Vec3d(MathHelper.sin(-player.getYaw() * MathHelper.RADIANS_PER_DEGREE), 0f, MathHelper.cos(-player.getYaw() * MathHelper.RADIANS_PER_DEGREE));
                         Vec3d center = direction.multiply(15f).add(player.getPos());
                         for (int x = -10; x < 10; x++) {
@@ -130,19 +126,15 @@ public class LeftClickPacket {
                                 }
                             }
                         }
-                        playerSoul.setMagic(playerSoul.getMagic() - 50f);
-                        playerSoul.resetLastCastTime();
                         player.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_SICKNESS, 600, 0));
                     }
                 } else if (playerSoul.getMagic() >= 5f) {
                     for (DeterminationArrowProjectile arrow : player.getEntityWorld().getEntitiesByType(TypeFilter.instanceOf(DeterminationArrowProjectile.class),
                             Box.of(player.getPos(), 100, 100, 100), arrow -> true)) {
-                        if (playerSoul.getMagic() < 5f) break;
+                        if (!playerSoul.tryConsumeMagic(5f)) break;
                         LivingEntity target = player.getEntityWorld().getClosestEntity(player.getEntityWorld().getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), Box.of(arrow.getPos(), 20, 20, 20), entity -> true),
                                 TargetPredicate.createAttackable(), player, arrow.getX(), arrow.getY(), arrow.getZ());
                         if (target != null) {
-                            playerSoul.setMagic(playerSoul.getMagic()-5f);
-                            playerSoul.resetLastCastTime();
                             arrow.setVelocity(target.getPos().subtract(arrow.getPos()).normalize().multiply(3f));
                         }
                     }

@@ -5,6 +5,7 @@ import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.TeamUtils;
+import com.pulsar.soulforge.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -22,10 +23,13 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import org.joml.Vector3f;
 
 import java.util.function.Consumer;
 
 public class JusticePelletProjectile extends ProjectileEntity {
+    private static final TrackedData<Vector3f> POSITION = DataTracker.registerData(JusticePelletProjectile.class, TrackedDataHandlerRegistry.VECTOR3F);
+    private static final TrackedData<Vector3f> VELOCITY = DataTracker.registerData(JusticePelletProjectile.class, TrackedDataHandlerRegistry.VECTOR3F);
     private static final TrackedData<Float> DAMAGE = DataTracker.registerData(JusticePelletProjectile.class, TrackedDataHandlerRegistry.FLOAT);
     private Consumer<LivingEntity> onDamageEvent = null;
 
@@ -60,12 +64,20 @@ public class JusticePelletProjectile extends ProjectileEntity {
     }
 
     public void setPos(Vec3d pos) {
+        this.dataTracker.set(POSITION, pos.toVector3f());
         this.setPosition(pos);
+    }
+
+    public void setVel(Vec3d vel) {
+        this.dataTracker.set(VELOCITY, vel.toVector3f());
+        this.setVelocity(vel);
     }
 
     @Override
     protected void initDataTracker() {
         this.dataTracker.startTracking(DAMAGE, 2f);
+        this.dataTracker.startTracking(POSITION, new Vector3f());
+        this.dataTracker.startTracking(VELOCITY, new Vector3f());
     }
 
     public void tick() {
@@ -77,11 +89,14 @@ public class JusticePelletProjectile extends ProjectileEntity {
                     this.onCollision(hitResult);
                 }
             }
+            Vec3d vel = this.getVelocity();
+            this.setPos(new Vec3d(this.getX() + vel.x, this.getY() + vel.y, this.getZ() + vel.z));
+        } else {
+            this.setVelocity(Utils.vector3fToVec3d(this.dataTracker.get(VELOCITY)));
+            this.setPosition(Utils.vector3fToVec3d(this.dataTracker.get(POSITION)));
         }
 
         this.checkBlockCollision();
-        Vec3d vel = this.getVelocity();
-        this.setPos(new Vec3d(this.getX() + vel.x, this.getY() + vel.y, this.getZ() + vel.z));
         ProjectileUtil.setRotationFromVelocity(this, 0.5F);
     }
 

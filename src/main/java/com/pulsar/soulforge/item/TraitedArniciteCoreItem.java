@@ -41,8 +41,8 @@ public class TraitedArniciteCoreItem extends Item implements GeoItem {
                 && !user.hasStatusEffect(SoulForgeEffects.MANA_SICKNESS)) {
             if (Utils.isInverted(playerSoul) && playerSoul.getMagicGauge() < playerSoul.getMagicGaugeMax()) {
                 float adding = 100f - playerSoul.getMagic();
-                playerSoul.setMagic(playerSoul.getMagic() + 100f);
-                playerSoul.setMagicGauge(playerSoul.getMagicGauge() + (10000f - adding));
+                playerSoul.addMagic(100f);
+                playerSoul.addMagicGauge(10000f - adding);
                 user.giveItemStack(new ItemStack(SoulForgeItems.ARNICITE_CORE));
                 user.setCurrentHand(hand);
                 user.getStackInHand(hand).decrement(1);

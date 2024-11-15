@@ -3,6 +3,7 @@ package com.pulsar.soulforge.entity;
 import com.pulsar.soulforge.item.devices.machines.Railkiller;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -10,6 +11,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.HitResult;
@@ -109,13 +111,14 @@ public class RailkillerEntity extends Entity implements GeoEntity {
     BlastEntity blast = null;
     @Override
     public void baseTick() {
+        Vec3d direction = Utils.vector3fToVec3d(this.dataTracker.get(DIRECTION));
+        this.setYaw((float)(MathHelper.atan2(direction.x, direction.z) * 57.2957763671875));
         if (!this.getWorld().isClient) {
             this.setPitch(0f);
             this.setPosition(Utils.vector3fToVec3d(this.dataTracker.get(POSITION)));
-            Vec3d direction = Utils.vector3fToVec3d(this.dataTracker.get(DIRECTION));
             ItemStack stack = this.dataTracker.get(STACK);
-            this.setYaw((float)(MathHelper.atan2(direction.x, direction.z) * 57.2957763671875));
-            this.getWorld().breakBlock(this.getBlockPos(), true);
+            BlockState state = this.getWorld().getBlockState(this.getBlockPos());
+            if (!state.isToolRequired() || Items.NETHERITE_PICKAXE.getDefaultStack().isSuitableFor(state)) this.getWorld().breakBlock(this.getBlockPos(), true);
             if (this.age >= 20 && blast == null) {
                 this.setNoGravity(true);
                 Vec3d start = getPos().add(direction.multiply(0.5f)).add(0, 1, 0);

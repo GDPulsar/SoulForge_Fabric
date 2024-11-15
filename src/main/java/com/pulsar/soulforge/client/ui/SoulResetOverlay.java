@@ -56,6 +56,7 @@ public class SoulResetOverlay implements HudRenderCallback {
         int height = client.getWindow().getScaledHeight();
         assert client.player != null;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(client.player);
+        if (playerSoul.getTraits().isEmpty()) return;
         ValueComponent values = SoulForge.getValues(client.player);
         if (values.getBool("resettingSoul")) {
             client.mouse.unlockCursor();

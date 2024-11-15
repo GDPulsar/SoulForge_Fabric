@@ -29,9 +29,7 @@ public class FearBombs extends AbilityBase {
     public boolean cast(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         float magicCost = Math.max(20f * (1f - summonCount * 0.1f), 4f) * (playerSoul.isPure() ? 0.5f : 1.0f) * (float)player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).getValue();
-        if (playerSoul.getMagic() < magicCost) return false;
-        playerSoul.setMagic(playerSoul.getMagic() - magicCost);
-        playerSoul.resetLastCastTime();
+        if (!playerSoul.tryConsumeMagic(magicCost)) return false;
         if (!getActive()) {
             HitResult result = Utils.getFocussedEntity(player, 20f);
             if (result == null) result = player.raycast(20f, 1f, false);

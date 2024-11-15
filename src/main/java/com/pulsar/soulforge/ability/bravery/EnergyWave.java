@@ -47,9 +47,7 @@ public class EnergyWave extends ToggleableAbilityBase {
         boolean valiantHeart = playerSoul.hasCast("Valiant Heart");
         chargeTimer++;
         if (chargeTimer % (valiantHeart ? 10 : 20) == 0) {
-            if (playerSoul.getMagic() >= 5f) {
-                playerSoul.setMagic(playerSoul.getMagic()-5f);
-            } else {
+            if (!playerSoul.tryConsumeMagic(5f)) {
                 if (playerSoul.getLV() >= 10 && playerSoul.getStyleRank() >= 3) {
                     playerSoul.setMagic(0f);
                 } else {

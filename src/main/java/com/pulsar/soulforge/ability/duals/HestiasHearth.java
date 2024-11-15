@@ -43,7 +43,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
             super.cast(player);
             return true;
         } else {
-            if (playerSoul.getMagic() < 5f) return false;
+            if (!playerSoul.tryConsumeMagic(5f)) return false;
             if (charge < 100) {
                 if (player.getPos().withAxis(Direction.Axis.Y, 0).distanceTo(hestiaPos.withAxis(Direction.Axis.Y, 0)) < 8f) {
                     charge += 2;
@@ -51,8 +51,6 @@ public class HestiasHearth extends ToggleableAbilityBase {
                     return false;
                 }
             }
-            playerSoul.setMagic(playerSoul.getMagic() - 5f);
-            playerSoul.resetLastCastTime();
             return false;
         }
     }

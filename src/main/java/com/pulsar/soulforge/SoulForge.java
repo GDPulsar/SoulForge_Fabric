@@ -57,7 +57,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.6.5");
+		LOGGER.info("Loading SoulForge v2.6.6");
 
 		//registerResourceListeners();
 

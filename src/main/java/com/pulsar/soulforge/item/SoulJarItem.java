@@ -71,9 +71,11 @@ public class SoulJarItem extends BlockItem {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         setHasSoul(stack, true);
         setOwner(stack, player.getName().getString());
-        setTrait1(stack, playerSoul.getTrait(0).getName());
-        if (playerSoul.getTraitCount() == 2) setTrait2(stack, playerSoul.getTrait(1).getName());
-        else setTrait2(stack, "");
+        if (!playerSoul.getTraits().isEmpty()) {
+            setTrait1(stack, playerSoul.getTrait(0).getName());
+            if (playerSoul.getTraitCount() == 2) setTrait2(stack, playerSoul.getTrait(1).getName());
+            else setTrait2(stack, "");
+        }
         setStrong(stack, playerSoul.isStrong());
         setPure(stack, playerSoul.isPure());
         setLv(stack, playerSoul.getLV());

@@ -118,7 +118,7 @@ public class AutoTurretEntity extends MobEntity implements GeoEntity, Ownable {
                             damage = 4f + playerSoul.getEffectiveLV() / 2f;
                         }
                         JusticePelletProjectile pellet = new JusticePelletProjectile(target.getWorld(), this, damage);
-                        pellet.setVelocity(direction.multiply(4f));
+                        pellet.setVel(direction.multiply(4f));
                         pellet.setPos(this.getPos().add(0, 1f, 0));
                         this.playSound(SoulForgeSounds.PELLET_SUMMON_EVENT, 1f, 1f);
                         this.getWorld().spawnEntity(pellet);

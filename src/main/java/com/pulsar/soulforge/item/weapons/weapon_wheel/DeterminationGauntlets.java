@@ -1,7 +1,6 @@
 package com.pulsar.soulforge.item.weapons.weapon_wheel;
 
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.item.weapons.MagicSwordItem;
 import com.pulsar.soulforge.util.Utils;
@@ -25,7 +24,6 @@ public class DeterminationGauntlets extends MagicSwordItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
             ValueComponent values = SoulForge.getValues(user);
             if (user.isSneaking()) {
                 values.setTimer("dtGauntletsRush", 15);
@@ -37,7 +35,6 @@ public class DeterminationGauntlets extends MagicSwordItem {
                 EntityHitResult hitResult = Utils.getFocussedEntity(user, 3);
                 if (hitResult != null && hitResult.getEntity() instanceof LivingEntity target) {
                     user.addVelocity(0, 0.7, 0);
-                    target.setFireTicks(10);
                     target.damage(user.getDamageSources().playerAttack(user), this.baseAttackDamage*2.5f);
                     target.timeUntilRegen = 15;
                     MinecraftServer server = world.getServer();

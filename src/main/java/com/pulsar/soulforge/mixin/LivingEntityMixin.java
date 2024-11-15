@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.pulsar.soulforge.SoulForge;
-import com.pulsar.soulforge.accessors.HasTickManager;
 import com.pulsar.soulforge.accessors.OwnableMinion;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -193,6 +192,7 @@ abstract class LivingEntityMixin extends Entity {
         return original;
     }
 
+    //TODO: check if these value component grabs are laggy
     @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = At.Shift.AFTER))
     protected void soulforge$modifyImmobility(CallbackInfo ci) {
         if (!this.canMoveVoluntarily()) {
@@ -396,11 +396,6 @@ abstract class LivingEntityMixin extends Entity {
         LivingEntityTick.tick((LivingEntity)(Object)this);
     }
 
-    @Inject(method = "tickCramming", at = @At("HEAD"), cancellable = true)
-    private void canTickCramming(CallbackInfo ci) {
-        if (!((HasTickManager)this.getWorld()).getTickManager().shouldTick()) ci.cancel();
-    }
-
     @Inject(method = "wakeUp", at = @At("HEAD"), cancellable = true)
     private void soulforge$canWakeUp(CallbackInfo ci) {
         if (this.hasStatusEffect(SoulForgeEffects.EEPY)) {
@@ -492,9 +487,7 @@ abstract class LivingEntityMixin extends Entity {
                     Siphon.Type siphonType = Siphon.Type.getSiphon(elytra.getNbt().getString("Siphon"));
                     if (siphonType == Type.KINDNESS || siphonType == Siphon.Type.SPITE) {
                         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                        if (playerSoul.getMagic() >= 40f) {
-                            playerSoul.setMagic(playerSoul.getMagic() - 40f);
-                            playerSoul.resetLastCastTime();
+                        if (playerSoul.tryConsumeMagic(40f)) {
                             float push = (float)Math.sqrt(amount) / 2f;
                             amount *= 0.05f;
                             for (LivingEntity nearby : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 10, 10, 10),

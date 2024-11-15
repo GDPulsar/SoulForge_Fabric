@@ -159,6 +159,7 @@ public class Utils {
     }
 
     public static Text getTraitText(SoulComponent playerSoul) {
+        if (playerSoul.getTraits().isEmpty()) return Text.literal("I THINK I FUCKED UP!!!");
         MutableText text = Text.literal(playerSoul.getTrait(0).getName());
         text = text.setStyle(playerSoul.getTrait(0).getStyle());
         if (playerSoul.getTraitCount() >= 2) {
@@ -214,7 +215,7 @@ public class Utils {
 
     public static Vec3d getArmPosition(PlayerEntity player) {
         float angle = player.getMainArm() == Arm.RIGHT ? (float)(-Math.PI/2f) : (float)(Math.PI/2f);
-        return player.getEyePos().add(player.getRotationVector().rotateY(angle).withAxis(Direction.Axis.Y, 0).multiply(0.4f)).subtract(0, 0.3f, 0);
+        return player.getEyePos().add(player.getRotationVector().rotateY(angle).withAxis(Direction.Axis.Y, 0).multiply(0.4f)).subtract(0, 1f, 0);
     }
 
     public static void addEffectDuration(LivingEntity target, StatusEffect effect, int duration, int amplifier) {

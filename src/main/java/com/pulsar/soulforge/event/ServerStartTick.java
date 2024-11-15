@@ -86,9 +86,7 @@ public class ServerStartTick implements ServerTickEvents.StartTick {
                                     }
                                     values.setTimer("BraveryElytra", 200);
                                 }
-                                if ((siphonType == Siphon.Type.JUSTICE || siphonType == Siphon.Type.SPITE) && values.getTimer("JusticeElytra") <= 0 && playerSoul.getMagic() >= 10f) {
-                                    playerSoul.setMagic(playerSoul.getMagic() - 10f);
-                                    playerSoul.resetLastCastTime();
+                                if ((siphonType == Siphon.Type.JUSTICE || siphonType == Siphon.Type.SPITE) && values.getTimer("JusticeElytra") <= 0 && playerSoul.tryConsumeMagic(10f)) {
                                     player.setVelocity(Vec3d.ZERO);
                                     player.velocityModified = true;
                                     values.setTimer("JusticeElytra", 100);

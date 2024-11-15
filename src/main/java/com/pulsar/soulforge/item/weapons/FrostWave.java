@@ -30,7 +30,7 @@ public class FrostWave extends MagicItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
-        if (playerSoul.getMagic() >= 2f) {
+        if (playerSoul.tryConsumeMagic(2f, true)) {
             if (!world.isClient) {
                 for (LivingEntity entity : Utils.getEntitiesInFrontOf(user, 3f, 7f, 1f, 2f)) {
                     if (entity instanceof PlayerEntity targetPlayer) {
@@ -57,8 +57,6 @@ public class FrostWave extends MagicItem {
                     }
                 }
                 world.playSoundFromEntity(null, user, SoulForgeSounds.FROST_WAVE_EVENT, SoundCategory.PLAYERS, 1f, 1f);
-                playerSoul.setMagic(playerSoul.getMagic() - 2f);
-                playerSoul.resetLastCastTime();
             } else {
                 Vec3d handPos = Utils.getArmPosition(user);
                 for (int i = 0; i < 5; i++) {

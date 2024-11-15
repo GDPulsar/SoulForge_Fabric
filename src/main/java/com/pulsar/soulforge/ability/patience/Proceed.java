@@ -8,6 +8,8 @@ import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.SnowgraveProjectile;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -15,6 +17,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.event.GameEvent;
 
@@ -44,6 +47,17 @@ public class Proceed extends ToggleableAbilityBase {
         EntityAttributeModifier modifier = new EntityAttributeModifier(UUID.fromString("ee2eb3dc-e9a2-4414-9c83-b745bc25563d"), "proceed", elvBoost, EntityAttributeModifier.Operation.ADDITION);
         player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).tryRemoveModifier(modifier.getId());
         player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(modifier);
+        LivingEntity nearest = null;
+        for (LivingEntity nearby : player.getWorld().getEntitiesByClass(LivingEntity.class, Box.of(player.getPos(), 50, 50, 50), entity -> player.canHit())) {
+            if (nearby == player) continue;
+            if (nearest == null) nearest = nearby;
+            else if (nearby.distanceTo(player) < nearest.distanceTo(player)) {
+                nearest = nearby;
+            }
+        }
+        if (nearest != null) {
+            player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, nearest.getEyePos());
+        }
         return super.tick(player);
     }
 

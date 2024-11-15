@@ -178,7 +178,7 @@ public class DomeEntity extends Entity implements Attackable {
         }
         if (getOwnerUUID() != null && this.owner == null) {
             setOwner(getOwnerUUID());
-        } else if (this.owner.getUuid() != getOwnerUUID()) {
+        } else if (this.owner != null && this.owner.getUuid() != getOwnerUUID()) {
             setOwner(getOwnerUUID());
         }
         if (this.owner != null) {
@@ -222,8 +222,8 @@ public class DomeEntity extends Entity implements Attackable {
                 for (DomePart part : this.getParts()) {
                     if (!part.isRemoved()) part.remove(RemovalReason.KILLED);
                 }
-                this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 10f, 1f);
             }
+            this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 2f, 1f);
             kill();
         }
         return true;

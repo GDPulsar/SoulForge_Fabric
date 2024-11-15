@@ -1,16 +1,13 @@
 package com.pulsar.soulforge.item.devices.devices;
 
-import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.item.GeoMagicItemRenderer;
 import com.pulsar.soulforge.entity.JusticePelletProjectile;
 import com.pulsar.soulforge.item.devices.DeviceBase;
-import com.pulsar.soulforge.item.devices.machines.DeterminationInjector;
 import com.pulsar.soulforge.item.special.CrushingRound;
 import com.pulsar.soulforge.item.special.FrostbiteRound;
 import com.pulsar.soulforge.item.special.PuncturingRound;
 import com.pulsar.soulforge.item.special.SuppressingRound;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import com.pulsar.soulforge.trait.TraitBase;
 import com.pulsar.soulforge.trait.Traits;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
@@ -69,7 +66,7 @@ public class JusticeGun extends DeviceBase implements GeoItem {
                     }
                 }
                 projectile.setPos(user.getEyePos());
-                projectile.setVelocity(user.getRotationVector().multiply(8));
+                projectile.setVel(user.getRotationVector().multiply(8));
                 world.spawnEntity(projectile);
                 world.playSoundFromEntity(null, user, SoulForgeSounds.GUN_SHOOT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 user.getItemCooldownManager().set(this, 10);

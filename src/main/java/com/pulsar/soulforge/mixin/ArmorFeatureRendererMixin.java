@@ -10,11 +10,9 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,6 +33,7 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
     @Inject(method = "renderArmor", at=@At(value = "INVOKE", target = "Lnet/minecraft/item/trim/ArmorTrim;getTrim(Lnet/minecraft/registry/DynamicRegistryManager;Lnet/minecraft/item/ItemStack;)Ljava/util/Optional;"))
     private void addSiphonRender(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo ci) {
         ItemStack stack = entity.getEquippedStack(armorSlot);
+        if (!getVisible(model, armorSlot)) return;
         if (stack.isIn(ItemTags.TRIMMABLE_ARMOR) && stack.getNbt() != null && stack.getNbt().contains("Siphon")) {
             String siphonStr = stack.getNbt().getString("Siphon");
 
@@ -45,6 +44,17 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
                 model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1f, 1f, 1f, 1.0F);
             }
         }
+    }
+
+    @Unique
+    protected boolean getVisible(A bipedModel, EquipmentSlot slot) {
+        return switch (slot) {
+            case HEAD -> bipedModel.head.visible && bipedModel.hat.visible;
+            case CHEST -> bipedModel.body.visible && bipedModel.rightArm.visible && bipedModel.leftArm.visible;
+            case LEGS -> bipedModel.body.visible && bipedModel.rightLeg.visible && bipedModel.leftLeg.visible;
+            case FEET -> bipedModel.rightLeg.visible && bipedModel.leftLeg.visible;
+            default -> true;
+        };
     }
 
     @Unique

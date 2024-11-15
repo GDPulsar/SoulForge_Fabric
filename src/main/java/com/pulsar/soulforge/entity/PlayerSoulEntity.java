@@ -53,9 +53,11 @@ public class PlayerSoulEntity extends Entity {
         super(SoulForgeEntities.PLAYER_SOUL_ENTITY_TYPE, player.getWorld());
         this.setOwner(player.getName().getString());
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        this.setTrait1(playerSoul.getTrait(0).getName());
-        if (playerSoul.getTraitCount() == 2) this.setTrait2(playerSoul.getTrait(1).getName());
-        else this.setTrait2("");
+        if (!playerSoul.getTraits().isEmpty()) {
+            this.setTrait1(playerSoul.getTrait(0).getName());
+            if (playerSoul.getTraitCount() == 2) this.setTrait2(playerSoul.getTrait(1).getName());
+            else this.setTrait2("");
+        }
         this.setStrong(playerSoul.isStrong());
         this.setPure(playerSoul.isPure());
         this.setLV(playerSoul.getLV());

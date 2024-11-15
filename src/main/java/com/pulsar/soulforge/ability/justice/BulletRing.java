@@ -56,7 +56,7 @@ public class BulletRing extends AbilityBase {
     public boolean end(ServerPlayerEntity player) {
         if (target == null) return true;
         for (JusticePelletProjectile pellet : projectiles) {
-            pellet.setVelocity(targetPos.add(0f, target.getHeight()/2f, 0f).subtract(pellet.getPos()).normalize().multiply(2f));
+            pellet.setVel(targetPos.add(0f, target.getHeight()/2f, 0f).subtract(pellet.getPos()).normalize().multiply(2f));
             pellet.velocityModified = true;
         }
         return super.end(player);

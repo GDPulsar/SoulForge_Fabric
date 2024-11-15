@@ -3,14 +3,12 @@ package com.pulsar.soulforge.ability.kindness;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.ToggleableAbilityBase;
-import com.pulsar.soulforge.block.SoulForgeBlocks;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.entity.DomeEntity;
 import com.pulsar.soulforge.entity.DomePart;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.trait.Traits;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -47,10 +45,11 @@ public class KindnessDome extends ToggleableAbilityBase {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 center = hitResult.getBlockPos().offset(hitResult.getSide());
                 domeRadius = MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4;
-                player.getWorld().playSoundFromEntity(null, player, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 10f, 1f);
-                entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
+                player.getServerWorld().playSound(null, center, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 2f, 1f);
+                entity = new DomeEntity(player.getWorld(), center.toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
                         playerSoul.getEffectiveLV() * 10, false, player, playerSoul.hasTrait(Traits.perseverance) && playerSoul.hasTrait(Traits.kindness));
-                entity.setPosition(player.getBlockPos().toCenterPos().subtract(0.5f, 0.5f, 0.5f));
+                entity.setPosition(center.toCenterPos().subtract(0.5f, 0.5f, 0.5f));
+                player.getWorld().spawnEntity(entity);
                 double radius = domeRadius + 0.5;
                 double radSq = radius * radius;
                 double rad1Sq = (radius - 1.5) * (radius - 1.5);
@@ -108,17 +107,6 @@ public class KindnessDome extends ToggleableAbilityBase {
             if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
         }
         if (center != null) {
-            for (int x = -domeRadius; x <= domeRadius; x++) {
-                for (int y = -domeRadius; y <= domeRadius; y++) {
-                    for (int z = -domeRadius; z <= domeRadius; z++) {
-                        BlockPos pos = new BlockPos(x, y, z).add(center);
-                        if (player.getServerWorld().getBlockState(pos).isOf(SoulForgeBlocks.DOME_BLOCK)) {
-                            player.getServerWorld().addBlockBreakParticles(pos, player.getWorld().getBlockState(pos));
-                            player.getServerWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-                        }
-                    }
-                }
-            }
             if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.integrity)) {
                 for (int i = 0; i < 15; i++) {
                     Vec3d velocity = new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f).normalize().multiply(2f);
@@ -128,7 +116,7 @@ public class KindnessDome extends ToggleableAbilityBase {
                     player.getWorld().spawnEntity(shard);
                 }
             }
-            player.getServerWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 5f, 1f, true);
+            player.getServerWorld().playSound(null, center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 2f, 1f);
         }
         entity = null;
         return super.end(player);

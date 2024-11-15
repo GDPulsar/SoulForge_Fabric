@@ -21,18 +21,18 @@ public class BraveryGauntlets extends MagicSwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        target.setFireTicks(10);
+        target.setFireTicks(target.getFireTicks() + 10);
         target.timeUntilRegen = 15;
         return super.postHit(stack, target, attacker);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
         EntityHitResult hitResult = Utils.getFocussedEntity(user, 3);
         if (hitResult != null && hitResult.getEntity() instanceof LivingEntity target) {
+            SoulComponent playerSoul = SoulForge.getPlayerSoul(user);
             user.addVelocity(0, 0.7, 0);
-            target.setFireTicks(10);
+            target.setFireTicks(target.getFireTicks() + 30);
             if (target.damage(user.getDamageSources().playerAttack(user), (this.baseAttackDamage + this.lvIncrease * playerSoul.getLV())*2.5f)) {
                 playerSoul.setStyle(playerSoul.getStyle() + (int)((this.baseAttackDamage + this.lvIncrease * playerSoul.getLV()) * 2.5f));
             }

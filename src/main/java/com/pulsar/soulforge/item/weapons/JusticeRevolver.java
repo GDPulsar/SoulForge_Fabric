@@ -55,7 +55,7 @@ public class JusticeRevolver extends MagicRangedItem {
                     }
                 }
                 projectile.setPos(user.getEyePos());
-                projectile.setVelocity(user.getRotationVector().multiply(8));
+                projectile.setVel(user.getRotationVector().multiply(8));
                 world.spawnEntity(projectile);
                 ammo--;
                 stackNbt.putInt("ammo", ammo);

@@ -83,7 +83,7 @@ public class Gunlance extends MagicSwordItem implements GeoItem {
             if (user instanceof PlayerEntity player) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 int useTicks = getMaxUseTime(stack) - remainingUseTicks;
-                if (useTicks >= 25 && playerSoul.getMagic() >= 4f) {
+                if (useTicks >= 25 && playerSoul.tryConsumeMagic(0.4f)) {
                     Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
                     HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
                     if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
@@ -97,9 +97,6 @@ public class Gunlance extends MagicSwordItem implements GeoItem {
                     } else {
                         blast.setPosition(Utils.getArmPosition(player));
                         blast.setEnd(end);
-                        if (useTicks % 10 == 0) {
-                            playerSoul.setMagic(playerSoul.getMagic() - 4f);
-                        }
                         playerSoul.resetLastCastTime();
                     }
                 }

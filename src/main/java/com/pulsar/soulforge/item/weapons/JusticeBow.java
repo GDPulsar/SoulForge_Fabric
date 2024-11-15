@@ -75,35 +75,32 @@ public class JusticeBow extends MagicRangedItem {
 
     public void scatter(PlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.getMagic() >= 10f) {
-            for (JusticeArrowProjectile arrow : player.getWorld().getEntitiesByClass(JusticeArrowProjectile.class, Box.of(player.getPos(), 200, 200, 200), entity -> entity.getOwner() == player)) {
-                for (int i = 0; i < (4+playerSoul.getLV()/4); i++) {
+        for (JusticeArrowProjectile arrow : player.getWorld().getEntitiesByClass(JusticeArrowProjectile.class, Box.of(player.getPos(), 200, 200, 200), entity -> entity.getOwner() == player)) {
+            if (playerSoul.tryConsumeMagic(10f)) {
+                for (int i = 0; i < (4 + playerSoul.getLV() / 4); i++) {
                     JusticePelletProjectile pellet = new JusticePelletProjectile(player.getWorld(), player);
                     pellet.setPos(new Vec3d(arrow.getX(), arrow.getY(), arrow.getZ()));
                     Vec3d pelletVel = arrow.getVelocity().normalize().multiply(2f)
-                            .add(new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f,Math.random() - 0.5f)).normalize().multiply(4f);
-                    pellet.setVelocity(pelletVel);
+                            .add(new Vec3d(Math.random() - 0.5f, Math.random() - 0.5f, Math.random() - 0.5f)).normalize().multiply(4f);
+                    pellet.setVel(pelletVel);
                     player.getWorld().spawnEntity(pellet);
                 }
-                playerSoul.setMagic(playerSoul.getMagic()-10f);
-                if (playerSoul.getMagic() < 10f) break;
-            }
+                arrow.kill();
+            } else break;
         }
     }
 
     public void aim(PlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-        if (playerSoul.getMagic() >= 3f) {
-            List<ProjectileEntity> projectiles = new ArrayList<>();
-            projectiles.addAll(player.getWorld().getEntitiesByClass(JusticeArrowProjectile.class, Box.of(player.getPos(), 200, 200, 200), entity -> entity.getOwner() == player));
-            projectiles.addAll(player.getWorld().getEntitiesByClass(JusticePelletProjectile.class, Box.of(player.getPos(), 200, 200, 200), entity -> entity.getOwner() == player));
-            Collections.shuffle(projectiles);
-            for (ProjectileEntity projectile : projectiles) {
+        List<ProjectileEntity> projectiles = new ArrayList<>();
+        projectiles.addAll(player.getWorld().getEntitiesByClass(JusticeArrowProjectile.class, Box.of(player.getPos(), 200, 200, 200), entity -> entity.getOwner() == player));
+        projectiles.addAll(player.getWorld().getEntitiesByClass(JusticePelletProjectile.class, Box.of(player.getPos(), 200, 200, 200), entity -> entity.getOwner() == player));
+        Collections.shuffle(projectiles);
+        for (ProjectileEntity projectile : projectiles) {
+            if (playerSoul.tryConsumeMagic(3f)) {
                 projectile.setVelocity(player.getRotationVector().multiply(projectile.getVelocity().length()));
                 projectile.velocityModified = true;
-                playerSoul.setMagic(playerSoul.getMagic() - 3f);
-                if (playerSoul.getMagic() < 3f) break;
-            }
+            } else break;
         }
     }
 }
