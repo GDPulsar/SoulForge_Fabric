@@ -100,14 +100,13 @@ abstract class PlayerEntityMixin extends LivingEntity {
     private Vec3d modifyMovement(Vec3d movementInput) {
         ValueComponent values = SoulForge.getValues((PlayerEntity)(Object)this);
         if (values != null) {
-            if (values.getBool("disableMovement") || values.hasTimer("disableMovement")) {
+            if (values.getBool("disableMovement") || values.getTimer("disableMovement") > 0) {
                 if (!wasSprinting) setSprinting(true);
                 return new Vec3d(0f, 0f, 0f);
             } else {
                 if (wasSprinting) setSprinting(false);
             }
-            if (values.getBool("forcedRunning")) return new Vec3d(0f, 0f, 1f);
-            if (values.hasTimer("forcedRunning")) return new Vec3d(0f, 0f, 1f);
+            if (values.getBool("forcedRunning") || values.getTimer("forcedRunning") > 0) return new Vec3d(0f, 0f, 1f);
         }
         return movementInput;
     }
@@ -115,7 +114,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @ModifyVariable(method="handleFallDamage", at=@At("HEAD"),ordinal=1, argsOnly = true)
     public float modifyFallDamage(float damageMultiplier) {
         PlayerEntity player = ((PlayerEntity)(Object)this);
-        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         ValueComponent values = SoulForge.getValues(player);
         if (values.getBool("shatterdrill")) {
             values.removeBool("shatterdrill");
@@ -282,8 +280,8 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @ModifyArgs(method = "spawnSweepAttackParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;spawnParticles(Lnet/minecraft/particle/ParticleEffect;DDDIDDDD)I"))
     private void soulforge$modifySweepParticleScale(Args args) {
         if (this.getMainHandStack().isOf(SoulForgeItems.COLOSSAL_CLAYMORE)) {
-            args.set(5, -2);
-            args.set(8, 1);
+            args.set(5, -2d);
+            args.set(8, 1d);
         }
     }
 

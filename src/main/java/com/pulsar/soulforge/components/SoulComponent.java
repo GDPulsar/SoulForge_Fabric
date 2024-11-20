@@ -1112,6 +1112,8 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                             } else {
                                 player.setVelocity(Vec3d.ZERO);
                                 player.velocityModified = true;
+                                values.removeTimer("forcedRunning");
+                                values.removeTimer("clawGouge");
                                 if (tryConsumeMagic(40f)) {
                                     Utils.addAntiheal(hasCast("Furioso") ? 1f : 0.8f, getLV() * 40, living);
                                 }

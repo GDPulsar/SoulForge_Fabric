@@ -182,9 +182,11 @@ public class ValueComponent implements AutoSyncedComponent, ServerTickingCompone
 
     @Override
     public void serverTick() {
+        boolean shouldSync = !timerVals.isEmpty();
         for (String timerKey : Set.copyOf(timerVals.keySet())) {
             timerVals.put(timerKey, timerVals.get(timerKey) - 1);
             if (timerVals.get(timerKey) == 0) timerVals.remove(timerKey);
         }
+        if (shouldSync) sync();
     }
 }

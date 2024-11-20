@@ -174,7 +174,7 @@ public class DomeEntity extends Entity implements Attackable {
     @Override
     public void tick() {
         for (DomePart part : this.parts) {
-            part.tick();
+            if (part.isAlive()) part.tick();
         }
         if (getOwnerUUID() != null && this.owner == null) {
             setOwner(getOwnerUUID());
@@ -184,7 +184,7 @@ public class DomeEntity extends Entity implements Attackable {
         if (this.owner != null) {
             if (this.owner.isDead() || this.owner.isRemoved()) {
                 this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 10f, 1f);
-                this.kill();
+                remove(RemovalReason.KILLED);
             }
         }
         super.tick();
@@ -224,7 +224,7 @@ public class DomeEntity extends Entity implements Attackable {
                 }
             }
             this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 2f, 1f);
-            kill();
+            remove(RemovalReason.KILLED);
         }
         return true;
     }

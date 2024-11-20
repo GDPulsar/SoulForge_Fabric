@@ -25,7 +25,7 @@ public class ArniciteItem extends Item {
         SoulComponent playerSoul;
         if (user instanceof ServerPlayerEntity) playerSoul = SoulForge.getPlayerSoul(user);
         else playerSoul = SoulForgeClient.getPlayerData();
-        if (playerSoul.tryConsumeMagic(50f)) return TypedActionResult.fail(user.getStackInHand(hand));
+        if (!playerSoul.tryConsumeMagic(50f)) return TypedActionResult.fail(user.getStackInHand(hand));
         if (playerSoul.getTraits().isEmpty()) return TypedActionResult.fail(user.getStackInHand(hand));
         TraitBase trait;
         if (playerSoul.getTraitCount() >= 2) trait = playerSoul.getTrait(MathHelper.floor(Math.random()*2));
