@@ -95,7 +95,7 @@ public class DeterminationDome extends ToggleableAbilityBase {
             if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
         }
         entity = null;
-        player.getWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 1f, 1f, true);
+        if (center != null) player.getWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 1f, 1f, true);
         return super.end(player);
     }
 

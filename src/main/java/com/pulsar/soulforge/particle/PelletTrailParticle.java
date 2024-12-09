@@ -7,35 +7,22 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import org.jetbrains.annotations.Nullable;
 
-public class FireParticle extends SpriteBillboardParticle {
-    protected FireParticle(ClientWorld world, SpriteProvider spriteSet, double x, double y, double z) {
+public class PelletTrailParticle extends SpriteBillboardParticle {
+    protected PelletTrailParticle(ClientWorld world, SpriteProvider spriteSet, double x, double y, double z) {
         super(world, x, y, z);
 
-        this.velocityX = (this.random.nextFloat() - 0.5f) * 0.01f;
-        this.velocityY = (this.random.nextFloat() - 0.5f) * 0.01f;
-        this.velocityZ = (this.random.nextFloat() - 0.5f) * 0.01f;
-        this.velocityMultiplier = 1f;
-        this.scale = 0.2f;
-        this.maxAge = 35;
-        this.setSprite(spriteSet.getSprite(this.random));
-
+        this.velocityMultiplier = 0f;
+        this.scale = 0.135f;
+        this.maxAge = 3;
         this.red = 1f;
         this.green = 1f;
-        this.blue = 0.7f;
-        this.alpha = 1f;
+        this.blue = 0f;
+        this.setSprite(spriteSet.getSprite(this.random));
     }
 
     @Override
     public void tick() {
-        this.velocityY += 0.0015f;
-        this.angle += 0.005f;
-        if (this.age >= 15) {
-            this.green -= 0.03f;
-            this.blue -= 0.035f;
-        }
-        if (this.age >= 25) {
-            this.scale -= 0.01f;
-        }
+        this.scale -= 0.045f;
         super.tick();
     }
 
@@ -55,7 +42,7 @@ public class FireParticle extends SpriteBillboardParticle {
         @Nullable
         @Override
         public Particle createParticle(DefaultParticleType parameters, ClientWorld world, double x, double y, double z, double vx, double vy, double vz) {
-            return new FireParticle(world, this.sprites, x, y, z);
+            return new PelletTrailParticle(world, this.sprites, x, y, z);
         }
     }
 }

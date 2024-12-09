@@ -26,6 +26,11 @@ public class FearlessInstincts extends AuraAbilityBase {
         ));
     }
 
+    @Override
+    public boolean hasFallImmunity() {
+        return true;
+    }
+
     public int getLV() { return 15; }
 
     public int getCost() { return 100; }

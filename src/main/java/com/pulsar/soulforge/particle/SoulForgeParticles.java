@@ -10,12 +10,15 @@ import net.minecraft.util.Identifier;
 
 public class SoulForgeParticles {
     public static final DefaultParticleType FIRE_PARTICLE = FabricParticleTypes.simple();
+    public static final DefaultParticleType PELLET_TRAIL = FabricParticleTypes.simple();
 
     public static void serverRegister() {
         Registry.register(Registries.PARTICLE_TYPE, new Identifier(SoulForge.MOD_ID, "fire"), FIRE_PARTICLE);
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier(SoulForge.MOD_ID, "pellet_trail"), PELLET_TRAIL);
     }
 
     public static void clientRegister() {
         ParticleFactoryRegistry.getInstance().register(FIRE_PARTICLE, FireParticle.Factory::new);
+        ParticleFactoryRegistry.getInstance().register(PELLET_TRAIL, PelletTrailParticle.Factory::new);
     }
 }
