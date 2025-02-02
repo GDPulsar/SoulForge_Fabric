@@ -166,6 +166,7 @@
   "item.soulforge.soul_jar": "Soul Jar",
   "soulforge.soul_forge_screen.lava_prefix": "Lava: ",
   "soulforge.creative_zone_screen.fuel_prefix": "Fuel Remaining: ",
+  "screen.soulforge.first_trait": "Pick your first trait:",
 
   "item.soulforge.arnicite_block": "Arnicite Block",
   "block.soulforge.arnicite_block": "Arnicite Block",

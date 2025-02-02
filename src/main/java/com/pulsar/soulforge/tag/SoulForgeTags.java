@@ -22,6 +22,7 @@ public class SoulForgeTags {
     public static final TagKey<Item> SIPHON_ADDITION = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "siphon_addition"));
     public static final TagKey<Item> SIPHONABLE = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "siphonable"));
     public static final TagKey<Item> PARRY_ITEMS = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "parry_items"));
+    public static final TagKey<Item> MAGIC_WEAPON = TagKey.of(RegistryKeys.ITEM, new Identifier(SoulForge.MOD_ID, "magic_weapon"));
     public static final TagKey<DamageType> NO_ARMOR_BREAK = TagKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(SoulForge.MOD_ID, "no_armor_break"));
     public static final TagKey<EntityType<?>> BOSS_ENTITY = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "boss_entity"));
     public static final TagKey<EntityType<?>> HATE_ALLY = TagKey.of(RegistryKeys.ENTITY_TYPE, new Identifier(SoulForge.MOD_ID, "hate_ally"));

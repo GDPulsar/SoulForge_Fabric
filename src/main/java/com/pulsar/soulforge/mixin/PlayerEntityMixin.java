@@ -43,6 +43,7 @@ import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
@@ -82,6 +83,8 @@ abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow public abstract ItemCooldownManager getItemCooldownManager();
 
     @Shadow public abstract Arm getMainArm();
+
+    @Shadow public abstract void playSound(SoundEvent sound, float volume, float pitch);
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -189,15 +192,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 }
             }
         }
-        /*if (target instanceof LivingEntity living) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul((PlayerEntity) (Object) this);
-            if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageActive")) {
-                if (playerSoul.getValue("rampageActive") == 3) {
-                    TemporaryModifierComponent modifiers = SoulForge.getTemporaryModifiers(living);
-                    original *= (modifiers.getModifierCount() * 0.05f) + 1f;
-                }
-            }
-        }*/
         return original;
     }
 
@@ -358,6 +352,12 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 }
                 cir.setReturnValue(false);
             }
+        }
+        if (player.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) {
+            int newAmpl = player.getStatusEffect(SoulForgeEffects.IMMOBILIZED).getAmplifier() - (int)amount;
+            if (newAmpl < 0) player.removeStatusEffect(SoulForgeEffects.IMMOBILIZED);
+            else player.setStatusEffect(new StatusEffectInstance(SoulForgeEffects.IMMOBILIZED, -1, newAmpl, false, false, false), null);
+            cir.setReturnValue(true);
         }
     }
 

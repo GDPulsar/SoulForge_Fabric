@@ -26,15 +26,17 @@ public class ResetData {
     public boolean perseverance;
     public boolean determination;
     public boolean strongDual;
+    public boolean setFirst;
     public List<Pair<TraitBase, TraitBase>> unlockedDuals;
     public List<TraitBase> unlockedPures;
 
-    public ResetData(int totalResets, int resetsSincePure, int resetsSinceStrong, int resetsSinceDual, int resetsSinceDT, List<Pair<TraitBase, TraitBase>> unlockedDuals, List<TraitBase> unlockedPures) {
+    public ResetData(int totalResets, int resetsSincePure, int resetsSinceStrong, int resetsSinceDual, int resetsSinceDT, boolean setFirst, List<Pair<TraitBase, TraitBase>> unlockedDuals, List<TraitBase> unlockedPures) {
         this.totalResets = totalResets;
         this.resetsSincePure = resetsSincePure;
         this.resetsSinceStrong = resetsSinceStrong;
         this.resetsSinceDual = resetsSinceDual;
         this.resetsSinceDT = resetsSinceDT;
+        this.setFirst = setFirst;
         this.unlockedDuals = unlockedDuals;
         this.unlockedPures = unlockedPures;
     }
@@ -45,6 +47,7 @@ public class ResetData {
         this.resetsSinceStrong = 0;
         this.resetsSinceDual = 0;
         this.resetsSinceDT = 0;
+        this.setFirst = false;
         this.unlockedDuals = new ArrayList<>();
         this.unlockedPures = new ArrayList<>();
     }
@@ -64,6 +67,7 @@ public class ResetData {
         perseverance = achieved.getBoolean("perseverance");
         determination = achieved.getBoolean("determination");
         strongDual = achieved.getBoolean("strongDual");
+        this.setFirst = nbt.getBoolean("setFirst");
         this.unlockedDuals = new ArrayList<>();
         NbtList duals = nbt.getList("duals", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < duals.size(); i++) {
@@ -101,6 +105,7 @@ public class ResetData {
         achieved.putBoolean("perseverance", perseverance);
         achieved.putBoolean("determination", determination);
         achieved.putBoolean("strongDual", strongDual);
+        nbt.putBoolean("setFirst", setFirst);
         nbt.put("achieved", achieved);
         NbtList duals = new NbtList();
         for (Pair<TraitBase, TraitBase> dual : unlockedDuals) {
@@ -132,6 +137,7 @@ public class ResetData {
         buf.writeBoolean(perseverance);
         buf.writeBoolean(determination);
         buf.writeBoolean(strongDual);
+        buf.writeBoolean(setFirst);
         buf.writeVarInt(unlockedDuals.size());
         for (Pair<TraitBase, TraitBase> dual : unlockedDuals) {
             buf.writeString(dual.getLeft().getName());
@@ -158,6 +164,7 @@ public class ResetData {
         resetData.perseverance = buf.readBoolean();
         resetData.determination = buf.readBoolean();
         resetData.strongDual = buf.readBoolean();
+        resetData.setFirst = buf.readBoolean();
         resetData.unlockedDuals = new ArrayList<>();
         int unlockedDualCount = buf.readVarInt();
         for (int i = 0; i < unlockedDualCount; i++) {

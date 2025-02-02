@@ -26,6 +26,7 @@ public class SoulForgeNetworking {
     public static final Identifier RELOAD_SELECT = new Identifier(SoulForge.MOD_ID, "reload_select");
     public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
     public static final Identifier RAMPAGE_ACTIVATE = new Identifier(SoulForge.MOD_ID, "rampage_activate");
+    public static final Identifier FIRST_TRAIT = new Identifier(SoulForge.MOD_ID, "first_trait");
 
     // S2C
     public static final Identifier PLAYER_SOUL = new Identifier(SoulForge.MOD_ID, "player_soul");
@@ -53,6 +54,7 @@ public class SoulForgeNetworking {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RELOAD_SELECT, ReloadSelectPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.DOMAIN_EXPANSION, DomainExpansionPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RAMPAGE_ACTIVATE, RampageActivatePacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.FIRST_TRAIT, FirstTraitPacket::receive);
     }
 
     public static void broadcast(@Nullable PlayerEntity exclude, MinecraftServer server, Identifier packet, PacketByteBuf buf) {

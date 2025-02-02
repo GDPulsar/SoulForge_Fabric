@@ -121,19 +121,6 @@ abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    /*@ModifyExpressionValue(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;isIn(Lnet/minecraft/registry/tag/TagKey;)Z", ordinal = 3))
-    private boolean soulforge$modifyBypassesCooldown(boolean original, @Local DamageSource source) {
-        if (source.getAttacker() instanceof PlayerEntity player) {
-            SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-            if (playerSoul.hasValue("rampageTimer") && playerSoul.hasValue("rampageActive")) {
-                if (playerSoul.getValue("rampageActive") == 4) {
-                    return true;
-                }
-            }
-        }
-        return original;
-    }*/
-
     @Inject(method = "onDeath", at = @At("HEAD"))
     private void soulforge$onDeath(DamageSource damageSource, CallbackInfo ci) {
         LivingDeathEvent.onDeath((LivingEntity)(Object)this);
@@ -197,7 +184,7 @@ abstract class LivingEntityMixin extends Entity {
     protected void soulforge$modifyImmobility(CallbackInfo ci) {
         if (!this.canMoveVoluntarily()) {
             ValueComponent values = SoulForge.getValues((LivingEntity) (Object) this);
-            if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) {
+            if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0 || this.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) {
                 this.jumping = false;
                 this.sidewaysSpeed = 0.0F;
                 this.forwardSpeed = 0.0F;
@@ -208,7 +195,7 @@ abstract class LivingEntityMixin extends Entity {
     @Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;tickNewAi()V", shift = At.Shift.AFTER))
     protected void soulforge$resetImmobilityMovement(CallbackInfo ci) {
         ValueComponent values = SoulForge.getValues((LivingEntity)(Object)this);
-        if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) {
+        if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0 || this.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) {
             this.jumping = false;
             this.sidewaysSpeed = 0.0F;
             this.forwardSpeed = 0.0F;
@@ -220,7 +207,7 @@ abstract class LivingEntityMixin extends Entity {
         LivingEntity living = (LivingEntity)(Object)this;
         ValueComponent values = SoulForge.getValues(living);
         if (values != null) {
-            if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0) return 0f;
+            if (values.getBool("Immobilized") || values.getTimer("Immobilized") > 0 || this.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) return 0f;
         }
         return baseGravity * this.getAttributeValue(SoulForgeAttributes.GRAVITY_MODIFIER);
     }

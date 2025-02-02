@@ -17,6 +17,7 @@ public class SoulForgeEffects {
     public static final StatusEffect EEPY = new EepyEffect();
     public static final StatusEffect MANA_TUMOR = new ManaTumorEffect();
     public static final StatusEffect TUMOR_IMMUNITY = new TumorImmunityEffect();
+    public static final StatusEffect IMMOBILIZED = new ImmobilizedEffect();
 
     public static void registerEffects() {
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "vulnerability"), VULNERABILITY);
@@ -29,5 +30,6 @@ public class SoulForgeEffects {
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "eepy"), EEPY);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "mana_tumor"), MANA_TUMOR);
         Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "tumor_immunity"), TUMOR_IMMUNITY);
+        Registry.register(Registries.STATUS_EFFECT, new Identifier(SoulForge.MOD_ID, "immobilized"), IMMOBILIZED);
     }
 }
