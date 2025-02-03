@@ -996,8 +996,10 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
     public void tick() {
         if (player instanceof ServerPlayerEntity serverPlayer) {
             if (!initialized) {
-                resetTrait();
-                updateAbilities();
+                if (!getResetData().setFirst) {
+                    resetTrait();
+                    updateAbilities();
+                }
                 initialized = true;
             }
 

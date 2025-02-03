@@ -290,6 +290,9 @@ public class SoulForgeClient implements ClientModInitializer {
 				client.setScreen(new FirstTraitScreen(null));
 			}
         });
+		ClientPlayConnectionEvents.DISCONNECT.register(((handler, client) -> {
+			ClientNetworkingHandler.playerSoul = null;
+		}));
 
 		RenderEvents.WORLD.register(stack -> {
 			PlayerEntity player = MinecraftClient.getInstance().player;
