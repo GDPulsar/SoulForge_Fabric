@@ -17,6 +17,7 @@ public class OpenScreenPacket {
                 case 3 -> client.setScreen(new ReloadScreen());
                 case 4 -> client.setScreen(new MorphingWeaponryScreen());
                 case 5 -> client.setScreen(new RampageScreen());
+                case 6 -> client.setScreen(new FirstTraitScreen(client.currentScreen));
             }
         });
     }
@@ -27,7 +28,8 @@ public class OpenScreenPacket {
         ARMORY(2),
         RELOAD(3),
         MORPHING_WEAPONRY(4),
-        RAMPAGE(5);
+        RAMPAGE(5),
+        FIRST_TRAIT(6);
 
         final int val;
         ScreenType(int val) {

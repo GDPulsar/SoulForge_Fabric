@@ -284,12 +284,6 @@ public class SoulForgeClient implements ClientModInitializer {
 		ClientTickEvents.START_CLIENT_TICK.register(new ClientStartTick());
 		ClientTickEvents.END_CLIENT_TICK.register(new ClientEndTick());
 
-		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-			SoulComponent playerSoul = SoulForge.getPlayerSoul(client.player);
-			if (!playerSoul.getResetData().setFirst) {
-				client.setScreen(new FirstTraitScreen(null));
-			}
-        });
 		ClientPlayConnectionEvents.DISCONNECT.register(((handler, client) -> {
 			ClientNetworkingHandler.playerSoul = null;
 		}));

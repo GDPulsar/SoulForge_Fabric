@@ -4,6 +4,7 @@ import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.advancement.SoulForgeCriterions;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.block.SoulForgeBlocks;
+import com.pulsar.soulforge.client.networking.OpenScreenPacket;
 import com.pulsar.soulforge.client.ui.CreativeZoneScreenHandler;
 import com.pulsar.soulforge.client.ui.SoulForgeScreenHandler;
 import com.pulsar.soulforge.command.*;
@@ -30,7 +31,9 @@ import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -96,6 +99,12 @@ public class SoulForge implements ModInitializer {
 
 		ServerTickEvents.START_SERVER_TICK.register(new ServerStartTick());
 		ServerTickEvents.END_SERVER_TICK.register(new ServerEndTick());
+		ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) -> {
+			SoulComponent playerSoul = SoulForge.getPlayerSoul(handler.player);
+			if (!playerSoul.getResetData().setFirst) {
+				ServerPlayNetworking.send(handler.player, SoulForgeNetworking.OPEN_SCREEN, PacketByteBufs.create().writeVarInt(OpenScreenPacket.ScreenType.FIRST_TRAIT.val()));
+			}
+		}));
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			SoulComponent playerSoul = getPlayerSoul(handler.getPlayer());
 			if (playerSoul != null) {
