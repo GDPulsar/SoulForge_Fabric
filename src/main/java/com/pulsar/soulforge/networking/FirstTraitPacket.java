@@ -22,7 +22,7 @@ public class FirstTraitPacket {
             int val = random.nextInt(50);
             if (val >= 45) {
                 TraitBase trait2 = List.of(Traits.bravery, Traits.justice, Traits.kindness, Traits.patience, Traits.integrity, Traits.perseverance).get(random.nextInt(6));
-                while (trait2 != trait)  trait2 = List.of(Traits.bravery, Traits.justice, Traits.kindness, Traits.patience, Traits.integrity, Traits.perseverance).get(random.nextInt(6));
+                while (trait2 == trait) trait2 = List.of(Traits.bravery, Traits.justice, Traits.kindness, Traits.patience, Traits.integrity, Traits.perseverance).get(random.nextInt(6));
                 playerSoul.setTraits(List.of(trait, trait2));
                 if (val == 45) playerSoul.setStrong(true);
             } else {
