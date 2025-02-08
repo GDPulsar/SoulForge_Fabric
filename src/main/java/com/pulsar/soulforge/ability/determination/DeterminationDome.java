@@ -40,28 +40,30 @@ public class DeterminationDome extends ToggleableAbilityBase {
             player.getServerWorld().playSound(null, center, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 2f, 1f);
             entity = new DomeEntity(player.getWorld(), player.getBlockPos().toCenterPos(), domeRadius, domeHealth, false, player);
             entity.setPosition(player.getBlockPos().toCenterPos().subtract(0, 0.5f, 0));
-            double radius = domeRadius + 0.5;
-            double radSq = radius * radius;
-            double rad1Sq = (radius - 1.5) * (radius - 1.5);
-            int ceilRad = MathHelper.ceil(radius);
-            for (int x = 0; x <= ceilRad; x++) {
-                for (int y = 0; y < ceilRad; y++) {
-                    for (int z = 0; z <= ceilRad; z++) {
-                        double distanceSq = lengthSq(x, y, z);
-                        if (distanceSq > radSq) continue;
-                        if (distanceSq < rad1Sq) continue;
+            player.getServer().execute(() -> {
+                double radius = domeRadius + 0.5;
+                double radSq = radius * radius;
+                double rad1Sq = (radius - 1.5) * (radius - 1.5);
+                int ceilRad = MathHelper.ceil(radius);
+                for (int x = 0; x <= ceilRad; x++) {
+                    for (int y = 0; y < ceilRad; y++) {
+                        for (int z = 0; z <= ceilRad; z++) {
+                            double distanceSq = lengthSq(x, y, z);
+                            if (distanceSq > radSq) continue;
+                            if (distanceSq < rad1Sq) continue;
 
-                        placeDomeBlock(x, y, z, player);
-                        placeDomeBlock(-x, y, z, player);
-                        placeDomeBlock(x, -y, z, player);
-                        placeDomeBlock(-x, -y, z, player);
-                        placeDomeBlock(x, y, -z, player);
-                        placeDomeBlock(-x, y, -z, player);
-                        placeDomeBlock(x, -y, -z, player);
-                        placeDomeBlock(-x, -y, -z, player);
+                            placeDomeBlock(x, y, z, player);
+                            placeDomeBlock(-x, y, z, player);
+                            placeDomeBlock(x, -y, z, player);
+                            placeDomeBlock(-x, -y, z, player);
+                            placeDomeBlock(x, y, -z, player);
+                            placeDomeBlock(-x, y, -z, player);
+                            placeDomeBlock(x, -y, -z, player);
+                            placeDomeBlock(-x, -y, -z, player);
+                        }
                     }
                 }
-            }
+            });
         }
         return true;
     }
@@ -89,12 +91,14 @@ public class DeterminationDome extends ToggleableAbilityBase {
     @Override
     public boolean end(ServerPlayerEntity player) {
         if (entity != null) {
-            for (DomePart part : entity.getParts()) {
-                if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
-            }
-            if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
+            player.getServer().execute(() -> {
+                for (DomePart part : entity.getParts()) {
+                    if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
+                }
+                if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
+                entity = null;
+            });
         }
-        entity = null;
         if (center != null) player.getWorld().playSoundAtBlockCenter(center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 1f, 1f, true);
         return super.end(player);
     }

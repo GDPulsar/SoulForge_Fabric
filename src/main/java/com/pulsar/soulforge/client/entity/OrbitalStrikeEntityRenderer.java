@@ -5,6 +5,7 @@ import com.pulsar.soulforge.client.render.CylinderRenderer;
 import com.pulsar.soulforge.entity.OrbitalStrikeEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -39,9 +40,9 @@ public class OrbitalStrikeEntityRenderer extends EntityRenderer<OrbitalStrikeEnt
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
         Color transparentColor = new Color(1f, 1f, 1f, 0.3f);
-        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, (float)(-63f - orbitalStrikeEntity.getY()), 0f), new Vector3f(0f, 0f, 0f), 2f, new Color(1f, 1f, 1f, 1f), 0, 255, true);
-        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, (float)(319f - orbitalStrikeEntity.getY()), 0f), 2f, new Color(1f, 1f, 1f, 1f), 0, 255, true);
-        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, (float)(-63f - orbitalStrikeEntity.getY()), 0f), new Vector3f(0f, 0f, 0f), 2f, transparentColor, 0, 255);
-        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, (float)(319f - orbitalStrikeEntity.getY()), 0f), 2f, transparentColor, 0, 255);
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, (float)(-63f - orbitalStrikeEntity.getY()), 0f), new Vector3f(0f, 0f, 0f), 2f, new Color(1f, 1f, 1f, 1f), OverlayTexture.DEFAULT_UV, 255, true);
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, (float)(319f - orbitalStrikeEntity.getY()), 0f), 2f, new Color(1f, 1f, 1f, 1f), OverlayTexture.DEFAULT_UV, 255, true);
+        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, (float)(-63f - orbitalStrikeEntity.getY()), 0f), new Vector3f(0f, 0f, 0f), 2f, transparentColor, OverlayTexture.DEFAULT_UV, 255);
+        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, (float)(319f - orbitalStrikeEntity.getY()), 0f), 2f, transparentColor, OverlayTexture.DEFAULT_UV, 255);
     }
 }

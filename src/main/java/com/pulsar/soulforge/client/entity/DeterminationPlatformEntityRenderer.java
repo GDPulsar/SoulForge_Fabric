@@ -5,6 +5,7 @@ import com.pulsar.soulforge.client.render.CylinderRenderer;
 import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -37,9 +38,13 @@ public class DeterminationPlatformEntityRenderer extends EntityRenderer<Determin
 
     public void render(DeterminationPlatformEntity platformEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
-        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0.25f, 0f), 1.25f, new Color(1f, 0f, 0f, 0.2f), 0, 255, false);
-        if (platformEntity.getStack() >= 1) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.1f, 0f), new Vector3f(0f, 0.15f, 0f), 1.75f, new Color(1f, 0f, 0f, 0.2f), 0, 255, false);
-        if (platformEntity.getStack() == 2) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.2f, 0f), new Vector3f(0f, 0.05f, 0f), 2.25f, new Color(1f, 0f, 0f, 0.2f), 0, 255, false);
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getGui());
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0.25f, 0f), 1.25f, new Color(1f, 1f, 1f, 1f), 0, 255, false);
+        if (platformEntity.getStack() >= 1) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.1f, 0f), new Vector3f(0f, 0.15f, 0f), 1.75f, new Color(1f, 1f, 1f, 1f), 0, 255, false);
+        if (platformEntity.getStack() == 2) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.2f, 0f), new Vector3f(0f, 0.05f, 0f), 2.25f, new Color(1f, 1f, 1f, 1f), 0, 255, false);
+        vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.1f, 0f), new Vector3f(0f, 0.325f, 0f), 1.4f, new Color(1f, 0f, 0f, 0.5f), OverlayTexture.DEFAULT_UV, 255, false);
+        if (platformEntity.getStack() >= 1) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.225f, 0f), new Vector3f(0f, 0.225f, 0f), 1.9f, new Color(1f, 0f, 0f, 0.5f), OverlayTexture.DEFAULT_UV, 255, false);
+        if (platformEntity.getStack() == 2) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.325f, 0f), new Vector3f(0f, 0.125f, 0f), 2.4f, new Color(1f, 0f, 0f, 0.5f), OverlayTexture.DEFAULT_UV, 255, false);
     }
 }

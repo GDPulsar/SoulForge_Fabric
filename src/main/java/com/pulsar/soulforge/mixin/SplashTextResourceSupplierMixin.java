@@ -23,6 +23,7 @@ public class SplashTextResourceSupplierMixin {
         original.add("ocean (uhhh?)");
         original.add("kaso moment");
         original.add("LETS GO GAMBLING!!!!");
+        original.add("now with NO OVERLAYS EVER!");
         return original;
     }
 }

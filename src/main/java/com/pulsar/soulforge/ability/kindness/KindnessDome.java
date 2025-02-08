@@ -50,28 +50,30 @@ public class KindnessDome extends ToggleableAbilityBase {
                         playerSoul.getEffectiveLV() * 10, false, player, playerSoul.hasTrait(Traits.perseverance) && playerSoul.hasTrait(Traits.kindness));
                 entity.setPosition(center.toCenterPos().subtract(0.5f, 0.5f, 0.5f));
                 player.getWorld().spawnEntity(entity);
-                double radius = domeRadius + 0.5;
-                double radSq = radius * radius;
-                double rad1Sq = (radius - 1.5) * (radius - 1.5);
-                int ceilRad = MathHelper.ceil(radius);
-                for (int x = 0; x <= ceilRad; x++) {
-                    for (int y = 0; y < ceilRad; y++) {
-                        for (int z = 0; z <= ceilRad; z++) {
-                            double distanceSq = lengthSq(x, y, z);
-                            if (distanceSq > radSq) continue;
-                            if (distanceSq < rad1Sq) continue;
+                player.getServer().execute(() -> {
+                    double radius = domeRadius + 0.5;
+                    double radSq = radius * radius;
+                    double rad1Sq = (radius - 1.5) * (radius - 1.5);
+                    int ceilRad = MathHelper.ceil(radius);
+                    for (int x = 0; x <= ceilRad; x++) {
+                        for (int y = 0; y < ceilRad; y++) {
+                            for (int z = 0; z <= ceilRad; z++) {
+                                double distanceSq = lengthSq(x, y, z);
+                                if (distanceSq > radSq) continue;
+                                if (distanceSq < rad1Sq) continue;
 
-                            placeDomeBlock(x, y, z, player);
-                            placeDomeBlock(-x, y, z, player);
-                            placeDomeBlock(x, -y, z, player);
-                            placeDomeBlock(-x, -y, z, player);
-                            placeDomeBlock(x, y, -z, player);
-                            placeDomeBlock(-x, y, -z, player);
-                            placeDomeBlock(x, -y, -z, player);
-                            placeDomeBlock(-x, -y, -z, player);
+                                placeDomeBlock(x, y, z, player);
+                                placeDomeBlock(-x, y, z, player);
+                                placeDomeBlock(x, -y, z, player);
+                                placeDomeBlock(-x, -y, z, player);
+                                placeDomeBlock(x, y, -z, player);
+                                placeDomeBlock(-x, y, -z, player);
+                                placeDomeBlock(x, -y, -z, player);
+                                placeDomeBlock(-x, -y, -z, player);
+                            }
                         }
                     }
-                }
+                });
             }
         }
         return true;
@@ -101,10 +103,13 @@ public class KindnessDome extends ToggleableAbilityBase {
     public boolean end(ServerPlayerEntity player) {
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (entity != null) {
-            for (DomePart part : entity.getParts()) {
-                if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
-            }
-            if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
+            player.getServer().execute(() -> {
+                for (DomePart part : entity.getParts()) {
+                    if (!part.isRemoved()) part.remove(Entity.RemovalReason.KILLED);
+                }
+                if (!entity.isRemoved()) entity.remove(Entity.RemovalReason.KILLED);
+                entity = null;
+            });
         }
         if (center != null) {
             if (playerSoul.hasTrait(Traits.kindness) && playerSoul.hasTrait(Traits.integrity)) {
@@ -118,7 +123,6 @@ public class KindnessDome extends ToggleableAbilityBase {
             }
             player.getServerWorld().playSound(null, center, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 2f, 1f);
         }
-        entity = null;
         return super.end(player);
     }
 

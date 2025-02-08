@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.client.render;
 
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -77,10 +78,10 @@ public class SphereRenderer {
             Vector3f p3,
             Vector3f p4
     ) {
-        vertices.vertex(model, p1.x, p1.y, p1.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
-        vertices.vertex(model, p2.x, p2.y, p2.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
-        vertices.vertex(model, p3.x, p3.y, p3.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
-        vertices.vertex(model, p4.x, p4.y, p4.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
+        vertices.vertex(model, p1.x, p1.y, p1.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
+        vertices.vertex(model, p2.x, p2.y, p2.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
+        vertices.vertex(model, p3.x, p3.y, p3.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
+        vertices.vertex(model, p4.x, p4.y, p4.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
     }
 
     private static void renderQuad(
@@ -90,9 +91,9 @@ public class SphereRenderer {
             Vector3f p3,
             Vector3f p4
     ) {
-        vertices.vertex(p1.x, p1.y, p1.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
-        vertices.vertex(p2.x, p2.y, p2.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
-        vertices.vertex(p3.x, p3.y, p3.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
-        vertices.vertex(p4.x, p4.y, p4.z).texture(0, 0).overlay(0).light(255).normal(0, 1, 0).next();
+        vertices.vertex(p1.x, p1.y, p1.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
+        vertices.vertex(p2.x, p2.y, p2.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
+        vertices.vertex(p3.x, p3.y, p3.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
+        vertices.vertex(p4.x, p4.y, p4.z).texture(0, 0).overlay(OverlayTexture.DEFAULT_UV).light(255).normal(0, 1, 0).next();
     }
 }
