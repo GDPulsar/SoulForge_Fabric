@@ -5,20 +5,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.ability.AbilityBase;
 import com.pulsar.soulforge.ability.patience.BlindingSnowstorm;
-import com.pulsar.soulforge.client.ui.ANOTHERHIM;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.components.ValueComponent;
 import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.trait.Traits;
-import net.minecraft.client.RunArgs;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.realms.RealmsClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.resource.ResourceReload;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,13 +71,5 @@ public abstract class MinecraftClientMixin {
             }
         }
         original.call(instance, value);
-    }
-
-    @Inject(method = "onInitFinished", at = @At("HEAD"), cancellable = true)
-    private void THEYRE_COMING(RealmsClient realms, ResourceReload reload, RunArgs.QuickPlay quickPlay, CallbackInfo ci) {
-        if (Math.random() < 0.001) {
-            this.setScreen(new ANOTHERHIM());
-            ci.cancel();
-        }
     }
 }

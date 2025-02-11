@@ -24,7 +24,6 @@ public class SoulForgeNetworking {
     public static final Identifier CAST_WORMHOLE = new Identifier(SoulForge.MOD_ID, "cast_wormhole");
     public static final Identifier SPAWN_WORMHOLE = new Identifier(SoulForge.MOD_ID, "spawn_wormhole");
     public static final Identifier RELOAD_SELECT = new Identifier(SoulForge.MOD_ID, "reload_select");
-    public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
     public static final Identifier RAMPAGE_ACTIVATE = new Identifier(SoulForge.MOD_ID, "rampage_activate");
     public static final Identifier FIRST_TRAIT = new Identifier(SoulForge.MOD_ID, "first_trait");
 
@@ -52,7 +51,6 @@ public class SoulForgeNetworking {
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.CAST_WORMHOLE, CastWormholePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.SPAWN_WORMHOLE, SpawnWormholePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RELOAD_SELECT, ReloadSelectPacket::receive);
-        ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.DOMAIN_EXPANSION, DomainExpansionPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.RAMPAGE_ACTIVATE, RampageActivatePacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(SoulForgeNetworking.FIRST_TRAIT, FirstTraitPacket::receive);
     }
