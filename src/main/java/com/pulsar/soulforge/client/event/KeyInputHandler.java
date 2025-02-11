@@ -16,15 +16,12 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.PacketByteBuf;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Objects;
-
 public class KeyInputHandler {
     public static final String KEY_CATEGORY = "category.soulforge.soulforge";
 
     public static final String KEY_MAGIC_MODE = "key.soulforge.magic_mode";
     public static final String KEY_CYCLE_UP = "key.soulforge.cycle_up";
     public static final String KEY_CYCLE_DOWN = "key.soulforge.cycle_down";
-    public static final String KEY_SOUL_RESET = "key.soulforge.soul_reset";
     public static final String KEY_CAST_ABILITY = "key.soulforge.cast_ability";
     public static final String KEY_ABILITY_SCREEN = "key.soulforge.ability_screen";
     public static final String KEY_WEAPON_SLOT = "key.soulforge.weapon_slot";
@@ -32,11 +29,9 @@ public class KeyInputHandler {
     public static KeyBinding MagicModeKey;
     public static KeyBinding CycleUpKey;
     public static KeyBinding CycleDownKey;
-    public static KeyBinding SoulResetKey;
     public static KeyBinding CastAbilityKey;
     public static KeyBinding AbilityScreenKey;
     public static KeyBinding WeaponSlotKey;
-    public static KeyBinding DomainExpansionKey;
 
     public static void registerKeyInputs() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -66,9 +61,6 @@ public class KeyInputHandler {
                     ClientNetworkingHandler.playerSoul.setAbilityRow((ClientNetworkingHandler.playerSoul.getAbilityRow()+3)%4);
                 }
             }
-            while (SoulResetKey.wasPressed()) {
-                ClientPlayNetworking.send(SoulForgeNetworking.START_SOUL_RESET, PacketByteBufs.create());
-            }
             while (CastAbilityKey.wasPressed()) {
                 SoulComponent playerSoul = ClientNetworkingHandler.playerSoul;
                 if (playerSoul == null) break;
@@ -84,13 +76,6 @@ public class KeyInputHandler {
                     }
                 } else {
                     ClientPlayNetworking.send(SoulForgeNetworking.CAST_ABILITY, buf);
-                }
-            }
-            if (Objects.equals(client.getSession().getUsername(), "GDPulsar")) {
-                if (DomainExpansionKey != null) {
-                    while (DomainExpansionKey.wasPressed()) {
-                        ClientPlayNetworking.send(SoulForgeNetworking.DOMAIN_EXPANSION, PacketByteBufs.create());
-                    }
                 }
             }
             while (WeaponSlotKey.wasPressed()) {
@@ -122,12 +107,6 @@ public class KeyInputHandler {
                 GLFW.GLFW_KEY_RIGHT_BRACKET,
                 KEY_CATEGORY
         ));
-        SoulResetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                KEY_SOUL_RESET,
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_END,
-                KEY_CATEGORY
-        ));
         CastAbilityKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 KEY_CAST_ABILITY,
                 InputUtil.Type.KEYSYM,
@@ -144,15 +123,6 @@ public class KeyInputHandler {
                 KEY_WEAPON_SLOT,
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_0,
-                KEY_CATEGORY
-        ));
-    }
-
-    public static void registerThePulsarFunnyThings() {
-        DomainExpansionKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.soulforge.domain_expansion",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_MULTIPLY,
                 KEY_CATEGORY
         ));
     }

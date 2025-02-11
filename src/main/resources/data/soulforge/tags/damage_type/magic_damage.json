@@ -1,0 +1,18 @@
+{
+  "values": [
+    "minecraft:dragon_breath",
+    "minecraft:indirect_magic",
+    "minecraft:magic",
+    "minecraft:sonic_boom",
+    "soulforge:ability",
+    "soulforge:ability_pierce",
+    "soulforge:auto_turret",
+    "soulforge:gun_shot",
+    "soulforge:shield_shard",
+    "soulforge:skewer_weakpoint",
+    "soulforge:stockpile",
+    "soulforge:stuck_spear",
+    "soulforge:summon_weapon",
+    "soulforge:warpspeed"
+  ]
+}

@@ -123,7 +123,7 @@ abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "onDeath", at = @At("HEAD"))
     private void soulforge$onDeath(DamageSource damageSource, CallbackInfo ci) {
-        LivingDeathEvent.onDeath((LivingEntity)(Object)this);
+        LivingDeathEvent.onDeath((LivingEntity)(Object)this, damageSource);
     }
 
     @Inject(method = "onKilledBy", at = @At("HEAD"))

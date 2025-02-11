@@ -135,6 +135,7 @@
   "item.soulforge.incendiary_grenade": "Incendiary Grenade",
   "item.soulforge.antiheal_dart": "Antiheal Dart",
   "item.soulforge.justice_arrow": "Justice Arrow",
+  "item.soulforge.trait_tuner": "Trait Tuner",
   "item.soulforge.hate_vial": "HATE Vial",
 
   "item.soulforge.revival_idol": "Revival Idol",
@@ -213,6 +214,8 @@
   "entity.soulforge.auto_turret": "Auto Turret",
 
   "itemGroup.soulforge.item_group": "SoulForge",
+
+  "soulforge.trait_tuner.description": "Right-click with essence to fill. The more essence, the higher the chance of getting that trait.",
 
   "category.soulforge.soulforge": "SoulForge",
   "key.soulforge.magic_mode": "Magic Mode",

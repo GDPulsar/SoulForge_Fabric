@@ -121,9 +121,6 @@ public class SoulForgeClient implements ClientModInitializer {
 
 		KeyInputHandler.register();
 		KeyInputHandler.registerKeyInputs();
-		if (MinecraftClient.getInstance().getSession().getUsername().equals("GDPulsar")) {
-			KeyInputHandler.registerThePulsarFunnyThings();
-		}
 
 		HandledScreens.register(SoulForge.SOUL_FORGE_SCREEN_HANDLER, SoulForgeScreen::new);
 		HandledScreens.register(SoulForge.CREATIVE_ZONE_SCREEN_HANDLER, CreativeZoneScreen::new);
@@ -199,7 +196,6 @@ public class SoulForgeClient implements ClientModInitializer {
 
 		HudRenderCallback.EVENT.register(new MagicHudOverlay());
 		HudRenderCallback.EVENT.register(new ValueHudOverlay());
-		HudRenderCallback.EVENT.register(new SoulResetOverlay());
 
 		SoulForgeParticles.clientRegister();
 

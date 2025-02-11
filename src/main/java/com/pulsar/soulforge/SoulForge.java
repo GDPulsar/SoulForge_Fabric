@@ -30,7 +30,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -38,12 +37,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.condition.RandomChanceLootCondition;
-import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
@@ -60,7 +55,7 @@ public class SoulForge implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.7.4");
+		LOGGER.info("Loading SoulForge v2.7.5");
 
 		//registerResourceListeners();
 
@@ -115,19 +110,6 @@ public class SoulForge implements ModInitializer {
 				}
 			}
 		});
-
-		LootTableEvents.MODIFY.register(((resourceManager, lootManager, id, tableBuilder, source) -> {
-			if (source.isBuiltin()) {
-				for (EntityType<?> entity : Constants.essenceDrops.keySet()) {
-					if (entity.getLootTableId().equals(id)) {
-						LootPool.Builder poolBuilder = LootPool.builder()
-								.with(ItemEntry.builder(Constants.essenceDrops.get(entity)))
-								.conditionally(RandomChanceLootCondition.builder(0.1f));
-						tableBuilder.pool(poolBuilder);
-					}
-				}
-			}
-		}));
 
 		ConfigHelper.register();
 	}

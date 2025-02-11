@@ -44,7 +44,6 @@ public class SoulForgeSounds {
     public static final Identifier WEAPON_UNSUMMON = new Identifier(SoulForge.MOD_ID, "weapon_unsummon");
     public static final Identifier MINE_BEEP = new Identifier(SoulForge.MOD_ID, "mine_beep");
     public static final Identifier MINE_SUMMON = new Identifier(SoulForge.MOD_ID, "mine_summon");
-    public static final Identifier DOMAIN_EXPANSION = new Identifier(SoulForge.MOD_ID, "domain_expansion");
     public static final Identifier TRANCE_HEARTBEAT = new Identifier(SoulForge.MOD_ID, "trance_heartbeat");
     public static final Identifier SKULL = new Identifier(SoulForge.MOD_ID, "skull");
     public static final Identifier KASO = new Identifier(SoulForge.MOD_ID, "kaso");
@@ -86,14 +85,11 @@ public class SoulForgeSounds {
     public static SoundEvent WEAPON_UNSUMMON_EVENT = SoundEvent.of(WEAPON_UNSUMMON);
     public static SoundEvent MINE_BEEP_EVENT = SoundEvent.of(MINE_BEEP);
     public static SoundEvent MINE_SUMMON_EVENT = SoundEvent.of(MINE_SUMMON);
-    public static SoundEvent DOMAIN_EXPANSION_EVENT = SoundEvent.of(DOMAIN_EXPANSION);
     public static SoundEvent TRANCE_HEARTBEAT_EVENT = SoundEvent.of(TRANCE_HEARTBEAT);
     public static SoundEvent SKULL_EVENT = SoundEvent.of(SKULL);
     public static SoundEvent KASO_EVENT = SoundEvent.of(KASO);
 
-    public static final Identifier ANOTHERHIM = new Identifier(SoulForge.MOD_ID, "anotherhim");
     public static final Identifier UT_ALPHYS = new Identifier(SoulForge.MOD_ID, "ut_alphys");
-    public static SoundEvent ANOTHERHIM_EVENT = SoundEvent.of(ANOTHERHIM);
     public static SoundEvent UT_ALPHYS_EVENT = SoundEvent.of(UT_ALPHYS);
 
     public static void registerSounds() {
@@ -133,7 +129,6 @@ public class SoulForgeSounds {
         Registry.register(Registries.SOUND_EVENT, WEAPON_SUMMON, WEAPON_SUMMON_EVENT);
         Registry.register(Registries.SOUND_EVENT, WEAPON_UNSUMMON, WEAPON_UNSUMMON_EVENT);
         Registry.register(Registries.SOUND_EVENT, MINE_BEEP, MINE_BEEP_EVENT);
-        Registry.register(Registries.SOUND_EVENT, DOMAIN_EXPANSION, DOMAIN_EXPANSION_EVENT);
         Registry.register(Registries.SOUND_EVENT, TRANCE_HEARTBEAT, TRANCE_HEARTBEAT_EVENT);
         Registry.register(Registries.SOUND_EVENT, SKULL, SKULL_EVENT);
         Registry.register(Registries.SOUND_EVENT, KASO, KASO_EVENT);

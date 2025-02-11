@@ -160,6 +160,7 @@ public class SoulForgeItems {
     public static Item INCENDIARY_GRENADE;
     public static Item ANTIHEAL_DART;
     public static Item JUSTICE_ARROW;
+    public static Item TRAIT_TUNER;
 
     public static Item REVIVAL_IDOL;
     public static Item HEAL_TABLET;
@@ -295,6 +296,7 @@ public class SoulForgeItems {
         INCENDIARY_GRENADE = RegisterItem("incendiary_grenade", new IncendiaryGrenade());
         JUSTICE_ARROW = RegisterItem("justice_arrow", new JusticeArrowItem());
         ANTIHEAL_DART = RegisterItem("antiheal_dart", new AntihealDart());
+        TRAIT_TUNER = RegisterItem("trait_tuner", new TraitTunerItem());
         SOUL_JAR = RegisterItem("soul_jar", new SoulJarItem());
 
         REVIVAL_IDOL = RegisterItem("revival_idol", new RevivalIdol());
