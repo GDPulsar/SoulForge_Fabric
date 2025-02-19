@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.item.weapons;
 
+import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShield;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -13,16 +14,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
-public class PerseveranceBlades extends MagicSwordItem {
+public class PerseveranceBlades extends MagicSwordItem implements FabricShield {
     public PerseveranceBlades() {
         super(6, 1.2f, 0.6f);
     }
@@ -30,16 +28,6 @@ public class PerseveranceBlades extends MagicSwordItem {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         tooltip.add(Text.translatable("item.soulforge.perseverance_blades.tooltip"));
-    }
-
-    @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.BLOCK;
-    }
-
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 72000;
     }
 
 
@@ -65,9 +53,12 @@ public class PerseveranceBlades extends MagicSwordItem {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        user.setCurrentHand(hand);
-        return TypedActionResult.consume(itemStack);
+    public int getCoolDownTicks() {
+        return 100;
+    }
+
+    @Override
+    public boolean supportsBanner() {
+        return false;
     }
 }

@@ -1035,9 +1035,15 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
 
             if (isStrong() && !player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).hasModifier(strongModifier)) {
                 player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).addPersistentModifier(strongModifier);
+            } else if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).hasModifier(strongModifier)) {
+                player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST).tryRemoveModifier(strongModifier.getId());
             }
-            if (isPure() && !player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).hasModifier(pureModifier)) {
-                player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(pureModifier);
+            if (isPure()) {
+                if (!player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).hasModifier(pureModifier)) player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).addPersistentModifier(pureModifier);
+                if (!player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).hasModifier(pureModifier)) player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).addPersistentModifier(pureModifier);
+            } else {
+                if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).hasModifier(pureModifier)) player.getAttributeInstance(SoulForgeAttributes.MAGIC_COOLDOWN).tryRemoveModifier(pureModifier.getId());
+                if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).hasModifier(pureModifier)) player.getAttributeInstance(SoulForgeAttributes.MAGIC_POWER).tryRemoveModifier(pureModifier.getId());
             }
 
             if (hasWeapon()) {

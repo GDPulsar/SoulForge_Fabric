@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Set;
 
 public class WormholeEntity extends Entity {
@@ -92,12 +93,13 @@ public class WormholeEntity extends Entity {
             timer++;
         }
         super.tick();
+        Random random = new Random();
         if (this.cracks.isEmpty()) {
             for(int i = 0; i < 5; ++i) {
                 Vec3d add = Vec3d.ZERO;
 
                 for(int tries = 0; add.length() < (new Vec3d(this.getCrackMod().x * (double)(4.0F * this.getSize()), this.getCrackMod().y * (double)(4.0F * this.getSize()), this.getCrackMod().z * (double)(4.0F * this.getSize()))).length() || !this.getWorld().getBlockState(new BlockPos((int)(this.getX() + add.getX()), (int) (this.getY() + add.getY()), (int) (this.getZ() + add.getZ()))).isAir(); ++tries) {
-                    add = new Vec3d(this.getWorld().random.nextGaussian() * (double)(4.0F * this.getSize()) * this.getCrackMod().x, this.getWorld().random.nextGaussian() * (double)(4.0F * this.getSize()) * this.getCrackMod().y, this.getWorld().random.nextGaussian() * (double)(4.0F * this.getSize()) * this.getCrackMod().z);
+                    add = new Vec3d(random.nextGaussian() * (double)(4.0F * this.getSize()) * this.getCrackMod().x, this.getWorld().random.nextGaussian() * (double)(4.0F * this.getSize()) * this.getCrackMod().y, this.getWorld().random.nextGaussian() * (double)(4.0F * this.getSize()) * this.getCrackMod().z);
                 }
 
                 this.cracks.add(add);

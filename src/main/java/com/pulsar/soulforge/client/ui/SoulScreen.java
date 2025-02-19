@@ -27,7 +27,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
@@ -84,10 +83,10 @@ public class SoulScreen extends Screen {
                 page = 1;
                 updateWidgets();
             }));
-            widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+            /*widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
                 page = 2;
                 updateWidgets();
-            }));
+            }));*/
         } else if (page == 1) {
             widgets.add(new SlotWidget(8 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.BRAVERY_HAMMER), () -> {
                 page = 0;
@@ -97,11 +96,11 @@ public class SoulScreen extends Screen {
                 page = 1;
                 updateWidgets();
             }));
-            widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
+            /*widgets.add(new SlotWidget(66 + this.x, 9 + this.y, new ItemStack(Items.ZOMBIE_HEAD), () -> {
                 page = 2;
                 updateWidgets();
-            }));
-        } else if (page == 2) {
+            }));*/
+        }/* else if (page == 2) {
             widgets.add(new SlotWidget(8 + this.x, 9 + this.y, new ItemStack(SoulForgeItems.BRAVERY_HAMMER), () -> {
                 page = 0;
                 updateWidgets();
@@ -114,7 +113,7 @@ public class SoulScreen extends Screen {
                 page = 2;
                 updateWidgets();
             }));
-        }
+        }*/
 
         modes = new ArrayList<>();
         if (!playerSoul.hasTrait(Traits.spite)) {
@@ -252,6 +251,7 @@ public class SoulScreen extends Screen {
             context.drawCenteredTextWithShadow(textRenderer, Text.literal("Trait: ").append(Utils.getTraitText(playerSoul)), 100 + this.x, 50 + this.y, 0xFFFFFF);
             int offset = 60;
             context.drawCenteredTextWithShadow(textRenderer, "LV: " + playerSoul.getLV(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
+            context.drawCenteredTextWithShadow(textRenderer, "ELV: " + playerSoul.getEffectiveLV(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             context.drawCenteredTextWithShadow(textRenderer, "EXP: " + playerSoul.getEXP(), 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;
             if (playerSoul.getLV() < 20) {
                 context.drawCenteredTextWithShadow(textRenderer, "EXP until next LV: ", 100 + this.x, offset + this.y, 0xFFFFFF); offset += 10;

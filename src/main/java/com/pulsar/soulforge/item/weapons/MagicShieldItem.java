@@ -1,6 +1,6 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.pulsar.soulforge.shield.CustomShield;
+import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShield;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
@@ -12,7 +12,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
-public class MagicShieldItem extends MagicItem implements CustomShield {
+public class MagicShieldItem extends MagicItem implements FabricShield {
     private int coolDownTicks;
 
     public MagicShieldItem(int coolDownTicks) {
@@ -33,6 +33,11 @@ public class MagicShieldItem extends MagicItem implements CustomShield {
     @Override
     public int getCoolDownTicks() {
         return coolDownTicks;
+    }
+
+    @Override
+    public boolean supportsBanner() {
+        return false;
     }
 
     @Override

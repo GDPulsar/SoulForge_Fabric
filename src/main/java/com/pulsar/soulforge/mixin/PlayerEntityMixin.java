@@ -15,11 +15,9 @@ import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.event.PlayerEvents;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.weapons.MagicSweepingSwordItem;
-import com.pulsar.soulforge.shield.ShieldDisabledCallback;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
-import com.pulsar.soulforge.tag.SoulForgeTags;
 import com.pulsar.soulforge.util.TeamUtils;
 import com.pulsar.soulforge.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -60,7 +58,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.ArrayList;
@@ -353,12 +350,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
                 cir.setReturnValue(false);
             }
         }
-        if (player.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) {
-            int newAmpl = player.getStatusEffect(SoulForgeEffects.IMMOBILIZED).getAmplifier() - (int)amount;
-            if (newAmpl < 0) player.removeStatusEffect(SoulForgeEffects.IMMOBILIZED);
-            else player.setStatusEffect(new StatusEffectInstance(SoulForgeEffects.IMMOBILIZED, -1, newAmpl, false, false, false), null);
-            cir.setReturnValue(true);
-        }
     }
 
     @Inject(method = "createPlayerAttributes", require = 1, allow = 1, at = @At("RETURN"))
@@ -389,19 +380,6 @@ abstract class PlayerEntityMixin extends LivingEntity {
             }
         }
         return original;
-    }
-
-    @Inject(method = "disableShield", at=@At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void disableShieldHead(boolean sprinting, CallbackInfo ci) {
-        PlayerEntity player = (PlayerEntity) (Object) this;
-        ItemStack activeItemStack = player.getActiveItem();
-        Item activeItem = activeItemStack.getItem();
-
-        ShieldDisabledCallback.EVENT.invoker().disable(player, player.getActiveHand(), activeItemStack);
-
-        if (activeItemStack.isIn(SoulForgeTags.SHIELDS)) {
-            itemCooldownManager.set(activeItem, 100);
-        }
     }
 
     @Inject(method = "takeShieldHit", at = @At("HEAD"), cancellable = true)

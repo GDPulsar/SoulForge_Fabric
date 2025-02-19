@@ -139,7 +139,6 @@ public class TraitTunerItem extends Item  {
             if (random.nextFloat() <= determinationChance) { // do determination check first
                 playerSoul.setTraits(List.of(Traits.determination));
                 user.setStackInHand(hand, ItemStack.EMPTY);
-                SoulForge.LOGGER.info("guaranteed dt");
                 return super.use(world, user, hand);
             }
             List<TraitBase> pures = new ArrayList<>();
@@ -148,10 +147,9 @@ public class TraitTunerItem extends Item  {
             }
             if (!pures.isEmpty()) { // guaranteed pure
                 TraitBase trait = pures.get(random.nextInt(pures.size()));
-                playerSoul.setTraits(List.of(trait));
                 playerSoul.setPure(true);
+                playerSoul.setTraits(List.of(trait));
                 user.setStackInHand(hand, ItemStack.EMPTY);
-                SoulForge.LOGGER.info("guaranteed pure");
                 return super.use(world, user, hand);
             }
             List<TraitBase> guaranteed = new ArrayList<>(); // get guaranteed traits
@@ -165,29 +163,24 @@ public class TraitTunerItem extends Item  {
                     if (trait == traitEntry.getKey()) affectedTotal += getAmount(stack, traitEntry.getValue());
                 }
                 if (random.nextFloat() <= affectedTotal / 50f) { // pure check for first guaranteed trait
-                    playerSoul.setTraits(List.of(trait));
                     playerSoul.setPure(true);
+                    playerSoul.setTraits(List.of(trait));
                     user.setStackInHand(hand, ItemStack.EMPTY);
-                    SoulForge.LOGGER.info("guaranteed random pure");
                     return super.use(world, user, hand);
                 }
                 if (guaranteed.size() >= 2) { // make it a dual otherwise
                     TraitBase trait2 = guaranteed.get(random.nextInt(guaranteed.size()));
                     while (trait == trait2) trait2 = guaranteed.get(random.nextInt(guaranteed.size()));
                     affectedTotal += getAmount(stack, traitKeys.get(trait2));
-                    playerSoul.setTraits(List.of(trait, trait2));
                     if (random.nextFloat() <= affectedTotal / 40f) { // strong dual check
                         playerSoul.setStrong(true);
-                        SoulForge.LOGGER.info("guaranteed strong dual");
                     }
-                    SoulForge.LOGGER.info("guaranteed dual");
+                    playerSoul.setTraits(List.of(trait, trait2));
                 } else {
                     if (random.nextFloat() <= affectedTotal / 40f) { // normal strong check
-                        playerSoul.setTraits(List.of(trait));
                         playerSoul.setStrong(true);
-                        SoulForge.LOGGER.info("guaranteed strong");
                     }
-                    SoulForge.LOGGER.info("guaranteed single");
+                    playerSoul.setTraits(List.of(trait));
                 }
             } else { // no traits are guaranteed
                 float total = 0f;
@@ -206,32 +199,27 @@ public class TraitTunerItem extends Item  {
                     if (trait == traitEntry.getKey()) affectedTotal += getAmount(stack, traitEntry.getValue());
                 }
                 if (random.nextFloat() <= affectedTotal / 50f) { // pure check for first guaranteed trait
-                    playerSoul.setTraits(List.of(trait));
                     playerSoul.setPure(true);
-                    SoulForge.LOGGER.info("random pure");
+                    playerSoul.setTraits(List.of(trait));
                     user.setStackInHand(hand, ItemStack.EMPTY);
                     return super.use(world, user, hand);
                 }
                 for (Map.Entry<TraitBase, String> entry : traitKeys.entrySet()) {
                     if (entry.getKey() == trait) continue; // NO MORE PATIENCE-PATIENCE
                     if (random.nextFloat() <= getAmount(stack, entry.getValue()) / 15f) {
-                        playerSoul.setTraits(List.of(trait, entry.getKey()));
                         affectedTotal += getAmount(stack, entry.getValue());
                         if (random.nextFloat() <= affectedTotal / 40f) { // strong dual check part two electric boogaloo
                             playerSoul.setStrong(true);
-                            SoulForge.LOGGER.info("random strong dual");
                         }
-                        SoulForge.LOGGER.info("random dual");
+                        playerSoul.setTraits(List.of(trait, entry.getKey()));
                         user.setStackInHand(hand, ItemStack.EMPTY);
                         return super.use(world, user, hand);
                     }
                 }
-                playerSoul.setTraits(List.of(trait));
                 if (random.nextFloat() <= affectedTotal / 40f) { // normal strong check
                     playerSoul.setStrong(true);
-                    SoulForge.LOGGER.info("random strong");
                 }
-                SoulForge.LOGGER.info("random single");
+                playerSoul.setTraits(List.of(trait));
             }
             user.setStackInHand(hand, ItemStack.EMPTY);
         }

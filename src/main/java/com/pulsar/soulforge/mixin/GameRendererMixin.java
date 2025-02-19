@@ -2,6 +2,7 @@ package com.pulsar.soulforge.mixin;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.components.ValueComponent;
+import com.pulsar.soulforge.effects.SoulForgeEffects;
 import com.pulsar.soulforge.entity.ShieldShardEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
@@ -10,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.SynchronousResourceReloader;
+import net.minecraft.util.hit.EntityHitResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,13 +26,14 @@ import java.util.function.Predicate;
 
 @Mixin(GameRenderer.class)
 abstract class GameRendererMixin implements SynchronousResourceReloader {
-    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final
+    MinecraftClient client;
 
     @Unique
     private boolean wasForcedThirdPerson = false;
 
     @Inject(method = "renderWorld", at=@At("HEAD"))
-    private void beforeCameraSetup(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci) {
+    private void soulforge$beforeCameraSetup(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci) {
         PlayerEntity player = this.client.player;
         if (player != null) {
             ValueComponent values = SoulForge.getValues(player);
@@ -46,8 +49,19 @@ abstract class GameRendererMixin implements SynchronousResourceReloader {
         }
     }
 
+    @Inject(method = "updateTargetedEntity", at = @At("HEAD"), cancellable = true)
+    private void soulforge$doImmobilizationSelfTarget(float tickDelta, CallbackInfo ci) {
+        if (client.player != null) {
+            if (client.player.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) {
+                client.crosshairTarget = new EntityHitResult(client.player);
+                client.targetedEntity = client.player;
+                ci.cancel();
+            }
+        }
+    }
+
     @ModifyArgs(method = "updateTargetedEntity", at=@At(value="INVOKE", target = "Lnet/minecraft/entity/projectile/ProjectileUtil;raycast(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;D)Lnet/minecraft/util/hit/EntityHitResult;"))
-    private void modifyTargetedEntity(Args args) {
+    private void soulforge$doShieldShardsTargeting(Args args) {
         Predicate<Entity> predicate = args.get(4);
         args.set(4, predicate.and((entity) -> {
             if (entity instanceof ShieldShardEntity shieldShard && shieldShard.owner != null) {

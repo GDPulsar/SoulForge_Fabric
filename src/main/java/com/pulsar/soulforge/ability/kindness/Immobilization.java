@@ -32,7 +32,7 @@ public class Immobilization extends ToggleableAbilityBase {
                 if (result.getEntity() instanceof LivingEntity living) {
                     if (living.getType().isIn(SoulForgeTags.BOSS_ENTITY)) return false;
                     target = living;
-                    target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.IMMOBILIZED, -1, playerSoul.getEffectiveLV() * 5 - 1));
+                    target.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.IMMOBILIZED, 1200, playerSoul.getEffectiveLV() * 5 - 1));
                     player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoulForgeSounds.UT_REFLECT_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                     return super.cast(player);
                 }

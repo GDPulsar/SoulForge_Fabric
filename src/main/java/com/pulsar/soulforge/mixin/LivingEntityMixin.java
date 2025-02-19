@@ -16,7 +16,6 @@ import com.pulsar.soulforge.event.LivingDeathEvent;
 import com.pulsar.soulforge.event.LivingEntityTick;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.item.devices.devices.RevivalIdol;
-import com.pulsar.soulforge.shield.ShieldBlockCallback;
 import com.pulsar.soulforge.siphon.Siphon;
 import com.pulsar.soulforge.siphon.Siphon.Type;
 import com.pulsar.soulforge.tag.SoulForgeTags;
@@ -99,6 +98,10 @@ abstract class LivingEntityMixin extends Entity {
     @Shadow public abstract boolean isDead();
 
     @Shadow public abstract boolean blockedByShield(DamageSource source);
+
+    @Shadow public abstract boolean removeStatusEffect(StatusEffect type);
+
+    @Shadow public abstract void setStatusEffect(StatusEffectInstance effect, @Nullable Entity source);
 
     @ModifyReturnValue(method = "isBlocking", at=@At("RETURN"))
     public boolean parryBlocking(boolean original) {
@@ -217,11 +220,14 @@ abstract class LivingEntityMixin extends Entity {
         cir.setReturnValue(cir.getReturnValue() || this.getMainHandStack().isIn(SoulForgeTags.BREAKS_SHIELD));
     }
 
-    @Inject(method = "damage", at=@At(value = "HEAD"))
+    @Inject(method = "damage", at=@At(value = "HEAD"), cancellable = true)
     private void invokeEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        LivingEntity entity = (LivingEntity)(Object)this;
-        ItemStack activeItem = entity.getActiveItem();
-        ShieldBlockCallback.EVENT.invoker().block(entity, source, amount, entity.getActiveHand(), activeItem);
+        if (this.hasStatusEffect(SoulForgeEffects.IMMOBILIZED)) {
+            int newAmpl = this.getStatusEffect(SoulForgeEffects.IMMOBILIZED).getAmplifier() - (int)amount;
+            if (newAmpl < 0) this.removeStatusEffect(SoulForgeEffects.IMMOBILIZED);
+            else this.setStatusEffect(new StatusEffectInstance(SoulForgeEffects.IMMOBILIZED, -1, newAmpl, false, false, false), null);
+            cir.setReturnValue(true);
+        }
     }
 
     @Inject(method = "damage", at = @At(value = "TAIL"))
@@ -375,8 +381,6 @@ abstract class LivingEntityMixin extends Entity {
         }
         return original;
     }
-
-
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void soulforge$onEntityTick(CallbackInfo ci) {
