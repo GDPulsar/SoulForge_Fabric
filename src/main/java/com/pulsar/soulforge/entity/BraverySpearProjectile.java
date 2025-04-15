@@ -101,20 +101,16 @@ public class BraverySpearProjectile extends PersistentProjectileEntity implement
         float f = 5.0f;
         Entity entity2 = this.getOwner();
         DamageSource damageSource = SoulForgeDamageTypes.of(getOwner(), getWorld(), SoulForgeDamageTypes.SUMMON_WEAPON_DAMAGE_TYPE);
-        if (entity.damage(damageSource, f)) {
-            if (entity.getType() == EntityType.ENDERMAN) {
-                return;
-            }
-            if (entity instanceof LivingEntity livingEntity2) {
-                if (entity2 instanceof LivingEntity) {
-                    EnchantmentHelper.onUserDamaged(livingEntity2, entity2);
-                    EnchantmentHelper.onTargetDamaged((LivingEntity)entity2, livingEntity2);
-                }
-                stuckEntity = livingEntity2;
-                this.setNoGravity(true);
-                this.onHit(livingEntity2);
-            }
+        if (!entity.damage(damageSource, f)) return;
+        if (entity.getType() == EntityType.ENDERMAN) return;
+        if (!(entity instanceof LivingEntity livingEntity2)) return;
+        if (entity2 instanceof LivingEntity) {
+            EnchantmentHelper.onUserDamaged(livingEntity2, entity2);
+            EnchantmentHelper.onTargetDamaged((LivingEntity)entity2, livingEntity2);
         }
+        stuckEntity = livingEntity2;
+        this.setNoGravity(true);
+        this.onHit(livingEntity2);
     }
 
     @Override

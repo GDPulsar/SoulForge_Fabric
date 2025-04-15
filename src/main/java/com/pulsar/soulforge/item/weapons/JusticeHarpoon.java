@@ -64,11 +64,10 @@ public class JusticeHarpoon extends MagicSwordItem/* implements GeoItem*/ {
         user.setCurrentHand(hand);
         for (JusticeHarpoonProjectile harpoon : world.getEntitiesByClass(JusticeHarpoonProjectile.class, Box.of(user.getPos(), 200, 200, 200), (entity) -> entity.getOwner() == user)) {
             if (harpoon.stuckEntity != null) {
+                Vec3d offset = user.getPos().subtract(harpoon.stuckEntity.getPos());
                 if (user.isSneaking()) {
-                    Vec3d offset = user.getPos().subtract(harpoon.stuckEntity.getPos());
                     harpoon.stuckEntity.addVelocity(offset.normalize().multiply(Math.sqrt(offset.length() * 1.5f)).add(0f, 1.25f, 0f));
                 } else {
-                    Vec3d offset = user.getPos().subtract(harpoon.stuckEntity.getPos());
                     harpoon.stuckEntity.addVelocity(offset.normalize().multiply(Math.sqrt(offset.length() * 4f)));
                     harpoon.stuckEntity.velocityModified = true;
                 }

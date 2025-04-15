@@ -387,26 +387,27 @@ public class Utils {
     }
 
     public static float getKillExpOverride(LivingEntity living) {
-        if (living.isPlayer()) {
-            float targetDefence = 0f;
-            if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float)living.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
-            PlayerEntity targetPlayer = (PlayerEntity)living;
-            SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
-            return 250f*(1+(targetDefence/10f)*(targetSoul.getLV()/4f));
-        } else if (living.getType() == EntityType.ENDER_DRAGON) {
-            return 3000;
-        } else if (living.getType() == EntityType.WITHER) {
-            return 1500;
-        } else if (living.getType() == EntityType.ELDER_GUARDIAN) {
-            return 500;
-        } else if (living.getType() == EntityType.EVOKER) {
-            return 250;
-        } else if (living.getType() == EntityType.WARDEN) {
-            return 1000;
-        } else if (living.getType() == EntityType.PIGLIN_BRUTE) {
-            return 250;
+        switch(living.getType()){
+            case EntityType.EVOKER:
+            case EntityType.PIGLIN_BRUTE:
+                return 250;
+            case EntityType.ELDER_GUARDIAN:
+                return 500;
+            case EntityType.WARDEN:
+                return 1000;
+            case EntityType.WITHER:
+                return 1500;
+            case EntityType.ENDER_DRAGON:
+                return 3000;
+            default:
+                break;
         }
-        return 0;
+        if (!living.isPlayer()) return 0;
+        float targetDefence = 0f;
+        if (living.getAttributes().hasAttribute(EntityAttributes.GENERIC_ARMOR)) targetDefence = (float)living.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
+        PlayerEntity targetPlayer = (PlayerEntity)living;
+        SoulComponent targetSoul = SoulForge.getPlayerSoul(targetPlayer);
+        return 250f*(1+(targetDefence/10f)*(targetSoul.getLV()/4f));
     }
 
     public static int getKillExp(LivingEntity living, PlayerEntity player) {
