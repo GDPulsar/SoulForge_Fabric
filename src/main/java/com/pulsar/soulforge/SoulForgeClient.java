@@ -15,7 +15,10 @@ import com.pulsar.soulforge.client.event.ClientStartTick;
 import com.pulsar.soulforge.client.event.KeyInputHandler;
 import com.pulsar.soulforge.client.networking.ClientNetworkingHandler;
 import com.pulsar.soulforge.client.render.SoulForgeRendering;
-import com.pulsar.soulforge.client.ui.*;
+import com.pulsar.soulforge.client.ui.CreativeZoneScreen;
+import com.pulsar.soulforge.client.ui.MagicHudOverlay;
+import com.pulsar.soulforge.client.ui.SoulForgeScreen;
+import com.pulsar.soulforge.client.ui.ValueHudOverlay;
 import com.pulsar.soulforge.components.SoulComponent;
 import com.pulsar.soulforge.config.ConfigHelper;
 import com.pulsar.soulforge.entity.SoulForgeEntities;
@@ -23,7 +26,6 @@ import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.particle.SoulForgeParticles;
 import com.pulsar.soulforge.shader.TestPostProcessor;
 import com.pulsar.soulforge.siphon.Siphon;
-import com.pulsar.soulforge.trait.Traits;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
@@ -257,20 +259,7 @@ public class SoulForgeClient implements ClientModInitializer {
 		ModelPredicateProviderRegistry.register(new Identifier("siphon_type"), siphonProvider);
 
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-			int color = 0x000000;
-			if (tintIndex == 0) {
-				try {
-					return Traits.get(stack.getOrCreateNbt().getString("trait1")).getColor();
-				} catch (NullPointerException ignored) {}
-			}
-			if (tintIndex == 1) {
-				try {
-					return Traits.get(stack.getOrCreateNbt().getString("trait2")).getColor();
-				} catch (NullPointerException ignored) {
-					return 0xFF80FF;
-				}
-			}
-			return color;
+			return SoulForge.GDPULSAR.getRGB();
 		}, SoulForgeItems.SOUL);
 
 		ClientNetworkingHandler.registerPackets();
@@ -333,7 +322,7 @@ public class SoulForgeClient implements ClientModInitializer {
 			stack.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(player.getYaw()));
 			stack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(player.getPitch()));
 			stack.translate(player.getX() + position.x, player.getEyeY() + position.y, player.getZ() + position.z);
-			Renderer3d.renderFilled(stack, color, Vec3d.ZERO, size);
+			Renderer3d.renderFilled(stack, SoulForge.GDPULSAR, Vec3d.ZERO, size);
 		}
 	}
 

@@ -46,6 +46,6 @@ public class Paranoia implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x0000B2;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

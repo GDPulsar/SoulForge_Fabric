@@ -46,6 +46,6 @@ public class Patience implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x00FFFF;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

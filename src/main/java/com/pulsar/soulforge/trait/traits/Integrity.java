@@ -46,6 +46,6 @@ public class Integrity implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x0000FF;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

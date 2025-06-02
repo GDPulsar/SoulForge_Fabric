@@ -15,8 +15,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.event.GameEvent;
 
-import java.awt.*;
-
 public class DeterminationBlaster extends AbilityBase {
     @Override
     public boolean cast(ServerPlayerEntity player) {
@@ -25,7 +23,7 @@ public class DeterminationBlaster extends AbilityBase {
         if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
-                player, 0.25f, Vec3d.ZERO, end, playerSoul.getEffectiveLV()*0.75f, Color.RED);
+                player, 0.25f, Vec3d.ZERO, end, playerSoul.getEffectiveLV()*0.75f, SoulForge.GDPULSAR);
         blast.owner = player;
         ServerWorld serverWorld = (ServerWorld)player.getWorld();
         serverWorld.spawnEntity(blast);

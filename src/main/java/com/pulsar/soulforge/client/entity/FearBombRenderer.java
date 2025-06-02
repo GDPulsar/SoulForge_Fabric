@@ -14,8 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 
-import java.awt.*;
-
 @Environment(EnvType.CLIENT)
 public class FearBombRenderer extends EntityRenderer<FearBombEntity> {
     private static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/white.png");
@@ -27,7 +25,7 @@ public class FearBombRenderer extends EntityRenderer<FearBombEntity> {
     public void render(FearBombEntity bomb, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
-        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.1f, new Color(178, 89, 0));
+        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.1f, SoulForge.GDPULSAR);
     }
 
     public Identifier getTexture(FearBombEntity bomb) {

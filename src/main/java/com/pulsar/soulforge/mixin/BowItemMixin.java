@@ -3,6 +3,7 @@ package com.pulsar.soulforge.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.entity.BlastEntity;
 import com.pulsar.soulforge.item.devices.machines.SiphonImbuer;
 import com.pulsar.soulforge.item.special.CrushingRound;
@@ -33,8 +34,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.awt.*;
 
 @Mixin(BowItem.class)
 public abstract class BowItemMixin {
@@ -90,7 +89,7 @@ public abstract class BowItemMixin {
                         float damage = (16f-((pullTime-6)*(pullTime-6))/2f) * 2f;
                         if (pullTime > 6) damage = 32f;
                         BlastEntity blast = new BlastEntity(user.getWorld(), Utils.getArmPosition(player),
-                                user, 0.25f, Vec3d.ZERO, end, damage, Color.YELLOW, true, 20);
+                                user, 0.25f, Vec3d.ZERO, end, damage, SoulForge.GDPULSAR, true, 20);
                         blast.owner = user;
                         world.spawnEntity(blast);
                         world.playSoundFromEntity(null, player, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);

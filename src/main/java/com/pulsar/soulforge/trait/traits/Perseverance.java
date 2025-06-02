@@ -43,6 +43,6 @@ public class Perseverance implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x8000FF;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

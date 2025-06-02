@@ -32,7 +32,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
-import java.awt.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -88,7 +87,7 @@ public class DeterminationStaff extends MagicItem implements GeoItem {
                 Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(50f));
                 HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
                 if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
-                BlastEntity blast = new BlastEntity(world, Utils.getArmPosition(player), player, 5f, Vec3d.ZERO, end, damage, Color.RED, true, 100, 5);
+                BlastEntity blast = new BlastEntity(world, Utils.getArmPosition(player), player, 5f, Vec3d.ZERO, end, damage, SoulForge.GDPULSAR, true, 100, 5);
                 blast.owner = player;
                 world.spawnEntity(blast);
                 user.addStatusEffect(new StatusEffectInstance(SoulForgeEffects.MANA_OVERLOAD, duration, 0));

@@ -30,7 +30,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
-import java.awt.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -47,7 +46,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
             Vec3d end = attacker.getRotationVector().multiply(8f);
             Vec3d start = Utils.getArmPosition((PlayerEntity)attacker);
             if (hit != null) end = hit.getPos().subtract(start);
-            BlastEntity blast = new BlastEntity(attacker.getWorld(), start, attacker, 0.5f, Vec3d.ZERO, end, 5 + playerSoul.getLV()*0.75f, Color.YELLOW);
+            BlastEntity blast = new BlastEntity(attacker.getWorld(), start, attacker, 0.5f, Vec3d.ZERO, end, 5 + playerSoul.getLV()*0.75f, SoulForge.GDPULSAR);
             blast.setPosition(attacker.getEyePos());
             attacker.getWorld().spawnEntity(blast);
             attacker.getWorld().playSoundFromEntity(null, attacker, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
@@ -79,7 +78,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
                 Vec3d end = user.getRotationVector().multiply(50f);
                 if (hit != null) end = hit.getPos();
                 Vec3d start = user.getEyePos();
-                BlastEntity blast = new BlastEntity(world, start, user, 0.2f, Vec3d.ZERO, end.subtract(start), 5 + playerSoul.getLV() / 2f, Color.YELLOW);
+                BlastEntity blast = new BlastEntity(world, start, user, 0.2f, Vec3d.ZERO, end.subtract(start), 5 + playerSoul.getLV() / 2f, SoulForge.GDPULSAR);
                 blast.setPosition(user.getEyePos());
                 world.spawnEntity(blast);
                 world.playSoundFromEntity(null, user, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);

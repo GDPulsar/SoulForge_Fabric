@@ -100,7 +100,7 @@ public class LeftClickPacket {
                         Vec3d end = player.getEyePos().add(player.getRotationVector().multiply(30f));
                         HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(30f)), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
                         if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
-                        BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player), player, 0.1f, Vec3d.ZERO, end, playerSoul.getLV() / 4f, Color.RED);
+                        BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player), player, 0.1f, Vec3d.ZERO, end, playerSoul.getLV() / 4f, SoulForge.GDPULSAR);
                         blast.owner = player;
                         ServerWorld serverWorld = (ServerWorld) player.getWorld();
                         serverWorld.spawnEntity(blast);

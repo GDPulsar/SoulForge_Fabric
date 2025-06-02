@@ -46,6 +46,6 @@ public class Kindness implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x00FF00;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

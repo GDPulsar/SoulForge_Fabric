@@ -50,6 +50,6 @@ public class Determination implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0xFF0000;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

@@ -14,8 +14,6 @@ import net.minecraft.util.math.RotationAxis;
 import org.joml.Vector3f;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-import java.awt.*;
-
 public class YoyoRenderer extends GeoEntityRenderer<YoyoProjectile> {
     public static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/integrity.png");
 
@@ -30,7 +28,7 @@ public class YoyoRenderer extends GeoEntityRenderer<YoyoProjectile> {
             if (projectile.distanceTo(projectile.getOwner()) <= 0.1f) return;
             VertexConsumer consumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutout(TEXTURE));
             Vector3f offset = projectile.getOwner().getPos().add(0f, 1f, 0f).toVector3f().sub(projectile.getPos().toVector3f());
-            CylinderRenderer.renderCylinder(matrixStack.peek().getPositionMatrix(), consumer, new Vector3f(), offset, 0.02f, Color.WHITE, 0, 255, false);
+            CylinderRenderer.renderCylinder(matrixStack.peek().getPositionMatrix(), consumer, new Vector3f(), offset, 0.02f, SoulForge.GDPULSAR, 0, 255, false);
         }
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.lerp(g, projectile.prevYaw, projectile.getYaw()) - 90.0f));
         matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerp(g, projectile.prevPitch, projectile.getPitch()) + 90.0f));

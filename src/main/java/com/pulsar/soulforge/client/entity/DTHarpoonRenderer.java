@@ -17,8 +17,6 @@ import net.minecraft.util.math.Vec3d;
 import org.joml.Vector3f;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-import java.awt.*;
-
 @Environment(value=EnvType.CLIENT)
 public class DTHarpoonRenderer extends GeoEntityRenderer<DTHarpoonProjectile> {
     public static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/item/determination.png");
@@ -34,7 +32,7 @@ public class DTHarpoonRenderer extends GeoEntityRenderer<DTHarpoonProjectile> {
             VertexConsumer consumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutout(TEXTURE));
             Vec3d harpoonEnd = projectile.getPos().subtract(projectile.getRotationVector().multiply(1.1725f));
             Vector3f offset = Utils.getArmPosition((PlayerEntity)projectile.getOwner()).subtract(harpoonEnd).toVector3f();
-            CylinderRenderer.renderCylinder(matrixStack.peek().getPositionMatrix(), consumer, new Vector3f(), offset, 0.02f, Color.GRAY, 0, 255, false);
+            CylinderRenderer.renderCylinder(matrixStack.peek().getPositionMatrix(), consumer, new Vector3f(), offset, 0.02f, SoulForge.GDPULSAR, 0, 255, false);
         }
         super.render(projectile, f, g, matrixStack, vertexConsumerProvider, i);
     }

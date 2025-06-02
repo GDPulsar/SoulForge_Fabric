@@ -52,6 +52,6 @@ public class Fear implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0xB25A00;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

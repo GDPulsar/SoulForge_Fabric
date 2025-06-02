@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.item.SoulForgeItems;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import net.fabricmc.api.EnvType;
@@ -24,8 +25,6 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.awt.*;
 
 public class DomeEmitterEntity extends ThrownItemEntity implements GeoEntity {
     public DomeEmitterEntity(World world, LivingEntity owner) {
@@ -52,7 +51,7 @@ public class DomeEmitterEntity extends ThrownItemEntity implements GeoEntity {
     @Environment(EnvType.CLIENT)
     public void handleStatus(byte status) {
         if (status == 3) {
-            ParticleEffect particleEffect = new DustParticleEffect(Vec3d.unpackRgb(Color.GREEN.getRGB()).toVector3f(), 1f);
+            ParticleEffect particleEffect = new DustParticleEffect(Vec3d.unpackRgb(SoulForge.GDPULSAR.getRGB()).toVector3f(), 1f);
             for (int i = 0; i < 8; i++) {
                 this.getWorld().addParticle(particleEffect, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
             }

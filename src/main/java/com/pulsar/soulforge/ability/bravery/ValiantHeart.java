@@ -18,7 +18,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -96,7 +95,7 @@ public class ValiantHeart extends AbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "valiant_heart"), "Valiant Heart",
-                0, timer / 20f, 1200f, new Color(1f, 0.5f, 0f)
+                0, timer / 20f, 1200f, SoulForge.GDPULSAR
         ));
     }
 }

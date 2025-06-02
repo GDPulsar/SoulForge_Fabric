@@ -45,6 +45,6 @@ public class Despair implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x5A00B2;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

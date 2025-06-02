@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.damage_type.SoulForgeDamageTypes;
 import com.pulsar.soulforge.util.TeamUtils;
 import net.minecraft.entity.*;
@@ -51,7 +52,7 @@ public class GunlanceBlastEntity extends Entity {
     protected void initDataTracker() {
         this.dataTracker.startTracking(START, new Vector3f(0, 0, 0));
         this.dataTracker.startTracking(END, new Vector3f(0, 5, 0));
-        this.dataTracker.startTracking(COLOR, Color.BLACK.getRGB());
+        this.dataTracker.startTracking(COLOR, SoulForge.GDPULSAR.getRGB());
         this.dataTracker.startTracking(RADIUS, 0.25f);
         this.dataTracker.startTracking(DAMAGE, 7.5f);
     }

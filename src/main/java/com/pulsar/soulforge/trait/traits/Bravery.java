@@ -48,6 +48,6 @@ public class Bravery implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0xFF8000;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

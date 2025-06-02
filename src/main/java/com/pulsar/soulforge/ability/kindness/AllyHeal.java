@@ -18,7 +18,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -95,7 +94,7 @@ public class AllyHeal extends AbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "ally_heal"), "Ally Heal",
-                0, timer / 20f, 10f, new Color(0f, 1f, 0f)
+                0, timer / 20f, 10f, SoulForge.GDPULSAR
         ));
     }
 

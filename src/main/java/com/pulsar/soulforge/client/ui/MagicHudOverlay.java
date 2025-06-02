@@ -58,7 +58,7 @@ public class MagicHudOverlay implements HudRenderCallback {
         int darkB = new Color(colorB).darker().getRGB();
         int darkkA = new Color(darkA).darker().getRGB();
         int darkkB = new Color(darkB).darker().getRGB();
-        Color styleColor = new Color(255, 0, 255);
+        Color styleColor = SoulForge.GDPULSAR;
 
         context.drawVerticalLine(left + 2, top + 2, top + 52, darkkB);
         context.drawVerticalLine(left + 2, top + 51, top + 103, darkkA);

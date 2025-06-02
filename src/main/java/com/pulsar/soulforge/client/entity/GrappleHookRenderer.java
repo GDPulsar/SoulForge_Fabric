@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.client.entity;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.render.CylinderRenderer;
 import com.pulsar.soulforge.entity.GrappleHookProjectile;
 import net.minecraft.client.render.OverlayTexture;
@@ -11,7 +12,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-import java.awt.*;
 import java.util.List;
 
 public class GrappleHookRenderer extends GeoEntityRenderer<GrappleHookProjectile> {
@@ -27,7 +27,7 @@ public class GrappleHookRenderer extends GeoEntityRenderer<GrappleHookProjectile
             List<Vec3d> positions = List.of(entity.getOwner().getPos());
             if (entity.positions != null && !entity.positions.isEmpty()) positions.addAll(entity.positions);
             for (int i = 0; i < positions.size() - 1; i++) {
-                CylinderRenderer.renderCylinder(consumer, positions.get(i).subtract(entity.getPos()).toVector3f(), positions.get(i + 1).subtract(entity.getPos()).toVector3f(), 0.1f, Color.GRAY, OverlayTexture.DEFAULT_UV, 255);
+                CylinderRenderer.renderCylinder(consumer, positions.get(i).subtract(entity.getPos()).toVector3f(), positions.get(i + 1).subtract(entity.getPos()).toVector3f(), 0.1f, SoulForge.GDPULSAR, OverlayTexture.DEFAULT_UV, 255);
             }
         }
     }

@@ -2,8 +2,6 @@ package com.pulsar.soulforge.client.entity;
 
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.client.render.CubeRenderer;
-import com.pulsar.soulforge.client.render.CylinderRenderer;
-import com.pulsar.soulforge.entity.DeterminationPlatformEntity;
 import com.pulsar.soulforge.entity.DetonatorMine;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,8 +15,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import java.awt.*;
 
 @Environment(EnvType.CLIENT)
 public class DetonatorMineRenderer extends EntityRenderer<DetonatorMine> {
@@ -40,6 +36,6 @@ public class DetonatorMineRenderer extends EntityRenderer<DetonatorMine> {
     public void render(DetonatorMine mine, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
-        CubeRenderer.renderCube(matrix, vertexConsumer, new Vector3f(-0.25f, -0.25f, -0.25f), new Vector3f(0.25f, 0.25f, 0.25f), Color.WHITE);
+        CubeRenderer.renderCube(matrix, vertexConsumer, new Vector3f(-0.25f, -0.25f, -0.25f), new Vector3f(0.25f, 0.25f, 0.25f), SoulForge.GDPULSAR);
     }
 }

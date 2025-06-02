@@ -42,7 +42,7 @@ public class SpecialHellEntityRenderer extends EntityRenderer<SpecialHellEntity>
         float top = 100f;
         if (specialHellEntity.timer >= 100) top = MathHelper.lerp(((specialHellEntity.timer + g)-100)/40f, 100f, 0f);
         if (specialHellEntity.timer < 60) top = 0.1f;
-        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, new Color(1f, 0.6f, 0.6f, 1f), 0, 0, false);
-        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, new Color(1f, 0.6f, 0.6f, 0.3f), 0, 0);
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, SoulForge.GDPULSAR, 0, 0, false);
+        CylinderRenderer.renderCylinderInnerFace(matrix, vertexConsumer,  new Vector3f(0f, -10f, 0f), new Vector3f(0f, top, 0f), 10f, new Color(SoulForge.GDPULSAR.getRed()/255f, SoulForge.GDPULSAR.getGreen()/255f, SoulForge.GDPULSAR.getBlue()/255f, 0.3f), 0, 0);
     }
 }

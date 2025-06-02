@@ -20,7 +20,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -128,7 +127,7 @@ public class Telekinesis extends ToggleableAbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "telekinesis"), "Telekinesis",
-                0, timer / 20f, timerMax / 20f, new Color(0f, 0f, 1f)
+                0, timer / 20f, timerMax / 20f, SoulForge.GDPULSAR
         ));
     }
 }

@@ -15,8 +15,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.event.GameEvent;
 
-import java.awt.*;
-
 public class Railcannon extends AbilityBase {
     private int timer = 0;
     private int castCount = 0;
@@ -38,7 +36,7 @@ public class Railcannon extends AbilityBase {
             HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
             if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
             BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
-                    player, 0.25f, Vec3d.ZERO, end, playerSoul.getEffectiveLV()/4f, Color.YELLOW, true, Math.min(200, 40*playerSoul.getEffectiveLV()/3));
+                    player, 0.25f, Vec3d.ZERO, end, playerSoul.getEffectiveLV()/4f, SoulForge.GDPULSAR, true, Math.min(200, 40*playerSoul.getEffectiveLV()/3));
             blast.owner = player;
             ServerWorld serverWorld = (ServerWorld)player.getWorld();
             serverWorld.spawnEntity(blast);

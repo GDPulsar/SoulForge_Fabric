@@ -1,5 +1,6 @@
 package com.pulsar.soulforge.entity;
 
+import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.item.devices.machines.Railkiller;
 import com.pulsar.soulforge.sounds.SoulForgeSounds;
 import com.pulsar.soulforge.util.Utils;
@@ -27,8 +28,6 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.awt.*;
 
 public class RailkillerEntity extends Entity implements GeoEntity {
     private static final TrackedData<ItemStack> STACK = DataTracker.registerData(RailkillerEntity.class, TrackedDataHandlerRegistry.ITEM_STACK);
@@ -125,7 +124,7 @@ public class RailkillerEntity extends Entity implements GeoEntity {
                 Vec3d end = start.add(direction.multiply(75f));
                 HitResult hit = getWorld().raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this));
                 if (hit != null) end = hit.getPos();
-                blast = new BlastEntity(getWorld(), getPos(), null, 1f, Vec3d.ZERO, end.subtract(start), 25f, Color.YELLOW, true, getItemCharge()/3);
+                blast = new BlastEntity(getWorld(), getPos(), null, 1f, Vec3d.ZERO, end.subtract(start), 25f, SoulForge.GDPULSAR, true, getItemCharge()/3);
                 blast.setPos(start);
                 getWorld().spawnEntity(blast);
                 getWorld().playSoundFromEntity(null, this, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.MASTER, 1f, 1f);

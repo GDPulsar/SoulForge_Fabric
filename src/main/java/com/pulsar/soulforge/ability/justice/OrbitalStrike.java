@@ -20,7 +20,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -100,7 +99,7 @@ public class OrbitalStrike extends AbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "orbital_strike"), "Orbital Strike",
-                0, timer / 20f, 15f, new Color(1f, 1f, 0f)
+                0, timer / 20f, 15f, SoulForge.GDPULSAR
         ));
     }
 }

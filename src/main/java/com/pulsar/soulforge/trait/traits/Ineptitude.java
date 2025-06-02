@@ -48,6 +48,6 @@ public class Ineptitude implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0xB2B200;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

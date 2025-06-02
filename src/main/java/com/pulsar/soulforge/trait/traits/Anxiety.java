@@ -46,6 +46,6 @@ public class Anxiety implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x00B2B2;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

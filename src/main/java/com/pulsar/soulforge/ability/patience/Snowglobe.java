@@ -15,7 +15,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,7 +84,7 @@ public class Snowglobe extends AbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "snowglobe"), "Snowglobe",
-                0, timer / 20f, 10f, new Color(0f, 1f, 1f)
+                0, timer / 20f, 10f, SoulForge.GDPULSAR
         ));
     }
 }

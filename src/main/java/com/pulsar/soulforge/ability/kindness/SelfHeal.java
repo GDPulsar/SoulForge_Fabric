@@ -11,7 +11,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -68,7 +67,7 @@ public class SelfHeal extends AbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "self_heal"), "Self Heal",
-                0, timer / 20f, 10f, new Color(0f, 1f, 0f)
+                0, timer / 20f, 10f, SoulForge.GDPULSAR
         ));
     }
 }

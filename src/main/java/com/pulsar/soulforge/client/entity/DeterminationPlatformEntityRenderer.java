@@ -43,8 +43,8 @@ public class DeterminationPlatformEntityRenderer extends EntityRenderer<Determin
         if (platformEntity.getStack() >= 1) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.1f, 0f), new Vector3f(0f, 0.15f, 0f), 1.75f, new Color(1f, 1f, 1f, 1f), 0, 255, false);
         if (platformEntity.getStack() == 2) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.2f, 0f), new Vector3f(0f, 0.05f, 0f), 2.25f, new Color(1f, 1f, 1f, 1f), 0, 255, false);
         vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityTranslucent(TEXTURE));
-        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.1f, 0f), new Vector3f(0f, 0.325f, 0f), 1.4f, new Color(1f, 0f, 0f, 0.5f), OverlayTexture.DEFAULT_UV, 255, false);
-        if (platformEntity.getStack() >= 1) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.225f, 0f), new Vector3f(0f, 0.225f, 0f), 1.9f, new Color(1f, 0f, 0f, 0.5f), OverlayTexture.DEFAULT_UV, 255, false);
-        if (platformEntity.getStack() == 2) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.325f, 0f), new Vector3f(0f, 0.125f, 0f), 2.4f, new Color(1f, 0f, 0f, 0.5f), OverlayTexture.DEFAULT_UV, 255, false);
+        CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.1f, 0f), new Vector3f(0f, 0.325f, 0f), 1.4f, new Color(SoulForge.GDPULSAR.getRed(), SoulForge.GDPULSAR.getGreen(), SoulForge.GDPULSAR.getBlue(), 128), OverlayTexture.DEFAULT_UV, 255, false);
+        if (platformEntity.getStack() >= 1) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.225f, 0f), new Vector3f(0f, 0.225f, 0f), 1.9f, new Color(SoulForge.GDPULSAR.getRed(), SoulForge.GDPULSAR.getGreen(), SoulForge.GDPULSAR.getBlue(), 128), OverlayTexture.DEFAULT_UV, 255, false);
+        if (platformEntity.getStack() == 2) CylinderRenderer.renderCylinder(matrix, vertexConsumer,  new Vector3f(0f, -0.325f, 0f), new Vector3f(0f, 0.125f, 0f), 2.4f, new Color(SoulForge.GDPULSAR.getRed(), SoulForge.GDPULSAR.getGreen(), SoulForge.GDPULSAR.getBlue(), 128), OverlayTexture.DEFAULT_UV, 255, false);
     }
 }

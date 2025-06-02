@@ -33,7 +33,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
-import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -69,7 +68,7 @@ public class BFRCMG extends MagicItem implements GeoItem {
                             if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
                             BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player), player, 0.1f,
                                     Vec3d.ZERO, end, 2f + playerSoul.getLV() / 6f * (1 + 0.02f * stack.getNbt().getInt("heat")),
-                                    Color.YELLOW, true, 4);
+                                    SoulForge.GDPULSAR, true, 4);
                             blast.owner = player;
                             ServerWorld serverWorld = player.getServerWorld();
                             serverWorld.spawnEntity(blast);

@@ -14,8 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 
-import java.awt.*;
-
 @Environment(EnvType.CLIENT)
 public class DeterminationShotRenderer extends EntityRenderer<DeterminationShotProjectile> {
     private static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/white.png");
@@ -27,7 +25,7 @@ public class DeterminationShotRenderer extends EntityRenderer<DeterminationShotP
     public void render(DeterminationShotProjectile energyBallEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
-        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.2f, Color.RED);
+        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.2f, SoulForge.GDPULSAR);
     }
 
     public Identifier getTexture(DeterminationShotProjectile energyBallEntity) {

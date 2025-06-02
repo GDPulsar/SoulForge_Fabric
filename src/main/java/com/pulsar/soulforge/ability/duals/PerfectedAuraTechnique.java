@@ -23,7 +23,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -145,7 +144,7 @@ public class PerfectedAuraTechnique extends AuraAbilityBase {
         if (fullPower) {
             return Optional.of(new CooldownDisplayEntry(
                     new Identifier(SoulForge.MOD_ID, "jackpot"), "Jackpot",
-                    0, timer / 20f, 251f, new Color(1f, 0f, 1f)
+                    0, timer / 20f, 251f, SoulForge.GDPULSAR
             ));
         }
         return Optional.empty();

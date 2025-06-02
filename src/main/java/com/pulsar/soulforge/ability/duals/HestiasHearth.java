@@ -67,8 +67,7 @@ public class HestiasHearth extends ToggleableAbilityBase {
                 float x = (float)Math.cos(phi);
                 float z = (float)Math.sin(phi);
                 Vector3f particlePos = new Vector3f(x, 0f, z).normalize().mul(8);
-                Vector3f color = Vec3d.unpackRgb(0xFF7700).toVector3f();
-                if (phi % 4 <= 1) color = Vec3d.unpackRgb(0x00FF00).toVector3f();
+                Vector3f color = Vec3d.unpackRgb(SoulForge.GDPULSAR.getRGB()).toVector3f();
                 serverWorld.spawnParticles(player, new DustParticleEffect(color, 1f), true, particlePos.x + hestiaPos.x, particlePos.y + hestiaPos.y, particlePos.z + hestiaPos.z, 1, 0, 0, 0, 0);
             }
             serverWorld.spawnParticles(player, ParticleTypes.FLAME, true, hestiaPos.x, hestiaPos.y+MathHelper.ceil(charge/25f), hestiaPos.z, MathHelper.ceil(charge/25f)*25, MathHelper.ceil(charge/25f)/3f, MathHelper.ceil(charge/25f)/3f, MathHelper.ceil(charge/25f)/3f, 0);

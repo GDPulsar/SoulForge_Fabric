@@ -48,6 +48,6 @@ public class Justice implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0xFFFF00;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

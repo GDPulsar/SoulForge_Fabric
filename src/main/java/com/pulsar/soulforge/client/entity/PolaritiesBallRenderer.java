@@ -14,8 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 
-import java.awt.*;
-
 @Environment(EnvType.CLIENT)
 public class PolaritiesBallRenderer extends EntityRenderer<PolarityBallEntity> {
     private static final Identifier TEXTURE = new Identifier(SoulForge.MOD_ID, "textures/white.png");
@@ -27,7 +25,7 @@ public class PolaritiesBallRenderer extends EntityRenderer<PolarityBallEntity> {
     public void render(PolarityBallEntity polarityBallEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         Matrix4f matrix = matrixStack.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(TEXTURE));
-        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.25f, polarityBallEntity.getInverse() ? new Color(0, 255, 255) : new Color(255, 255, 0));
+        SphereRenderer.renderSphere(matrix, vertexConsumer, 0.25f, SoulForge.GDPULSAR);
     }
 
     @Override

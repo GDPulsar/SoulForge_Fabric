@@ -119,7 +119,7 @@ public class Warpspeed extends AbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "warpspeed"), "Warpspeed",
-                0, timer / 20f, 15f, new Color(0f, 0f, 1f)
+                0, timer / 20f, 15f, SoulForge.GDPULSAR
         ));
     }
 }

@@ -46,16 +46,20 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+
 public class SoulForge implements ModInitializer {
 	public static final String MOD_ID = "soulforge";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	public static Color GDPULSAR = new Color(255, 0, 128);
 
 	public static ScreenHandlerType<SoulForgeScreenHandler> SOUL_FORGE_SCREEN_HANDLER;
 	public static ScreenHandlerType<CreativeZoneScreenHandler> CREATIVE_ZONE_SCREEN_HANDLER;
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Loading SoulForge v2.7.6");
+		LOGGER.info("Loading GDPULSAR MODE");
 
 		//registerResourceListeners();
 

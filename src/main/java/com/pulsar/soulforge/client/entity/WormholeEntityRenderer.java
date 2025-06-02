@@ -56,9 +56,9 @@ public class WormholeEntityRenderer extends EntityRenderer<WormholeEntity> {
     public void render(WormholeEntity rift, float yaw, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
         VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().setVertexSupplier((consumer, stack, vfxBuilder, x, y, z, u, v) -> {
             if (stack == null) {
-                consumer.vertex(x, y, z).color(1f, 1f, 1f,1f).texture(u, v).light(15).next();
+                consumer.vertex(x, y, z).color(SoulForge.GDPULSAR.getRed()/255f, SoulForge.GDPULSAR.getGreen()/255f, SoulForge.GDPULSAR.getBlue()/255f,1f).texture(u, v).light(15).next();
             } else {
-                consumer.vertex(stack, x, y, z).color(1f, 1f, 1f, 1f).texture(u, v).light(15).next();
+                consumer.vertex(stack, x, y, z).color(SoulForge.GDPULSAR.getRed()/255f, SoulForge.GDPULSAR.getGreen()/255f, SoulForge.GDPULSAR.getBlue()/255f, 1f).texture(u, v).light(15).next();
             }
 
         }).setFormat(VertexFormats.POSITION_COLOR_TEXTURE_LIGHT);
@@ -75,13 +75,13 @@ public class WormholeEntityRenderer extends EntityRenderer<WormholeEntity> {
             }
 
             builder.setRenderType(RIFT_CRACKS_RENDER_TYPES.get(rift.cracks.indexOf(crack) % 5));
-            builder.setColor(new Color(0xFFFFFF)).setAlpha(1.0F).renderBeam(matrixStack.peek().getPositionMatrix(), rift.getPos(), toPos, 2.0F * rift.getSize());
+            builder.setColor(new Color(SoulForge.GDPULSAR.getRGB())).setAlpha(1.0F).renderBeam(matrixStack.peek().getPositionMatrix(), rift.getPos(), toPos, 2.0F * rift.getSize());
             builder.setRenderType(RIFT_CRACKS_BLOOMS_RENDER_TYPES.get(rift.cracks.indexOf(crack) % 5));
-            builder.setColor(new Color(0x00FF90)).setAlpha(1.0F).renderBeam(matrixStack.peek().getPositionMatrix(), rift.getPos(), toPos, 2.0F * rift.getSize());
+            builder.setColor(new Color(SoulForge.GDPULSAR.getRGB())).setAlpha(1.0F).renderBeam(matrixStack.peek().getPositionMatrix(), rift.getPos(), toPos, 2.0F * rift.getSize());
 
             builder.setVertexConsumer(RenderHandler.DELAYED_RENDER.getTarget().getBuffer(RIFT_CRACKS_BLOOMS_RENDER_TYPES.get(rift.cracks.indexOf(crack) % 5)));
             for (int i = (int)(2 * rift.getSize()); i <= (int)(5 * rift.getSize()); ++i) {
-                builder.setColor(new Color(0.0F, 1.0F, (float) i / (5.0F * rift.getSize()))).setAlpha(MathHelper.clamp((MathHelper.sin((rift.age + partialTicks + (float) i / rift.getSize() * 20.0F) / 10.0F) + (float) i / rift.getSize() / 2.0F) / (2.0F * ((float) i / rift.getSize() / 2.0F)), 0.0F, 1.0F) / rift.getSize()).renderBeam(matrixStack.peek().getPositionMatrix(), rift.getPos(), toPos, (float) i);
+                builder.setColor(SoulForge.GDPULSAR).setAlpha(MathHelper.clamp((MathHelper.sin((rift.age + partialTicks + (float) i / rift.getSize() * 20.0F) / 10.0F) + (float) i / rift.getSize() / 2.0F) / (2.0F * ((float) i / rift.getSize() / 2.0F)), 0.0F, 1.0F) / rift.getSize()).renderBeam(matrixStack.peek().getPositionMatrix(), rift.getPos(), toPos, (float) i);
             }
         }
     }

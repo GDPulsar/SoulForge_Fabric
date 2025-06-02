@@ -54,6 +54,6 @@ public class Misery implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0x00B200;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

@@ -113,6 +113,6 @@ public class Spite implements TraitBase {
 
     @Override
     public int getColor() {
-        return 0xB20000;
+        return SoulForge.GDPULSAR.getRGB();
     }
 }

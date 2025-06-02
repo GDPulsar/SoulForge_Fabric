@@ -15,7 +15,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -104,7 +103,7 @@ public class SAVELOAD extends ToggleableAbilityBase {
     public Optional<CooldownDisplayEntry> getCooldownEntry() {
         return Optional.of(new CooldownDisplayEntry(
                 new Identifier(SoulForge.MOD_ID, "save_load"), "SAVE/LOAD",
-                0, timer / 20f, 30f, new Color(1f, 0f, 0f)
+                0, timer / 20f, 30f, SoulForge.GDPULSAR
         ));
     }
 }

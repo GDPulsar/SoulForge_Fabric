@@ -60,8 +60,6 @@ import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 public class SoulComponent implements AutoSyncedComponent, CommonTickingComponent {
@@ -1131,7 +1129,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                                 HitResult hit = player.getWorld().raycast(new RaycastContext(player.getEyePos(), player.getEyePos().add(player.getRotationVector().multiply(50f)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, player));
                                 if (hit != null) end = hit.getPos().subtract(Utils.getArmPosition(player));
                                 BlastEntity blast = new BlastEntity(player.getWorld(), Utils.getArmPosition(player),
-                                        player, 0.25f, Vec3d.ZERO, end, getLV() * 1.5f, Color.YELLOW, false, 10);
+                                        player, 0.25f, Vec3d.ZERO, end, getLV() * 1.5f, SoulForge.GDPULSAR, false, 10);
                                 blast.owner = player;
                                 ServerWorld serverWorld = (ServerWorld) player.getWorld();
                                 serverWorld.spawnEntity(blast);
