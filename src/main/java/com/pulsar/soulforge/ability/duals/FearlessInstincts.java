@@ -17,8 +17,8 @@ public class FearlessInstincts extends AuraAbilityBase {
     public HashMap<EntityAttribute, EntityAttributeModifier> getModifiers(int elv) {
         return new HashMap<>(Map.ofEntries(
                 entry(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier("fearless_instincts", elv / 2f, EntityAttributeModifier.Operation.ADDITION)),
-                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("fearless_instincts", elv * 0.175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
-                entry(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier("fearless_instincts", elv * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier("fearless_instincts", elv * 0.0175f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
+                entry(EntityAttributes.GENERIC_MOVEMENT_SPEED, new EntityAttributeModifier("fearless_instincts", elv * 0.02f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
                 entry(SoulForgeAttributes.AIR_SPEED_BECAUSE_MOJANG_SUCKS, new EntityAttributeModifier("fearless_instincts", elv * 0.0266f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
                 entry(SoulForgeAttributes.GRAVITY_MODIFIER, new EntityAttributeModifier("fearless_instincts", 0.5f, EntityAttributeModifier.Operation.MULTIPLY_TOTAL)),
                 entry(SoulForgeAttributes.STEP_HEIGHT, new EntityAttributeModifier("fearless_instincts", 1f, EntityAttributeModifier.Operation.ADDITION)),

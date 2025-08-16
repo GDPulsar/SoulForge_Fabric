@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.8-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -62,9 +62,9 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.3.6")))
 
-	modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:v${project.fabric_shield_lib_version}"
-	modImplementation "maven.modrinth:midnightlib:${project.midnightlib_version}"
-	modImplementation "com.github.Chocohead:Fabric-ASM:v${project.fabricasm_version}"
+	include modImplementation("com.github.CrimsonDawn45:Fabric-Shield-Lib:v${project.fabric_shield_lib_version}")
+	include modImplementation("maven.modrinth:midnightlib:${project.midnightlib_version}")
+	include modImplementation("com.github.Chocohead:Fabric-ASM:v${project.fabricasm_version}")
 
 	include(modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"))
 	include(modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"))

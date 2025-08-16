@@ -202,7 +202,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                             hasIG = true;
                         }
                     }
-                    float cost = 1f;
+                    float cost = hasIG ? 5f : 10f;
                     if (player.getAttributeInstance(SoulForgeAttributes.MAGIC_COST) != null) {
                         cost *= (float)player.getAttributeValue(SoulForgeAttributes.MAGIC_COST);
                     }
