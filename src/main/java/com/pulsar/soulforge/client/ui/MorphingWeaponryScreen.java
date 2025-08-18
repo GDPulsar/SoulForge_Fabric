@@ -70,8 +70,8 @@ public class MorphingWeaponryScreen extends Screen {
                 context.getMatrices().scale(2f, 2f, 2f);
                 context.drawItem(weapon, -9, -9);
                 context.getMatrices().pop();
-                if ((anglePer*(i-0.5) < mouseAngle || anglePer*(i-0.5) < mouseAngle - MathHelper.TAU) &&
-                        (anglePer*(i+0.5) >= mouseAngle || anglePer*(i+0.5) >= mouseAngle - MathHelper.TAU)) {
+                if ((anglePer*(i-0.5) < mouseAngle && anglePer*(i+0.5) >= mouseAngle) ||
+                        (anglePer*(i-0.5) < mouseAngle - MathHelper.TAU || anglePer*(i+0.5) >= mouseAngle + MathHelper.TAU)) {
                     hovering = weapon;
                     context.drawCenteredTextWithShadow(textRenderer, weapon.getName(), centerX, centerY, 0xFFFFFF);
                 }

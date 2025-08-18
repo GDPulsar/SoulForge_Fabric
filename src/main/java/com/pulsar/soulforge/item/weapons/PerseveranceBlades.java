@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,16 @@ import java.util.UUID;
 public class PerseveranceBlades extends MagicSwordItem implements FabricShield {
     public PerseveranceBlades() {
         super(6, 1.2f, 0.6f);
+    }
+
+    @Override
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.BLOCK;
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack) {
+        return 72000;
     }
 
     @Override

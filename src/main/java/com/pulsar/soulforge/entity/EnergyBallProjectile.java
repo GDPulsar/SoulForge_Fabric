@@ -91,12 +91,14 @@ public class EnergyBallProjectile extends ProjectileEntity {
         }
         Entity entity = entityHitResult.getEntity();
         if (entity.damage(SoulForgeDamageTypes.of((PlayerEntity)this.getOwner(), this.getWorld(), SoulForgeDamageTypes.ABILITY_PROJECTILE_DAMAGE_TYPE), damage)) {
-            if (this.getOwner() instanceof PlayerEntity player) {
-                SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
-                playerSoul.setStyle(playerSoul.getStyle() + (int)damage);
-            }
             if (entity instanceof LivingEntity living) {
-                living.setFireTicks(250);
+                if (TeamUtils.canDamageEntity(this.getServer(), (PlayerEntity)this.getOwner(), living)) {
+                    if (this.getOwner() instanceof PlayerEntity player) {
+                        SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
+                        playerSoul.setStyle(playerSoul.getStyle() + (int) damage);
+                    }
+                    living.setFireTicks(250);
+                }
             }
         }
     }

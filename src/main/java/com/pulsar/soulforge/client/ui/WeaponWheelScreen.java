@@ -76,8 +76,8 @@ public class WeaponWheelScreen extends Screen {
                 context.getMatrices().scale(1.75f, 1.75f, 1.75f);
                 context.drawItem(weapon, -9, -9);
                 context.getMatrices().pop();
-                if ((anglePer*(i-0.5) < mouseAngle || anglePer*(i-0.5) < mouseAngle - MathHelper.TAU) &&
-                        (anglePer*(i+0.5) >= mouseAngle || anglePer*(i+0.5) >= mouseAngle - MathHelper.TAU)) {
+                if ((anglePer*(i-0.5) < mouseAngle && anglePer*(i+0.5) >= mouseAngle) ||
+                        (anglePer*(i-0.5) < mouseAngle - MathHelper.TAU || anglePer*(i+0.5) >= mouseAngle + MathHelper.TAU)) {
                     hovering = weapon;
                     context.drawCenteredTextWithShadow(textRenderer, weapon.getName(), centerX, centerY, 0xFFFFFF);
                 }

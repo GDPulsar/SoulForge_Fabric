@@ -16,6 +16,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class CastAbilityPacket {
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        if (player.isSpectator()) return;
         SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
         if (buf.readBoolean()) {
             boolean isName = buf.readBoolean();

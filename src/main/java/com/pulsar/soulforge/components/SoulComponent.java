@@ -190,6 +190,7 @@ public class SoulComponent implements AutoSyncedComponent, CommonTickingComponen
                     }
                     break;
                 case SPAWN_PLATFORM:
+                    if (player.isSpectator()) break;
                     boolean hasDT = false;
                     boolean hasIG = false;
                     for (AbilityBase ability : abilities.getActive()) {

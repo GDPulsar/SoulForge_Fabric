@@ -23,7 +23,7 @@ public class RendAsunder extends AbilityBase {
         StatusEffectInstance effect = new StatusEffectInstance(SoulForgeEffects.VULNERABILITY, playerSoul.getEffectiveLV()*10, playerSoul.isPure() ? 1 : 0);
         DamageSource damageSource = SoulForgeDamageTypes.of(player, SoulForgeDamageTypes.ABILITY_DAMAGE_TYPE);
         int affectedCount = 0;
-        for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 2f, 3f, 1f, 2f)) {
+        for (LivingEntity target : Utils.getEntitiesInFrontOf(player, 3f, 4f, 1f, 2f)) {
             if (!TeamUtils.canDamageEntity(player.getServer(), player, target)) continue;
             if (target.damage(damageSource, 0.5f*playerSoul.getEffectiveLV())) {
                 affectedCount++;
