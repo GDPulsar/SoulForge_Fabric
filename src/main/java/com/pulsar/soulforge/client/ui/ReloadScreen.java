@@ -70,12 +70,14 @@ public class ReloadScreen extends Screen {
                     hovering = weapon;
                     context.drawCenteredTextWithShadow(textRenderer, weapon.getName(), centerX, centerY, 0xFFFFFF);
                 }
-                float posX = centerX;
-                float posY = centerY;
-                while (posX >= 0 && posX < width && posY >= 0 && posY < height) {
-                    posX += (float)Math.sin(anglePer*(i-0.5));
-                    posY += (float)Math.cos(anglePer*(i-0.5));
-                    context.fill((int)posX - 1, (int)posY - 1, (int)posX + 1, (int)posY + 1, 0xAA000000);
+                if (weapons.size() > 1) {
+                    float posX = centerX;
+                    float posY = centerY;
+                    while (posX >= 0 && posX < width && posY >= 0 && posY < height) {
+                        posX += (float) Math.sin(anglePer * (i - 0.5));
+                        posY += (float) Math.cos(anglePer * (i - 0.5));
+                        context.fill((int) posX - 1, (int) posY - 1, (int) posX + 1, (int) posY + 1, 0xAA000000);
+                    }
                 }
             }
         }
