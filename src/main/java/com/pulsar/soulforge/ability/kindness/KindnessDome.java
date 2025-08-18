@@ -44,7 +44,7 @@ public class KindnessDome extends ToggleableAbilityBase {
             if (hitResult != null) {
                 SoulComponent playerSoul = SoulForge.getPlayerSoul(player);
                 center = hitResult.getBlockPos().offset(hitResult.getSide());
-                domeRadius = Math.max(MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4, 10);
+                domeRadius = Math.min(MathHelper.floor(playerSoul.getEffectiveLV()/10f) + 4, 10);
                 player.getServerWorld().playSound(null, center, SoulForgeSounds.DR_RUDEBUSTER_SWING_EVENT, SoundCategory.PLAYERS, 2f, 1f);
                 entity = new DomeEntity(player.getWorld(), center.toCenterPos().subtract(0.5f, 0.5f, 0.5f), domeRadius,
                         playerSoul.getEffectiveLV() * 10, false, player, playerSoul.hasTrait(Traits.perseverance) && playerSoul.hasTrait(Traits.kindness));
