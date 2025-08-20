@@ -1,6 +1,5 @@
 package com.pulsar.soulforge.item.weapons;
 
-import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShield;
 import com.pulsar.soulforge.SoulForge;
 import com.pulsar.soulforge.attribute.SoulForgeAttributes;
 import com.pulsar.soulforge.components.SoulComponent;
@@ -14,6 +13,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class PerseveranceBlades extends MagicSwordItem implements FabricShield {
+public class PerseveranceBlades extends MagicSwordItem {
     public PerseveranceBlades() {
         super(6, 1.2f, 0.6f);
     }
@@ -41,6 +42,11 @@ public class PerseveranceBlades extends MagicSwordItem implements FabricShield {
         tooltip.add(Text.translatable("item.soulforge.perseverance_blades.tooltip"));
     }
 
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        user.setCurrentHand(hand);
+        return TypedActionResult.success(user.getStackInHand(hand));
+    }
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -61,15 +67,5 @@ public class PerseveranceBlades extends MagicSwordItem implements FabricShield {
                 ), 2f);
             }
         }
-    }
-
-    @Override
-    public int getCoolDownTicks() {
-        return 100;
-    }
-
-    @Override
-    public boolean supportsBanner() {
-        return false;
     }
 }

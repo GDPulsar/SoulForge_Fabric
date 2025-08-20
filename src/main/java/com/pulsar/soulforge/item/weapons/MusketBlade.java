@@ -85,10 +85,11 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
                 world.playSoundFromEntity(null, user, SoulForgeSounds.UT_BLASTER_EVENT, SoundCategory.PLAYERS, 1f, 1f);
                 user.getItemCooldownManager().set(this, 10);
                 stack.getOrCreateNbt().remove("loaded");
+                return TypedActionResult.consume(stack);
             }
         }
         user.setCurrentHand(hand);
-        return TypedActionResult.consume(user.getStackInHand(hand));
+        return TypedActionResult.consume(stack);
     }
 
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
@@ -96,7 +97,7 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
             int i = this.getMaxUseTime(player) - remainingUseTicks;
             float f = getPullProgress(i, player);
             if (f >= 1.0F && !(stack.getOrCreateNbt().contains("loaded") && stack.getOrCreateNbt().getBoolean("loaded"))) {
-                stack.getOrCreateNbt().putBoolean("true", false);
+                stack.getOrCreateNbt().putBoolean("loaded", true);
                 SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, soundCategory, 1.0F, 1.0F);
             }
@@ -114,6 +115,11 @@ public class MusketBlade extends MagicSwordItem implements GeoItem {
         }
 
         return f;
+    }
+
+    @Override
+    public int getMaxUseTime(ItemStack stack) {
+        return 23;
     }
 
     public int getMaxUseTime(PlayerEntity player) {

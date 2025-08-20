@@ -67,7 +67,7 @@ public class Gunlance extends MagicSwordItem implements GeoItem {
         if (playerSoul.getMagic() < 4f) {
             ValueComponent values = SoulForge.getValues(user);
             if (values != null) {
-                values.setBool("disableMovement", true);
+                values.setTimer("disableMovement", 7);
                 values.setTimer("clawGouge", 23);
             }
             user.getItemCooldownManager().set(this, 200);
